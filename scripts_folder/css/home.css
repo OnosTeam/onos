@@ -1,0 +1,53 @@
+
+@media screen  and (max-width:320px) /*Iphone4 320x480*/ {
+
+
+
+
+}/*chiusura iphone4*/
+
+
+
+@media screen  and (max-width:360px) /*Note3neo 360*640*/ {
+
+#box{
+
+width:360px;
+height:100px;
+position:relative;
+top:50px;
+border-bottom: dashed 2px #0072ca;
+
+}
+
+#testo-box{
+font-family: recharge;
+width:360px;
+height:30px;
+position:absolute;
+top:15px;
+text-align:center;
+color:#0072ca;
+}
+	
+
+#numero-persone{
+
+
+font-family: digital;
+width:360px;
+height:35px;
+position:absolute;
+top:40px;
+text-align:center;
+color:#0072ca;
+font-size:50px;
+
+}
+
+
+
+
+
+
+}/*chiusura media note 3neo 360px*/

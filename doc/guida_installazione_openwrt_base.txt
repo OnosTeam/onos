@@ -1,0 +1,625 @@
+connettere seriale al router.
+connettere ethernet lan (quella vicino usb) al pc
+Premere e tenere premuto il pulsante del router ed alimentare il router.
+a schermo il router dirà di tenere premuto il pulsante per un tempo variabile in base alla funzione desiderata.
+la funzione utile a caricare una nuova immagine è quella a 3 secondi.
+
+
+imposto il pc con ip 192.168.1.2    e gateway 192.168.1.1
+
+apro il browser e vado a 192.168.1.1
+
+seleziono sulla pag web il file da caricare  ad esempio openwrt-ar71xx-generic-gl-inet-v1-squashfs-factory.bin
+
+e carico.
+
+La pagina web dirà router is upgrading ..
+
+e la seriale mostrerà una serie di asterischi
+
+
+il router si riavvierà da solo.
+
+
+
+df -h mostrerà qualcosa di simile:
+
+
+Filesystem                Size      Used Available Use% Mounted on              
+rootfs                   30.0M     36.0K     29.9M   0% /                       
+/dev/root                 2.3M      2.3M         0 100% /rom                    
+tmpfs                    30.0M     44.0K     29.9M   0% /tmp                    
+tmpfs                    30.0M     36.0K     29.9M   0% /tmp/root               
+overlayfs:/tmp/root      30.0M     36.0K     29.9M   0% /                       
+tmpfs                   512.0K         0    512.0K   0% /dev 
+
+
+
+per cambiare pasword root:   (da creare con uno script automatico e casuale)
+passwd    
+
+
+
+
+
+vi /etc/config/network
+metti indirizzo lan , indirizzo gateway e il dns!
+
+
+l'unica riga da cambiare è:
+        option ipaddr '192.168.1.1'  a          option ipaddr '192.168.101.1'
+
+esempio :
+
+config interface 'loopback'
+        option ifname 'lo'
+        option proto 'static'
+        option ipaddr '127.0.0.1'
+        option netmask '255.0.0.0'
+
+config globals 'globals'
+        option ula_prefix 'fde5:6674:7d9b::/48'
+
+config interface 'lan'
+        option ifname 'eth1'
+        option force_link '1'
+        option type 'bridge'
+        option proto 'static'
+        option ipaddr '192.168.101.1'
+        option netmask '255.255.255.0'
+        option ip6assign '60'
+
+config interface 'wan'
+        option ifname 'eth0'
+        option proto 'dhcp'
+
+config interface 'wan6'
+        option ifname '@wan'
+        option proto 'dhcpv6'
+
+
+
+
+
+
+poi dare ifdown lan
+ifup lan
+
+o
+ /etc/init.d/network reload
+
+
+
+
+modificare il wifi:
+
+
+vi /etc/config/wireless
+
+il file originale è   :
+
+config wifi-device  radio0
+        option type     mac80211
+        option channel  11
+        option hwmode   11g
+        option path     'platform/ar933x_wmac'
+        option htmode   HT20
+        # REMOVE THIS LINE TO ENABLE WIFI:
+        option disabled 1
+
+config wifi-iface
+        option device   radio0
+        option network  lan
+        option mode     ap
+        option ssid     OpenWrt
+        option encryption none
+
+
+
+
+da sostituire con:  (nota bene :"option disabled 0"  per abilitare il wifi, la key (da creare con uno script automatico e casuale)
+
+
+config wifi-device  radio0
+        option type     mac80211
+        option channel  11
+        option hwmode   11g
+        option path     'platform/ar933x_wmac'
+        option htmode   HT20
+        # REMOVE THIS LINE TO ENABLE WIFI:
+        option disabled 0
+
+config wifi-iface
+        option device   radio0
+        option network  lan
+        option mode     ap
+        option encryption 'psk-mixed'                                           
+        option ssid 'ONOS'                                               
+        option disabled '0'                                                     
+        option key '12345678'   
+
+
+
+
+
+
+riavviare e provare che sia possibile connettersi al wifi..e che si abbia accesso ad internet da li.
+
+
+
+
+
+
+per vedere se il router ha internet dare:
+ping 8.8.8.8
+
+
+per installare python:
+
+opkg update
+
+opkg install python
+
+installare openssl per onos mail agent:
+
+opkg install python-openssl
+
+
+opkg install tar
+
+
+
+per creare avvio automatico onos:
+
+modificare /etc/rc.local   (dovrebbe essere vuoto con solo exit 0) :
+
+vi /etc/rc.local
+
+
+ecco come dovrà essere il file alla fine:
+
+
+ifup lan               
+                                              
+cd /bin/onos
+mkdir /tmp/onos
+cp -R *  /tmp/onos/
+cd /tmp/onos/
+sh onos.sh >/dev/null 2>&1 &   
+#sh onos.sh  /tmp/log.txt 2>&1 &       
+                                              
+exit 0  
+
+
+
+
+
+
+
+
+
+
+
+Installare onos:
+
+
+creare la cartella onos con  
+mkdir /bin/onos
+
+scoprire che ip ha onos al momento sull wan (eth0) con:
+
+ifconfig
+
+poi disabilitare momentaneamente il firewall per avere accesso ssh con:
+
+/etc/init.d/firewall stop
+
+
+
+
+aprire la cartella onos che si vuole installare nel pc e dare:
+
+
+
+
+
+scp -r *  root@192.168.0.2:/bin/onos
+
+
+
+riavviare:
+
+reboot
+
+
+
+
+
+ora disabilitare avvio automatico ssh con:
+
+vi /etc/config/dropbear
+
+
+
+inserire :
+option enable 0
+
+
+
+il file finale sarà:
+
+config dropbear
+        option PasswordAuth 'on'
+        option RootPasswordAuth 'on'
+        option Port         '22'
+#       option BannerFile   '/etc/banner'
+        option enable 0
+
+
+
+
+
+
+disabilitare il webserver nativo luci:
+
+/etc/init.d/uhttpd stop
+/etc/init.d/uhttpd disable
+
+
+
+
+
+consentire l'accesso da wan alla pagina web onos:
+
+
+
+modificare il firewall:
+/etc/config/firewall 
+
+aggiungendo il port foward sulla porta 80 
+
+# Port 80  try--------delete after    
+config 'redirect'                          
+        option 'src' 'wan'       
+        option 'proto' 'tcp'      
+        option 'src_ip' ''
+        option 'src_dport' '80'
+        option 'dest_ip' '192.168.101.1'
+        option 'dest_port' '80'
+                                  
+config 'rule'                         
+        option 'src' 'wan'     
+        option 'proto' 'tcp'   
+        option 'src_ip' ''            
+        option 'dest_ip' ''    
+        option 'dest_port' '80'       
+        option 'target' 'ACCEPT'
+
+
+
+il file finale sarà:
+
+config defaults
+        option syn_flood        1
+        option input            ACCEPT
+        option output           ACCEPT
+        option forward          REJECT
+# Uncomment this line to disable ipv6 rules
+#       option disable_ipv6     1
+
+config zone
+        option name             lan
+        list   network          'lan'
+        option input            ACCEPT
+        option output           ACCEPT
+        option forward          ACCEPT
+
+config zone
+        option name             wan
+        list   network          'wan'
+        list   network          'wan6'
+        option input            REJECT
+        option output           ACCEPT
+        option forward          REJECT
+        option masq             1
+        option mtu_fix          1
+
+config forwarding
+        option src              lan
+        option dest             wan
+
+
+# Port 80  try--------delete after    
+config 'redirect'                          
+        option 'src' 'wan'       
+        option 'proto' 'tcp'      
+        option 'src_ip' ''
+        option 'src_dport' '80'
+        option 'dest_ip' '192.168.101.1'
+        option 'dest_port' '80'
+                                  
+config 'rule'                         
+        option 'src' 'wan'     
+        option 'proto' 'tcp'   
+        option 'src_ip' ''            
+        option 'dest_ip' ''    
+        option 'dest_port' '80'       
+        option 'target' 'ACCEPT'
+
+
+# We need to accept udp packets on port 68,
+# see https://dev.openwrt.org/ticket/4108
+config rule
+        option name             Allow-DHCP-Renew
+        option src              wan
+        option proto            udp
+        option dest_port        68
+        option target           ACCEPT
+        option family           ipv4
+
+# Allow IPv4 ping
+config rule
+        option name             Allow-Ping
+        option src              wan
+        option proto            icmp
+        option icmp_type        echo-request
+        option family           ipv4
+        option target           ACCEPT
+
+# Allow DHCPv6 replies
+# see https://dev.openwrt.org/ticket/10381
+config rule
+        option name             Allow-DHCPv6
+        option src              wan
+        option proto            udp
+        option src_ip           fe80::/10
+        option src_port         547
+        option dest_ip          fe80::/10
+        option dest_port        546
+        option family           ipv6
+        option target           ACCEPT
+
+# Allow essential incoming IPv6 ICMP traffic
+config rule
+        option name             Allow-ICMPv6-Input
+        option src              wan
+        option proto    icmp
+        list icmp_type          echo-request
+        list icmp_type          echo-reply
+        list icmp_type          destination-unreachable
+        list icmp_type          packet-too-big
+        list icmp_type          time-exceeded
+        list icmp_type          bad-header
+        list icmp_type          unknown-header-type
+        list icmp_type          router-solicitation
+        list icmp_type          neighbour-solicitation
+        list icmp_type          router-advertisement
+        list icmp_type          neighbour-advertisement
+        option limit            1000/sec
+        option family           ipv6
+        option target           ACCEPT
+
+# Allow essential forwarded IPv6 ICMP traffic
+config rule
+        option name             Allow-ICMPv6-Forward
+        option src              wan
+        option dest             *
+        option proto            icmp
+        list icmp_type          echo-request
+        list icmp_type          echo-reply
+        list icmp_type          destination-unreachable
+        list icmp_type          packet-too-big
+        list icmp_type          time-exceeded
+        list icmp_type          bad-header
+        list icmp_type          unknown-header-type
+        option limit            1000/sec
+        option family           ipv6
+        option target           ACCEPT
+
+# include a file with users custom iptables rules
+config include
+        option path /etc/firewall.user
+
+
+### EXAMPLE CONFIG SECTIONS
+# do not allow a specific ip to access wan
+#config rule
+#       option src              lan
+#       option src_ip   192.168.45.2
+#       option dest             wan
+#       option proto    tcp
+#       option target   REJECT
+
+# block a specific mac on wan
+#config rule
+#       option dest             wan
+#       option src_mac  00:11:22:33:44:66
+#       option target   REJECT
+
+# block incoming ICMP traffic on a zone
+#config rule
+#       option src              lan
+#       option proto    ICMP
+#       option target   DROP
+
+# port redirect port coming in on wan to lan
+#config redirect
+#       option src                      wan
+#       option src_dport        80
+#       option dest                     lan
+#       option dest_ip          192.168.16.235
+#       option dest_port        80
+#       option proto            tcp
+
+# port redirect of remapped ssh port (22001) on wan
+#config redirect
+#       option src              wan
+#       option src_dport        22001
+#       option dest             lan
+#       option dest_port        22
+#       option proto            tcp
+
+# allow IPsec/ESP and ISAKMP passthrough
+#config rule
+#       option src              wan
+#       option dest             lan
+#       option protocol         esp
+#       option target           ACCEPT
+
+#config rule
+#       option src              wan
+#       option dest             lan
+#       option src_port         500
+#       option dest_port        500
+#       option proto            udp
+#       option target           ACCEPT
+
+### FULL CONFIG SECTIONS
+#config rule
+#       option src              lan
+#       option src_ip   192.168.45.2
+#       option src_mac  00:11:22:33:44:55
+#       option src_port 80
+#       option dest             wan
+#       option dest_ip  194.25.2.129
+#       option dest_port        120
+#       option proto    tcp
+#       option target   REJECT
+
+#config redirect
+#       option src              lan
+#       option src_ip   192.168.45.2
+#       option src_mac  00:11:22:33:44:55
+#       option src_port         1024
+#       option src_dport        80
+#       option dest_ip  194.25.2.129
+#       option dest_port        120
+#       option proto    tcp
+
+
+
+
+
+
+riavviare il firewall  e provare a vedere se l'interfaccia funziona da wan:
+
+
+/etc/init.d/firewall restart
+
+
+
+
+Rimuovere pulsante reset (opzionale):
+
+vi  /etc/rc.button/reset
+
+il file originale è:
+
+#!/bin/sh
+
+[ "${ACTION}" = "released" ] || exit 0
+
+. /lib/functions.sh
+
+logger "$BUTTON pressed for $SEEN seconds"
+
+if [ "$SEEN" -lt 1 ]
+then
+        echo "REBOOT" > /dev/console
+        sync
+        reboot
+elif [ "$SEEN" -gt 5 ]
+then
+        echo "FACTORY RESET" > /dev/console
+        jffs2reset -y && reboot &
+fi
+
+
+
+
+rimuovere la linea  "jffs2reset -y && reboot &"
+
+
+ottenendo:
+
+
+
+#!/bin/sh
+
+[ "${ACTION}" = "released" ] || exit 0
+
+. /lib/functions.sh
+
+logger "$BUTTON pressed for $SEEN seconds"
+
+if [ "$SEEN" -lt 1 ]
+then
+        echo "REBOOT" > /dev/console
+        sync
+        reboot
+elif [ "$SEEN" -gt 5 ]
+then
+        echo "FACTORY RESET" > /dev/console
+fi
+
+
+
+
+
+volendo si può trasformare in un pulsante per attivare il wifi..
+
+
+
+
+
+
+
+
+
+
+
+eliminare problema ram:
+
+echo  "vm.overcommit_memory = 2" >> /etc/sysctl.conf
+echo  "vm.overcommit_ratio = 80" >> /etc/sysctl.conf
+
+
+
+
+
+Disable TCP slow start on idle connections:  #utile? forse no...
+
+
+echo "net.ipv4.tcp_slow_start_after_idle = 0" >> /etc/sysctl.conf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fine
+
+
+opzionale .......
+
+installare luci:
+opkg install luci
+opkg install luci-theme-openwrt
+
+configurare webserver luci su porta 8080
+vi /etc/config/uhttpd
+
+abilitare avvio webserver
+
+/etc/init.d/uhttpd enable
+reboot
+
+

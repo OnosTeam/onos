@@ -1,0 +1,59 @@
+
+body{
+   background: black;
+   margin:0;  
+   width: 100%;
+   height:100%;
+  
+}
+
+
+.tabella,
+.riga,
+.colonna {
+  background: black;
+  color: lime;
+  border: 1px solid lime;
+ /* text-align:center;*/
+ 
+}
+
+.tabella { 
+  display: table;
+  width: 100%;
+  height:100%;
+ 
+}
+
+.riga { 
+  clear: both; 
+  display: block; 
+  display: table-row; 
+  width: 100%;
+ 
+}
+
+#last_row{ 
+  background: grey;
+  color: black;
+}
+
+
+
+.colonna {display: table-cell}
+
+
+input {
+    
+    background: black; 
+    border: 1px solid lime;
+    color: white;
+    height: 100%; 
+    width: 100%; 
+    
+}
+
+a:link{text-decoration:none;color: lime;}
+a:visited{text-decoration:none;color: lime;}
+
+

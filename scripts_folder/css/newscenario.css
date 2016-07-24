@@ -1,0 +1,125 @@
+/*//////////////////////////////pezzo standard per ogni css////////////////*/
+
+
+
+a, a:visited  {text-decoration:none;color:black;}
+
+a:hover{text-decoration:none;  font-weight: bold;}
+
+
+
+.container1{
+
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:30px;
+	top:150px;
+	position:relative;
+	width:600px;
+	height:50px;
+
+
+
+}
+
+.testo{
+
+	width:550px;
+	height:50px;
+	display: block;
+	position: absolute;
+	margin: 0px;
+
+}
+
+#enabling{
+
+	height:50px;
+	display: block;
+	position: absolute;
+	left:100px;
+	top:-20px;
+}
+
+#select{
+
+
+	height:25px;
+	display: block;
+	position: absolute;
+	left:200px;
+	top:0px;
+
+}
+
+
+.border.container1{border-bottom: solid 1px gray;}
+
+
+#sbutton{
+
+background-color:#0072ca;
+color:black;
+
+}
+
+.submit-button{
+
+
+
+	text-align:center;
+	margin:0 auto;
+	font-weight:bold;
+	width:550px;
+	height:50px;
+	position: absolute;
+	background-color:#C9C9C9;
+	border: 5px outset black;
+
+}
+
+
+#summary{
+
+background-color:#cc66ff;
+color:black;
+
+}
+
+#sum-function{
+
+background-color:#00ccff;
+color:black;
+
+}
+
+.summary-button{
+
+	text-align:center;
+	margin:0 auto;
+	font-weight:bold;
+	width:120px;
+	height:30px;
+	position: absolute;
+	background-color:#C9C9C9;
+	border: 1px solid black;
+	left:420px;
+	top:-8px;
+}
+
+.textbox{
+
+	width:200px;
+	display: block;
+	position: absolute;
+	left:200px;
+	top:-5px;
+
+}
+
+
+.ghost{
+
+display:none;
+
+}

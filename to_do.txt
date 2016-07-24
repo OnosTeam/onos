@@ -1,0 +1,138 @@
+avvio di onos anche senza internet?  update_check...
+
+bug  no internet cpu > 85 %
+
+onos updater in onos.sh
+
+make the json read safe and load an alternative json if the one readed is corrupted 
+
+
+
+error003 the webobject does not exist in the dict, i close the scenario check,objname: not wifi0_Plug6way0001 e:('not wifi0_Plug6way0001',)
+
+
+problema ,alcune volte il thread che riceve i messaggi dai nodi si blocca...anche spegnendo e riaccendendo i nodi quelli non tornano attivi..
+
+
+
+aggiungere status range al oggetto in modo da poter mostrare una barra per gli oggetti analogici scalata giusta, 0:180 servo  , 0:255 analogici ... 
+
+
+
+
+
+onosBusThread()  a volte si blocca?
+
+
+
+
+
+0) Passare tutto da tcp a udp ?  // passata la gestione nodi da richiesta http a query tcp 
+
+
+
+0.2)Sviluppare comunicazione php tcp con webserver locale python ..
+
+0.3)Fare lampadina onos con condensatore
+
+
+
+
+
+1)  Salvataggio dati su json  e se l'hardware è gl.inet  salvataggio dati su flash e non su ram   FATTO
+
+    Timeout login remoto!
+    strip down jsons files
+    
+
+2)  Sviluppo aggiornamento da remoto e da usb  FATTO , manca da usb...e bisogna fare il checksum dei file dopo estrazione ,non solo del tar con:
+sudo find -name '*' -exec md5sum {} > checksum.md5 \;
+sed '/.old/d' checksum.md5|sed '/oldapp/d'|sed '/checksum/d'|sed '/random-seed/d' |sed '/udhcpd/d'|sed '/macaddr/d' > checksum2.md5 
+sudo md5sum -c checksum2.md5 
+
+
+
+
+3)  Creazione degli username da locale che andranno poi creati sul database  online in automatico  Fatto parzialmente
+
+
+3.1) Creazione server online di backup , se onoscenter non riesce più a connettersi all'indirizzo principale proverà ad usare il secondario (sia per update che per controllo web) 
+
+
+3.2) Pulsante disabilitazione scenari , pulsante forzatura scenari (premi il pulsante ed esegui l'operazione nello scenario)
+
+3,5) interrupt su arduino...con ne555?
+
+
+3,6)grafica per configurare onos_mail_conf in globalvar per mandare mail
+
+
+
+------------------------------------------da fare dopo:
+
+3.7) Gestione carichi e pannelli solari,lettura contatore enel  
+
+4)  Sviluppo nodi wireless con wifi o altro modulo wireless
+
+5)  Cercare di permettere all'utente di scrivere nomi non ashii per gli oggetti, gli scenari,gli utenti...
+
+6)  Documentazione utente base e documentazione api
+
+7)  Sviluppo hardware differenti da prese , permettendo l'uso di arduino
+
+8)  Sviluppo o integrazione di moduli terzi per il comando di lampadine  
+
+9)  Sviluppo torretta conta persone --> accendi luce
+
+10) Video dimostrativo ,documentazione per maker faire , pubblicazione hackaday e indiegogo
+
+11) Sviluppo allarme al laser/infrarossi perimetrale
+
+12) Sviluppo log delle statistiche autoconfigurato per contare cose come i minuti di accensione di ciascuna presa , la corrente usata o la temperatura della stanza magari esportando su google data...
+
+13) espansione glinet con arduino via usb o seriale
+
+
+
+
+
+
+
+
+creare programma python da eseguire per poter comandare i pin di un arduino via seriale
+
+
+se utile:
+creare un nuovo tipo di webobject  che abbia n stati  come un automa...e che permetta di andare al prossimo od al precedente stato  
+
+aggiungere ad ogni oggetto una variabile displayType che dica al core di onos come mostrare l'oggetto su pagina web...ad esempio barra , pulsante ecc..
+
+
+
+
+
+Fare testo pagina in italiano ed inglese
+Fare logo e scritta accostati e metterli sul forum sul sito e su sourceforge
+Fare biglietti da visita
+Fare logo magliette da stampare.
+Fare video nuovo utilizzo onos , unboxing, installazione
+Fare video presentazione onos.
+
+
+Il sito non ha tutti i link presenti.
+Aggiungere link a wiki 
+Scrivere materiale sul wiki (guide,caratterisctiche tecniche ecc..)
+
+fare form per opinioni e per contattarci
+fare form "descrivici il tuo problema ti daremo la soluzione su misura"
+fare form "inscriviti alla newsletter per ricevere aggiornamenti"
+
+pubblicità mirata sul forum di arduino
+
+
+
+
+
+
+
+

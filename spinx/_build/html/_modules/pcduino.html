@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pcduino &mdash; ONOS  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ONOS  documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> ONOS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../arduino_handler.html">arduino_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../arduinoserial.html">arduinoserial module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../globalVar.html">globalVar module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw_node.html">hw_node module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mail_agent.html">mail_agent module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../node_query_handler.html">node_query_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pcduino.html">pcduino module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../router_handler.html">router_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_zone.html">time_zone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../web_object.html">web_object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webserver.html">webserver module</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ONOS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>pcduino</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pcduino</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+<span class="c"># per creare l&#39;oggetto si fa  nomeoggetto=pyduino.Pyduino()</span>
+
+<span class="c">#pcduino 2.3</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. warning::</span>
+
+<span class="sd">    Never used</span>
+
+<span class="sd">This module will interface with an arduino over serial port</span>
+<span class="sd">         </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">arduinoserial</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">thread</span><span class="o">,</span><span class="nn">threading</span><span class="o">,</span><span class="nn">time</span><span class="o">,</span><span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">globalVar</span> <span class="kn">import</span> <span class="o">*</span>           <span class="c"># import parameter globalVar.py</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+
+
+<span class="c">#old comment not valid anymore...</span>
+<span class="c">#for each comunication arduino has to send, arduino will respond with a series of char making &quot;the message&quot;, </span>
+<span class="c">#followed by a char that is the sum of all the single char value of the message,</span>
+<span class="c"># (if is more than 255 it will sotract n times 255 to the number in order to make it &lt; 255)</span>
+<span class="c">#after this control char the arduino will send a &#39;/n&#39; char  that define the end of the message.</span>
+<span class="c">#the pc check if the sum of every char received (less the control char and the end of message char)</span>
+<span class="c">#are equal to the control char received and then if so respond with the control char.</span>
+<span class="c">#otherwise it respond &#39;?&#39; and the arduino will try to send again the message (max 10 times)</span>
+<span class="c">#if the pc want to set an arduino pin to a digital status its write &#39;dw131&#39;+ch  where ch is the control byte.</span>
+<span class="c">#the arduino set the pin and then write back to the pc &#39;dw&#39;+ch+&#39;;&#39;+&#39;/n&#39; where ch is the control byte of the received message </span>
+  
+
+<span class="n">pcduino_exit</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">pcduinoTread</span><span class="o">=</span><span class="mi">1</span>
+
+
+<span class="n">HIGH</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">LOW</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">ser</span><span class="o">=</span><span class="mi">0</span>
+<div class="viewcode-block" id="Pcduino"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino">[docs]</a><span class="k">class</span> <span class="nc">Pcduino</span><span class="p">:</span>
+    <span class="n">__baudrate</span><span class="o">=</span><span class="mi">115200</span>
+    <span class="n">__connected</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">__maxPin</span><span class="o">=</span><span class="mi">13</span>
+    <span class="n">analog1</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">done</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">statusInterrupt</span><span class="o">=</span><span class="mi">0</span>
+
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      
+      <span class="n">done</span><span class="o">=</span><span class="mi">0</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">object_dict</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">watchPinDict</span><span class="o">=</span><span class="p">{}</span>  <span class="c">#list of pin to read from the arduino...the keys are the number of pin , the values are the values of the pins</span>
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">write_buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">=</span><span class="mi">0</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">=</span><span class="s">&quot;a&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">__connected</span><span class="o">=</span><span class="mi">0</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">=</span><span class="mi">1</span>
+      <span class="c">#self.t0 = threading.Thread(target=self.readSerialThread)</span>
+      <span class="c">#self.t0.start()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span>
+      <span class="c">#self.waitForThread=0</span>
+
+      <span class="c">#thread.start_new_thread(self.readSerialThread,())  </span>
+      <span class="c">#print &quot;a=&quot;+self.a</span>
+      <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyUSB0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>   <span class="c">#work only if there is only ttyUSB port</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyUSB1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyUSB2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyUSB3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyUSB&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyACM0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyACM1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyACM2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyACM3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep ttyACM&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">old_port</span><span class="o">=</span><span class="n">port</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
+        <span class="n">port</span><span class="o">=</span><span class="s">&#39;/dev/&#39;</span><span class="o">+</span><span class="n">port</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>   <span class="c">#remove /n of ls</span>
+      
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span> <span class="o">=</span><span class="n">arduinoserial</span><span class="o">.</span><span class="n">SerialPort</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">115200</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__connected</span><span class="o">=</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">=</span><span class="s">&quot;b&quot;</span>
+        <span class="c">#print &quot;a=&quot;+self.a</span>
+        <span class="k">print</span> <span class="s">&#39;connection with arduino successful &#39;</span>
+      <span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;error in init arduino is not connected to this port , i will try another USB port  &#39;</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyUSB0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>   <span class="c">#work only if there is only ttyUSB port</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyUSB1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep -v  | grep ttyUSB2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyUSB3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyUSB&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyACM0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyACM1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyACM2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyACM3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">port</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">&quot;ls /dev/ | grep -v &quot;</span><span class="o">+</span><span class="n">old_port</span><span class="o">+</span><span class="s">&quot; | grep ttyACM&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="c">#port=port[0:len(port)-1]   #remove /n of ls</span>
+         <span class="c">#port=string.replace(port,&#39;/n&#39;,&#39;&#39;)</span>
+        <span class="n">port</span><span class="o">=</span><span class="s">&#39;/dev/&#39;</span><span class="o">+</span><span class="n">port</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
+        <span class="c">#port=&#39;/dev/&#39;+port</span>
+        <span class="k">print</span> <span class="s">&quot;i try&#39;&quot;</span><span class="o">+</span><span class="n">port</span><span class="o">+</span><span class="s">&quot;&#39;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span> <span class="o">=</span><span class="n">arduinoserial</span><span class="o">.</span><span class="n">SerialPort</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">115200</span><span class="p">)</span>
+
+          <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">=</span><span class="s">&quot;c&quot;</span>
+          <span class="k">print</span> <span class="s">&quot;a=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+
+          <span class="bp">self</span><span class="o">.</span><span class="n">__connected</span><span class="o">=</span><span class="mi">1</span> 
+          <span class="k">print</span> <span class="s">&#39;connection with arduino successful &#39;</span>
+          <span class="c">#print self.ser.isOpen()</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&#39;error arduino is not connected , please connect arduino and retry  &#39;</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">__connected</span><span class="o">=</span><span class="mi">0</span>       
+       <span class="c">#self.ser = serial.Serial(0)       ls /dev/| grep -v USB1| grep USB</span>
+
+       
+      <span class="k">print</span> <span class="s">&quot;a=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+       
+
+
+
+
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+      <span class="k">print</span> <span class="s">&quot;closing pcduino&quot;</span>
+      <span class="k">global</span> <span class="n">pcduino_exit</span>
+      <span class="nb">exit</span><span class="o">=</span><span class="mi">1</span>
+      <span class="n">pcduino_exit</span><span class="o">=</span><span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="k">print</span> <span class="s">&quot;pcduino class destroyed&quot;</span>
+      
+<div class="viewcode-block" id="Pcduino.end"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;closing pcduino end()&quot;</span>
+        <span class="k">global</span> <span class="n">pcduino_exit</span>
+        <span class="n">pcduino_exit</span><span class="o">=</span><span class="mi">1</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+         
+
+</div>
+<div class="viewcode-block" id="Pcduino.change_baudrate"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.change_baudrate">[docs]</a>    <span class="k">def</span> <span class="nf">change_baudrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">baud</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">__baudrate</span><span class="o">=</span><span class="n">baud</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">baudrate</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__baudrate</span>
+          <span class="k">print</span> <span class="s">&#39;baudrate changed to &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__baudrate</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&#39; &#39;</span>
+
+
+
+        
+</div>
+<div class="viewcode-block" id="Pcduino.getMaxPin"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.getMaxPin">[docs]</a>    <span class="k">def</span> <span class="nf">getMaxPin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="p">)</span>
+
+
+</div>
+<div class="viewcode-block" id="Pcduino.print_baudrate"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.print_baudrate">[docs]</a>    <span class="k">def</span> <span class="nf">print_baudrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__baudrate</span><span class="p">)</span>
+
+
+
+        
+          
+         </div>
+<div class="viewcode-block" id="Pcduino.get_statusInterrupt"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.get_statusInterrupt">[docs]</a>    <span class="k">def</span>  <span class="nf">get_statusInterrupt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statusInterrupt</span> <span class="o">==</span> <span class="s">&quot;0&quot;</span><span class="p">:</span>
+        <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statusInterrupt</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">:</span>
+        <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+ 
+      <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+
+
+</div>
+<div class="viewcode-block" id="Pcduino.getCheck"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.getCheck">[docs]</a>    <span class="k">def</span> <span class="nf">getCheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">message</span><span class="p">):</span>  <span class="c">#will be changed to crc8  check</span>
+      <span class="k">print</span> <span class="s">&quot;getCheck executed&quot;</span>
+      <span class="n">total</span><span class="o">=</span><span class="mi">0</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+        <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="o">+</span><span class="nb">ord</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">total</span><span class="o">&gt;</span><span class="mi">250</span><span class="p">:</span>
+        <span class="n">total</span><span class="o">=</span><span class="nb">divmod</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="mi">250</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c">#give the rest from the division between  total and 250</span>
+      <span class="n">total</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+      
+      <span class="k">print</span> <span class="s">&quot;check =&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+
+      <span class="k">return</span> <span class="p">(</span><span class="n">total</span><span class="p">)</span>
+
+
+
+
+</div>
+<div class="viewcode-block" id="Pcduino.digitalRead"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.digitalRead">[docs]</a>    <span class="k">def</span> <span class="nf">digitalRead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">object_dict1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">object_dict</span><span class="o">=</span><span class="n">object_dict1</span>
+      <span class="k">print</span> <span class="s">&quot;digital read&quot;</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">()</span> <span class="p">:</span> 
+        <span class="k">print</span> <span class="s">&quot;connection ok&quot;</span>
+      <span class="k">else</span><span class="p">:</span>     
+        <span class="k">print</span> <span class="s">&quot;cannot read digital pin because arduino is not connected, please connect it and retry&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c">#self.connect()</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      
+      <span class="k">if</span> <span class="p">((</span><span class="n">pinNumber</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="p">)</span><span class="ow">or</span> <span class="p">(</span><span class="n">pinNumber</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range ,use a value from 0 to 13 for arduino2009 or a value from 0 to 52 for arduino mega&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+     
+      <span class="k">if</span> <span class="n">pinNumber</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">cmd_pin_read</span><span class="o">=</span><span class="s">&#39;dr&#39;</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmd_pin_read</span><span class="o">=</span><span class="s">&#39;dr&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>        
+
+      <span class="n">l1</span><span class="o">=</span><span class="s">&#39;a&#39;</span>
+      <span class="k">print</span> <span class="s">&quot;try to read pin &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>      
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">():</span>
+        <span class="c">#self.buffer=&#39;&#39;  #void rx buffer before to ask data     </span>
+        <span class="c">#self.ser.write(cmd_pin_read)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="c">#wait for incoming data</span>
+        <span class="n">l1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="n">l1</span>
+
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span>   
+        <span class="k">while</span>  <span class="p">(</span><span class="n">pcduino_exit</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">5</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__connected</span><span class="o">==</span><span class="mi">1</span> <span class="p">):</span>  
+          <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+          <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">==</span><span class="s">&#39;onos_error&#39;</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nb">exit</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+          <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;input buffer=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span>
+            <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span><span class="n">cmd_pin_read</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pos</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>  <span class="c">#cmdpin find in serial input buffer</span>
+              <span class="k">print</span> <span class="s">&quot;pin status found in input buffer&quot;</span>
+              <span class="k">try</span><span class="p">:</span> 
+                <span class="n">pinStatus</span><span class="o">=</span><span class="n">tmp</span><span class="p">[</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">):</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="c">#read the next char after cmd_pin_read</span>
+                <span class="k">if</span> <span class="n">pinStatus</span><span class="o">==</span><span class="s">&#39;0&#39;</span><span class="p">:</span>
+                  <span class="k">print</span> <span class="s">&quot;pin=0&quot;</span>
+                  <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>      
+                <span class="k">if</span> <span class="n">pinStatus</span><span class="o">==</span><span class="s">&#39;1&#39;</span><span class="p">:</span>
+                  <span class="k">print</span> <span class="s">&quot;pin=1&quot;</span>
+                  <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>      
+              <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;not able to read pin status&quot;</span> 
+
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="c">#wait for incoming data</span>
+          <span class="n">l1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+          <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="n">l1</span>
+
+          <span class="c">#time.sleep(0.1)</span>
+    
+        
+</div>
+<div class="viewcode-block" id="Pcduino.updateObjectDict"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.updateObjectDict">[docs]</a>    <span class="k">def</span> <span class="nf">updateObjectDict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">object_dict1</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">object_dict</span><span class="o">=</span><span class="n">object_dict1</span>
+
+   
+</div>
+<div class="viewcode-block" id="Pcduino.addPinToCheck"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.addPinToCheck">[docs]</a>    <span class="k">def</span> <span class="nf">addPinToCheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">,</span><span class="n">typeOfPin</span><span class="p">):</span>  
+      <span class="k">if</span> <span class="p">((</span><span class="n">pinNumber</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="p">)</span><span class="ow">or</span> <span class="p">(</span><span class="n">pinNumber</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range ,use a value from 0 to 13 for arduino2009 or a value from 0 to 52 for arduino mega&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">watchPinDict</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=-</span><span class="mi">1</span>   <span class="c">#fill the dictionary with a  new pin for arduino to watching</span>
+
+
+      <span class="k">if</span> <span class="n">typeOfPin</span><span class="o">==</span><span class="s">&quot;digital&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pin</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+          <span class="n">cmd_pin_check</span><span class="o">=</span><span class="s">&#39;dc&#39;</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">cmd_pin_check</span><span class="o">=</span><span class="s">&#39;dc&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>            
+
+      <span class="k">if</span> <span class="n">typeOfPin</span><span class="o">==</span><span class="s">&quot;analog&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pin</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+          <span class="n">cmd_pin_check</span><span class="o">=</span><span class="s">&#39;ac&#39;</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">cmd_pin_check</span><span class="o">=</span><span class="s">&#39;ac&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>     
+
+
+       <span class="c">#implement the part where the arduino is told to check for a change on the pin status</span>
+
+
+
+</div>
+<div class="viewcode-block" id="Pcduino.digitalReadPins"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.digitalReadPins">[docs]</a>    <span class="k">def</span> <span class="nf">digitalReadPins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">object_dict1</span><span class="p">):</span>  <span class="c">#this method is a thread that contantly wait for data from arduino..</span>
+      <span class="n">listOfPinStatus</span><span class="o">=</span><span class="p">[]</span>
+
+      
+      <span class="k">while</span> <span class="n">pcduino_exit</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+          <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+          <span class="k">continue</span>
+        <span class="n">tmpObject_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object_dict</span>
+        <span class="k">print</span> <span class="s">&quot;digital read all the pin setted as input&quot;</span>
+        <span class="k">try</span><span class="p">:</span> 
+          <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>     
+          <span class="k">print</span> <span class="s">&quot;cannot read digital pin because arduino is not connected, please connect it and retry&quot;</span>
+        <span class="c">#self.connect()</span>
+          <span class="k">continue</span>
+      <span class="c">#self.ser.write(cmd_pin_read)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="c">#wait for incoming data</span>
+        <span class="n">r1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">r1</span><span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="n">r1</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;c??&quot;</span><span class="p">)</span>  <span class="c"># ask arduino if is alive</span>
+          <span class="k">continue</span>
+
+        <span class="n">checkByte</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="c">#byte for check the comunication error  is the second last of the packet..</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getCheck</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">]))</span><span class="o">==</span><span class="n">checkByte</span><span class="p">:</span> <span class="c">#packet received correctly</span>
+          <span class="k">print</span> <span class="s">&quot;received a packet fro arduino:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;error receiving a packet from arduino&quot;</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;r??&quot;</span><span class="p">)</span>  <span class="c"># ask arduino to resend the packet</span>
+          <span class="k">continue</span>
+
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">tmpObject_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c"># iterate every object </span>
+          <span class="n">a</span><span class="o">=</span><span class="n">tmpObject_dict</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+          <span class="n">pinNumber</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">getAttachedPin</span><span class="p">()</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">getType</span><span class="p">()</span><span class="o">==</span><span class="s">&quot;d_sensor&quot;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">pin</span><span class="o">!=</span><span class="mi">9999</span><span class="p">):</span>
+            <span class="n">pinNumber</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
+              <span class="n">pinNumber</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pinNumber</span>
+            <span class="n">cmd_pin_read</span><span class="o">=</span><span class="s">&#39;dr&#39;</span><span class="o">+</span><span class="n">pinNumber</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span><span class="n">cmd_pin_read</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pos</span><span class="o">!=-</span><span class="mi">1</span> <span class="p">:</span>  <span class="c"># found dr+pinnumber in reading buffer </span>
+              <span class="n">pinStatus</span><span class="o">=</span><span class="n">tmp</span><span class="p">[</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">):</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">cmd_pin_read</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="c">#read the next char after cmd_pin_read           </span>
+              <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://localhost/onos_cmd==setSts_&#39;</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="s">&#39;==&#39;</span><span class="o">+</span><span class="n">pinStatus</span><span class="o">+</span><span class="s">&#39;_&#39;</span><span class="p">)</span>  <span class="c">#tell the webserver to set the webobj according to the pin status received from arduino</span>
+
+             
+              
+               
+
+
+
+
+
+
+
+
+
+ 
+</div>
+<div class="viewcode-block" id="Pcduino.digitalWrite"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.digitalWrite">[docs]</a>    <span class="k">def</span> <span class="nf">digitalWrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hw_node_address</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">status</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">=</span><span class="mi">0</span>
+      <span class="k">try</span><span class="p">:</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">()</span>
+      <span class="k">except</span><span class="p">:</span>     
+        <span class="k">print</span> <span class="s">&quot;cannot write digital pin because arduino is not connected  (error self.ser.isOpen()), please connect it and retry&quot;</span>
+        <span class="c">#self.connect()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      
+      <span class="k">if</span> <span class="p">((</span><span class="n">pinNumber</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="p">)</span><span class="ow">or</span> <span class="p">(</span><span class="n">pinNumber</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range ,use a value from 0 to 13 for arduino2009 or a value from 0 to 52 for arduino mega&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+   
+         
+      <span class="k">if</span> <span class="p">((</span><span class="n">status</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="ow">and</span><span class="p">(</span><span class="n">status</span><span class="o">!=</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  digital value is out of range ,use 0 or 1 to set the pin&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+      
+      <span class="c">#self.buffer=&#39;&#39;  #void rx buffer before to ask data</span>
+     
+      <span class="k">if</span> <span class="mi">1</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span>
+        <span class="c">#self.ser.write(&#39;dw&#39;+str(pinNumber)+str(status))        </span>
+        <span class="c">#self.write_buffer=self.write_buffer+&#39;dw&#39;+str(pinNumber)+str(status)</span>
+        <span class="n">pinNumber</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
+         <span class="n">pinNumber</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pinNumber</span>
+        <span class="n">ch</span><span class="o">=</span><span class="s">&#39;0&#39;</span>
+        
+        <span class="n">ch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getCheck</span><span class="p">(</span><span class="s">&#39;dw&#39;</span><span class="o">+</span><span class="n">pinNumber</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
+        <span class="n">cmd</span><span class="o">=</span><span class="s">&#39;dw&#39;</span><span class="o">+</span><span class="n">pinNumber</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">)</span><span class="o">+</span><span class="n">ch</span>
+
+
+        <span class="n">trycount</span><span class="o">=</span><span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="c">#wait for incoming data</span>
+        <span class="n">l1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="n">l1</span>
+
+        <span class="k">while</span> <span class="n">trycount</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pcduino try to write to serial port dw with cmd=&quot;</span><span class="o">+</span><span class="n">cmd</span>
+
+          
+          <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span><span class="s">&#39;dw&#39;</span><span class="o">+</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">!=-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;wrote ok&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;buffer=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">=</span><span class="mi">1</span>
+            <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c">#write corfimed</span>
+          <span class="n">trycount</span><span class="o">=</span><span class="n">trycount</span><span class="o">+</span><span class="mi">1</span>
+          <span class="k">print</span> <span class="s">&quot;no dw found ,buffer=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>          
+          <span class="n">l1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="c">#wait for incoming data          </span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">+</span><span class="n">l1</span>
+          <span class="c">#time.sleep(0.01)</span>
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">=</span><span class="mi">1</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span><span class="c">#except:</span>
+        <span class="c">#self.connect()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&#39;error arduino is not connected , please connect arduino&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readEnable</span><span class="o">=</span><span class="mi">1</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  
+          
+        
+
+     
+  </div>
+<div class="viewcode-block" id="Pcduino.analogRead"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.analogRead">[docs]</a>    <span class="k">def</span> <span class="nf">analogRead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">):</span>
+
+      <span class="k">try</span><span class="p">:</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">()</span>
+      <span class="k">except</span><span class="p">:</span>     
+        <span class="c">#self.connect()</span>
+        <span class="k">print</span> <span class="s">&quot;cannot read digital pin because arduino is not connected, please connect it and retry&quot;</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>	
+
+      <span class="k">if</span> <span class="p">((</span><span class="n">pinNumber</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="p">)</span><span class="ow">or</span> <span class="p">(</span><span class="n">pinNumber</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range ,use a value from 0 to 13 for arduino2009 or a value from 0 to 52 for arduino mega&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+      <span class="n">l2</span><span class="o">=</span><span class="s">&#39;a&#39;</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">():</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">!=</span><span class="s">&#39;a&#39;</span><span class="p">:</span>
+
+          <span class="k">if</span> <span class="n">pinNumber</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;ar&#39;</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">))</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;ar&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">))</span>   
+<span class="c">#fine while</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+          <span class="k">try</span><span class="p">:</span>
+            <span class="n">l2</span><span class="o">=</span><span class="mi">0</span><span class="o">+</span><span class="mi">1000</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> 
+            <span class="n">l2</span><span class="o">=</span><span class="n">l2</span><span class="o">+</span><span class="mi">100</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> 
+            <span class="n">l2</span><span class="o">=</span><span class="n">l2</span><span class="o">+</span><span class="mi">10</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> 
+            <span class="n">l2</span><span class="o">=</span><span class="n">l2</span><span class="o">+</span><span class="mi">1</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  
+            <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="o">=</span><span class="mi">1</span>
+          <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="o">=</span><span class="mi">0</span> 
+
+            <span class="k">if</span> <span class="n">pinNumber</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">write_buffer</span><span class="o">=</span><span class="s">&#39;ar&#39;</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">write_buffer</span><span class="o">=</span><span class="s">&#39;ar&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>  
+
+
+
+               
+        <span class="k">print</span> <span class="n">l2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>  <span class="c">#void rx buffer before to ask data</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">l2</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c">#self.connect()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&#39;error arduino is not connected , please connect arduino&#39;</span><span class="p">)</span>
+
+
+
+
+
+
+    </div>
+<div class="viewcode-block" id="Pcduino.analogWrite"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.analogWrite">[docs]</a>    <span class="k">def</span> <span class="nf">analogWrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+      <span class="k">try</span><span class="p">:</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">()</span>
+      <span class="k">except</span><span class="p">:</span>     
+        <span class="c">#self.connect()</span>
+        <span class="k">print</span> <span class="s">&quot;cannot write analog pin because arduino is not connected, please connect it and retry&quot;</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="p">((</span><span class="n">value</span> <span class="o">&gt;</span><span class="mi">255</span><span class="p">)</span><span class="ow">or</span><span class="p">(</span><span class="n">value</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  analog value is out of range ,use a value from 0 to 255&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+      <span class="k">if</span> <span class="p">((</span><span class="n">pinNumber</span> <span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="p">)</span><span class="ow">or</span> <span class="p">(</span><span class="n">pinNumber</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range ,use a value from 0 to 13 for arduino2009 or a value from 0 to 52 for arduino mega&#39;</span>
+        <span class="k">return</span><span class="p">()</span>
+   
+
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">isOpen</span><span class="p">():</span>
+  
+
+        <span class="k">if</span> <span class="n">pinNumber</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+          <span class="n">pinNumber</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">pinNumber</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+             
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">value</span><span class="o">&gt;</span><span class="mi">99</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">value</span><span class="o">&lt;</span><span class="mi">999</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;aw&#39;</span><span class="o">+</span><span class="n">pinNumber</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="p">(</span><span class="n">value</span><span class="o">&gt;</span><span class="mi">9</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">value</span><span class="o">&lt;</span><span class="mi">99</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;aw&#39;</span><span class="o">+</span><span class="n">pinNumber</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="p">(</span><span class="n">value</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">value</span><span class="o">&lt;</span><span class="mi">9</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;aw&#39;</span><span class="o">+</span><span class="n">pinNumber</span><span class="o">+</span><span class="s">&#39;00&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c">#self.connect()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&#39;error arduino is not connected , please connect arduino&#39;</span><span class="p">)</span>   
+
+
+      <span class="k">return</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+
+
+
+
+</div>
+<div class="viewcode-block" id="Pcduino.getRouterName"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.getRouterName">[docs]</a>    <span class="k">def</span> <span class="nf">getRouterName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># to implement</span>
+
+
+
+
+
+
+
+
+
+
+</div>
+<div class="viewcode-block" id="Pcduino.readSerialThread"><a class="viewcode-back" href="../pcduino.html#pcduino.Pcduino.readSerialThread">[docs]</a>    <span class="k">def</span> <span class="nf">readSerialThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+      <span class="k">global</span> <span class="n">pcduinoTread</span>
+     
+
+      <span class="k">print</span> <span class="s">&quot;wait for connection to serial port&quot;</span>
+      <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__connected</span><span class="o">==</span><span class="mi">0</span> <span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span>
+      <span class="c">#print &quot;readSerialThread&quot;</span>
+      <span class="k">while</span> <span class="n">pcduino_exit</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">j</span><span class="o">=</span><span class="mi">11</span>
+        <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">pcduino_exit</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span><span class="c">#if pcduino is writing on serial port...not used for now</span>
+          <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span>
+          <span class="k">if</span> <span class="n">j</span><span class="o">&gt;</span><span class="mi">25</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;thread read paused&quot;</span>
+            <span class="n">j</span><span class="o">=</span><span class="mi">0</span>
+          <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+   
+        <span class="c">#print &quot; write buffer2=&quot;+self.write_buffer</span>
+        <span class="c">#self.waitForThread=1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_buffer</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="p">:</span>
+          <span class="c">#print &quot;write&quot;+self.write_buffer+&quot;to the serial port&quot;</span>
+          <span class="c">#time.sleep(0.01)</span>
+          <span class="k">try</span><span class="p">:</span>
+            <span class="c">#tmp_bf=string.split(self.path,&quot;;&quot;) # split each command and creeate a list of commands named tmp_bf</span>
+            <span class="c">#for a in  tmp_bf:             </span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_buffer</span><span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_buffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+            <span class="c">#self.waitForThread=0</span>
+          <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;error cant write to serial port&#39;</span>
+            <span class="c">#self.waitForThread=0</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">x</span><span class="o">=</span><span class="mi">0</span>
+          <span class="c">#print &quot;nothing to write to the serial port&quot; </span>
+
+        <span class="c">#try:</span>
+          <span class="c">#print &quot;read serial&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+
+          <span class="n">l1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> 
+          <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">+</span><span class="n">l1</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;nothing received by the serial port&quot;</span>
+            <span class="c">#print &quot;input buffer &gt;0&quot;</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span><span class="s">&#39;onos_error&#39;</span>
+          <span class="k">print</span> <span class="s">&quot;reading serial port error&quot;</span> 
+
+
+        <span class="k">if</span> <span class="n">pcduino_exit</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>   <span class="c">#exit</span>
+          <span class="n">pcduinoTread</span><span class="o">=</span><span class="mi">0</span>
+          <span class="k">print</span> <span class="s">&quot;pcduino reading thread closed&quot;</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+          <span class="k">return</span>    
+
+         
+        <span class="c">#if len (self.watchPinDict.keys())&gt;0:</span>
+        <span class="c">#  for b in self.watchPinDict.keys():</span>
+        <span class="c">#    a=self.watchPinDict[b]</span>
+        <span class="c">#    if string.find(self.buffer,&quot;an&quot;+b) :  #found a change of status pin in the input buffer</span>
+        <span class="c">#      x=0</span>
+
+      <span class="k">if</span> <span class="n">pcduino_exit</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>   <span class="c">#exit</span>
+        <span class="n">pcduinoTread</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">print</span> <span class="s">&quot;pcduino reading thread closed&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span>    
+
+
+
+        <span class="c">#  print &quot;serial error&quot;</span>
+
+          <span class="c">#print &#39;serial comunication reading error in thread read&#39;</span>
+          
+        <span class="c">#print &quot;hkeys----------------------------------------------------------------------------------------------&quot;</span>
+        <span class="c">#print object_dict.keys()</span>
+
+         <span class="c">#for b in object_dict.keys() : #for every web obj</span>
+       <span class="c">#   a=object_dict[b]</span>
+        <span class="c">#  pin=a.getAttachedPin()</span>
+       <span class="c">#   if (a.getType()==&quot;d_sensor&quot;)&amp;(pin!=9999):</span>
+        <span class="c">#print &quot;webobj status set reading arduino pin to&quot;</span>
+    <span class="c">#        tmp_buffer=self.buffer</span>
+            
+     <span class="c">#       if pin &lt;10:</span>
+     <span class="c">#         find=string.find(tmp_buffer,&quot;dr0&quot;+str(pin))</span>
+     <span class="c">#         if (find!=-1):   # found the reading of the pin in the input buffer</span>
+     <span class="c">#           try:</span>
+     <span class="c">#             a.setStatus(int(tmp_buffer[find+3:find+4]))   # find a way to update the real object...</span>
+                  
+     <span class="c">#             print &quot;status setteddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd&lt;10&quot;</span>
+                  <span class="c">#break</span>
+     <span class="c">#           except:</span>
+     <span class="c">#             print &quot;cant&#39; set the status to the web object&quot;+tmp_buffer[find:find+1]</span>
+     <span class="c">#             x=0  # void command</span>
+
+     <span class="c">#       else:#pin &gt;9</span>
+     <span class="c">#         find=string.find(tmp_buffer,&quot;dr&quot;+str(pin))</span>
+     <span class="c">#         if (find!=-1):   # found the reading of the pin in the input buffer</span>
+     <span class="c">#           try:</span>
+     <span class="c">#             a.setStatus(int(tmp_buffer[find+4:find+5]))</span>
+     <span class="c">#             print &quot;status setteddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd&gt;9&quot;</span>
+                 <span class="c"># break</span>
+     <span class="c">#           except:</span>
+     <span class="c">#             print &quot;cant&#39; set the status to the web object&quot;+tmp_buffer[find:find+1]</span>
+     <span class="c">#             x=0  # void command</span>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+</pre></div></div></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

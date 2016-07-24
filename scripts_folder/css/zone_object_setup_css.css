@@ -1,0 +1,218 @@
+
+body {    background-color: black;
+}
+
+#header{
+    margin-bottom: 2%;
+    width: 100%;
+    height: 30px;
+    text-align:center;
+    border: 1px solid black;
+    background-color: #0072ca;
+    color:black;
+    font-size: 200%;
+    line-height: 100%;   
+    overflow: hidden;
+  
+}
+/*////////////float bar////////*/
+#buttons
+{
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  position: fixed;
+  bottom: 0px;
+  left:0px;
+  margin: 0%;
+  width: 100%;
+  background-color: black;
+  
+}
+
+
+
+#home{
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  width: 50%;
+  margin: 0%;
+  float:left;
+  text-align: center;
+  background-color: #0072ca;
+  border: 2px solid black;
+  color:black;
+  font-size: 200%;
+  line-height: 100%;   
+}
+
+#home:hover{
+  background-color: black;
+  border: 2px solid #0072ca;
+  color:#0072ca;
+}
+
+
+#back{
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  overflow: hidden;
+  margin: 0%;
+  text-align: center;
+  background-color: #0072ca;
+  border: 2px solid black;
+  color:black;
+  font-size: 200%;
+  line-height: 100%;   
+}
+
+#back:hover{
+  background-color: black;
+  border: 2px solid #0072ca;
+  color:#0072ca;
+}
+/*/////////fine float bar//////*/
+
+
+
+
+
+/*//////////input///////////*/
+
+#testo
+{
+ border-radius:12px;
+ -moz-border-radius:12px;
+ -webkit-border-radius:12px;
+ -khtml-border-radius:12px;  
+  background-color: black;
+  margin-bottom: 7%;
+  width: 100%;
+  
+}
+
+input[type="text"]{
+  color:#0072ca;
+  background: black;
+  border: 2px solid #0072ca;
+  
+  
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+ height:50px;
+ width: 100%;
+ text-align:center;
+  
+}
+
+input[type="submit"]{
+  color:#0072ca;
+  background: black;
+  border: 2px solid #0072ca;
+  overflow: hidden;
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  height:50px;
+  text-align:center;
+  width:100%;
+}
+
+
+/*//////////fine input///////*/
+
+
+
+
+
+
+/*///////////riga oggetti////////*/
+
+#riga
+{
+ border-radius:12px;
+ -moz-border-radius:12px;
+ -webkit-border-radius:12px;
+ -khtml-border-radius:12px;  
+  background-color: black;
+  margin-bottom: 7%;
+  width: 100%;
+  
+}
+
+
+
+
+
+
+
+#object{
+    overflow: hidden;
+    float: left;
+    border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+    margin: 0%;
+    width: 75%;
+    height:40px;
+    text-align:center;
+    border: 2px solid #0072ca;
+    background-color: black;
+    color:#0072ca;
+    font-size:170%;
+    line-height: 135%;   
+    } 
+  
+
+
+#add{
+    overflow: hidden;
+    border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+    margin: 0%;
+    height:40px;
+    text-align:center;
+    border: 2px solid #0072ca;
+    background-color: black;
+    color:#0072ca;
+    font-size:120%;
+    line-height: 240%;   
+    } 
+  
+#used{
+    overflow: hidden;
+    border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+    margin: 0%;
+    height:40px;
+    text-align:center;
+    border: 2px solid #0072ca;
+    background-color: green;
+    color:black;
+    font-size:120%;
+    line-height: 240%;   
+    } 
+
+
+
+
+/*//////fine riga oggetti///////*/
+
+
+
+
+a {text-decoration:none;color:#0072ca;}
+a:visited {text-decoration:none; color:#0072ca}

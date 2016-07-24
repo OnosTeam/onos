@@ -1,0 +1,144 @@
+/*//////////////////////////////pezzo standard per ogni css////////////////*/
+
+body {
+margin: 0;
+padding: 0;
+background-color: white;
+}
+
+a, a:visited  {text-decoration:none;color:black;}
+
+a:hover{text-decoration:none;  font-weight: bold;}
+
+#image {
+	display: block;
+	margin: auto;
+    height: auto;
+}
+
+#container-image{
+	margin:0 auto;
+	width:100%;
+	background-color: black;
+}
+
+.divisorio{
+	height:auto;
+	margin-bottom:100px;
+	background-color: black;
+	color:#0072ca;
+	text-align: center;
+	font-weight: bold;
+	font-size: 40px;
+	text-shadow: 2px 2px gray ;/*non supportato da IE9 e precedenti*/
+}
+
+
+
+/*//////////////////////////////////inizio menu/////////////////////////*/
+
+#container{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top:15px;
+	position:relative;
+	width:400px;
+	height:70px;
+
+}
+
+.menu{
+	color:white;
+	background-color:red;
+	text-align:center;
+	
+}
+
+.flex {max-width: 100%}
+
+
+
+#play{
+	width:60px;
+	height:60px;
+	position:absolute;
+	
+}
+
+#teach{
+	width:60px;
+	height:60px;
+	position:absolute;
+	left:180px;
+	bottom:4px;
+}
+
+#setup{
+	width:60px;
+	height:60px;
+	position:absolute;
+	left:340px;
+}
+
+.button:hover{top:-10px;}
+
+
+/*//////////////////////////////fine menu//////////////////////////////pezzo standard per ogni css*/
+
+
+
+
+
+
+.oggetto-container{
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:10px;
+	position:relative;
+	width:600px;
+	height:50px;
+	border-bottom: 2px solid black;
+
+}
+
+.oggetto{
+	width:550px;
+	position:absolute;
+	text-align: center;
+	color:black;
+	font-size: 40px;
+	overflow:hidden;
+
+}
+
+.oggetto-container:hover{	
+	
+	font-weight: bold;
+    background-image: url("../img/sfumatura.png");
+    background-repeat: no-repeat;
+
+}
+
+#stato-oggetto{
+	width:40px;
+	height:40px;
+	position:absolute;
+	left:555px;
+	top:7px;
+}
+
+
+
+/*//////////////////////////////////fine zona/////////////////////////*/
+
+
+#footer {
+
+
+	margin: auto;
+	height:100px;
+	width:100%;
+
+
+}
+

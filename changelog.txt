@@ -1,0 +1,819 @@
+versione 2.5:
+  aggiunto pulsante reset generale
+  aggiunto supporto a diverse pagine html
+  aggiunto supporto immagini
+
+versione 2.6:
+  aggiunto body css
+  eliminato flip immagini con self.send_header('Cache-Control',        'max-age=31536000') 
+  aggiunta possibilità di negare stato pulsanti con "!"
+
+versione 2.7  inizio  utilizzo xml in lettura per i web_object
+               aggiunta location per ogni web_object
+
+versione 2.8   cambiati text0 e text1  in web_object  to  html0  e html1
+               fatta prima interfaccia html per creare web_object
+
+versione 2.9  aggiunta interfaccia creazione e rimozione stanze
+
+versione 3.0 aggiunta interfaccia aggiunta e rimozione oggetti dalle stanze e creazione nuovi oggetti
+
+versione 3.1 aggiunta interfaccia modifica web object 
+
+versione 3.2 finita interfaccia modifica web object 
+
+versione 3.3  risolto problema form multipli su http://192.168.0.101/setup/room5/button2  dopo il submit 
+
+
+versione 3.5  aggiunto creazione cartelle per ogni room e creazione index.html  
+
+versione 3.6   risolto bug  body  , risolto bug per cui non si riusciva a leggere html file  in quanto si tentava di aprire 2 volte lo stesso file
+
+versione3.7   risolto bug form modifica html ..premendo + volte sul submit si aggiungevano oggetti   trovato bug se si crea una nuova room chiamata 'a' da errore..con altri nomi funziona perche' c'era un file chiamato 'a' nella directory che pero' non era una cartella
+
+versione3.8   aggiunta lettura e salvataggio dati su xml!    e intestazione licenza gpl
+
+versione3.9   lettura di setup/ModifyWebObjForm.template.html per il render della pag di modifica webobj 
+
+versione4.0  aggiunto updateObjectThread  che può modificare i webobject da thread...
+
+versione4.1 iniziato ad includere pcduino...e  a riempire updateObjectThread
+
+versione4.2  aggiunto form arduino pin in pag mod webobject 
+
+versione4.3   12:25 Domenica   collegato arduino e acceso con successo led 13!!!!!!!!!!!da pag web
+              16:18  letto pin 8 di arduino e cambiato colore pulsante a seconda del valore sul pin!!!
+              reso possibile disconnetere e riconnettere arduino senza dovere riavviare il programma...(solo perdendo qualche comando inviato) 
+ 
+versione4.31    modificata libreria pcduino perchè dava problemi leggendo più di un pin
+
+versione4.40   iniziato ad usare ajax per aggiornare solo una parte della pagina web  (scartato jquery perchè pesante)  
+
+versione4.51    risolti vari bug tra i quali il div che si aggiungeva in automatico ogni volta che si modificava la pag tha webpag..
+                aggiunto anche controllo per aggiornare la pag solo se la pag è cambiata in qualcosa!
+                fatto in modo che allo spegnersi del webserver lo stato attuale sia salvato come stao iniziale ,
+                in questo modo  al riavvio le uscite saranno impostate come prima dello spegnimento
+                oggi sabato 21 giugno alle 7.36  comandato onos da internet!!!
+
+
+versione4.52   cambiato il tipo di comando da os.popen a os.system perchè altrimenti il programma s bloccava      
+               per aspettare  la risposta del comando..aggiunto metodo parse per i comandi inseriti..
+
+versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con arduino uno...che dava problemi 
+
+
+
+4.55   cambiato pcduino sul pc e su arduino in modo che facciano il controllo degli errori sui messaggi..e che la pag web n
+               non possa cambiare se il pin non è stato settato..cambiato metodo lettura seriale
+
+              
+               aggiunta parte di programma che risponde a wget http://localhost/onos_cmd==setSts_ingresso1==1_
+               settando lo stato dei web_obj anche da parte di programmi esterni!
+              
+               spostate le room nella cartella rooms
+
+               aggiunto controllo per evitare che sul xml venga scritto "none" come valore
+
+               parte di controllo stato pin mandati in automatico da arduino iniziata.. 
+
+
+               problema con aggiornamento automatico stato pin pag   e se premo reset...ed un pulsante..
+               problema aggiornando pagina se si scrive testo poco prima del </body>  questo testo viene raddoppiato da javascript..
+
+               bug all'aggiunta di un elemento la parte html del webobj viene aggiunta dopo la fine del div  realoadme...
+               risolto aggiungendo reload_page_end_indicator  nella pag web.. e  non scrivendo nulla dopo  di esso...
+               l'html della pag che si vuole aggiungere a mano va inserito prima di :
+                    <!--soacdnrtc end of the part reloaded by the browser by javascript-->
+  
+
+               bug: la pressione del pulsante su mega 1280 non è affidabile ..a volte premendo ,il led cambia stato ma 
+                    il web server no , aumantati i tentativi di trasmissione su pcduino
+       
+
+4.56:          spostate rooms nella cartella rooms
+
+4.57:          removed delay from arduinoserial.py waitForData()   , so now the digitalwrite function run faster and 
+               the buttons that change arduino pin status change their html faster
+
+
+4.58:          added the hw_node  class , every room will have a  relative hw_node if arduino is connected..
+               the hw_node will be created on the creation of a new room .
+               there is a thread always running on arduinoserial  wich check for new message from the arduino.           
+               (not_working yet) and automaticly update the status of the webobjects
+               today 7 september at 22.34  my raspberry handler class turn on and of 2 leds
+               made all the tread daemons so they will be killed as soon as the main program exit
+
+
+4.59:          today 10 september at 23.05 onos read and write pins correctly!
+         
+
+4.60           added  index .html menu   , add css to config  menu...  (Enrik) 
+               fixed unicode problem when used in webpage post methods
+               replaced all special imputs with '_'
+               added log in home page
+
+4.61           bug fix about the mod webobject , problem because  / was replaced in all post , not only in the post for  the directory name
+               fixed, now / will be replaced by "_" only where you use it in a directory name.
+
+
+4.62           added css and better graphics  (Enrik) 
+               added javascript that select all the text of an input field once clicked on it
+
+
+4.63           changed XMLHttpRequest  to synchronous connection and added new Date()).getTime()  in order to change every request (to prevent cache to been used)
+               add a python string strftime("%S", gmtime())  in order to write to the browser a new data every time (to prevent cache)
+               removed the web page not changed feacture for now...it prevents to have more browser tabs updated at the same time.
+
+               bug solved (when you delete all zones an create a new one onos crashed)
+               bug solved (when you rename a zone  the relative directory didn't change name but a new one was created)
+
+               bug solved (sometimes clicking a button nothing happen because the page is reloading itself)
+                   solved  using onmousedown="stopUpdate()"   onmouseout="restartUpdate() on every button
+                     
+               improved the connection bandwidth using a variable nothing_changed,  after 5 times a web page is reloaded 
+               also if there are no changes, onos will start to sent "nonews" to the javascript of the webpage
+               until something on the page changed.
+
+
+
+
+4.64           21-9-14 at 1.04 am changed modPag()  in order to make possible to use Enrik template...
+               now is much more flexible and simple to make html custom pages !!!
+  
+
+
+4.65           improved the modPag() funcion and added the gui for zone_play !
+               modified getRoomHtml  to create a template if the zone html doesn't exist
+
+
+
+4.66           bugfix:  the webpage on the playzone  was not updating itself until you press a button
+              
+               improved: now webobject are  displayed in alphabetical order 
+
+
+4.67           added the possibility to delete webobject , made web object manager  (enrik)
+               made setup select menu      
+
+4.68           bug fix: when you removed a webobject the zones containing it failed to load.
+               enabled create new object input box 
+
+
+4.69           created new /setup/zone_manager  (enrik)   ,now can create new zones, delete zones and rename zones
+               link to create a new object in setup/obj_manager/  not yet done 
+               
+ 
+4.70           Added back up settings menu...import and export xml and restore to default  
+               NOW TO RUN THE WEBSERVER YOU HAVE TO EXECUTE: ./onos.sh 
+
+4.71           added  /zone_objects_setup/   that allow to add and remove object in a zone , and also  make you able to create  private objects to the zone
+               bugfix: add a check in import config ...if nothing is iported don't empty data.xml 
+               bugfix: corrected some back link
+
+
+4.72           bugfix: problem when renamed a zone ..the old zone_body wasn't removed 
+
+
+4.73           deleted all not used files
+
+
+4.74           bugfix :  added updateoneRoom() after the zone objects setup  
+
+
+4.75           added  try except to all the server response in order to make onos more stable over long period
+ 
+4.76           added try: to the raspberry_handler when it try to contact the webserver.py to set a status pin 
+               added the method getNodeSectionStatusByPin() to hw_node
+
+4.77           implemented parts of arduino_handler.py  
+
+4.78           moved the cmd0.log files in logs directory
+               moved all the xml files in config_files directory
+               moved all the scripts and related files to the scripts_folder 
+
+4.79           started to implement the json saving system to replace the old xml system ,
+               in order to increase the portability of the project and to support unicode.
+
+
+4.80           replaced the hardware pin variable in the webobject class with a list of pins
+               implemented the last json import export config part , now onos doesn't use xml anymore!
+               29/11/14  at 19.29  i run onos on the router gl.inet for the first time !!!
+
+4.81           corrected some bug , moving some return in the get method
+               started to add nodes to the webserver.py 
+               added the method changeWebObjectStatus() which update hw_node and webobject with the same pin status
+               added the method changeWebObjectType()which change the hw_node and webobject pin type
+               implemented the sr_relay type for web_object.py
+
+4.82           modified rasberry_handler in order to use it as the router_handler , 
+               which now can support router pin and node pins (importing arduino_handler when needs it )
+               modified read_router_pins() in order to run only if there are pins used as input
+               modified the router_handler digitalWrite() in order to select if it has to write to the routers pin or 
+               to the arduino pin .
+               modified getNodeSectionStatusByPin() in hw_node   to return also the section number
+               16-12-14  found cheap powerline on sale ...the network nodes will be based on them
+               modified createNewWebObjFromNode() in order to use hardwareModelDict  to create new objects
+               corrected a bug that don't allow to turn on off webobj on router node (node with address 0)
+
+4.83           added the check if (os.path.exists("/sys/class/gpio")==1)   in order to recognise when the router hardware
+               has not io hardware pins (like a pc) .
+               added if (previous_status==statusToSet): #if nothing needs to be changed...i will return
+               to router_handler
+               added the the json backup and load of the nodeDict  !
+               bugfix:  can't create 2 plug6way  , onos doesn't create the second plug objects
+               now the nodeDict keys will be the nodename like Plug6way0001 , the address will be assigned automatically 
+               by the new GetfirstFreeNodeAddress() function that will act like a dhcp server.
+               the onos equipment will have the lab printed as :
+               Plug6way0001, Plug6way0002,Plug6way0003,onosAllarmIR0001,onosAllarmIR0002,onosAllarmIR0003  
+               so the "serial number" will start from 0 for every new device...in order to make simple to know how many
+               devices of one type were ship.
+               bug fix found a problem in the hardwareModelDict reading  the structure was not uniforn for all the devices.
+               added the methods getListPinsConfigByHardwareModel()  and getListUsedPinsByHardwareModel() to router_handler
+
+4.84           addedd hardware.setHwPinMode(node_address,pins_to_set[0],"DOUTPUT")  to  changeWebObjectType()
+               18.19 11/1/2015  onos_sensor_node_example.pde   i made a simple node with ENC28J60 and a arduino .
+               the example read a pin status and make a query to the webserver.py 
+               in order to change the status of the object .
+
+4.85           started to implement onos_sensor_node.pde  for arduino eth node
+               moved the hardwareModelDict to globalVar.py 
+               started using hardwareModelDict to configure pin in hw_node.py
+               writed getSetupMsg()  , added self.node_fw var inside hw_node  wich contain the fw version of each node
+               rewrited the setSts obj  query to  /onos_cmd?cmd=setSts&obj=sensor1&status=1&hw=0__    
+               obj_pins changed to obj_Pins in data.json 
+               rewrited setnodepin query to /onos_cmd?cmd=setNodePin&nodeSn=RouterGL0001&pin=22&status=1&hw=0__  
+
+4.86           writed onos_cmd?cmd=pinsetup query answer in order send the setup to the node and get the
+               node ip address   
+               writed the msg setup coding in hw_node.py now when node ask for pin setup the server send 
+               a 65 byte long message containing all the setup for up to 72 pins (arduino mega) 
+               the setup message contain which pin are used and if a pi is used as:
+               digital read,digital out , analog in ,analog out , servo control out
+
+4.87           arduino node receive correctly the onos pin setup message 
+                 
+
+
+4.88           changed def createNewWebObjFromNode(hwType0,node_sn) in   progressive_number=node_sn 
+               because otherwise two node with the same numeric sn override their objects
+               bugfix: bug in prominiA all digital read pin but one  have the html make the user click to change obj 
+               status like if they are digital output   
+               writing arduino setup side, setup msg received successfully!
+               the nod address i changed from int to string by now
+               bugfix  :Plug6way0002 node    created from arduino , the zone pag don't allow to press the socket objects
+                    modified createNewWebObjFromNode() in webserver.py
+                    modified setStatus() in web_object.py   added "button" in the type of objects 
+
+4.89           bugfix : added or(self.__object_type=="digital_input")  in web_object.py 
+               continued the arduino code part (the read analog and digital pin part)
+               
+  
+4.90           bugfix: on promini node webpage there is no clickable element , not even the button type objects 
+                added (objType=="digital_output")  if (objType=="b")|(objType=="sb")|(objType=="sr_relay")
+                in webserver.py modPage()  and in web_obj.py setStatus()
+
+
+4.91           continued with arduino code , now arduino ask to onos the pin configuration and then 
+               when a pin setted as input(analog or digital) read a status change then arduino send all the pins status 
+               with a post method to onos!
+
+
+4.92           added updateNodeAddress() to webserver.py  to update the nodes ip 
+               bug len message variable from arduino solved in arduino code
+ 
+4.93           added a thread webserver to handle the arduino comunication ,now the pin reading of pin 4 is stable!
+
+
+
+4.94           started analog pin reading in arduino code and in onos webserver
+
+
+
+4.95           analog input pins are working now!!! 
+               added line os.popen('echo '+str(pin)+' > /sys/class/gpio/unexport ').read()  #Create a GPIO file access
+               to router_handler   to correct the bug "write error: Device or resource busy"
+               bugfix: corrected the creation of the router hw node...setting ipaddress ="0" instead of 0
+               this bug stopped the router pins to be setted ...
+
+ 
+4.96           removed several bugs...now the analogs value are updated only if there is a change > than tollerance
+               or if there is a change in digital input status
+
+
+
+4.97           onos_tcp_server_example  writed (turn on and off led attached to arduino from browser) 
+               started implementing it in the onos_sensor_node_example
+
+
+4.98           now the arduino part is able to turn on off digital pin and to set pwm ,
+               all from browser query continuing to send pin change to onos!
+
+4.99           moved gui_webserver_port and service_webserver_port in globalVar.py
+               renamed method digitalwrite to outputWrite  in routerhandler
+               Now onos is able to turn on and off a set reset relay connected to a remote node!!!!
+
+               added the status 0.5 wich is the waiting status!
+               disabled the html room reading in webserver.py  getRoomHtml()  
+               if ((len(readed_html)>10)&(string.find(readed_html,'<!--onos_automatic_page-->')!=-1)):
+
+5.00           modified get_Zone_Objects_Setup()  to make the last element void in order to not be hidden a webobject
+               under the submit button
+               added timout in all the urllib2.urlopen(req, timeout=5)  request in router_handler.py  
+
+
+5.01           corrected some bugs in hw_node.py   in setDigitalPinOutputStatus() and setDigitalPinInputStatus()
+               inserted self.pins_status[pin]="DINPUT="+str(status) instead of self.pins_status[pin]=status
+
+               overrided method  def finish(self,*args,**kw)  in order to try solving the broken pipeline problem
+               switched using RequestHandler  as class overrided in order to try solving the broken pipeline problem
+
+               added a try except on webserver handlers  witch will print "something went wrong on secondWebserver handler "              added "from signal import signal, SIGPIPE, SIG_DFL "   in webserver.py
+               added pass  #ignore the error   to except in finish()
+               added  def finish_request()  to RequestHandler
+
+5.02           modified finish_request()  now onos seems stable also with broken connection ! 24 hours test ok
+               after 36 hours the problem was there again...
+
+
+
+5.03           bugfix in router_handler.py  in   outputWrite()
+               inserted a  return(1) after  "self.makeChangeWebObjectStatusQuery(objName,statusToSet)"
+               otherwise onos tries to set the local pin also in the remote node with adress 0 wich does't exist
+               make all the query from router_handler.py to webserver.py  using layerExangeDataQueue.put  
+               in order to avoid long time and overwork with the previously used urlrequest.
+               made the new method setNodePin() in webserver.py
+
+
+
+
+5.04
+               removed makeChangeWebObjectStatusQuery() from router_handler.py since i use layerExangeDataQueue 
+               to pass data to webserver.py
+               RESOLVED MAJOR PROBLEM, SOMETIMES THE WEBOJECTS STAYS GREY AND DON'T CHANGE STATUS :
+               added a timout of 1 to urlib2 request and a retry 200 times loop , now every time you set a object 
+               it will absolutely set in the node !!!!
+               If the node is disconnected at the time of the request  and then connected the objects will be 
+               setted as requested!!!!!(if the 200 times loops is still running)
+               web_object.py --->modified all the  if ( (self.status==1)&(status==0)): to if (status==0):
+               since was not working if the previus state was 0.5 or somethin else.
+
+5.05           added    attachScenario() and getListAttachedScenarios() to web_object.py #still to implement
+               added CheckwebObjectScenarios()  to webserver.py   #still to implement
+               added the log size check ,each 10 minutes make a check if the log size is >1 megabyte and if so clear it
+               (saving all the errors found)
+               added login form and login system based on ip and timeout when the user is inactive
+    
+
+5.06           added mail agent(mail_agent.py)  ,mail thread that check the mail for command 
+               added permission system in linux style rwx!  added priority system from 0 to 10!  with 99 as temp
+               added webobjects group
+               finished first part mail agent parsing code  (set webobject)
+               today 3-7-2015 at 21.42 first webobject  changed from mail !!!
+               today 3-7-2015 at 22.35 first relay socket turned on from mail !!!
+               moved the import of email and smtplib inside webserver.py from mail_agent.py
+               moved all the library import to globalVar.py
+               changed roomDict to zoneDict
+               added the "debug"  variable in the globalVar.py   wich tell onos to execute some code without try except ..
+               added the "cgi"  directory , every python script inside this directory can now be executed with the path
+               http://onosIP/cgi/scriptName.py  ,  to display an html you just have to write inside the "web_page" variable
+
+5.07
+               adopted httplib.HTTPConnection instead of urllib2 to query the nodes (bug)
+               scenario core finished!!!
+
+5.08
+               Onos forum made  ,changed css manually 
+
+               today 16 august 2015 at 22.22   i finished the webserver core part to controll onos online without 
+               opening the router ports
+               bug in the router_handler.py  solved (the query was wrong and static)
+               today 17 august 2015 at 12.21 i turn on a remote node webobject from internet!
+               changed all the url query adopting urllib3 !because is thread safe and faster
+               added the automatic refresh in the online webserver page
+               changed onoscenter default ip to 192.168.101.1 in the arduino code
+               solved a mail agent bug (variable name mail_whiteList with typo)
+               changed  sh onos.sh  /tmp/log.txt 2>&1 &  to sh onos.sh >/dev/null 2>&1 & 
+               in onosCenter  /etc/rc.local 
+
+
+5.09           removed some delays in hardwareHandlerThread() and reduced others
+               changed url_request_manager = PoolManager(20) to url_request_manager = PoolManager(5) to save memory
+               removed bug , every get request index.html was loaded from file , now only if the path is "/"
+               started to parse all the get request with regex
+               setNodePin() uses layerExchangeDataQueue now
+               error answer implemented in setNodePin query handler
+               the nodes now answer to onoscenter with "ok" instead of "onos_ok"  to reduce time..
+               removed the  digital and analog read from the plug6way.pde  to improve speed
+               added the sync between the nodes and the onosCenter every 60 seconds with :
+                 #localhost/onos_cmd?cmd=sync&node_sn=ProminiA0002&node_fw=5.09__  
+               now if you reboot the onosCenter after 60 seconds it will know the ip of each active nodes!
+
+
+5.10           inserted the time ntpd  run and update to get the right time on the OnosCenter
+               modified getRoomHtml() now the html page of a zone will be overwritten only if  
+               <!--onos_automatic_page--> is present!
+               started to implement the new gui
+               modified onos in order to send to the javascript only the html section to update !!!
+               bug fix: 2 onosCenter create some common online users: make a unique dict called online_usersDict wich contain only unique online username 
+               bug fix: timezone now is setted in onos.sh (time_zone.py) before webserver.py otherwise onos take a wrong time                    added os.environ['TZ']=timezone  to confifure the right timezone 
+
+               moved the layerExchangeDataQueue check in the onosBusThread()  to improve the velocity of the system
+               changed the way the hardwareHandlerThread execute the varius task : 
+               now there is a wait without delay using time.time()
+               changed the way onos handle the query from webpage , now to change multiple webobject the href can be:
+               http://192.168.0.100/Plug6way0001/index.html?socket5_Plug6way0001=1&socket5_Plug6way0002=1
+               not implemented yet on php side !!!
+               now there is a router_read_pin_frequency variable to avoid the loss of resource from the hardware
+               the local router pins will be read only every n seconds
+
+
+5.11           start implementing errorQueue to handle error   
+               removed the math variable from the scenarios
+               bug: if a node was disconnected then onos make a great number of retry and stop itself,
+                    reduced the number of retry in router_handler.py
+  
+               changed all the naming of nodeName to node_serial_number and also all the relative functions
+               now node_serial_number is  like: RouterGL0000
+
+               Onos must know if a node isn't working or powered off
+               each node will ask the setup to onos every n minuts , so onos will wait and set as inactive every node 
+               that will not ask the setup for more that n minuts .
+               For sensible node like antitheft sensors the timeout might be 30 seconds
+               The variable is_active will be stored in each webobject of the node and will be usable in the scenarios (banana not implemented yet)
+               Each node will have a variable called "last_node_sync" (setted using the funcions updateNodeAddress() and then updateLastNodeSync()) which will store the last time the node ask the setup to onos
+               a variable "isActive" which will tell onos if the node is active and a variable called "timeout" which will set the time without contact after onos will set the node as not active.
+               The inactive webobjects will have a white color in the onos interface 
+               and their status will be setted to the string "inactive"
+               After the node is connected again all the webobjects will be setted to the status previous the disconnection  
+               Each node "timeout" is loaded from hardwareModelDict{}    
+
+
+
+5.12           start implementing the :  except Exception, e:    errorQueue.put(e.args)   
+               in order to send the real error message! 
+               bugfix : now after a node was inactive and turned active its webobject will be return the previous status ,
+               if the previous status was "inactive" it will return to the start status.
+               bugfix: in hw_node.py  there were error in self.pins_io_mode[i]=1  ,changed to self.pins_io_mode[pin]=1
+
+
+
+5.13           changed the delay(50) to delay(150) in onos_node_Plug6way.pde after the relay set
+               made the onosServiceThread() and moved there half a part from  onosBusThread()
+               Today 14 november 2015 at 19.34 onos controlled for the first time my boiler from internet!
+               bug fix added  |(status=="0") to getHtml(),getStyle()... of web_object.py and modPage() of webserver.py
+               modified pag_creator.py and modPag() with:
+              <!--start_img'''+a+'''--><img class="flex" src="/img/on.png" class="image" />  <!--end_img'''+a+'''--> 
+               in order to change the image button color
+
+
+
+5.14           changed if (cmp(online_usersDict,online_synced_user_dict))!=0 : to  if (force_online_sync_users==1): in
+               webserver.py
+               now the users dict will sync only on the onos start and in the creation of new users  
+         
+               moved onos online server from elettroicaopensource.com to myonos.com
+               implemented css for login form 
+
+
+
+5.15           implemented online login css
+               moved the &(onlineServerSyncThreadIsrunning==0):    up by one if  in the mailcheck 
+               changed timeout in the online db query from 5 to 20 seconds
+               modified web_object.py costructor ...now each status is a key of a dictionary for the style,html,bash cmd!
+               so each status can have different style,html,bash cmd !!!
+               implemented the scenarioDict , online_usersDict, and various other settings json backup and restore !
+               implemented getObjectDictionary() in web_object.py
+               Now onos detect if the hardware is GL.Inet and if so saves the config to flash instead of saving it to ram!!
+               IMPLEMENTED AUTO UPDATE!!!!Now onos check at boot time if the fw is updated and if not  (and auto update is enabled)       update all the fw to the latest version for that hardware!!!
+
+               Disabled Nagle's Algorithm in class MyHandler(BaseHTTPRequestHandler):
+
+             
+
+5.16           added a delay after error in mail sent       time.sleep(mail_retry_timeout) # wait before retry...to not overload the cpu
+               implemented node_query_handler.py which will make one and only one query for each node (using threads)
+               If different query are to be done to the same address , it will add them to a list and then excutes one after one 
+               
+
+
+5.17           changed the waiting marker from 0.5 to "onoswait"
+               changed the refresh time in refreshPage.html from 1050 to 512
+               removed "setType":"condition_to_set_status"  from scenario dict because not used
+               removed if (previous_status==statusToSet): in router_handler.py
+               removed if (obj_previous_status==statusToSet):  from  changeWebObjectStatus
+               implemented the gui for the creation of local and remote users 
+               implemented recovery mode for json loading file
+
+
+5.18           start implementing scenario interface
+               add the function replaceAttachedScenario() to web_object.py   
+               now is possible to rename the scenario,create new scenario, create new conditions from gui!   
+               Implemented the first part of scenario function_to_run gui
+               Implemented the second part of scenario function_to_run gui and the core part to add and remove scenarios conditions
+               bugfix: the scenarios execution was not working because i replaced also the first variable with its value
+               bugfix: onos didn't add the scenarios to each object on json load
+               bugfix: first time you add a condition to a scenario its add an & to the start of the condition.
+               bugfix: int and str were mixed in the status object, now status object is ALWAYS a string
+               bugfix: true status was invalid for webobject validateStatusToSetObj()
+               implemented the remove scenario gui and core parts
+               bugfix:error in the eval of for op in executionList fixed 
+
+
+
+               To make the update  safe if internet is off
+
+
+5.19           bugfix: "onoswait"   was not supported as status in validateStatusToSetObj()
+               bugfix:  creating new nodes was corrupted ,implemented newNodeWebObj() in conf.py to solve the problem
+               bugfix: arduinopromini hardware doesn't work anymore if there is no analog pin enabled in globalvar.py
+                       corrected the onos_node_ProminiA.pde in order to send 16 times "0" if there is no analog pin used
+
+               bugfix: analog read from arduino pro mini doesn't work anymore , solved 
+                       changed data transmission protocol on arduino an on webserver side ,
+                       reduced resolution from 10 bit to 8 bit in order to have less byte to send
+                       now analog data is half the size than before!
+               bugfix: removed ((tmp_status_to_set!=0)and(tmp_status_to_set!=1)) from router_handler
+                       because they prevent the servo_output to work.
+                   
+               added servo support on onos_node_ProminiA2.pde
+
+               added :if status in self.cmdDict.keys():
+                        os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
+               to web_object.py
+ 
+               today 9 march 2016 first servomotor controlled from onos!!!
+
+
+
+
+5.20           onos is too slow to contact the nodes and sometimes it fail..
+               started implementing a pure tcp server/client communication to the node 
+               def nodeTcpServer(): part done 
+               bugfix:if a webobject was in onoswait status when the node was declared inactive then 
+               the webobject remained inactive also after the node has returned online , fixed now it will return to previous_status
+               previous_status will never be setted to "inactive" or "onoswait"
+               now the tcp request to nodes works!!!!!       
+               bugfix: without wan port connected onos will still try to send mail and connect to internet:
+               checked the internet connection before...
+               implemented another queue called priorityCmdQueue that will be used before layerExchangeDataQueue to give priority to gui command 
+               added a variable "wait_because_node_is_talking" that should have solved the problem that happened when the node try to query onos and ons try to query the node at the same time..
+               modified onos_node_Plug6way.pde  because there was a client.stop() missing and added a part where the syn message is sent...to wait for the message from onos.
+               bugfix: the mailOutputHandler is executed more times  ...until onos can't handle more threads..solved: there was a variable mailOutputHandler_is_running  not setted as global in the thread!  
+   
+
+
+5.21            converted all the os.popen()  call to subprocess.check_output to try to fix (12, 'Cannot allocate memory')
+                and all os.system() call to  subprocess.call()  
+                Added the get_top_menu.py function in gui folder, now all the top menù will be generated using the imput written   
+                there!!!
+                bugfix: the errorlog mails contained the same errors repeated 
+
+
+(110, 'Connection timed out');;;
+main error in handle_new_query_to_remote_node_thread;;;
+('a float is required',);;;
+error2 after main error in handle_new_query_to_remote_node_thread;;;
+(u'Plug6way0001',)
+
+ 
+
+
+ bug ,the web object html will be replaced with the status if the status was a string 
+
+
+ to implement the inactive method also in the php part 
+ 
+
+
+
+       warning: when createNewNode() is executed the onos interface will lag for some seconds..its normal beacause this function write to disk before answering to the browser.
+
+       Warning: mails will not be sent if the system is offline and will not be stored to sent them where internet is up
+
+
+
+       bug : the local password is not requested in the api...so someone could change onos obj status ..
+       bug : if the object is already the sate you want to change withe the mail onos will not answer the mail
+
+ 
+
+       bug in a4 analog value display ? 
+
+       bug onosplug6way (arduino code), after boot the socket take n request before answering ok and turning on the relay...then works fine
+
+
+
+       make the mode setup query   more robust from arduino side...
+
+       
+
+       bug: if a post request is made and then broken onos will wait forever.
+       bug: if you start onos after arduino ,arduino will never get the setup and ask forever 
+       
+       bug: analog value sent also if not changed
+       bug: problem with the analog pins number readed   
+       
+
+
+       if the arduino reset itself (with watchdog for example)  the output status are not resumed as before the reset...
+       make onos resume them every time its receive a setup request
+
+       
+
+next   
+       make the json read safe and load an alternative json if the one readed is corrupted 
+       timezone , the user must be able to edit it!
+
+       make the arduino onos_sensor_node_example.pde code ask the pin configuration to the webserver.py 
+       and configure the arduino pin .
+       the arduino has to send its ip to the webserver .
+       make the message repeted if packets were lost
+       make each node answer to a url query with the firmware version like 001_01-12-15
+
+       make the pin setup custom for each serial number?
+       make a function to change the node serial number and hwtype remotely?
+
+       when the webserver is executed on a pc , write in the router zone  
+       that the webobject in that zone will not work because the router is a standard pc 
+
+       make possible to upload a zone html from browser and to restore the original zone html
+
+       use watchdog in arduino 
+       
+       make each node to save 3 byte in the eprom :
+         one rappresent the node type 
+         two to store the serial number(0:9999)
+         mac address will be composed from serial number+ node type
+
+       make a reset button that reset the css style of a webobject or all the webobject in a node
+
+       make onos know which node are active , 
+
+       make onos recognise when the config use a pin that is impossible for that hardsware...example pin 55 on arduino 2009
+
+       make possible to disable a node (maybe a broken node ) in order to make onos ignore the node requests ?
+
+       make the router node created from conf.py with relanive webobjects and zone 
+       make the node slave request the an ip to use , and make webserver.py give it one  and save it on the nodeDict 
+
+       implement digitalWriteSection()  in router_handler.py  and in arduino_handler  and in arduino serial 
+       implement and modify setPinMode in router_handler.py
+       modify arduino_serial.py
+
+       use hardwareModelDict  inside the router_handler.py  and in hw_node,py
+       save the node_dict on json
+               
+to do:
+use regular exression to replace part in the webpage in modPage()
+make possible to reset the nodes from url query
+arduino serial will try to set a pin as requested from arduino handler ,meanwhile the node and the webobj will change status without a check.
+if  the message from arduino serial to the arduino  failed for more than n times  arduino serial will make a urlib call to webserver.py and ask it to change the  node and the webobject status to the old ones.
+
+remove the possibility to change the weboobject type? 
+for all the weboject different from the arduinos ones (like onosProminiB0001 and  onosMegaAAAA0001 ) i will forbid the change of io pin modes (digital,analog...input output..), so to the final user will not be shown in the weobobject property.
+
+Show certain zones , certain webobject and the setup only to the right users 
+make a logout button
+
+
+add a frame in the zone   in order to print the varius response from the onos system  like: socket a turned on ...or 
+   error no pin attacged to this web object
+
+
+add a fallback mode if problems happens opening data.json  , read a back up file and if also this failed read default.json  
+
+
+start using  ArduinoHandler  in server.py
+move the hardware_node call to webserver.py  and make arduinoiserial.py able to write to it
+or make webserver.py able to create new hardware nodes 
+make the sendPinModeToArduino   in arduinoserial
+MUST!!!!)implement a check with urlib that restart onos if is not responding
+make a limit  of the size of onos in order to prevent the user to stop the router running it due to no space left.
+bug:  click back after going to setup/zone_manager/ and going to  one_objects_setup/   make you turn back in http://localhost/zone_list
+use :
+from unicodedata import normalize
+normalize('NFC', a)
+normalize('NFC', b)
+everywhere you use a text compare because the same letter in unicode can be rappresented by more than one methods..
+so with normalize you will use a standard method...so if a and b rappresent the same letter normalize('NFC', a) will be equal to normalize('NFC', b)
+
+
+
+bug  web_obj_modifier   pin problem you have to insert a list of pins ? 
+
+
+
+-bug changing zone name the zone body doesn't change name but a new one is created
+
+-setup/zone_manager/  does not have autoclick select all feald
+
+-implement javascript to update and change page contents  to save bandwidth
+-connect pcduino to arduino serial correctly
+-implement checksum() in arduinoserial
+-implement a check if the pin number exist ,otherwise tell in the web interface that does not exist!
+-implement digital write to arduino node
+-implement servo commands
+-implement class to save and restore xml data
+-add a central unit hardware   select button on config webpage  to select pc+arduino  or just raspberry
+
+--add a banner to tell arduino is not connected..to the main page
+--add a zone where every webobject is added ..in order to have a quick view of all them 
+
+--replace onos logo with a scaled one for less byte to download
+--add try to conf.py and if except...load default xml
+
+--make log file smaller ..
+
+
+
+-limit the user input lenght  for name like the zone names and the obj names 
+
+#note...on arduino if you use also only one analog input as a digital pin...you can't use the left pins to read analog values!
+
+
+bug: if a webobject is a button and then is changed to a digital sensor the html on the page don't remove the href link...until you delete the html in the room folder
+
+bug: sometimes the onos shut down is not clear.
+
+
+javascript aggiornato solo cancellando l'html dalla cartella (quindi solo alla creazione di una room nuova) ...conviene così  oppure è meglio aggiornarlo sempre?
+
+
+
+
+
+
+
+
+
+risolvere problema di dover sempre mettere "/" a fine /setup  e /setup/room
+
+mettere try ovunque nelle funzioni che non lo hanno
+
+
+ideas:
+fare il string .replace anche per le pag html...l'utente scrivera'  "onosnomewebobj_text"  e quella scritta verra' rimpiazzata dal testo..
+
+
+web label che sara' solamente una parte di html variabile a seconda dello stato del pin ma che non sarà un pulsante(l'utente non potrà cambiare stato al webobj associato ma solo visualizzarlo)
+
+
+creare xml per ogni voce del menu per poter tradurre in molte lingue
+
+fare in modo che su Web Object Command  per ogni volta che c'è un a capo si inserisca in automatico un && per eseguire i comandi bash in successione...
+quando si cancella tutta la text area del mod room  si crea bug
+problema body non modificabile
+inserire possibilità eliminazione web_object
+controllare creazione oggetto body per ogni pag..(in conf.py)
+aggiornare i metodi post
+programma per modificare stato web_object da sorgenti esterne al webserver (arduino o sistema linux)
+
+
+
+mettere flag debug che permetta di vedere in una textarea il risultato dei comandi bash eseguiti
+
+
+
+
+
+
+
+
+permettere la programmazione basata sullo stato degli oggetti..se stato ogetto ==1 allora  setta a uno lo stato dei un'altro ogetto
+
+creare  css variabili a seconda del valore analogico del web_object come scala di rossi o scala colori.
+
+creare possibilità di avere barre per visualizzare un valore analogico e per settarlo
+
+
+permettere la creazioni di template grafici da poter condividere .
+
+
+
+
+
+
+
+
+
+
+errori:
+
+problemi ad inserire nel form html &nbsp;
+
+
+
+
+
+
+note:
+all the name of webobject and room can't have ','   '/'   '='   '"'  '?'  '!'  in their name  i will replace them with '_'
+
+only one id= foreach <a> tag
+
+ #idname must be limited by " not by ' like:id="button1" 
+
+<a   must be without spacing    so < a> it's not supported  only <a>  and  </a>
+
+
+

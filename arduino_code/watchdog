@@ -1,0 +1,25 @@
+#include <avr/wdt.h>
+
+void setup()
+{
+//attivo il watchdog e lo imposto
+//per una soglia di tempo di 2 Secondi
+wdt_enable(WDTO_4S);
+
+  Serial.begin(115200);
+  Serial.print(F("start "));
+
+}
+
+void loop()
+{
+//eseguo qualcosa…
+  Serial.print(F("inizio "));
+
+delay(4100);
+
+  Serial.print(F("fine "));
+
+  //resetto il watchdog
+  wdt_reset();
+}

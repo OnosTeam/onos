@@ -1,0 +1,41 @@
+
+
+
+How to use the onos online database:
+
+
+1)First create the new onoscenter user , key and password  using the form :
+"new_onos_center_form.html"   , it will call  create_new_onos_center.php  wich will create a new db in the folder "users_db"
+
+
+2)Create a onos username with new_onos_user_form.html wich will call "create_new_onos_user.php" 
+ (if you connect the onoscenter with the right key it will create all the username there are locally)
+
+
+3)Now using login_form.php you can login with the new username and password   , If you insert a wrong username or password 
+  "login_error_page.php"  will be executed wich will ask you to reinsert the data.
+
+
+4)To insert some example data in the database you could run python_post_send.py from your local pc .
+  
+
+
+
+
+3)To fake a onos connection and make an example of data transmission you can use "fake_form_db_sync.php"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

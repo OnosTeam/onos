@@ -1,0 +1,607 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>arduinoserial &mdash; ONOS  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ONOS  documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> ONOS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../arduino_handler.html">arduino_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../arduinoserial.html">arduinoserial module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../globalVar.html">globalVar module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw_node.html">hw_node module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mail_agent.html">mail_agent module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../node_query_handler.html">node_query_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pcduino.html">pcduino module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../router_handler.html">router_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_zone.html">time_zone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../web_object.html">web_object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webserver.html">webserver module</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ONOS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>arduinoserial</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for arduinoserial</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c">#</span>
+<span class="c"># Copyright 2007 John Wiseman &lt;jjwiseman@yahoo.com&gt;</span>
+<span class="c">#</span>
+<span class="c"># Permission is hereby granted, free of charge, to any person</span>
+<span class="c"># obtaining a copy of this software and associated documentation files</span>
+<span class="c"># (the &quot;Software&quot;), to deal in the Software without restriction,</span>
+<span class="c"># including without limitation the rights to use, copy, modify, merge,</span>
+<span class="c"># publish, distribute, sublicense, and/or sell copies of the Software,</span>
+<span class="c"># and to permit persons to whom the Software is furnished to do so,</span>
+<span class="c"># subject to the following conditions:</span>
+<span class="c">#</span>
+<span class="c"># The above copyright notice and this permission notice shall be</span>
+<span class="c"># included in all copies or substantial portions of the Software.</span>
+<span class="c">#</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span>
+<span class="c"># EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span>
+<span class="c"># MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span>
+<span class="c"># NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS</span>
+<span class="c"># BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN</span>
+<span class="c"># ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN</span>
+<span class="c"># CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c"># SOFTWARE.</span>
+
+
+<span class="c">#   Copyright 2014 Marco Rigoni                                               #</span>
+<span class="c">#   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #</span>
+<span class="c">#   This program is free software: you can redistribute it and/or modify      #</span>
+<span class="c">#   it under the terms of the GNU General Public License as published by      #</span>
+<span class="c">#   the Free Software Foundation, either version 3 of the License, or         #</span>
+<span class="c">#   (at your option) any later version.                                       # </span>
+<span class="c">#																			  #</span>
+<span class="c">#   This program is distributed in the hope that it will be useful,           #</span>
+<span class="c">#   but WITHOUT ANY WARRANTY; without even the implied warranty of            #</span>
+<span class="c">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #</span>
+<span class="c">#   GNU General Public License for more details.                              #</span>
+<span class="c">#                                                                             #</span>
+<span class="c">#   You should have received a copy of the GNU General Public License         #</span>
+<span class="c">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.     #</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">..Note::</span>
+
+<span class="sd">    Module not used , deprecated and to implement in the future</span>
+
+
+<span class="sd">A port of Tod E. Kurt&#39;s arduino-serial.c.</span>
+<span class="sd">&lt;http://todbot.com/blog/2006/12/06/arduino-serial-c-code-to-talk-to-arduino/&gt;</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">termios</span>
+<span class="kn">import</span> <span class="nn">fcntl</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">getopt</span>
+<span class="kn">from</span> <span class="nn">globalVar</span> <span class="kn">import</span> <span class="o">*</span>           <span class="c"># import parameter globalVar.py</span>
+<span class="kn">import</span> <span class="nn">thread</span><span class="o">,</span><span class="nn">threading</span><span class="o">,</span><span class="nn">time</span><span class="o">,</span><span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">hw_node</span>
+
+<span class="n">hwNodeDict</span><span class="o">=</span><span class="p">{}</span>     <span class="c">#dictionary containing all the hw nodes objects   the key is the node address</span>
+
+
+
+<span class="c"># Map from the numbers to the termios constants (which are pretty much</span>
+<span class="c"># the same numbers).</span>
+
+<span class="n">BPS_SYMS</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="mi">4800</span><span class="p">:</span>   <span class="n">termios</span><span class="o">.</span><span class="n">B4800</span><span class="p">,</span>
+  <span class="mi">9600</span><span class="p">:</span>   <span class="n">termios</span><span class="o">.</span><span class="n">B9600</span><span class="p">,</span>
+  <span class="mi">19200</span><span class="p">:</span>  <span class="n">termios</span><span class="o">.</span><span class="n">B19200</span><span class="p">,</span>
+  <span class="mi">38400</span><span class="p">:</span>  <span class="n">termios</span><span class="o">.</span><span class="n">B38400</span><span class="p">,</span>
+  <span class="mi">57600</span><span class="p">:</span>  <span class="n">termios</span><span class="o">.</span><span class="n">B57600</span><span class="p">,</span>
+  <span class="mi">115200</span><span class="p">:</span> <span class="n">termios</span><span class="o">.</span><span class="n">B115200</span>
+  <span class="p">}</span>
+
+
+<span class="c"># Indices into the termios tuple.</span>
+
+<span class="n">IFLAG</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">OFLAG</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">CFLAG</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">LFLAG</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">ISPEED</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">OSPEED</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">CC</span> <span class="o">=</span> <span class="mi">6</span>
+
+
+<div class="viewcode-block" id="bps_to_termios_sym"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.bps_to_termios_sym">[docs]</a><span class="k">def</span> <span class="nf">bps_to_termios_sym</span><span class="p">(</span><span class="n">bps</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">BPS_SYMS</span><span class="p">[</span><span class="n">bps</span><span class="p">]</span>
+
+  
+<span class="c">#hwNodeDict[0]=hw_node.HwNode(&quot;base&quot;,&quot;arduino_2009&quot;,0)  #make the first node , the base station  one</span>
+
+</div>
+<div class="viewcode-block" id="SerialPort"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort">[docs]</a><span class="k">class</span> <span class="nc">SerialPort</span><span class="p">:</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialport</span><span class="p">,</span> <span class="n">bps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes the string name of the serial port</span>
+<span class="sd">    (e.g. &quot;/dev/tty.usbserial&quot;,&quot;COM1&quot;) and a baud rate (bps) and</span>
+<span class="sd">    connects to that port at that speed and 8N1. Opens the port in</span>
+<span class="sd">    fully raw mode so you can send binary data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">=</span><span class="n">serialport</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">busy</span><span class="o">=</span><span class="mi">0</span>
+<span class="c">#the error controll is done by the arduin_handler.py     </span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">serialport</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDWR</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NOCTTY</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NDELAY</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">=</span><span class="mi">1</span>
+
+
+
+    <span class="c">#except:</span>
+   <span class="c">#   print &quot;serial arduino error&quot;</span>
+   <span class="c">#   self.fd =&quot;&quot;</span>
+   <span class="c">#   self.status=0</span>
+
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">termios</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="p">)</span>
+    <span class="n">bps_sym</span> <span class="o">=</span> <span class="n">bps_to_termios_sym</span><span class="p">(</span><span class="n">bps</span><span class="p">)</span>
+    <span class="c"># Set I/O speed.</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">ISPEED</span><span class="p">]</span> <span class="o">=</span> <span class="n">bps_sym</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">OSPEED</span><span class="p">]</span> <span class="o">=</span> <span class="n">bps_sym</span>
+
+    <span class="c"># 8N1</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">PARENB</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">CSTOPB</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">CSIZE</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CFLAG</span><span class="p">]</span> <span class="o">|=</span> <span class="n">termios</span><span class="o">.</span><span class="n">CS8</span>
+    <span class="c"># No flow control</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">CRTSCTS</span>
+
+    <span class="c"># Turn on READ &amp; ignore contrll lines.</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CFLAG</span><span class="p">]</span> <span class="o">|=</span> <span class="n">termios</span><span class="o">.</span><span class="n">CREAD</span> <span class="o">|</span> <span class="n">termios</span><span class="o">.</span><span class="n">CLOCAL</span>
+    <span class="c"># Turn off software flow control.</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">IFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">termios</span><span class="o">.</span><span class="n">IXON</span> <span class="o">|</span> <span class="n">termios</span><span class="o">.</span><span class="n">IXOFF</span> <span class="o">|</span> <span class="n">termios</span><span class="o">.</span><span class="n">IXANY</span><span class="p">)</span>
+
+    <span class="c"># Make raw.</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">LFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">termios</span><span class="o">.</span><span class="n">ICANON</span> <span class="o">|</span> <span class="n">termios</span><span class="o">.</span><span class="n">ECHO</span> <span class="o">|</span> <span class="n">termios</span><span class="o">.</span><span class="n">ECHOE</span> <span class="o">|</span> <span class="n">termios</span><span class="o">.</span><span class="n">ISIG</span><span class="p">)</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">OFLAG</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">OPOST</span>
+
+    <span class="c"># It&#39;s complicated--See</span>
+    <span class="c"># http://unixwiz.net/techtips/termios-vmin-vtime.html</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CC</span><span class="p">][</span><span class="n">termios</span><span class="o">.</span><span class="n">VMIN</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">attrs</span><span class="p">[</span><span class="n">CC</span><span class="p">][</span><span class="n">termios</span><span class="o">.</span><span class="n">VTIME</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="n">termios</span><span class="o">.</span><span class="n">tcsetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TCSANOW</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;cat &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">usb</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+    <span class="c">#n = os.read(self.fd)</span>
+
+
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">removeFromInBuffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">usb</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="s">&#39;rw&#39;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">=</span><span class="mi">1</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;no device&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">+</span><span class="s">&quot;found&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">dataAvaible</span><span class="o">=</span><span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">t_read</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read_data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">t_read</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c">#make the thread a daemon thread</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">t_read</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">=</span><span class="mi">0</span>
+
+
+
+
+
+<div class="viewcode-block" id="SerialPort.read_data"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.read_data">[docs]</a>  <span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="c"># thread  function</span>
+      <span class="sd">&#39;&#39;&#39;Outputs data from serial port to sys.stdout.&#39;&#39;&#39;</span>
+      <span class="k">print</span> <span class="s">&quot;read_data thread executed&quot;</span>
+      <span class="n">ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>   <span class="c">#&#39;\r&#39;</span>
+      <span class="n">filedev</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">dataAvaible</span><span class="o">=</span><span class="mi">0</span>
+      
+      <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+          <span class="n">tmpRm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">removeFromInBuffer</span>
+          <span class="n">buf</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+          <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmpRm</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmpRm</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>  <span class="c">#remove from buffer the part just readed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removeFromInBuffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+          <span class="n">buf</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+          <span class="n">done</span><span class="o">=</span><span class="mi">0</span>
+          <span class="k">while</span> <span class="n">done</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+              <span class="k">break</span>
+            <span class="k">try</span><span class="p">:</span>
+              <span class="n">byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+              <span class="n">byte</span><span class="o">=-</span><span class="mi">1</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span>
+              <span class="k">continue</span>
+          
+
+            <span class="k">if</span> <span class="n">byte</span> <span class="ow">in</span> <span class="n">ignore</span><span class="p">:</span>
+              <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">byte</span><span class="p">:</span>  <span class="c">#nothing on incoming serial buffer</span>
+              <span class="n">done</span><span class="o">=</span><span class="mi">1</span>
+              <span class="k">print</span> <span class="s">&quot;end of serial packet&quot;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span><span class="o">==</span><span class="mi">10</span><span class="p">):</span>  <span class="c"># 10 is the value for new line (\n) end of packet on incoming serial buffer  </span>
+              <span class="n">done</span><span class="o">=</span><span class="mi">1</span>
+              <span class="k">print</span> <span class="s">&quot;end of serial packet len=0&quot;</span>
+            <span class="k">else</span><span class="p">:</span>   
+              <span class="c">#print &quot;in byte=&quot;+byte+&quot; end of in byte&quot;</span>
+              <span class="n">buf</span><span class="o">=</span><span class="n">buf</span><span class="o">+</span><span class="n">byte</span>
+          <span class="c">#at this point i should have a full packet message</span>
+          <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+
+            <span class="c">#a=bin(a)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">:</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;U&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;r&#39;</span><span class="p">):</span>    <span class="c">#arduino is sending a digital status pins byte</span>
+                <span class="n">received_node_address</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">section_index</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">data_register</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">rx_check_byte</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+                <span class="n">check_byte</span><span class="o">=</span><span class="n">checksum</span><span class="p">((</span><span class="s">&#39;U&#39;</span><span class="p">,</span><span class="n">received_node_address</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">,</span><span class="n">section_index</span><span class="p">,</span><span class="n">data_register</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">check_byte</span><span class="o">==</span><span class="n">rx_check_byte</span><span class="p">:</span>
+                  <span class="k">print</span> <span class="s">&quot;check ok&quot;</span>
+
+
+
+                <span class="n">answer_byte</span><span class="o">=</span><span class="s">&#39;U&#39;</span><span class="o">+</span><span class="n">node_address</span><span class="o">+</span><span class="s">&#39;C&#39;</span><span class="o">+</span><span class="n">check_byte</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">answer_byte</span><span class="p">)</span>  <span class="c">#send the check byte</span>
+
+
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">4</span><span class="p">:</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;U&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;q&#39;</span><span class="p">):</span>    <span class="c">#arduino is asking for pins mode configuration (input or output)</span>
+                <span class="n">received_node_address</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">hw_type</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">rx_check_byte</span><span class="o">=</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">received_node_address</span> <span class="ow">in</span> <span class="n">hwNodeDict</span><span class="p">:</span>  <span class="c"># a node with that address exist yet</span>
+                  <span class="n">pin_mode_list</span><span class="o">=</span><span class="n">hwNodeDict</span><span class="p">[</span><span class="n">received_node_address</span><span class="p">]</span><span class="o">.</span><span class="n">getNodeSectionMode</span><span class="p">()</span>
+                  <span class="n">k</span><span class="o">=</span><span class="mi">0</span>
+                  <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">pin_mode_list</span><span class="p">:</span>   <span class="c">#for each section of the pin mode list send it to arduino</span>
+                    <span class="n">check_byte</span><span class="o">=</span><span class="n">checksum</span><span class="p">((</span><span class="s">&#39;U&#39;</span><span class="p">,</span><span class="n">received_node_address</span><span class="p">,</span><span class="s">&#39;m&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">a</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;U&#39;</span><span class="o">+</span><span class="n">received_node_address</span><span class="o">+</span><span class="s">&#39;m&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="n">a</span><span class="o">+</span><span class="n">check_byte</span><span class="p">)</span>
+                    <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c"># address not in the dictionary</span>
+                  <span class="k">if</span> <span class="n">hw_type</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="n">hw_type</span><span class="o">=</span><span class="s">&quot;arduino_2009&quot;</span>
+                  <span class="k">if</span> <span class="n">hw_type</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">hw_type</span><span class="o">=</span><span class="s">&quot;arduino_promini&quot;</span>
+                  <span class="c">#a=hw_node.HwNode(&#39;new_node&#39;+received_node_address,hw_type,received_node_address)</span>
+                  <span class="c">#hwNodeDict[received_node_address]=a</span>
+                  <span class="c">#banana insert here a url query to create the node</span>
+                  <span class="n">pin_mode_list</span><span class="o">=</span><span class="n">hwNodeDict</span><span class="p">[</span><span class="n">received_node_address</span><span class="p">]</span><span class="o">.</span><span class="n">getNodeSectionMode</span><span class="p">()</span>
+                  <span class="n">k</span><span class="o">=</span><span class="mi">0</span>
+                  <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">pin_mode_list</span><span class="p">:</span>   <span class="c">#for each section of the pin mode list send it to arduino</span>
+                    <span class="n">check_byte</span><span class="o">=</span><span class="n">checksum</span><span class="p">((</span><span class="s">&#39;U&#39;</span><span class="p">,</span><span class="n">received_node_address</span><span class="p">,</span><span class="s">&#39;m&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;U&#39;</span><span class="o">+</span><span class="n">received_node_address</span><span class="o">+</span><span class="s">&#39;m&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="n">check_byte</span><span class="p">)</span>
+                    <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span>
+                <span class="n">check_byte</span><span class="o">=</span><span class="n">checksum</span><span class="p">((</span><span class="s">&#39;U&#39;</span><span class="p">,</span><span class="n">received_node_address</span><span class="p">,</span><span class="s">&#39;f&#39;</span><span class="p">))</span> <span class="c">#tell arduino that the pins configuration is ended </span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;U&#39;</span><span class="o">+</span><span class="n">received_node_address</span><span class="o">+</span><span class="s">&#39;f&#39;</span><span class="o">+</span><span class="n">check_byte</span><span class="p">)</span>
+     
+                  
+              <span class="c">#self.write(byte)  send the configuration</span>
+              <span class="c">#self.write(&#39;\n&#39;)</span>
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataAvaible</span><span class="o">=</span><span class="mi">1</span>
+            <span class="k">print</span> <span class="s">&quot;serial input=&quot;</span><span class="o">+</span><span class="n">buf</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span><span class="o">+</span><span class="n">buf</span>
+            <span class="k">print</span> <span class="s">&quot;incoming buffer=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataAvaible</span><span class="o">=</span><span class="mi">0</span>
+
+</div>
+<div class="viewcode-block" id="SerialPort.waitForData"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.waitForData">[docs]</a>  <span class="k">def</span> <span class="nf">waitForData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">times</span><span class="p">):</span>
+    <span class="n">j</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">while</span> <span class="n">j</span><span class="o">&lt;</span><span class="p">(</span><span class="n">times</span><span class="o">*</span><span class="mi">1000000</span><span class="p">):</span>
+      <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataAvaible</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      
+      <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mf">0.1</span>
+    <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+    
+
+
+</div>
+<div class="viewcode-block" id="SerialPort.read"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.read">[docs]</a>  <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;arduinoserial read executed&quot;</span>
+    <span class="c">#buf = &quot;&quot;</span>
+    <span class="c">#buf=os.popen(&quot;cat &lt; &quot;+self.port).read()</span>
+    
+    <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">removeFromInBuffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">removeFromInBuffer</span><span class="o">+</span><span class="n">tmp</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">incomingBuffer</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+    <span class="k">print</span> <span class="s">&quot;readed serial port=&quot;</span><span class="o">+</span><span class="n">tmp</span>
+    <span class="k">return</span> <span class="n">tmp</span>
+
+
+</div>
+<div class="viewcode-block" id="SerialPort.sendDigitalWrite"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.sendDigitalWrite">[docs]</a>  <span class="k">def</span> <span class="nf">sendDigitalWrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_address</span><span class="p">,</span><span class="n">pin</span><span class="p">,</span><span class="n">status</span><span class="p">):</span>
+    <span class="c"># tells arduino to write  the register pins as readed from the hw_node class where the status of the pin is modified</span>
+    <span class="c"># according the parameter passed to sendDigitalWrite()</span>
+    <span class="k">if</span> <span class="n">node_address</span> <span class="ow">in</span> <span class="n">hwNodeDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+      <span class="n">hwNodeDict</span><span class="p">[</span><span class="n">node_address</span><span class="p">]</span><span class="o">.</span><span class="n">setDigitalPinOutputStatus</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span><span class="n">status</span><span class="p">)</span>  <span class="c">#set the pin status in the class according to the parameter received</span>
+      <span class="n">section</span><span class="o">=</span><span class="n">pin</span><span class="o">//</span><span class="mi">8</span>
+      <span class="n">section_pins_status</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">hwNodeDict</span><span class="p">[</span><span class="n">node_address</span><span class="p">]</span><span class="o">.</span><span class="n">getNodeSectionStatusByPin</span><span class="p">(</span><span class="n">pin</span><span class="p">))</span>
+      <span class="n">msg</span><span class="o">=</span><span class="s">&quot;U0s&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">+</span><span class="n">section_pins_status</span><span class="o">+</span><span class="s">&#39;0&#39;</span>
+      <span class="k">print</span> <span class="s">&quot;writing register to arduino pin&quot;</span>
+
+      <span class="k">while</span> <span class="p">(</span><span class="n">rx_check_byte</span><span class="o">!=</span><span class="n">check_byte</span><span class="p">):</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;wait for correct answer to dw&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo &quot;</span><span class="o">+</span><span class="n">msg</span><span class="o">+</span><span class="s">&quot; &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span> <span class="c">#write the message</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo </span><span class="se">\n</span><span class="s"> &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>      <span class="c">#write the closing message byte    \n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">rx_check_byte</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;error address node not in node dictionary&quot;</span> 
+    <span class="k">return</span>    
+</div>
+<div class="viewcode-block" id="SerialPort.write"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.write">[docs]</a>  <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="nb">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&quot;dw&quot;</span><span class="p">:</span>    <span class="c">#if the cmd is to set arduino pins...then make sure arduino answer ok</span>
+      <span class="k">print</span> <span class="s">&quot;writing to arduino pin&quot;</span>
+      <span class="c">#check_byte=checksum(str2....)</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">rx_check_byte</span><span class="o">!=</span><span class="n">check_byte</span><span class="p">):</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;wait for correct answer to dw&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo &quot;</span><span class="o">+</span><span class="nb">str</span><span class="o">+</span><span class="s">&quot; &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo </span><span class="se">\n</span><span class="s"> &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">rx_check_byte</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+      <span class="k">return</span>    
+
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;U&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">str</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;m&#39;</span><span class="p">):</span>    <span class="c">#if the cmd is to change pin mode of arduino...then make sure arduino answer ok</span>
+      <span class="k">print</span> <span class="s">&quot;writing  pin configuration to arduino&quot;</span>
+      <span class="c">#check_byte=checksum(str2....)</span>
+      <span class="n">rx_check_byte</span><span class="o">=</span><span class="mi">0</span>
+      <span class="n">j</span><span class="o">=</span><span class="mi">0</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">rx_check_byte</span><span class="o">!=</span><span class="n">check_byte</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">j</span><span class="o">&lt;</span><span class="mi">15</span><span class="p">):</span>
+        <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo &quot;</span><span class="o">+</span><span class="nb">str</span><span class="o">+</span><span class="s">&quot; &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo </span><span class="se">\n</span><span class="s"> &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">rx_message</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">rx_check_byte</span><span class="o">=</span><span class="n">rx_message</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  
+      <span class="k">return</span>  
+
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;U&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">str</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;f&#39;</span><span class="p">):</span>    <span class="c">#if the cmd is to write end of the change pin mode of arduino...then make sure arduino answer ok</span>
+      <span class="k">print</span> <span class="s">&quot;writing  pin configuration to arduino&quot;</span>
+      <span class="c">#check_byte=checksum(str2....)</span>
+      <span class="n">rx_check_byte</span><span class="o">=</span><span class="mi">0</span>
+      <span class="n">j</span><span class="o">=</span><span class="mi">0</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">rx_check_byte</span><span class="o">!=</span><span class="n">check_byte</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">j</span><span class="o">&lt;</span><span class="mi">15</span><span class="p">):</span>
+        <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo &quot;</span><span class="o">+</span><span class="nb">str</span><span class="o">+</span><span class="s">&quot; &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;echo </span><span class="se">\n</span><span class="s"> &gt;&gt; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waitForData</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">rx_message</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">rx_check_byte</span><span class="o">=</span><span class="n">rx_message</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  
+      <span class="k">return</span>    
+    
+
+
+     <span class="c">#os.write(self.fd, str)</span>
+<span class="c">#    while self.busy==1:</span>
+<span class="c">#      time.sleep(0.01)</span>
+<span class="c">#    self.busy=1</span>
+    <span class="c">#os.system(&quot;echo &quot;+str+&quot; &gt;&gt; &quot;+self.port)</span>
+    <span class="c">#self.busy=0</span>
+    <span class="k">return</span>
+
+
+</div>
+<div class="viewcode-block" id="SerialPort.digitalWriteSection"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.digitalWriteSection">[docs]</a>  <span class="k">def</span> <span class="nf">digitalWriteSection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_address</span><span class="p">,</span><span class="n">section</span><span class="p">,</span><span class="n">section_status</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;i write a section status to arduino&quot;</span>
+    
+ 
+
+ <span class="c"># def write_byte(self, byte):</span>
+ <span class="c">#   os.write(self.fd, chr(byte))</span>
+</div>
+<div class="viewcode-block" id="SerialPort.isOpen"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.isOpen">[docs]</a>  <span class="k">def</span> <span class="nf">isOpen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c">#print &quot; called  isOpen&quot;</span>
+    <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+
+  <span class="c">#def open():</span>
+  <span class="c">#  return(1)</span>
+
+
+ <span class="c"># def __del__(self):</span>
+ <span class="c">#   print &quot;class arduinoserial destroyed&quot;</span>
+ <span class="c">#   try:</span>
+ <span class="c">#     os.close(self.fd)</span>
+ <span class="c">#   except:</span>
+ <span class="c">#     print &quot;tried to close serial port&quot;</span>
+
+</div>
+<div class="viewcode-block" id="SerialPort.make_new_node"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.make_new_node">[docs]</a>  <span class="k">def</span> <span class="nf">make_new_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_name</span><span class="p">,</span><span class="n">hwType</span><span class="p">,</span><span class="n">node_address</span><span class="p">):</span>  
+    <span class="k">if</span> <span class="n">node_address</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hwNodeDict</span><span class="p">:</span>
+      <span class="n">hwNodeDict</span><span class="p">[</span><span class="n">node_address</span><span class="p">]</span><span class="o">=</span><span class="n">hw_node</span><span class="o">.</span><span class="n">HwNode</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span><span class="n">hwType</span><span class="p">,</span><span class="n">node_address</span><span class="p">)</span>
+      <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;address already used&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+</div>
+<div class="viewcode-block" id="SerialPort.setPinMode"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.setPinMode">[docs]</a>  <span class="k">def</span> <span class="nf">setPinMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_address</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">node_address</span> <span class="ow">in</span> <span class="n">hwNodeDict</span><span class="p">:</span>
+      <span class="n">hwNodeDict</span><span class="p">[</span><span class="n">node_address</span><span class="p">]</span><span class="o">.</span><span class="n">setPinMode</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">mode</span><span class="p">)</span>  <span class="c">#set the pin mode in the hardware_node</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">sendPinModeToArduino</span><span class="p">()</span> <span class="c"># to implement</span>
+
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;error node address not found in the dictionary&quot;</span>
+      <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>      
+
+
+
+
+
+
+
+
+</div>
+<div class="viewcode-block" id="SerialPort.close"><a class="viewcode-back" href="../arduinoserial.html#arduinoserial.SerialPort.close">[docs]</a>  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">=</span><span class="mi">1</span>
+
+    <span class="k">print</span> <span class="s">&quot;class arduinoserial destroyed&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;tried to close serial port&quot;</span>
+</pre></div></div></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

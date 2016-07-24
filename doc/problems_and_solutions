@@ -1,0 +1,789 @@
+0)what happen if onos try to write to node which is offline? :
+  onos will try n times and after that it will give up ,the relative onos object will remain in wait status 
+    it is usefull to make a flag on the onos node ...at start time each hwnode will ask onos for the pin config 
+    when this happen the flag has to be setted to active=1  ,on onos reboot all theese flag will be cleared.
+    So onos know which nodes have been active after its boot
+    see point 34
+
+
+1)what happen if onos try to write to node which is asking onos for pins config?
+  onos will try n times and after that it will give up ,the relative onos object will not change status 
+
+onos allarms must remain active also if the current went out 
+
+2)i will use http://www.arduino.cc/en/Reference/Servo   for the servos control but when you use one or more servo you will not be able to use analog out  pins
+  onos must block the user to make this.
+  
+
+3)the analog pin can't be used as digital and then reused for analog unless you reboot arduino:
+  the pin setup is done only on arduino boot , so there is no problem 
+
+
+4)the pin setup need to be improved because it's not compact:
+  no problem , each node tells onos its serial number and its node_fw
+  (if the node_fw number is newer use the new method else use the old one)
+
+5)need to encode the pin setup in a sinmple and compact way:
+#  here the protocol:
+#  start with 's='
+#  then  add    9 bytes that rappresent the pin used (1 for pin used 0 for not used)   
+#  after that   9 bytes that rappresent the digital pin setup from pin0 to pin 72 (8*9=72) , where 1 is output ,0 is input
+#  after that   9 bytes that tell arduino which pin to set as analog input
+#  after that   9 bytes that tell arduino which pin to set as pwm output
+#  after that   9 bytes that tell arduino which pin to set as servo output
+#  then  3   bytes to close the packet '_#]'
+#  example:"s=000000000000000000000000000000000000000000000_#]"  the 0 are not 0 but the value corrisponding to ascii '0'
+    # total 50 byte 
+
+
+5 New)Need a simpler way to code the setup:
+
+# here a protocol we coul use:#not implemented
+# start with 's='
+# then  add    1 byte to tell the msg length
+# then  add    1 byte to tell the pin number (from 0 to 255) 
+# after that   1 byte to tell the pin type ( digital out, digital in,set/reset relay,analog input,pwm output,servo output)
+# after that   1 byte to tell the pin starting status from 0 to 255 (the pin will be setted to this status )
+# then repeat for the other pins leving out the "s=" and the msg lenght
+
+
+6)in arduino analogRead(0) ,0 does't refer to the digital pin 0 of the arduino but to the analogpin 0 of arduino:
+  when you try to read an analog pin you will have to use the real arduino number so:
+  static const uint8_t A0 = 14;
+  static const uint8_t A1 = 15;
+  static const uint8_t A2 = 16;
+  static const uint8_t A3 = 17;
+  static const uint8_t A4 = 18;
+  static const uint8_t A5 = 19;
+  static const uint8_t A6 = 20;
+  static const uint8_t A7 = 21;
+  if you want to read the analog value of analog 0 pin  you have to set the pin 14 as analoginput in the onos node
+  an alternative is to make a dict only used by analogread function  ,maybe in the future
+
+
+
+7)when an arduino node read a change in a pin then execute a query like /onos_cmd==setnodepin_  
+  then onos change all the webobjects status which have the pin of this node in their class doing so 
+  you can't have object that reads more than one pin ,
+  instead you can have webobject that set more than a pin at a time , like sr_relay .
+
+    problem not solved for now you can't have sensor object with more than a pin attached , maybe a solution is to made
+    a scenario which use the data from two or more objects in order to set another objects status
+
+8)the user can setup a pin with more than one mode in the hardwareModelDict  
+    for now the problem exist...banana to solve later
+
+
+9)Each node has to send the change status of a pin to onos webserver but some nodes can have up to 72 status to send.
+    Every times a pin status changes the node will send 9 byte containing the digital status of the 72 pins , 
+    onos then will compare the data to the hardware model of the node type and discover 
+    what are really used as digital input , then it will change each relative webobject using the method
+    changeWebObjectStatus(objName,statusToSet,write_to_hardware)  setting the write_to_hardware flag to 0 
+    for the analog there will be only a maximun of 16 analog input (arduino mega)
+    adc on arduino are 10bit so to store a value you need 2 byte (an uint16_t  or short variable)
+    so there will be an array of uint16_t  containing the 16 analog input
+    every time an adc value change from the old one by a threshold (25 which is a change by 0,122 volts )
+    the node will send to the server the message to change all the webobjects status which have this analog pin attached.
+    so the register used on arduino will be:  
+     10 bytes for the digital status (9+ 1 void to close the array),
+     10 bytes for the digital setup pins(9+ 1 void to close the array) (to know which pin to read) 
+     10 bytes to store the analog pin setup(9+ 1 void to close the array) (which of the 16 pin is used as analog input)     
+     33 bytes for the analog status.
+     total 70 bytes
+
+     the protocol for data trasmission from arduino to onos webserver will be:
+     "onos"+node_code_name+node_fw+"d"+d_status_string+"a"+a_status_string+"_#]"
+     where :
+     "onos": 4 byte long  told onos the packet start
+     node_code_name is 12 bytes long like :"ProminiA0002"
+     node_fw is  4 bytes long  like :"4.99"
+     "d":  1 byte long  tell the follower string is a digital register
+     d_status_string is 9 bytes long and each byte is a char with the value of 8 bits in the registers status 
+     "a":  1 byte long  tell the follower string is an analog register
+     a_status_string is 32 bytes long and each 2 bytes contain an analog value
+     "_#]"  3 byte long  to tell onos end of packet  
+
+   
+
+
+
+
+10)How to insert fastly a serial number in the onos router? 
+
+
+11)If the onos webserver is rebooted after crash but the hw nodes are not , them continue to think onos has the node data.
+   but onos forgot it.
+     make the onos webserver create the node class again also from the setnode pin query
+
+
+12)Is difficult to make a onos node that will act as server and also as client 
+   bacause while the node is writing the pin status to the server , the server can't change the pin status on the node.
+     the solution is to have different node types :
+     The nodes with fast data read update which will have a fast data reading update and a slow act on query(turn on things)
+     The nodes with slow data reading which will give the onos server the data only when requested or every n minutes
+     this type will be used to execute task like turn on the light after received the query from the onos webserver
+
+
+13)Arduino send binary data but onos give error sometimes:
+
+192.168.0.15 - - [29/Mar/2015 13:34:53] code 400, message Bad request version ('0000470180204603501150702\x00%\x00\x00%\x00%\xa1+\x13%+\x13\x00\x085+\x13\x00\x08Q')
+I will use post instead that get message
+
+
+14)If a node lost connection to the router and then regain connection...then the node ip will change and the webserver will still think that node has the old ip:
+  the nodes will contact the onos webserver every  n minutes.
+  Onos will start a query to a node with the node serial number so 
+  the node will do nothing if received a message with the wrong serial number and will tell that to onos.
+
+
+15) if a post request is made and then broken onos will wait forever..
+   banana not solved yet
+
+
+
+16)Onos has to set the nodes digital out /analog out /servo control   pins of all nodes.
+  here the protocol:
+  onos will send a get query to the nodes with a type of data (digital ,analog ,servo,specialcmd) then will send a data 
+  and then will send 's' + 4 char containing the onos node (see point 14) 
+ 
+  made by :
+  "onos_"   this start string
+
+  for digital pin it will be:
+  1 byte with 'd' for the modes (digital out)
+  2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
+  1 byte to separe the pin number from the value , it will be 'v'
+  1 byte to tell arduino the status (0 or 1 ) to set the pin
+  1 byte to tell the node serial number
+  example : onos_d04v001s0001_#]         to set pin 4 to 1  onos_d04v001s0001_#]
+            onos_d04v000s0001_#]         to set pin 4 to 0  onos_d04v000s0001_#]
+
+  
+  for analog pin it will be
+
+  1 byte with 'a' for the modes (analog out )
+  2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
+  1 byte to separe the pin number from the value , it will be 'v'
+  3 byte to tell arduino the value (0 or 255 ) to set the pin (to set 10 it will send '010',to set 255 it will send '255')
+  1 byte to tell the node serial number
+  example : onos_a11v255s0001_#]         to set pin 11 to 255
+            onos_a11v099s0001_#]         to set pin 11 to 99
+
+
+
+  for servo pin it will be
+
+  1 byte with 's' for the modes (servo controll )
+  2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
+  1 byte to separe the pin number from the value , it will be 'v'
+  3 byte to tell arduino the value (0 or 180 ) to set the pin (to set 10 it will send '010',to set 180 it will send '180')
+  1 byte to tell the node serial number
+  example : onos_s05v180s0001_#]         to set pin 5 to 180
+            onos_s05v090s0001_#]         to set pin 5 to  90
+
+
+  for set/reset latch relay control it will be:
+  
+  1 byte with 'r' for the modes (relay controll )
+  4 byte for the number of pins  (for pin 4 as set and pin 5 as reset it will send '0405')
+  1 byte to separe the pin number from the value , it will be 'v'
+  1 byte to tell arduino the value (0 or 1 ) to set the relay
+  1 byte to tell the node serial number 
+  example : onos_r0405v1s0001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 1
+            onos_r0405v0s0001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 0  
+
+
+
+
+  after that the node will answer with a "onos_ok" if everything is fine  or with a code error if something went wrong
+  (like if the pin doesn't support the mode requested will answer with "ep"  --> error pin)
+  In order to make sure the html changes only if the node answers with "ok" and to avoid the stop of the webserver until 
+  the message is received , the request will be made in a new thread created and destroyed after the use.
+  After the thread has received the ok msg it will make a query with urlib to the onos webserver to change the html.. 
+  Note !!! this will not allow to set 2 or more pin status at the same time,because after each pin status set will pass some time..
+  So there will be some coding like onos_cmd....  
+
+
+
+17) After the user click to set an output onos will have to wait some time before changing the button color , so the 
+    user will not know if the button was clicked correctly.
+ 
+    We can make a third webobject status that will be the waiting status with a different color and html
+    from the other status, this status will be the 0,5  status
+
+
+18) the last element of a list in the html menu' is covered by the back button:
+     make a void element at the end of the html
+
+
+19) Onos has to work from internet without the need of a dsl router with opened ports:
+      we have to make a website with login where the users will connect in order to controll their onos systems.
+      OnosCenter will connect to the website and give the list of changed webobjects , 
+      the website will have to store a variable which tell the onoscenter if something has changed from the user input.
+      If something did , then OnosCenter will download the full webobjectstatus and apply them.
+      This every n seconds, if more than 20 seconds passed then the onoscenter is offline.
+      The site will be made in php because all server has php ,python would be more easy though
+      multiple sqlite databases will be used (one for each user)
+      The data to pass between the 2 system are:
+        object_dict{} , zoneDict{} , remote_status_change_list[] ,sync_messages[]
+      Every data will be passed using a json structure
+
+      Onos will contact  the online php script every n seconds passing the parameters.
+      The first 3 parameters are always username , password and key,so the main php script will open the right database and write there the datas (each onos system will have a database)
+      then it will ask fo the sync_messages[]  and if it is empty  will do nothing .
+
+       
+
+
+IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+TO PREVENT DATABASE DOWNLOAD FROM BROWSER put a .htaccess in the site  directory with :
+
+<Files ~ "\.d">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<FilesMatch "\.d">
+Deny from all
+</FilesMatch>
+
+
+
+      The onos system database structure will be:
+
+    $db->exec("CREATE TABLE if not exists onos_user (onos_username VARCHAR(40) PRIMARY KEY,user_password VARCHAR(40),onos_db TEXT )" );
+
+$db->exec("CREATE TABLE if not exists onos_sys (onos_key TEXT PRIMARY KEY,onos_password VARCHAR(40),hw_fw_version TEXT,last_sync_time VARCHAR(16))" );
+
+$db->exec("INSERT INTO onos_sys (onos_key,onos_password,hw_fw_version,last_sync_time ) VALUES ('$key','$pass','$hw_fw_version','00:00:00')");
+
+$db->exec("CREATE TABLE if not exists zones (zone_name VARCHAR(40) PRIMARY KEY,zone_objects TEXT,zone_order INTEGER , zone_owner VARCHAR(40) ,zone_permissions VARCHAR(16) )");
+
+$db->exec("CREATE TABLE if not exists web_objects (obj_name VARCHAR(40) PRIMARY KEY,obj_status TEXT,obj_style TEXT , obj_html TEXT ,obj_type VARCHAR(40),obj_permission VARCHAR(16),obj_group  VARCHAR(40),obj_priority INTEGER  )" );
+
+
+$db->exec( "CREATE TABLE if not exists changed_remote_status_dict(changed_remote_status_dict_id INTEGER PRIMARY KEY,remote_status_dict TEXT)");
+
+
+$db->exec("CREATE TABLE if not exists sync_messages (cmd_id INTEGER PRIMARY KEY,cmd_message TEXT)");
+
+
+
+       every time i need to read or write list in a sqlite row i will use json to read or write! 
+
+       to sync the webobjects and the zones  the online db will always answer to the query update with :
+       the list of zone names , the list of weboject names , the list of weboject status.
+       if the OnosCenter found that an online list is different from the local one , it will force a full update with a post query:
+             
+       
+
+       The user will have a sync button to force the sync of all data.  (to implement )
+
+       The onos center will download new version of the firmware if there is a cmd in the sync_messages (to implement )
+
+
+20) Onos need to be controlled by mail
+
+      A mail system will be avaible(activable from web interface) 
+      so if the user onos mail receive a mail with :
+
+      onos=  arguments separed by ","
+ 
+      example:
+      onos=usr:onos_usr,pw:onos_pw,cmd:so,arg:lamp0,st:0,
+
+       # example : onos=cmd:so,arg:button1_RouterGL0000,st:1,      note the end ","  must be used
+
+
+      The password used to controll onos from mail will be different from the one used for local webinterface
+      for security reasons.
+      onos will parse the cmdcode and if the password is correct will execute it.
+      Onos will be able also to use a white list mail , from which will accept command without password  
+      Using the mail_log in each webobject and scenario onos will write to the mail if there is a change in the status.
+      with analog value there will be a threshold setted by mail
+
+      The user can also send multiple commands ,he has just to make a new line for each command. 
+
+
+
+
+
+      the user password to control onos from mail will be stored in usersDict["onos_admin"]["mail_control_password"]
+      the list of mail from which onos will accept command without password  will be a list named mail_witheList
+
+      type of cmd:
+
+      so to set object
+   
+      ro to read object
+
+      log_obj1 will active log mail on the object or scenario
+
+      log_obj0 will disable log mail on the object or scenario
+
+      en_scen will enable a scenario
+
+      ds_scen will disable a scenario
+      
+      r_scen to read a scenario (conditions ..)
+
+
+      argument:
+
+        "all" will include all the obj or scenario  the user can use 
+ 
+
+      
+      mail cmd examples (onos_usr is the username, onos_pw is the password):
+     
+      hypothesizing the user has the execute permission on the object
+      
+      mail="onos=usr:onos_usr,pw:onos_pw,cmd=so,lamp0=0" will set the webobject  lamp0 to 0 if the username and password are right 
+      mail="onos=so.lamp0=0" will set the webobject  lamp0 to 0 if the mail is in the whitelist 
+      mail="onos=onos_usr.so.lamp0=0" will set the webobject  lamp0 to 0 if the mail is in the whitelist 
+      mail="onos=onos_usr.so.lamp0=0.priority:9" will set the webobject  lamp0 with a "9" priority
+
+
+      hypothesizing the user has the read permission on the object
+
+      mail="onos=onos_usr.ro.lamp0" will write back a mail with the status of the  lamp0 webobject 
+
+      mail="onos=onos_usr.ro.all#" will write back a mail with all the names and status of the webobject the user has the permission to read.
+
+
+
+
+      mail="onos=onos_usr.st_scenario.all" will write back a mail with all the names , status (enabled or not) and conditions to set of the scenarios the user has the permission to read.
+
+      mail="onos=onos_usr.en_scen.scenario_name=1" will enable the "scenario_name" scenario if the user has the execution permission on this scenario
+
+      mail="onos=onos_usr.en_scen.scenario_name=0" will disable the "scenario_name" scenario if the user has the execution permission on this scenario
+
+      mail="onos=onos_usr.log_obj1.lamp0" will check and write back the each change of status of this webobject, if the webobject is digital   
+
+      mail="onos=onos_usr.log_obj1.temperature0.20" will check and write back the status each time it change by 20 from last mail
+
+      
+
+     
+21) Is not possible to connect to the OnosCenter webpage from the wan port :
+    opened the router firewall port
+
+
+
+22) Sometimes a button remains in pending operation also if the nodes executed the action :
+    implemented the queue system in order to avoid making webserver url query to change button status from the nodes
+    each new node will have a queue where router_handler will put the change to be done in the webobjects status
+    the webserver will check continuosly all the queues and make the changes
+    Each element of the queue will contain a dictionary:
+
+    to change all the webobjects status that have the node and the pin given:
+    layerExangeDataQueue.put( {"cmd":"setNodePin","node_sn":"node_serial_numb","pinNumber":pin,"status_to_set":"the value of the status","write_to_hw":"1  to write to hardware 0 to change only the webobject status" } )
+    
+    example:
+     layerExangeDataQueue.put({'setNodePin': 21, 'status_to_set': 1, 'cmd': 'pinNumber', 'write_to_hw': 0, 'node_sn': 'RouterGL0001'})
+
+
+
+    to change a webobject status by name :
+
+    layerExangeDataQueue.put( {"cmd":"setSts","webObjectName":"the web object name","status_to_set":"the value of the status","write_to_hw":"1  to write to hardware 0 to change only the webobject status"  })
+
+    
+
+ 
+
+     
+     
+
+
+
+hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{}}
+
+
+
+
+23) How to make sure onos webserver stays always online : (banana not implemented yet)
+    make a demon in onos.sh that will check every tot seconds if the webserver is answering  from local query 
+    and also from internet query. 
+    If the webserver is not answering the process will be killed , the onos configuration saved and the python script 
+    will be exeecuted again, if after 2 minutes the webserver doesn't answer onos will be switched to recovery mode
+    with the default configurations. 
+    if there is non internet connection a query to the onos node connnected to the router will ask it to power off 
+    the router and power on it after 1 minute
+
+
+
+24) How to make a system where if a webobject change to a status then other webobjects change status as well:
+    Scenarios:
+
+     Add a dictionary  scenarioDict{} in globalVar.py where all the operation for all the webobject will be stored.
+     Each webobject which is part of an operation will have a list of the scenarioDict{} keys  (the names of the scenarios) so it will check the  instruction and execute it at each status change   
+    
+     add a webobject called hours  which will contain the hours of the current clock  
+     add a webobject called minutes  which will contain the minutes of the current clock  
+     add a webobject called day  which will contain the calendar number of the day 
+     add a webobject called month  which will contain the calendar number of the month 
+     add a webobject called year  which will contain the calendar number of the years 
+     add a webobject called dayTime  which will contain the hours of the day expressed in minutes
+
+
+     all the time update will be made in  the hardwareHandlerThread() thread
+
+    
+     the scenarios will have a flag  "one_time_shot" which if true disable the scenario after the first run
+     
+
+     to evaluate the conditions i will use eval(string_condition)
+     in both cases i will allow only certain characters input  and replace the webobjects name with their status value
+     note if in the condition there is a webobject with a pending status the scenario will not be executed
+
+
+
+
+     scenarioDict["change_lampobj"]{"enabled":1,"after_execution_mode":"","conditions":[cond1&cond2|cond3],"functionsToRun":[lamp1=0,lamp2=#_lamp2_#+1...],"afterDelayFunctionsToRun":[],"delayTime":0,"priority":0}
+                                        
+                                        
+     ###inside "status" you put the status that the obj will be set to if the condition is true
+     inside web_obj_to_read you put a list of weboject that will be readed and used in the  conditions from this scenario
+     i need this list because i will replace all the names in the conditions with the values of the webobject      
+
+     inside conditions put a string where to insert a webobject name you have to write  #_webobjectname_#
+      so "#_webobjectname_#" will be replaced by the webobjectname status value
+      the condition may have how much () you want  like : 
+       (#_webobjectname1_#==1)&( #_webobjectname2_#==0)|( #_webobjectname3_#==#_webobjectname2_#) 
+
+
+      if you want to use the obj previous value write #p_webobjectname_#
+
+ 
+     #deprecated inside the actType you put the type of set , if is "delay" then will tell to the timer to set the obj to "end_status" after n minutes
+     inside functionsToRun you put a list of the actions to be made when the conditions are true
+     inside afterDelayFunctionsToRun you put a list of the actions to be made when the delay time is finish
+     inside priority you put the priority of the scenario , default is 0  , put 6 if you want this scenario to overcome 
+     all other scenarios and normal user actions
+
+     #deprecated if the actType is delay then the functionsToRun instruction will be executed immediately and a new scenario
+     with the afterDelayFunctionsToRun inside the  functionsToRun , with autodelete=1  and with the conditions setted as   
+     dayTime> (#_dayTime_#-delayTime) will be created
+
+     #deprecated  if the actType is "nodelay"  the webobject will be setted to "status" immediately 
+
+    
+     if "enabled"  is 1 then check and execute the scenario , else the scenario is disabled
+     if "after_execution_mode="one_time_shot" disable the scenario part containing this flag after the execution 
+     if "after_execution_mode="autodelete"then the scenario will be deleted from the the dictionary after the first execution
+
+     if the user want to use the previous status of a webobject in the condition 
+        he can write #p_webobjectname_#  and onos will use the previous status of that webobject  
+
+
+     the conditions  will be checked only if one of its component changed its status 
+     the operations  will be executed only if one of its component changed its status 
+
+
+
+     ###the scenarios could be enabled and disabled from timer schedule
+
+
+     action the scenario could make:
+   
+       set or reset a webobject status ( 0 or 1 )
+       set a webobject status to a costant value
+       set a webobject to the status of another webobject
+       set a webobject to its status+1  (or +n)
+       set a webobject to its status-1  (or -n)
+       to negate a object status you could use :
+   #    "not #_webobjectname2_#"this will replace the value with 0 if the value was 1...
+
+       if in the functionsToRun you write  #_webobjectname_#=0
+         webobjectname will be readed as a webobject name and this webobject will be setted to 0
+
+       if in the functionsToRun you write  webobjectname=#_webobjectname2_#
+         #val_webobjectname2_# will be replaced by the value of the webobjectname2 status
+         so the webobject will be set to that value
+
+       if in the functionsToRun you write  webobjectname=#p_webobjectname2_#
+         #val_webobjectname2_# will be replaced by the previous value of the webobjectname2 status
+         so the webobject will be set to that value
+
+
+      i will use regular expressions to replace the parts:
+
+      scenario_conditions=re.sub(r'#_.+?_#',lambda x: str( object_dict[x.group(0)[2:-2]].getStatus()),scenario_conditions)
+
+
+
+      NOTE: never add the scenario name to  minutes object while using the dayTime obj as scenario condition:
+            this will gave you a delay of 1 minute in the scenario execution because minutes change before dayTime...
+
+            now if a delay of 1 minute is called , then the execution happen on the change of the minute 
+             so if there are 10 seconds before the next minute , the delay will be 10 seconds instead...
+
+
+            the time could be checked inside the     while not layerExchangeDataQueue.empty(): loop 
+            if needed  (to implement?)
+            or a thread with a delay could be created inside the scenario check
+
+             
+
+
+
+ 
+
+
+
+25) What happen if a webobject is setted from the users from web interface  but there is a scenario that want to control the webobject as well?
+
+  The permission system will be:
+   owner  group_users  scenarios
+   rwx    rwx         rwx
+   read,write,execute               
+   where:
+     read means read the webobject status
+     write means modify the webobject 
+     execute changes its status 
+   
+   so 777 will set rwx to all the user and to all scenarios
+
+   each webobject has a owner list of username who can modify the webobject  
+
+
+  There are scenarios with the maximum level priority like the security ones .
+  each scenarios will have a priority level  that  range from 0 to 10  where 10 is the top priority and 0 is the lowest 
+  5 will be the default scenario priority.
+  if a scenarios has the priority set to 10 it will be able to make everything on a webobject regardless the permission of the webobject.
+  only admin can set a scenarios priority to 10  ,the normal user will be able to set it up to 9(banana to implement)
+  if any scenario action is in conflict with another  , the action performed will be the one from the scenario with greater priority.
+  when a webobject status is changed ,onos will write in the webobject  priority_action  the value of the priority that 
+  has changed the object status.
+  In order to change again the status the next change must be made from a priority level equal or greater than the previous.
+  The normal user will have a priority of 5  while an admin user could have a priority of 10 (by default is always 5)
+  if  a priority of 99 is setted this will allow the execution but will not increase the object priority after it     
+ 
+
+
+
+
+
+
+
+  All the webobjects will have a owner value list where there will be the user owner names 
+  by default the webobject created from onos will have a user owner called "onos"
+  by default all webobjects permission will be set to 777  , access to every one
+  by default all webobjects will have a permission_timout of 5 minuts after that all the scenario with that webobjects as output will be checked if a manual change occured
+
+
+  the scenarios will be able to change webobjects permission 
+
+  each webobject will have a Permissions value , if the permissions value from the method is tring to set the status of the webobject is compatible with the object permissions value then the webobject will be setted , otherwise it will not.
+  The standard webobject will have default permissions value of 777 (The file's owner may read, write, and execute the file. All others may read and execute the file) .
+  if a user set a webobject ,its permissions will change to 770 so the scenarios will find the 0 and will not be able to change the webobject.
+
+  Each webobject will have a status_before_manual_change value where the status before the manual change will be stored.
+
+  The user will be able to choose for each object the behavior.
+  there will be 2 type of behavior : 
+     the first is the status_before_manual_change based one
+     the second is the timer one
+
+
+  In the first mode, after the manual change the scenarios will not be able to change the webobject until the user
+  changes the status back to the original (before the first manual change) 
+  Or until another scenario changes the permission of the webobject
+ 
+  In the second mode, after the manual change the scenarios will not be able to change the webobject until a time chosen by the user in the webobject setup, after that time the webobject 
+  permissions  will be restored to 777 and the scenarios will be able to set it
+
+
+  So if a webobject is changed by the user and then a scenario tries to change it , the object will not change because the permission of the senario is lower than the user ones.
+  In the case a webobject is controlled by hand from the user the permission of the webobject will change to 770
+
+
+
+
+26) Need to ensure no one except the user can controll the webobject :
+    block ssh from wan
+    the webobjects will be under a different network connected to the onosCenter , using iptable to block external contact
+    Study iptable to open only port 80 to the outside ...so the webobjects will be controlled only by webinterface ,
+    so with password. 
+
+
+
+27) Onos Login page :
+    After the login onos will save the ip and username of the user and check every n minutes (logTimeout) if the user is active
+    (updating user_active_time_dict[user_ip]= [username,timeNow] after every request)
+    if  (timeNow> user_active_time_dict[user_ip][1]+logTimeout) ---> logout
+
+    The check will be made on every webpage request and if the user is not logged anymore onos will redirect him to
+    the login page.
+    If the user has not the permission to view a section ,this section will be hidden  (private zones..)
+    Usernames and password will be stored in a dict -->>   usersDict[username]=password     
+
+
+
+28) Make onos multilanguage : banana to implement
+    There will be differents json files which will contain all the texts for all the languages 
+    Onos will load in memory only the one needed as a dictionary  where the key will be a english string describing the page , inside this dictionary there will be a list of strigs.
+    example:
+    languageDict["start_page"]=("play","info","setup")
+    in the start_page there is 3 string  ...the first one is "play"
+    
+    
+
+29) The javascript update page fail to update if there is a lost connection just one time
+
+
+30) The user don't have to have a list of all the nodes in the zones webpage :banana to implement
+
+     a GENERIC  "allNodes"   zone will be created with all the webobject created from the nodes.
+     Hide or not create a zone fo each node
+
+
+
+31) I need to make possible for the user to  hide and to order the zones ,and the zones has to be accessible following the onos permission system (rwe):#banana the core is done but there is the gui part left..
+
+  The zone dict will be structured in the following way:
+  The dictionary key will be the zone name  
+  The dictionary data ,will be a dictionary itself, having this keys:  
+    "objects" : a list of all webobjects names 
+    "order"     the position of the zone when all zones are to be displayed  ,int 0 is the first 
+    "permissions"  the linux style permission   "777"  
+    "group"    a list of names used by the permission system
+    "owner"    the owner name of the zone
+    "hidden"   0 or 1  if true will hide the zone from all the users  (only in the play section of the webpage interface )
+ 
+   zoneDict[node_sn]={"objects":[],"order":zoneDict.keys(),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+   sortZonesByOrderNumber()
+
+
+
+32) I need to allow other people to develop a onos gui:
+    Created the cgi folder, every python script there could be executed as part of the main webserver.
+    When the user insert in the browser   : onosip/cgi/pythonScriptName.py 
+    the "pythonScriptName.py" will be executed and the variable "web_page"  will be served to the browser.
+    so if inside pythonScriptName.py  you write   web_page="hello world"  this will be printed on the webpage
+    Note that all the global variable are accessible from the external python script.
+
+
+
+33) Onos must have a way to update itself to the latest version , from internet and also from local:banana to implement
+
+    A python script (update_check.py) will be executed before the onos script from "onos.sh"!.
+    this python will search for a folder "onos_update" in the main onos folder (on the flash).
+    if the folder does exist (and the md5sumis is right)then the onos will execute the "onos_update.py"
+    in that folder ,which will check if there is enough free ram space.
+    If so it will download (in ram) the tar with all the new onos files, check if the md5sum is right and then 
+    extract them in ram and then will replace them to the old ones in the flash.
+    After that the script will remove the directory onos_update and run the main webserver.
+    if you power off before all the files are moved the directory will be still there and at the next reboot onos will 
+    try to update itself again!
+
+
+
+    the first file that will be downloaded will contain the current online fw version the hw type and the total number of files to download
+    if the fw version is the same as the one in the fw_version.txt (which will like 5.15_GLINET#files:226#)
+    Onos will know that the fw is updated.
+    Otherwise will download all the files,and after that if the file number is the same indicated in 
+    the downloaded fw_version.txt , onos will replace all the old files with the new ones.
+    Then will replace the fw_version.txt and remove the "onos_update" folder
+
+    To update the system onos will delete all the directory but these:
+    /scripts_folder/cgi
+    /scripts_folder/config_files
+    /scripts_folder/zones
+    
+    The files in these directories will not be replaced with the new ones (so if the user had created some files this will not deleted )
+
+    if at the boot onos found the folder "onos_update" because it was not deleted  , then will update all
+    because probably something went wrong with the previous update
+   
+    Note that the script "onos.sh" will never be updated
+
+    The update files must never be too big because otherwise the filesystem will have problems
+    The "onos_update" folder can be downloaded  automatically by the system (enable_onos_auto_update="yes" in globalvar.py and cfg.json) or the request to update could be sent manually from the web interface (stil to implement banana)
+
+    To implement a simple web server at startup wich allow you to upload the fw from browser.. 
+
+
+34)  Onos must know if a node isn't working or powered off , and lets the user know it as well:
+     each node will ask the setup to onos every 3 minuts , so onos will wait and set as inactive every node 
+     that will not ask the setup for more that 3 minuts .
+     For sensible node like antitheft sensors the timeout might be 30 seconds
+     The variable is_active will be stored in each webobject of the node and will be usable in the scenarios (banana not implemented yet)
+     Each node will have a variable called "last_node_sync" (setted using the funcions updateNodeAddress() and then updateLastNodeSync()) which will store the last time the node ask the setup to onos
+     a variable "isActive" which will tell onos if the node is active and a variable called "timeout" which will set the time without contact after onos will set the node as not active.
+     The inactive webobjects will have a white color in the onos interface 
+     and their status will be setted to the string "inactive"
+     After the node is connected again all the webobjects will be setted to the status previuos the disconnection  
+     Each node "timeout" will be loaded from hardwareModelDict{}    
+
+
+35)  Sometimes the communication with a node fail :
+     In order to have one and only one query for each node , a query handler will be implemented.
+     Passing node_address,query,objName,status_to_set,user,priority,mail_report_list
+     If different queries are to be done to the same address , they will be added to a list and then excuted one after one 
+     ###not to implement?? Each request will have a priority , the next query to be done will be the one with the greatest priority number (from 0 to 10 ,99 will be replaced by 10)
+     ###not to implement??####If the request query is lesser than 10 then the query will be tried 5 times before passing to the next one(for te same node),the query will not be removed from the list and will be retried other 15 times.. if the priority is 10 the query will be repeated 20 times before giving up 
+     
+ 
+
+35b)  After the implementation of point 35 the stability problem of connection is still there:
+     Change the way onos talks to the nodes using pure tcp message without http protocol ..
+     each tcp message will end with  "_#]"
+     
+
+
+
+
+36)  Onos must has a way to tell what is going on to the user:#banana to implement
+     A webpage where the log is printed will be created 
+
+
+37) The user must be able to create new username account inside the local onos interface: 
+     (for security reason this part will be avaible only in the local interface)
+    The interface will ask an username , a password and a mail .
+    After that it will check if there is internet connection ,otherwise will rise error and tell the user to connect it (advanced users that don't use internet with onos will have to modify the json to create local users)
+    After the user iserted the data onos will check if the username exist yet in the online database , if yes it will tell the user to use another username.
+    If the username is new then onos will add it to the online database and then add to the local usernames.
+
+    There will be a gui to handle each users permission and to delete the usernames, only admin will have access to it
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

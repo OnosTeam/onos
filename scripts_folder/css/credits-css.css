@@ -1,0 +1,111 @@
+
+body {    background-color:black;
+          margin-bottom:1%;
+}
+
+#header{
+    margin-bottom: 5%;
+    width: 100%;
+    color:#0072ca;
+    font-size: 200%;
+    
+  
+}
+
+#header1{
+    margin-bottom: 7%;
+    width: 100%;
+    color:#0072ca;
+    font-size: 150%;
+    
+  
+}
+/*////////////float bar////////*/
+#buttons
+{
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  position: fixed;
+  bottom: 0px;
+  left:0px;
+  margin: 0%;
+  width: 100%;
+  background-color: black;
+  
+}
+
+
+
+#home{
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  overflow: hidden;
+  width: 50%;
+  margin: 0%;
+  float:left;
+  text-align: center;
+  background-color: #0072ca;
+  border: 2px solid black;
+  color:black;
+  font-size: 200%;
+  line-height: 100%;   
+}
+
+#home:hover{
+  background-color: black;
+  border: 2px solid #0072ca;
+  color:#0072ca;
+}
+
+
+#back{
+  border-radius:12px;
+    -moz-border-radius:12px;
+    -webkit-border-radius:12px;
+    -khtml-border-radius:12px;
+  overflow: hidden;
+  margin: 0%;
+  text-align: center;
+  background-color: #0072ca;
+  border: 2px solid black;
+  color:black;
+  font-size: 200%;
+  line-height: 100%;   
+}
+
+#back:hover{
+  background-color: black;
+  border: 2px solid #0072ca;
+  color:#0072ca;
+}
+/*/////////fine float bar//////*/
+
+
+
+
+
+
+/*///////////riga oggetti////////*/
+
+
+
+li {
+  margin-bottom:4%;
+  color:#0072ca;
+}
+
+ul{display:inline;}
+
+
+
+/*//////fine riga oggetti///////*/
+
+
+
+a:hover{color:lime;}
+a {text-decoration:none;color:#0072ca;}
+a:visited {text-decoration:none; color:#0072ca}

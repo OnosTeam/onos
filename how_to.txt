@@ -1,0 +1,57 @@
+Requirements :
+In order to run O.N.O.S. you have to use a Linux system , which has to have installed Python 2.6 or newer(I tested it only on Python 2.7.3).
+It works well on Raspberry Pi B version (700Mhz cpu , 512 mb ram) so it isn't much demanding.
+If you want to help me, please tell me on which hardware and operative system you work on.
+Installation:
+O.N.O.S. is a Python system, it is portable so you don't have to install it.
+Just copy the folder where you want in your pc and you are done!
+Usage:
+Expert guide: 
+Download O.N.O.S zip and extract it in a rapberry folder. 
+Open a terminal and :
+cd to the O.N.O.S. folder 
+Run as administrator chmod +x onos.sh
+
+then run as administrator "./onos" 
+Wait 10-20 seconds
+open a browser and insert the ip of the raspberry; you will see the O.N.O.S. main webpage.
+To turn off onos press ctr+c in the terminal where you executed it
+Full guide:
+Download the updated version of O.N.O.S. from https://sourceforge.net/projects/onos/
+Unzip it where you want , for example in your home directory of the raspberry .
+To run O.N.O.S. open a Linux terminal and move to the O.N.O.S. directory .
+If you put, for example, the O.N.O.S. directory in your home folder you'll have to write in the terminal:
+cd onos_4.72/ 
+Then press enter.
+After this you have to run " chmod +x onos.sh " as root.
+On debian /ubuntu /mint distro you can write:
+sudo chmod +x onos.sh
+Press enter and then you will ask for the root password, insert it and press again enter.
+After that run always as administrator ./onos.sh
+On debian /ubuntu /mint distro you can write:  sudo ./onos.sh
+
+Now if each passage has gone well O.N.O.S. is running. You will see a lot of writings on the terminal, don't worry they are for debug!
+After about 10/20 seconds the web server should be running well so you can open a browser and insert the raspberry ip in the address bar, go there and the O.N.O.S. main page should show up.
+You can control O.N.O.S. from any pc from the same local network and also from internet (for that I will make a guide soon).
+You have to know the IP address of the raspberry which runs O.N.O.S. and then you can insert this IP on the browser instead of localhost.
+To know what is the IP of the raspberry you could run:
+sudo ifconfig
+in the terminal 
+Something like this should appair:
+eth0 Link encap:Ethernet HWaddr 00:xx:22:6f:4d:XX 
+inet addr:192.168.0.101 Bcast:192.168.0.255 Mask:255.255.255.0
+inet6 addr: fe80::225:22ff:fe6f:4de4/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+RX packets:31474 errors:0 dropped:0 overruns:0 frame:0
+TX packets:30007 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000 
+RX bytes:27442591 (26.1 MiB) TX bytes:5298952 (5.0 MiB)
+Interrupt:44 Base address:0x8000
+In this example the pc address is 192.168.0.101 .
+You can also use your graphic network tool to discover the ip.
+Make sure never to connect an raspberry pin to vcc or gnd and then try to turn on or off the pin, because doing that you will make short circuit on the Arduino pin.
+If you have to connect a pin to gnd or vcc I advise you to use a resistor of at least 800 ohm.
+To turn off onos press ctr+c in the terminal where you executed it
+
+
+

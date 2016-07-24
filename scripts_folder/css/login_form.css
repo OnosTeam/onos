@@ -1,0 +1,110 @@
+body {
+margin: 0;
+padding: 0;
+background-color: black;
+}
+
+#body2{
+
+margin: 0;
+padding: 0;
+
+}
+
+#image {
+	display: block;
+	margin: auto;
+    height: auto;
+}
+
+#container-image{
+	margin:0 auto;
+	width:100%;
+	background-color: black;
+}
+
+#footer {
+	margin: auto;
+	height:100px;
+	width:100%;
+}
+
+#container{
+
+
+position:relative;
+margin-top:70px;
+margin-left:  auto;
+margin-right: auto;
+width:200px;
+
+
+}
+
+
+h1{
+color: #0072ca;               
+position:relative;
+margin-left:  auto;
+margin-right: auto;
+width:200px;
+
+
+}
+
+#error {
+color: red;               
+position:relative;
+margin-left:  auto;
+margin-right: auto;
+width:600px;
+font-weight: bold;
+font-size: 30px;
+text-align:center; 
+}
+
+
+.textbox{
+
+position:relative;
+margin-top:10px;
+margin-left:  auto;
+margin-right: auto;
+width:200px;
+
+}
+
+
+
+
+#log{/*viene spostato fuori schermo per mantenerlo nel flusso ma non farlo apparire perchè il label trasmette lo stato al checkbox*/
+  position: absolute;
+  left: -9999px;
+}
+
+
+#container2{
+
+position:relative;
+border: 2px solid #0072ca;
+color: #0072ca;               
+font-weight: bold;
+text-align:center;         
+height: auto;              
+width: 200px;
+margin-top:50px;
+margin-left: auto;
+margin-right: auto;
+}
+
+
+#container2:hover{
+
+border: 5px solid #0072ca;
+}
+
+
+
+
+
+

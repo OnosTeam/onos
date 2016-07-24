@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mail_agent module &mdash; ONOS  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ONOS  documentation" href="index.html"/>
+        <link rel="next" title="node_query_handler module" href="node_query_handler.html"/>
+        <link rel="prev" title="hw_node module" href="hw_node.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> ONOS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="arduino_handler.html">arduino_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arduinoserial.html">arduinoserial module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="globalVar.html">globalVar module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw_node.html">hw_node module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">mail_agent module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node_query_handler.html">node_query_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pcduino.html">pcduino module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="router_handler.html">router_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_zone.html">time_zone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_object.html">web_object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webserver.html">webserver module</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ONOS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>mail_agent module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/mail_agent.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-mail_agent">
+<span id="mail-agent-module"></span><h1>mail_agent module<a class="headerlink" href="#module-mail_agent" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line">This module handles the onos email system.</div>
+<div class="line">It handles the incoming mails and the outbound email.</div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<div class="last line-block">
+<div class="line">You musn&#8217;t have the fowarding from the mail you use as onos income mail. </div>
+<div class="line">You musn&#8217;t use a mail programm to automaticly download the mail. </div>
+<div class="line-block">
+<div class="line">Because otherwise the mail will be donwloaded elsewhere and onos will not be able to read it since it reads only the unreaded mails.</div>
+</div>
+</div>
+</div>
+<dl class="function">
+<dt id="mail_agent.get_text">
+<tt class="descclassname">mail_agent.</tt><tt class="descname">get_text</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="_modules/mail_agent.html#get_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mail_agent.get_text" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Given the python mail object, parses email message text and return the mail text content.</div>
+<div class="line">This doesn&#8217;t support infinite recursive parts, but mail is usually not so naughty.</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mail_agent.receiveMail">
+<tt class="descclassname">mail_agent.</tt><tt class="descname">receiveMail</tt><big>(</big><em>mail_conf</em>, <em>imaplib</em>, <em>email</em><big>)</big><a class="reference internal" href="_modules/mail_agent.html#receiveMail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mail_agent.receiveMail" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">This function connect to the mail server and download all the unread mails.</div>
+<div class="line">Then if a mail contain the &#8220;onos=&#8221; string, the mail is added to a list which  will be returned. </div>
+<div class="line">Otherwise the mail is setted as unreaded in the mail server since is not a mail command for onos.</div>
+<div class="line">To connect to the mail server the credential contained in mail_conf[] dictionary will be used.</div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mail_conf</strong> &#8211; The dictionary containing the mail credential,server address and smtp_port. (for now i tried only with gmail).</li>
+<li><strong>imaplib</strong> &#8211; The imaplib library imported in globalVar.py</li>
+<li><strong>email</strong> &#8211; The email library imported in globalVar.py</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mail_agent.sendMail">
+<tt class="descclassname">mail_agent.</tt><tt class="descname">sendMail</tt><big>(</big><em>receiver_user_mail</em>, <em>mailtext</em>, <em>mailSubject</em>, <em>mail_conf</em>, <em>smtplib</em>, <em>string</em><big>)</big><a class="reference internal" href="_modules/mail_agent.html#sendMail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mail_agent.sendMail" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function send a mail from the onos system.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you want to send a mail, is better to add it to the mailQueue using:     
+mailQueue.put({&#8220;mail_address&#8221;:m_sender,&#8221;mailText&#8221;:mailText,&#8221;mailSubject&#8221;:mailSubject})
+In this way the mail will be sent after the previous ones are sent.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>receiver_user_mail</strong> &#8211; The mail receiver</li>
+<li><strong>mailtext</strong> &#8211; The mail text content</li>
+<li><strong>mailSubject</strong> &#8211; The mail subject</li>
+<li><strong>mail_conf</strong> &#8211; The dictionary containing the mail credential,server address and smtp_port. (for now i tried only with gmail).</li>
+<li><strong>imaplib</strong> &#8211; The imaplib library imported in globalVar.py</li>
+<li><strong>string</strong> &#8211; The string library imported in globalVar.py</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="node_query_handler.html" class="btn btn-neutral float-right" title="node_query_handler module"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="hw_node.html" class="btn btn-neutral" title="hw_node module"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

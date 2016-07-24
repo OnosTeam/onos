@@ -1,0 +1,207 @@
+/*//////////////////////////////pezzo standard per ogni css////////////////*/
+
+body {
+margin: 0;
+padding: 0;
+background-color: white;
+}
+
+#body2 {
+position:absolute;
+margin: 0;
+padding: 0;
+background-color: white;
+width:100%;
+}
+
+a, a:visited  {text-decoration:none;	color:black;}
+
+a:hover{text-decoration:none;  font-weight: bold;}
+
+#image {
+	display: block;
+	margin: auto;
+    height: auto;
+}
+
+#container-image{
+	margin:0 auto;
+	width:100%;
+	background-color: black;
+}
+
+.divisorio{
+	height:auto;
+	background-color: black;
+	border-bottom: 2px solid #0072ca;
+	color:#0072ca;
+	text-align: center;
+	font-weight: bold;
+	font-size: 40px;
+	text-shadow: 2px 2px gray ;/*non supportato da IE9 e precedenti*/
+}
+
+
+
+/*//////////////////////////////////inizio menu/////////////////////////*/
+
+#container{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top:15px;
+	position:relative;
+	width:400px;
+	height:70px;
+
+}
+
+.menu{
+	
+	text-align:center;
+	
+}
+
+.flex {max-width: 100%}
+
+
+
+#play{
+	width:60px;
+	height:60px;
+	position:absolute;
+	
+}
+
+#teach{
+	width:60px;
+	height:60px;
+	position:absolute;
+	left:180px;
+	bottom:4px;
+}
+
+#setup{
+	width:60px;
+	height:60px;
+	position:absolute;
+	left:340px;
+}
+
+.button:hover{top:-10px;}
+
+#footer {
+	margin: auto;
+	height:100px;
+	width:100%;
+}
+
+
+/*//////////////////////////////fine menu-//////////////pezzo standard per css////////////////*/
+
+
+
+
+
+/*////////////////////////////////////inizio nuovo scenario///////////////////////////////////*/
+
+.nuovo-container{
+	margin-top:50px;
+	margin-left:auto;
+	margin-right:auto;
+	position:relative;
+	width:800px;
+	height:50px;
+
+	border-bottom: 2px solid black;
+
+
+}
+
+
+
+
+.nuovo-testo{
+	color:black;
+	width:750px;
+	position:absolute;
+	text-overflow:ellipsis;
+	text-align: center;
+	font-size: 40px;
+	overflow:hidden;
+}
+
+#nuovo-image{
+	width:40px;
+	height:40px;
+	position:absolute;
+	left:650px;
+	top:5px;
+}
+
+
+
+/*////////////////////////////////////fine nuovo scenario///////////////////////////////////*/
+
+
+
+
+
+/*////////////////////////////////////lista scenari///////////////////////////////////*/
+
+.scenario-container{
+
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:30px;
+	position:relative;
+	width:710px;
+	height:50px;
+
+	border-bottom: 2px solid black;
+
+
+}
+
+.scenario{
+	color:black;
+	width:550px;
+	position:absolute;
+	text-overflow:ellipsis;
+	text-align: center;
+	font-size: 40px;
+	overflow:hidden;
+}
+
+.setup-scenario{
+	width:40px;
+	height:40px;
+	position:absolute;
+	left:550px;
+	top:5px;
+}
+
+.setup-scenario:hover{left:552px;}
+
+
+.delete-button{
+
+	text-align:center;
+	margin:0 auto;
+	font-weight:bold;
+	font-size: 10px;
+	width:60px;
+	height:20px;;
+	position: absolute;
+	background-color:red;
+	color:black;
+	left:600px;
+	top:16px;
+	border: 3px outset red;
+}
+
+/*//////////////////////////////////fine scenari/////////////////////////*/
+
+
+
+
+

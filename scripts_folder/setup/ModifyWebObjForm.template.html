@@ -1,0 +1,61 @@
+<html>
+<head>
+<link rel="stylesheet" href="/css/modify-webobj.css" type="text/css" media="all" />
+<style type="text/css">
+
+.text{font-size:110%} .title{font-size:120%}+ONOSstyle+
+
+
+</style>
+</head>
+<body><form action="" method="POST"><input type="hidden" name="mod_object" value="+ONOSself.path+">
+<table border="1" style="width:100%">
+<tr>
+<td><div class="title"> Web Object Name: </div><br/><input type="text" name="obj_name"  value="+ONOSname+"  size="50" style="width:100%; margin:5px 0px 0px 0px;"><br/></td>
+
+<td>
+<table  border="1"   style="width:100%">
+
+
+
+<tr>
+<td><div class="title">Web Object Notes: </div></td>
+<td><div class="title" >Web Object Arduino Pin: </div>Arduino pin for this web object</td>
+
+
+
+</tr>
+
+<tr>
+
+<td><br/><input type="text" name="obj_notes"  value="+ONOSnotes+"  size="50"  style="width:100%;"><br/><br/></td>
+
+
+<td><br/>Arduino pin number: <input type="text" name="obj_hardware_pin"  value="+ONOSpin+"  size="5" style="margin:0px 0px 0px 10px;" ><br/><br/></td>
+
+</tr>
+
+
+
+
+
+</table>
+</td>
+</tr>
+<tr><td><div class="title"> Web Object Type </div><ul><input type="radio" name="obj_type" value="b"+ONOStype_b+>Normal Button</ul>
+<ul><input type="radio" name="obj_type" value="sb"+ONOStype_sb+>Static Button</ul>
+<ul><input type="radio" name="obj_type"value="l"+ONOStype_l+>Web Label</ul>
+<ul><input type="radio" name="obj_type"value="d_sensor"+ONOStype_d_sensor+>Digital Sensor</ul>
+<ul><input type="radio" name="obj_type"value="a_sensor"+ONOStype_a_sensor+>Analog Sensor</ul>
+<br/><br/><br/></td><td><div class="title"> Web Object Current Status </div><ul><input type="radio" name="obj_current_status" value="0" +ONOScurrent_status0+  >0</ul><ul><input type="radio" name="obj_current_status" value="1"+ONOScurrent_status1+ >1</ul><br/> <a id="+ONOSname+"  href="/?+ONOSname+=+ONOSstatus_link+">+ONOShtml_obj+</a> <br/><xmp ><a id="+ONOSname+"  href="/?+ONOSname+=+ONOSstatus_link+">+ONOShtml_obj+</a></xmp >  <br/></td></tr>
+<br/><tr><td class="title">First Web Object Style &nbsp;</td><td class="title">Second Web Object Style</td></tr>
+<tr><td>  <textarea name="obj_style0" cols=1 rows=15 style="width:100%" >+ONOSstyle0+</textarea></td> <td>    <textarea name="obj_style1" cols=1 rows=15 style="width:100%">+ONOSstyle1+</textarea></td></tr>
+<tr><td> <div class="title">First Web Object Html </div> Html displayed on web page when the web object status is 0</td><td><div class="title">Second Web Object Html</div>Html displayed on web page when the web object status is 1</td></tr>
+<tr><td> <textarea name="obj_html0" cols=1 rows=15 style="width:100%">+ONOShtml0+</textarea></td> <td>    <textarea name="obj_html1" cols=1 rows=15 style="width:100%">+ONOShtml1+</textarea></td> </tr>
+<tr> <td><div class="title">First Web Object Command</div>Bash command executed when the web object status changes from 1 to 0 </td><td><div class="title">Second Web Object Command</div>Bash command executed when the web object status changes from 0 to 1 </td>
+</tr>
+<tr> <td> <textarea name="obj_cmd0" cols=1 rows=5 style="width:100%">+ONOScommand0+</textarea></td> <td>    <textarea name="obj_cmd1" cols=1 rows=5 style="width:100%">+ONOScommand1+</textarea></td> </tr>
+<tr><table border="1" style="width:100%"><tr>
+<td style="width:15%" ><div class="title" > Web Object Init Command</div>Command executed once only when you start the webserver</td> <td>    <textarea name="obj_init_cmd" cols=1 rows=5 style="width:100%">+ONOSinit_command+</textarea></td></tr>
+</table></tr>
+</table></div><br/><br/><br/> <input type="submit" value="Submit"><input type="reset" value="Reset"><a href="/"><div id="home">HOME</div></a><a href="/setup/obj_manager/"><div id="back">BACK</div></a></form></body></html>

@@ -1,0 +1,714 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>router_handler &mdash; ONOS  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ONOS  documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> ONOS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../arduino_handler.html">arduino_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../arduinoserial.html">arduinoserial module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../globalVar.html">globalVar module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw_node.html">hw_node module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mail_agent.html">mail_agent module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../node_query_handler.html">node_query_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pcduino.html">pcduino module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../router_handler.html">router_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_zone.html">time_zone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../web_object.html">web_object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webserver.html">webserver module</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ONOS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>router_handler</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for router_handler</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: UTF-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">globalVar</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">node_query_handler</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+
+<span class="c"># Note for raspberry users, the GPIO numbers that you program here refer to the pins</span>
+<span class="c"># of the BCM2835 and *not* the numbers on the pin header. </span>
+<span class="c"># So, if you want to activate GPIO7 on the header you should be </span>
+<span class="c"># using GPIO4 in this script. Likewise if you want to activate GPIO0</span>
+<span class="c"># on the header you should be using GPIO17 here.</span>
+
+
+<span class="c">#echo &quot;24&quot; &gt; /sys/class/gpio/export </span>
+<span class="c"># to clean up a pin exported  : echo &quot;4&quot; &gt; /sys/class/gpio/unexport</span>
+<span class="c">#echo &quot;out&quot; &gt; /sys/class/gpio/gpio24/direction</span>
+<span class="c">#echo &quot;1&quot; &gt; /sys/class/gpio/gpio24/value</span>
+
+<span class="c">#echo &quot;in&quot; &gt; /sys/class/gpio/gpio23/direction</span>
+<span class="c">#cat /sys/class/gpio/gpio23/value</span>
+
+
+
+
+<div class="viewcode-block" id="RouterHandler"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler">[docs]</a><span class="k">class</span> <span class="nc">RouterHandler</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hardwareModelDict</span><span class="p">,</span><span class="n">router_sn</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">router_sn</span><span class="o">=</span><span class="n">router_sn</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">0</span>
+    <span class="c">#os.system(&quot;echo classe &gt;&gt; numero_classi_raspberry_handler&quot;)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">old_pins_status</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="o">=</span><span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;hwName&quot;</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">__hardware_type</span><span class="o">=</span><span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;hardware_type&quot;</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">__node_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">router_sn</span>   <span class="c"># RouterGL0001</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">=</span><span class="mi">0</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span><span class="o">=</span><span class="p">[]</span>
+      <span class="c">#self.read_thread_running=0   </span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">arduino_used</span><span class="o">=</span><span class="mi">0</span>  
+      <span class="bp">self</span><span class="o">.</span><span class="n">local_pin_enabled</span><span class="o">=</span><span class="mi">0</span>
+    
+      <span class="bp">self</span><span class="o">.</span><span class="n">__maxPin</span><span class="o">=</span><span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;max_pin&quot;</span><span class="p">]</span>    <span class="c">#17 -2 used for uart</span>
+    
+      <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span><span class="o">=</span><span class="n">getListUsedPinsByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">)</span>
+      <span class="k">print</span> <span class="s">&quot;pin used =&quot;</span>
+      <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span>
+      <span class="c">#print &quot;digital input router pin total number= &quot;</span>
+      <span class="c">#print (getListPinsConfigByHardwareModel(self.hwModelName,&quot;digital_input&quot;))</span>
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">router_input_pin</span><span class="o">=</span><span class="n">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">,</span><span class="s">&quot;digital_input&quot;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">total_in_pin</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">router_input_pin</span><span class="p">)</span> <span class="c">#get the number of digital inputs</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hardware_type</span><span class="o">==</span><span class="s">&quot;rasberry_b_rev2_only&quot;</span><span class="p">:</span>  <span class="c">#banana to import this from hardwareModelDict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">1</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hardware_type</span><span class="o">==</span><span class="s">&quot;gl.inet_only&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">1</span>
+
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hardware_type</span><span class="o">==</span><span class="s">&quot;gl.inet_with_arduino2009&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arduino_used</span><span class="o">=</span><span class="mi">1</span>
+        <span class="n">arduino</span><span class="o">=</span><span class="n">arduino_handler</span><span class="o">.</span><span class="n">ArduinoHandler</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">1</span>
+
+
+      <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&quot;/sys/class/gpio&quot;</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="c">#if the directory exist ,then the hardware has embedded IO pins</span>
+        <span class="k">print</span> <span class="s">&quot;discovered local hardware io pins&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">0</span>   <span class="c">#disable embedded pins because the harware hasn&#39;t got any</span>
+        <span class="k">print</span> <span class="s">&quot;no embedded IO pins founded , are you running onos on a pc?&quot;</span>
+
+      <span class="n">error_number</span><span class="o">=</span><span class="mi">0</span>   <span class="c">#count how many errors..</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>  <span class="c"># create the pin var in the dictionary</span>
+          <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;i try to execute echo &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; &gt; /sys/class/gpio/export &quot;</span>
+            <span class="c">#os.popen(&#39;echo &#39;+str(pin)+&#39; &gt; /sys/class/gpio/unexport &#39;).read()  #remove a GPIO file access</span>
+            <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+              <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;echo &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; &gt; /sys/class/gpio/unexport &#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="c">#os.popen(&#39;echo &#39;+str(pin)+&#39; &gt; /sys/class/gpio/export &#39;).read()  #Create a GPIO file access</span>
+              <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;echo &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; &gt; /sys/class/gpio/export &#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+          <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+            <span class="n">error_number</span><span class="o">=</span><span class="n">error_number</span><span class="o">+</span><span class="mi">1</span>
+            <span class="k">print</span> <span class="s">&quot;error can&#39;t create GPIO pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; and set its mode :&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error can&#39;t create GPIO pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; and set its mode :&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+          <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+          <span class="k">if</span> <span class="n">pin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">router_input_pin</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>  <span class="c"># set the pin as input</span>
+            <span class="k">try</span><span class="p">:</span>
+              <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;echo in &gt; /sys/class/gpio/gpio&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/direction&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>   
+              <span class="c">#os.popen(&#39;echo in &gt; /sys/class/gpio/gpio&#39;+str(pin)+&#39;/direction&#39;).read()  #set the GPIO as input  </span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+              <span class="k">print</span> <span class="s">&quot;error trying to read a router pin :&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s">&quot;error trying to read a router pin :&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+              <span class="n">error_number</span><span class="o">=</span><span class="n">error_number</span><span class="o">+</span><span class="mi">1</span>
+            
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+              <span class="k">print</span> <span class="s">&quot;i try to read the status with: cat /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/value&quot;</span>
+              <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s">&quot;cat /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/value&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+              <span class="c">#status=os.popen(&quot;cat /sys/class/gpio/gpio&quot;+str(pin)+&quot;/value&quot;).read()</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">status</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+              <span class="k">print</span> <span class="s">&quot;error in reading pin&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error in reading pin&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="p">)</span> 
+              <span class="n">error_number</span><span class="o">=</span><span class="n">error_number</span><span class="o">+</span><span class="mi">1</span>
+
+          <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>  <span class="c"># set the pin as output</span>
+            <span class="k">print</span> <span class="s">&quot;i try to set the pin as output&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+              <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                <span class="c">#os.popen(&#39;echo out &gt; /sys/class/gpio/gpio&#39;+str(pin)+&#39;/direction&#39;).read()  #set the GPIO as output </span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;echo out &gt; /sys/class/gpio/gpio&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/direction&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+              <span class="n">error_number</span><span class="o">=</span><span class="n">error_number</span><span class="o">+</span><span class="mi">1</span>
+              <span class="k">print</span> <span class="s">&quot;error setting pin&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span> <span class="s">&quot;as output&quot;</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s">&quot;error setting pin&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span> <span class="s">&quot;as output&quot;</span><span class="p">)</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="n">error_number</span> <span class="o">&gt;</span><span class="mi">5</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">=</span><span class="mi">0</span>  <span class="c">#disable the bash pin command if too many error happen</span>
+          <span class="k">print</span> <span class="s">&quot;too many error commandi the router pins  , are you running onos on a pc?&quot;</span>
+          <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;too many error commandi the router pins  , are you running onos on a pc?&quot;</span> <span class="p">)</span>
+<span class="c">#        if ( (len (self.pin_numbers) &gt;0)&amp;(self.bash_pin_enable==1)): </span>
+<span class="c">#        #if the router hardware has any hardware pins ..then run the thread in order to read them</span>
+<span class="c">#          self.exit==0</span>
+<span class="c">#          self.tr_read = threading.Thread(target=self.read_router_pins)</span>
+<span class="c">#          self.tr_read.daemon = True  #make the thread a daemon thread</span>
+
+<span class="c">#          self.tr_read.start()</span>
+<span class="c">#        else:</span>
+<span class="c">#          print &quot;i don&#39;t start the reading thread because i can&#39;t read the hw pins&quot;</span>
+
+
+
+
+
+
+<div class="viewcode-block" id="RouterHandler.read_router_pins"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler.read_router_pins">[docs]</a>    <span class="k">def</span> <span class="nf">read_router_pins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="c"># thread  function to read changing of pin status</span>
+      <span class="c">#print &quot;read_router_pins() executed&quot;</span>
+      <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span><span class="p">)</span> <span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">==</span><span class="mi">1</span><span class="p">)):</span> 
+        <span class="c">#if the router hardware has any hardware pins ..then run the thread in order to read them</span>
+        <span class="c">#print &quot;starting to read pins&quot;</span>
+        <span class="n">x</span><span class="o">=</span><span class="mi">0</span> <span class="c">#void operation</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;i don&#39;t start the reading function because i can&#39;t read the router hw pins&quot;</span>
+        <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;i don&#39;t start the reading function because i can&#39;t read the router hw pins&quot;</span><span class="p">)</span>  
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_in_pin</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span><span class="c">#there is no input pin to read</span>
+        <span class="k">print</span> <span class="s">&quot;there is no input pin to read&quot;</span>
+        <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;there is no input pin to read&quot;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="c">#time.sleep(3)  #wait for the webserver</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span> <span class="c"># if is not exiting time</span>
+
+        <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span><span class="p">:</span>
+          <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span>
+          <span class="c">#print &quot;pin to read=&quot;+str(pin)</span>
+
+          
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>  <span class="c">#if the pin is an input one</span>
+
+            <span class="n">current_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> 
+            <span class="c">#total_in_pin=total_in_pin+1 </span>
+            <span class="c">#print &quot;foud a input pin in the router, pin number&quot;+str(pin)</span>
+            <span class="c">#try:</span>
+            <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+              <span class="n">status</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s">&quot;cat /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/value&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="c">#status=os.popen(&quot;cat /sys/class/gpio/gpio&quot;+str(pin)+&quot;/value&quot;).read()</span>
+            <span class="n">current_state</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">status</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+              <span class="c">#print &quot;the current pin status is: &quot;+str(current_state)</span>
+            <span class="c">#except:</span>
+            <span class="c">#  print &quot;error in reading pin&quot;+str(pin)</span>
+            <span class="c">#  continue  #restart the loop</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">!=</span><span class="n">current_state</span><span class="p">:</span>  <span class="c">#if the value is different from the old one</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="n">current_state</span>  <span class="c"># update the old pin status with the current one</span>
+              <span class="k">print</span> <span class="s">&quot;the router pin: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="o">+</span><span class="s">&quot; input status changed to: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+
+
+              <span class="c">#priority=99   usersDict[&quot;onos_node&quot;][&quot;priority&quot;]               </span>
+              <span class="n">priority</span><span class="o">=</span><span class="mi">99</span>   <span class="c">#99 will allow the x but will not increase the object priority       </span>
+              <span class="n">priorityCmdQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="p">{</span><span class="s">&quot;cmd&quot;</span><span class="p">:</span><span class="s">&quot;setNodePin&quot;</span><span class="p">,</span><span class="s">&quot;node_sn&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">router_sn</span><span class="p">,</span><span class="s">&quot;pinNumber&quot;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">pin</span><span class="p">),</span><span class="s">&quot;status_to_set&quot;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">current_state</span><span class="p">),</span><span class="s">&quot;write_to_hw&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user&quot;</span><span class="p">:</span><span class="s">&quot;onos_node&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="n">priority</span><span class="p">,</span><span class="s">&quot;mail_report_list&quot;</span><span class="p">:[]</span> <span class="p">}</span> <span class="p">)</span>
+
+              
+
+
+
+      <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+</div>
+<div class="viewcode-block" id="RouterHandler.composeChangeNodeOutputPinStatusQuery"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler.composeChangeNodeOutputPinStatusQuery">[docs]</a>    <span class="k">def</span> <span class="nf">composeChangeNodeOutputPinStatusQuery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pinNumbers</span><span class="p">,</span><span class="n">node_obj</span><span class="p">,</span><span class="n">objName</span><span class="p">,</span><span class="n">status_to_set</span><span class="p">,</span><span class="n">node_serial_number</span><span class="p">,</span><span class="n">out_type</span><span class="p">,</span><span class="n">user</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">mail_report_list</span><span class="p">)</span> <span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;composeChangeNodeOutputPinStatusQuery() executed&quot;</span>
+
+      <span class="n">numeric_serial_number</span><span class="o">=</span><span class="n">node_serial_number</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>     <span class="c"># example get 0001  from &quot;ProminiA0001&quot;</span>
+      <span class="n">address</span><span class="o">=</span><span class="n">node_obj</span><span class="o">.</span><span class="n">getNodeAddress</span><span class="p">()</span>
+      <span class="n">base_query</span><span class="o">=</span><span class="s">&#39;&#39;</span>           <span class="c">#&#39; &#39;&#39;http://&#39;&#39;&#39;+address+&#39;&#39;&#39;:&#39;&#39;&#39;+str(node_webserver_port)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">out_type</span><span class="o">==</span><span class="s">&quot;sr_relay&quot;</span><span class="p">):</span>
+        <span class="n">pin1</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">pin0</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">pin0</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">2</span><span class="p">):</span>
+          <span class="n">pin0</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pin0</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">pin1</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">2</span><span class="p">):</span>
+          <span class="n">pin1</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pin1</span>
+
+  
+        <span class="n">query</span><span class="o">=</span><span class="n">base_query</span><span class="o">+</span><span class="s">&#39;&#39;&#39;onos_r&#39;&#39;&#39;</span><span class="o">+</span><span class="n">pin0</span><span class="o">+</span><span class="n">pin1</span><span class="o">+</span><span class="s">&#39;&#39;&#39;v&#39;&#39;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status_to_set</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;&#39;&#39;s&#39;&#39;&#39;</span><span class="o">+</span><span class="n">numeric_serial_number</span><span class="o">+</span><span class="s">&#39;&#39;&#39;_#]&#39;&#39;&#39;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="n">out_type</span><span class="o">==</span><span class="s">&quot;digital_output&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c">#if c is not a list , trasform it in a list of one element</span>
+          <span class="n">pinNumbers</span><span class="o">=</span><span class="p">[</span><span class="n">pinNumbers</span><span class="p">]</span>
+        <span class="n">pin</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">2</span><span class="p">):</span>
+          <span class="n">pin</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pin</span>
+
+        <span class="c">#onos_d07v001s0001_#]</span>
+        <span class="n">query</span><span class="o">=</span><span class="n">base_query</span><span class="o">+</span><span class="s">&#39;&#39;&#39;onos_d&#39;&#39;&#39;</span><span class="o">+</span><span class="n">pin</span><span class="o">+</span><span class="s">&#39;&#39;&#39;v&#39;&#39;&#39;</span><span class="o">+</span><span class="s">&#39;&#39;&#39;00&#39;&#39;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status_to_set</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;&#39;&#39;s&#39;&#39;&#39;</span><span class="o">+</span><span class="n">numeric_serial_number</span><span class="o">+</span><span class="s">&#39;&#39;&#39;_#]&#39;&#39;&#39;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="n">out_type</span><span class="o">==</span><span class="s">&quot;servo_output&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c">#if c is not a list , trasform it in a list of one element</span>
+          <span class="n">pinNumbers</span><span class="o">=</span><span class="p">[</span><span class="n">pinNumbers</span><span class="p">]</span>
+        <span class="n">pin</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">2</span><span class="p">):</span>
+          <span class="n">pin</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pin</span>
+        <span class="n">status_to_set</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">status_to_set</span><span class="p">)</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">status_to_set</span><span class="p">))</span> <span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">status_to_set</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">status_to_set</span> 
+
+        <span class="c">#onos_s07v180s0001_#]</span>
+        <span class="n">query</span><span class="o">=</span><span class="n">base_query</span><span class="o">+</span><span class="s">&#39;&#39;&#39;onos_s&#39;&#39;&#39;</span><span class="o">+</span><span class="n">pin</span><span class="o">+</span><span class="s">&#39;&#39;&#39;v&#39;&#39;&#39;</span><span class="o">+</span><span class="n">status_to_set</span><span class="o">+</span><span class="s">&#39;&#39;&#39;s&#39;&#39;&#39;</span><span class="o">+</span><span class="n">numeric_serial_number</span><span class="o">+</span><span class="s">&#39;&#39;&#39;_#]&#39;&#39;&#39;</span> 
+
+
+      <span class="k">if</span> <span class="p">(</span><span class="n">out_type</span><span class="o">==</span><span class="s">&quot;analog_output&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c">#if c is not a list , trasform it in a list of one element</span>
+          <span class="n">pinNumbers</span><span class="o">=</span><span class="p">[</span><span class="n">pinNumbers</span><span class="p">]</span>
+        <span class="n">pin</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">2</span><span class="p">):</span>
+          <span class="n">pin</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">pin</span>
+        <span class="n">status_to_set</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">status_to_set</span><span class="p">)</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">status_to_set</span><span class="p">))</span> <span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+          <span class="n">status_to_set</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="o">+</span><span class="n">status_to_set</span> 
+
+        <span class="c">#onos_a07v100s0001_#]</span>
+        <span class="n">query</span><span class="o">=</span><span class="n">base_query</span><span class="o">+</span><span class="s">&#39;&#39;&#39;onos_a&#39;&#39;&#39;</span><span class="o">+</span><span class="n">pin</span><span class="o">+</span><span class="s">&#39;&#39;&#39;v&#39;&#39;&#39;</span><span class="o">+</span><span class="n">status_to_set</span><span class="o">+</span><span class="s">&#39;&#39;&#39;s&#39;&#39;&#39;</span><span class="o">+</span><span class="n">numeric_serial_number</span><span class="o">+</span><span class="s">&#39;&#39;&#39;_#]&#39;&#39;&#39;</span> 
+
+
+
+
+
+
+
+
+      <span class="k">print</span> <span class="s">&quot;query to remote node:&quot;</span><span class="o">+</span><span class="n">query</span>
+
+     
+      <span class="n">queryToNodeQueue</span><span class="o">.</span><span class="n">put</span><span class="p">({</span><span class="s">&quot;node_serial_number&quot;</span><span class="p">:</span><span class="n">node_serial_number</span><span class="p">,</span><span class="s">&quot;address&quot;</span><span class="p">:</span><span class="n">address</span><span class="p">,</span><span class="s">&quot;query&quot;</span><span class="p">:</span><span class="n">query</span><span class="p">,</span><span class="s">&quot;objName&quot;</span><span class="p">:</span><span class="n">objName</span><span class="p">,</span><span class="s">&quot;status_to_set&quot;</span><span class="p">:</span><span class="n">status_to_set</span><span class="p">,</span><span class="s">&quot;user&quot;</span><span class="p">:</span><span class="n">user</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="n">priority</span><span class="p">,</span><span class="s">&quot;mail_report_list&quot;</span><span class="p">:</span><span class="n">mail_report_list</span><span class="p">})</span>
+
+      <span class="k">with</span> <span class="n">lock1_current_node_handler_list</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;lock1a from router_handler&quot;</span><span class="o">+</span><span class="n">node_serial_number</span>
+        <span class="k">print</span> <span class="s">&quot;current_node_handler_list:&quot;</span><span class="p">,</span><span class="n">current_node_handler_list</span>
+        <span class="n">node_not_being_contacted</span><span class="o">=</span><span class="p">(</span><span class="n">node_serial_number</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_node_handler_list</span><span class="p">)</span>
+
+      <span class="c">#with lock2_query_threads:</span>
+      <span class="c">#query_threads_number=node_query_threads_executing</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="n">node_not_being_contacted</span><span class="p">)</span> <span class="p">:</span> <span class="c">#there is not a query thread running for this node  thread executing </span>
+        <span class="k">print</span> <span class="s">&quot;no handler running for this node&quot;</span>
+
+        <span class="c">#handle_new_query_to_remote_node(node_serial_number,address,query,objName,status_to_set,user,priority,mail_report_list)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">node_query_threads_executing</span><span class="o">&lt;</span><span class="n">max_number_of_node_query_threads_executing</span><span class="p">):</span> <span class="c"># there are less than x node query thread running</span>
+          <span class="n">tr_handle_new_query_to_remote_node</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">handle_new_query_to_remote_node_thread</span><span class="p">)</span>
+          <span class="n">tr_handle_new_query_to_remote_node</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c">#make the thread a daemon thread</span>
+          <span class="n">tr_handle_new_query_to_remote_node</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>   
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;too many node_query_threads_executing: &quot;</span><span class="p">,</span><span class="n">query_threads_number</span>
+
+
+      <span class="k">else</span><span class="p">:</span><span class="c">#there is already a query thread running for this node  </span>
+        <span class="k">print</span> <span class="s">&quot;there is already a query thread running for this node :&quot;</span><span class="o">+</span><span class="n">node_serial_number</span> 
+
+      <span class="k">return</span><span class="p">()</span> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<div class="viewcode-block" id="RouterHandler.outputWrite"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler.outputWrite">[docs]</a>    <span class="k">def</span> <span class="nf">outputWrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_serial_number</span><span class="p">,</span><span class="n">pinList</span><span class="p">,</span><span class="n">statusList</span><span class="p">,</span><span class="n">node_obj</span><span class="p">,</span><span class="n">objName</span><span class="p">,</span><span class="n">previous_status</span><span class="p">,</span><span class="n">statusToSet</span><span class="p">,</span><span class="n">output_type</span><span class="p">,</span><span class="n">user</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">mail_report_list</span><span class="p">):</span>
+      
+      
+      <span class="k">print</span> <span class="s">&quot;executed router_handler digitalwrite()&quot;</span>
+      <span class="n">node_address</span><span class="o">=</span><span class="n">node_obj</span><span class="o">.</span><span class="n">getNodeAddress</span><span class="p">()</span>
+      <span class="n">remoteNodeHwModel</span><span class="o">=</span><span class="n">node_obj</span><span class="o">.</span><span class="n">getNodeHwModel</span><span class="p">()</span>
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;error len pinList&lt;1 ,len=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">))</span>
+        <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s">&quot;error len pinList&lt;1 ,len=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)))</span>
+
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)</span><span class="o">!=</span><span class="nb">len</span><span class="p">(</span><span class="n">statusList</span><span class="p">):</span>
+
+        <span class="k">print</span> <span class="s">&quot;error in the router handler, len pinlist!=statusList&quot;</span>
+        <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error in the router handler, len pinlist!=statusList&quot;</span> <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span> 
+          <span class="k">print</span> <span class="s">&quot;len pinlist=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">))</span><span class="o">+</span> <span class="s">&quot; len statusList=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">statusList</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;can&#39;t print len of statusList or pinlist&quot;</span>
+          <span class="k">print</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> 
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+
+   <span class="c">#   if (previous_status==statusToSet): #if nothing needs to be changed...i will return</span>
+   <span class="c">#     print &quot;statusToSet equal to previous status..&quot;</span>
+   <span class="c">#     return(1)</span>
+
+
+
+      <span class="k">if</span> <span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">node_address</span><span class="p">))</span><span class="o">==</span><span class="s">&quot;0&quot;</span><span class="p">):</span> <span class="c">#if is selected the router as node </span>
+        <span class="k">print</span> <span class="s">&quot;the node selected is the router one&quot;</span>      
+
+        <span class="k">if</span> <span class="p">((</span><span class="n">output_type</span><span class="o">==</span><span class="s">&quot;analog_output&quot;</span><span class="p">)</span><span class="ow">or</span><span class="p">(</span><span class="n">output_type</span><span class="o">==</span><span class="s">&quot;servo_output&quot;</span><span class="p">)):</span>
+          <span class="k">print</span> <span class="s">&quot;error the router cannot handle &quot;</span><span class="o">+</span><span class="n">output_type</span><span class="o">+</span><span class="s">&quot;  type&quot;</span>
+          <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s">&quot;error the router cannot handle &quot;</span><span class="o">+</span><span class="n">output_type</span><span class="o">+</span><span class="s">&quot;  type&quot;</span><span class="p">)</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span> <span class="c"># if the router has  IO pins</span>
+          <span class="k">print</span> <span class="s">&quot;the router has the pin io enabled&quot;</span>
+
+          <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+
+          <span class="k">print</span> <span class="s">&quot;len pinlist=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">))</span>
+          <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">pinNumber</span><span class="o">=</span><span class="n">pinList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">tmp_status_to_set</span><span class="o">=</span><span class="n">statusList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">pinNumber</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span> <span class="p">)</span><span class="ow">or</span><span class="p">((</span><span class="n">tmp_status_to_set</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="ow">and</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="o">!=</span><span class="mi">1</span><span class="p">)):</span>
+              <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range of rasberry &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="o">+</span><span class="s">&quot;pin_number=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&#39;error the  pin value is out of range of rasberry &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="o">+</span><span class="s">&quot;pin_number=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span> <span class="p">)</span>
+              <span class="k">print</span> <span class="s">&quot;status to set=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>  <span class="s">&quot;status to set=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">))</span>
+              <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pinNumber</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>  <span class="c"># if the pin is setted as input.. then set it as output</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pinNumber</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+              <span class="k">print</span> <span class="s">&quot;pin setted as input i try to set it as output&quot;</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;pin setted as input i try to set it as output&quot;</span><span class="p">)</span> 
+              <span class="k">try</span><span class="p">:</span>
+                <span class="c">#os.system(&#39;echo out &gt; /sys/class/gpio/gpio&#39;+str(pinNumber)+&#39;/direction&#39;)  #set the GPIO as output   </span>
+                <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                  <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;echo out &gt; /sys/class/gpio/gpio&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/direction&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="k">print</span> <span class="s">&quot;pin&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; setted as output &quot;</span>
+              <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;error can&#39;t configure the pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; as output and set it to &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span>   
+                <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error can&#39;t configure the pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; as output and set it to &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span> <span class="p">)</span>
+                <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> 
+                <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+                <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+              <span class="c">#os.popen(&#39;echo &#39;+str(tmp_status_to_set)+&#39; &gt; /sys/class/gpio/gpio&#39;+str(pinNumber)+&#39;/value&#39;).read() </span>
+              <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s">&#39;echo &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; &gt; /sys/class/gpio/gpio&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/value&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+              <span class="k">print</span> <span class="s">&quot;pin&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; setted to &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+              <span class="k">print</span> <span class="s">&quot;error can&#39;t set the pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; to &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span>   
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error can&#39;t set the pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; to &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span>   <span class="p">)</span>
+              <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> 
+              <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+            <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+          <span class="c">#self.makeChangeWebObjectStatusQuery(objName,statusToSet)</span>
+
+
+      
+          <span class="n">priorityCmdQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="p">{</span><span class="s">&quot;cmd&quot;</span><span class="p">:</span><span class="s">&quot;setSts&quot;</span><span class="p">,</span><span class="s">&quot;webObjectName&quot;</span><span class="p">:</span><span class="n">objName</span><span class="p">,</span><span class="s">&quot;status_to_set&quot;</span><span class="p">:</span><span class="n">statusToSet</span><span class="p">,</span><span class="s">&quot;write_to_hw&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user&quot;</span><span class="p">:</span><span class="n">user</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="n">priority</span><span class="p">,</span><span class="s">&quot;mail_report_list&quot;</span><span class="p">:</span><span class="n">mail_report_list</span> <span class="p">})</span>
+          <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> 
+          
+        <span class="k">else</span><span class="p">:</span> <span class="c">#the router has&#39;t got  IO pins</span>
+
+          <span class="k">print</span> <span class="s">&quot;the router has no IO pin&quot;</span>
+          <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        
+
+
+      <span class="k">if</span> <span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">node_address</span><span class="p">))</span><span class="o">==</span><span class="s">&quot;1&quot;</span><span class="p">):</span> <span class="c">#a local arduino selected   not implemented yet </span>
+        <span class="k">print</span> <span class="s">&quot;i write to/from a remote node selected&quot;</span>
+        <span class="c">#self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove</span>
+        <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">arduino_used</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node_address</span><span class="o">==</span><span class="s">&quot;1&quot;</span><span class="p">)):</span>  <span class="c">#check if arduino is enabled correctly and is selected with 1</span>
+          <span class="k">print</span> <span class="s">&quot;digital write used on arduino&quot;</span>
+          <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)</span> <span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span> 
+            <span class="k">print</span> <span class="s">&quot;i have to set more than a pin at the same time&quot;</span>
+              
+            <span class="n">packet_list</span><span class="o">=</span><span class="p">[]</span>
+              
+            <span class="n">i</span><span class="o">=</span><span class="mi">0</span> 
+            <span class="n">pinList</span><span class="o">=</span><span class="n">pinList</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span> <span class="c">#order the list by pin number</span>
+            <span class="n">previus_section</span><span class="o">=-</span><span class="mi">1</span>
+            <span class="n">section</span><span class="o">=</span><span class="n">previus_section</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">i</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)):</span>
+              <span class="n">section</span><span class="o">=</span><span class="n">node_obj</span><span class="o">.</span><span class="n">getNodeSectionStatusByPin</span><span class="p">(</span><span class="n">pinList</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+              <span class="k">if</span><span class="p">(</span><span class="n">section</span><span class="o">!=</span><span class="n">previus_section</span><span class="p">):</span>
+                <span class="n">previus_section</span><span class="o">=</span><span class="n">section</span>
+                <span class="n">section_status</span><span class="o">=</span><span class="n">node_obj</span><span class="o">.</span><span class="n">getNodeSectionStatusByPin</span><span class="p">(</span><span class="n">pinList</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span><span class="c">#get the section status </span>
+                <span class="n">packet_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="p">,</span><span class="n">section_status</span><span class="p">)</span>
+              <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+              <span class="c">#now inside  packet_list i have a tuple </span>
+              <span class="c">#where the first element is the pin byte section and the second the data is the status byte for that section</span>
+            <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">packet_list</span><span class="p">:</span>  <span class="c">#write to arduino all the registers</span>
+              <span class="n">arduino</span><span class="o">.</span><span class="n">digitalWriteSection</span><span class="p">(</span><span class="n">node_address</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">objName</span><span class="p">,</span><span class="n">previous_status</span><span class="p">,</span><span class="n">statusToSet</span><span class="p">)</span>
+
+
+          <span class="k">else</span><span class="p">:</span> <span class="c">#only one pin to set           </span>
+            <span class="n">arduino</span><span class="o">.</span><span class="n">digitalWrite</span><span class="p">(</span><span class="n">node_address</span><span class="p">,</span><span class="n">pinList</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">statusList</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">objName</span><span class="p">,</span><span class="n">previous_status</span><span class="p">,</span><span class="n">statusToSet</span><span class="p">)</span><span class="c">#write to arduino to set a pin        </span>
+
+
+
+      <span class="k">else</span><span class="p">:</span> <span class="c">#str(node_address))!=&quot;1&quot; and !=0 ---&gt;    remote node selected</span>
+        <span class="k">print</span> <span class="s">&quot;i write to/from a remote node with address:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">node_address</span><span class="p">)</span>
+
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">print</span> <span class="s">&quot;len address=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">node_address</span><span class="p">))</span>
+        <span class="k">print</span> <span class="s">&quot;len pinlist=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">))</span>
+        
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">output_type</span><span class="o">==</span><span class="s">&quot;sr_relay&quot;</span><span class="p">):</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">composeChangeNodeOutputPinStatusQuery</span><span class="p">(</span><span class="n">pinList</span><span class="p">,</span><span class="n">node_obj</span><span class="p">,</span><span class="n">objName</span><span class="p">,</span><span class="n">statusToSet</span><span class="p">,</span><span class="n">node_serial_number</span><span class="p">,</span><span class="n">output_type</span><span class="p">,</span><span class="n">user</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">mail_report_list</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;error number of pins !=2&quot;</span>
+            <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error number of pins !=2&quot;</span> <span class="p">)</span> 
+            <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">pinList</span><span class="p">)</span> <span class="p">:</span>
+          <span class="n">pinNumber</span><span class="o">=</span><span class="n">pinList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+          <span class="n">tmp_status_to_set</span><span class="o">=</span><span class="n">statusList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">pinNumber</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_obj</span><span class="o">.</span><span class="n">getUsedPins</span><span class="p">()):</span>
+            <span class="k">print</span> <span class="s">&#39;error the  pin value is out of range of node :&#39;</span><span class="o">+</span><span class="n">remoteNodeHwModel</span><span class="o">+</span><span class="s">&quot;pin_number=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+            <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&#39;error the  pin value is out of range of node :&#39;</span><span class="o">+</span><span class="n">remoteNodeHwModel</span><span class="o">+</span><span class="s">&quot;pin_number=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span> <span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;status to set=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span>
+            <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;status to set=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_status_to_set</span><span class="p">)</span> <span class="p">)</span>
+            <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+            <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">))</span>
+            <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+          <span class="bp">self</span><span class="o">.</span><span class="n">composeChangeNodeOutputPinStatusQuery</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">node_obj</span><span class="p">,</span><span class="n">objName</span><span class="p">,</span><span class="n">tmp_status_to_set</span><span class="p">,</span><span class="n">node_serial_number</span><span class="p">,</span><span class="n">output_type</span><span class="p">,</span><span class="n">user</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">mail_report_list</span><span class="p">)</span>
+          <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="c">#start a thread query to the node</span>
+
+                        
+
+      <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> 
+
+
+
+
+</div>
+<div class="viewcode-block" id="RouterHandler.setHwPinMode"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler.setHwPinMode">[docs]</a>    <span class="k">def</span> <span class="nf">setHwPinMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_address</span><span class="p">,</span><span class="n">pinNumber</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
+      <span class="k">print</span> <span class="s">&quot;router_handler setHwPinMode() executed&quot;</span>
+    
+      <span class="k">if</span> <span class="n">node_address</span><span class="o">==</span><span class="s">&quot;0&quot;</span> <span class="p">:</span>  <span class="c">#the node is the router itself </span>
+
+        <span class="k">if</span> <span class="n">pinNumber</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">router_pin_numbers</span> <span class="p">:</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bash_pin_enable</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;DOUTPUT&quot;</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pinNumber</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+              <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                  <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s">&#39;echo &quot;out&quot; &gt; /sys/class/gpio/gpio&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/direction&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="c">#os.popen(&#39;echo &quot;out&quot; &gt; /sys/class/gpio/gpio&#39;+str(pinNumber)+&#39;/direction&#39;).read()  #set the GPIO as output</span>
+              <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;error can&#39;t set the direction of the pin:  /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+                <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error can&#39;t set the direction of the pin:  /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span> <span class="p">)</span>
+                <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> 
+              <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">:</span> <span class="c">#check every pin to understand if there are pin setted as input </span>
+                <span class="k">if</span> <span class="n">a</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">total_in_pin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_in_pin</span><span class="o">+</span><span class="mi">1</span>   
+                
+
+            <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;DINPUT&quot;</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">pins_mode</span><span class="p">[</span><span class="n">pinNumber</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+              <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">lock_bash_cmd</span><span class="p">:</span>
+                  <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s">&#39;echo &quot;in&quot; &gt; /sys/class/gpio/gpio&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/direction&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">close_fds</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="c">#os.popen(&#39;echo &quot;in&quot; &gt; /sys/class/gpio/gpio&#39;+str(pinNumber)+&#39;/direction&#39;).read()  #set the GPIO as input  </span>
+              <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;error can&#39;t set the direction of the pin:  /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">)</span>
+                <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s">&quot;error can&#39;t set the direction of the pin:  /sys/class/gpio/gpio&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pinNumber</span><span class="p">))</span> 
+                <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> 
+              <span class="c">#if self.read_thread_running==0:  #if the thread is not running then run it</span>
+              <span class="c">#  self.tr_read = threading.Thread(target=self.read_router_pins)</span>
+              <span class="c">#  self.tr_read.daemon = True  #make the thread a daemon thread</span>
+              <span class="c">#  self.tr_read.start()</span>
+                
+          <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;the router has no IO pin&quot;</span>
+            <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pinNumber out of range&quot;</span>   
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">else</span><span class="p">:</span>  <span class="c">#banana  make there the configuration pin of remote nodes</span>
+        <span class="k">print</span> <span class="s">&quot;the node address to write to is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">node_address</span><span class="p">)</span>       
+
+</div>
+<div class="viewcode-block" id="RouterHandler.getRouterName"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler.getRouterName">[docs]</a>    <span class="k">def</span> <span class="nf">getRouterName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">)</span>
+
+
+</div>
+<div class="viewcode-block" id="RouterHandler.close"><a class="viewcode-back" href="../router_handler.html#router_handler.RouterHandler.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">=</span><span class="mi">1</span>
+      <span class="k">print</span> <span class="s">&quot;class router_handler destroyed&quot;</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="p">)</span>
+      <span class="k">except</span> <span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;tried to close serial port&quot;</span>
+</pre></div></div></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
