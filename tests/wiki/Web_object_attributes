@@ -1,0 +1,22 @@
+'''Web object attributes  :
+'''
+
+Each web object will have these attributes:
+
+
+* '''objname'''        : the web object name
+* '''node_sn'''        : the serial number of the node which the web object is part (use 9999 if the web object doesn't belong to a node )
+* '''pins'''           : a list with the hardware pin number of the node relative to the web object (use [9999] if it has not hw pins)
+* '''type'''           : the web object type (visit this for the list of possible type)
+* '''status'''         : the current web object status   
+* '''previous_status''': the previous web object status
+* '''htmlDict'''       : a dictionary where the keys are the status values and the data is the html to display for each status
+* '''styleDict'''      : a dictionary where the keys are the status values and the data is the style to use for each status
+* '''cmdDict'''        : a dictionary where the keys are the status values and the data is the linux shell command to execute when the webobject became equal to the relative status key 
+* '''own'''            : the username of the web object owner (the one who created it)
+* '''grp'''            : the group list the user must belong to in order to set the status (linux style)
+* '''perm'''           : the permission the user must have in order to change the status (linux style) , expressed in octal form like 777  ,read write execute (execute is not used)
+* '''priority'''       : the priority of the last user that has setted the status, if a user has a minor priority than the one requested it will not be able to change the status.
+* '''mail_l'''         : list of mail addresses which onos will send a mail when the object status changes
+* '''scenarios'''            : list of attached scenarios
+
