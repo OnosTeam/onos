@@ -1,0 +1,2006 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>globalVar &mdash; ONOS  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ONOS  documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> ONOS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../arduino_handler.html">arduino_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../arduinoserial.html">arduinoserial module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../globalVar.html">globalVar module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw_node.html">hw_node module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mail_agent.html">mail_agent module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../node_query_handler.html">node_query_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pcduino.html">pcduino module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../router_handler.html">router_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_zone.html">time_zone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../web_object.html">web_object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webserver.html">webserver module</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ONOS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>globalVar</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for globalVar</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This module is imported from all the others and it stores the global variables and some global functions.</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">Queue</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">string</span><span class="o">,</span><span class="nn">cgi</span><span class="o">,</span><span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">codecs</span> <span class="c">#to save and open utf8 files</span>
+<span class="kn">import</span> <span class="nn">socket</span>  
+
+<span class="kn">from</span> <span class="nn">signal</span> <span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">SIG_DFL</span>  <span class="c"># to prevent [Errno 32] Broken pipe</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">datetime</span><span class="o">,</span><span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">curdir</span><span class="p">,</span> <span class="n">sep</span>
+<span class="kn">import</span> <span class="nn">BaseHTTPServer</span>
+<span class="kn">from</span> <span class="nn">BaseHTTPServer</span> <span class="kn">import</span> <span class="n">BaseHTTPRequestHandler</span><span class="p">,</span> <span class="n">HTTPServer</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">gmtime</span><span class="p">,</span> <span class="n">strftime</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="c">#import urllib2,urllib </span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="c">#import httplib</span>
+<span class="kn">import</span> <span class="nn">thread</span><span class="o">,</span><span class="nn">threading</span><span class="o">,</span><span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">binascii</span>  <span class="c">#used by weobject class for the permission </span>
+<span class="kn">import</span> <span class="nn">re</span>  <span class="c">#regular expression</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>   <span class="c">#used by mail_agent to send mail</span>
+
+
+
+<span class="c"># Add vendor directory to module search path</span>
+<span class="n">lib_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;external_libraries&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lib_dir</span><span class="p">)</span>
+<span class="c"># Now you can import any library located in the &quot;external_libraries&quot; folder!</span>
+
+<span class="n">lib_dir2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;gui&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lib_dir2</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">urllib3</span>
+<span class="kn">from</span> <span class="nn">urllib3</span> <span class="kn">import</span> <span class="n">PoolManager</span> <span class="p">,</span><span class="n">Timeout</span>
+<span class="c">#use example urllib3</span>
+<span class="c">#url_request_manager = PoolManager(10)</span>
+<span class="c">#url_request_manager=PoolManager(10)</span>
+<span class="c">#r = url_request_manager.request(&#39;GET&#39;, &#39;http://example.com&#39;)</span>
+<span class="c">#or</span>
+<span class="c">#r=url_request_manager.request_encode_body(&#39;POST&#39;,&#39;url&#39;,fields,timeout=Timeout(total=5.0))</span>
+<span class="c">#print r.data</span>
+<span class="c">#</span>
+<span class="c"># r = url_request_manager.request(&#39;GET&#39;, &#39;http://example.com:80&#39;,timeout=Timeout(total=5.0))</span>
+
+<span class="n">url_request_manager</span> <span class="o">=</span> <span class="n">PoolManager</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+
+<span class="nb">exit</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">debug</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#debug mode , if set to 1  the debug mode is on </span>
+<span class="n">object_dict</span><span class="o">=</span><span class="p">{}</span> <span class="c">#object_dict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object</span>
+<span class="n">zoneDict</span><span class="o">=</span><span class="p">{}</span><span class="c">#dict where the key is the name from roomList and the value is a list of all the webobject names present in the room  </span>
+<span class="n">router_hardware</span><span class="o">=</span><span class="p">{}</span>
+<span class="n">scenarioDict</span><span class="o">=</span><span class="p">{}</span>
+
+
+<span class="n">timezone</span><span class="o">=</span><span class="s">&quot;CET-1CEST,M3.5.0,M10.5.0/3&quot;</span>  <span class="c">#will be overwritten by /scripts_folder/config_files/cf.json</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;TZ&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">timezone</span> 
+<span class="k">try</span><span class="p">:</span>
+  <span class="n">time</span><span class="o">.</span><span class="n">tzset</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="k">print</span> <span class="s">&quot;tzset not present , timezone will work anyway&quot;</span>
+<span class="c">#time_gap=120    #minutes of difference between utc and local time </span>
+<span class="c">#export TZ=&quot;CET-1CEST,M3.5.0,M10.5.0/3&quot;</span>
+
+
+
+<span class="n">user_active_time_dict</span><span class="o">=</span><span class="p">{}</span>
+<span class="n">login_required</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#if setted to 1 enable the webpage login  and allow only logged user to use onos,overwritten by /scripts_folder/config_files/cfg.json</span>
+<span class="n">logTimeout</span><span class="o">=</span><span class="mi">15</span> <span class="c">#minutes of user inactivity before logout , will be overwritten by /scripts_folder/config_files/cf.json</span>
+
+<span class="n">log_name</span><span class="o">=</span><span class="s">&quot;file.log&quot;</span>
+<span class="n">error_log_name</span><span class="o">=</span><span class="s">&quot;erros.log&quot;</span>
+<span class="n">log_enable</span><span class="o">=</span><span class="mi">0</span>   <span class="c">#enable the log file size check</span>
+<span class="n">check_log_len_time</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">minute</span>
+<span class="n">mail_error_log_enable</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#enable onos to send mail when an error happens</span>
+<span class="n">error_log_mail_frequency</span><span class="o">=</span><span class="mi">60</span>  <span class="c">#seconds between a error check and another</span>
+<span class="n">last_error_check_time</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">mail_where_to_send_errors</span><span class="o">=</span><span class="s">&quot;electronicflame@gmail.com&quot;</span>
+
+<span class="n">baseRoomPath</span><span class="o">=</span><span class="s">&quot;zones/&quot;</span>
+<span class="n">hardwareModelDict</span><span class="o">=</span><span class="p">{}</span>
+
+<span class="c">#read_onos_sensor_enabled=1</span>
+<span class="n">router_sn</span><span class="o">=</span><span class="s">&quot;RouterGL0000&quot;</span>
+<span class="n">router_hardware_type</span><span class="o">=</span><span class="s">&quot;RouterGL&quot;</span> <span class="c">#select the type of hardware</span>
+<span class="n">router_hardware_fw_version</span><span class="o">=</span><span class="s">&quot;5.14&quot;</span>
+<span class="n">gui_webserver_port</span><span class="o">=</span><span class="mi">80</span>
+<span class="n">service_webserver_port</span><span class="o">=</span><span class="mi">81</span>
+<span class="n">onos_center_internal_ip</span><span class="o">=</span><span class="s">&#39;192.168.101.1&#39;</span>  <span class="c"># the ip of the lan , the one where all nodes are attached</span>
+<span class="n">service_webserver_delay</span><span class="o">=</span><span class="mi">1</span> <span class="c">#seconds of delay between each answer</span>
+<span class="n">node_webserver_port</span><span class="o">=</span><span class="mi">9000</span>   <span class="c"># the web server port used on remote nodes</span>
+<span class="n">router_read_pin_frequency</span><span class="o">=</span><span class="mi">20</span>  <span class="c">#seconds between a pin read in the router hardware</span>
+<span class="n">last_pin_read_time</span><span class="o">=</span><span class="mi">0</span>
+
+
+<span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&quot;/sys/class/gpio&quot;</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">router_hardware_type</span><span class="o">==</span><span class="s">&quot;RouterGL&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="c">#if the directory exist ,then the hardware has embedded IO pins</span>
+  <span class="n">discovered_running_hardware</span><span class="o">=</span><span class="n">router_hardware_type</span>
+  <span class="n">base_cfg_path</span><span class="o">=</span><span class="s">&quot;/bin/onos/scripts_folder/&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">discovered_running_hardware</span><span class="o">=</span><span class="s">&quot;pc&quot;</span>  <span class="c">#the hardware has not IO pins</span>
+  <span class="n">base_cfg_path</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+
+
+
+
+<span class="n">accept_only_from_white_list</span><span class="o">=</span><span class="mi">0</span>  <span class="c">#if set to 1 the onos cmd will be accepted only from mail in white list</span>
+<span class="c">#will be overwritten by /scripts_folder/config_files/cf.json</span>
+
+<span class="n">mail_whiteList</span><span class="o">=</span><span class="p">[]</span>  <span class="c">#will be overwritten by /scripts_folder/config_files/cf.json</span>
+<span class="n">mail_whiteList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">)</span>
+<span class="n">mail_whiteList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;electronicflame@gmail.com&quot;</span><span class="p">)</span>
+<span class="n">mail_whiteList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;marco_righe@yahoo.it&quot;</span><span class="p">)</span>
+<span class="n">enable_mail_service</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#active mailCheckThread   will be overwritten by /scripts_folder/config_files/cf.json</span>
+<span class="n">enable_mail_output_service</span><span class="o">=</span><span class="mi">1</span> <span class="c">#activate the sending of mails from onos  will be overwritten by /scripts_folder/config_files/cf.json</span>
+<span class="n">last_mail_sync_time</span><span class="o">=</span><span class="mi">0</span>  
+<span class="n">mailCheckThreadIsrunning</span><span class="o">=</span><span class="mi">0</span> <span class="c"># tell onos if the mail thread is alredy running</span>
+<span class="n">mail_service</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">mail_check_frequency</span><span class="o">=</span><span class="mi">10</span>  <span class="c">#seconds between 2 checks</span>
+<span class="n">mailOutputHandler_is_running</span><span class="o">=</span><span class="mi">0</span>  <span class="c">#tell onos if the thread is already running</span>
+<span class="n">mail_retry_timeout</span><span class="o">=</span><span class="mi">120</span>  <span class="c">#seconds between retry after error in sending mail</span>
+
+
+
+
+
+<span class="n">enable_onos_auto_update</span><span class="o">=</span><span class="s">&quot;yes&quot;</span> <span class="c"># possible value: &quot;yes&quot;,&quot;no&quot;,&quot;ask_me&quot;  # banana ask_me not implemented yet</span>
+<span class="n">scenarios_enable</span><span class="o">=</span><span class="mi">1</span>  <span class="c"># tell onos if it have to check the scenarios or not</span>
+<span class="n">online_server_enable</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#enable the remote online server to controll onos from internet without opening the router ports</span>
+<span class="c">#will be overwritten by /scripts_folder/config_files/cf.json</span>
+
+<span class="n">last_server_sync_time</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">onlineServerSyncThreadIsrunning</span><span class="o">=</span><span class="mi">0</span> <span class="c">#tell onos if the thread is running</span>
+<span class="n">online_server_delay</span><span class="o">=</span><span class="mi">3</span>  <span class="c">#3  #seconds between each online server query</span>
+<span class="n">online_object_dict</span><span class="o">=</span><span class="p">[]</span>   <span class="c">#online object dict ,used to know if an update of the dict is needed</span>
+<span class="n">online_zone_dict</span><span class="o">=</span><span class="p">[]</span>   <span class="c">#online zone dict ,used to know if an update of the dict is needed</span>
+<span class="k">if</span> <span class="n">online_server_enable</span><span class="o">==</span><span class="mi">1</span> <span class="p">:</span>
+  <span class="n">force_online_sync_users</span><span class="o">=</span><span class="mi">1</span>    <span class="c">#used to know if an update of the dict is required</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">force_online_sync_users</span><span class="o">=</span><span class="mi">0</span>    <span class="c">#used to know if an update of the dict is required</span>
+<span class="n">online_usersDict</span><span class="o">=</span><span class="p">{}</span>
+<span class="n">online_first_contact</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#tell if is the first contact between this router and the online server</span>
+<span class="n">onos_online_key</span><span class="o">=</span><span class="n">router_sn</span>  <span class="c">#unique key used by the router to login on the online server </span>
+<span class="n">onos_online_password</span><span class="o">=</span><span class="s">&quot;1234&quot;</span>  <span class="c">#password used by the router to login on the online server </span>
+<span class="n">onos_online_site_url</span><span class="o">=</span><span class="s">&quot;http://www.myonos.com/onos/&quot;</span>  <span class="c">#remote online server url (where the php onos scripts are located)</span>
+
+<span class="n">internet_connection</span><span class="o">=</span><span class="mi">0</span>  <span class="c">#tell onos if there is internet connection, do not change it..onos will change it if there is internet</span>
+
+
+<span class="n">queryToNodeQueue</span><span class="o">=</span><span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">node_query_threads_executing</span><span class="o">=</span><span class="mi">0</span><span class="c"># </span>
+<span class="n">max_number_of_node_query_threads_executing</span><span class="o">=</span><span class="mi">3</span> <span class="c">#tells onos the maximun number of thread it can executes to handle node queries</span>
+
+<span class="n">layerExchangeDataQueue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>  <span class="c"># this queue will contain all the dictionaries to pass data from the hardware layer to the webserver layer   router_handler.py will pass trought this queue all the change of hardware status to the webserver.py</span>
+
+
+<span class="n">priorityCmdQueue</span><span class="o">=</span><span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>  <span class="c">#this queue will contain all the command received from the web gui...those will have priority over the one contained in layerExchangeDataQueue </span>
+
+
+<span class="n">mailQueue</span><span class="o">=</span><span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>  <span class="c"># this queue will contain all the mail to send , onos will send them as soon as possible</span>
+
+<span class="n">errorQueue</span><span class="o">=</span><span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>  <span class="c"># this queue will contain all the error happened</span>
+
+<span class="n">lock_bash_cmd</span><span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<span class="n">lock1_current_node_handler_list</span><span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>  <span class="c">#lock to access current_node_handler_list</span>
+<span class="c">#lock2_query_threads = threading.Lock()  #lock to access query_to_nodeDict{}</span>
+<span class="n">wait_because_node_is_talking</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="n">current_node_handler_list</span><span class="o">=</span><span class="p">[]</span>   <span class="c">#list containing all the node_serial_number of the nodes that are being queried</span>
+<span class="n">query_to_node_dict</span><span class="o">=</span><span class="p">{}</span> <span class="c"># this dictionary will  have the node_serial_number as key and will contain a list of dictionaries </span>
+<span class="c">#example :   query_to_node_dict={&#39;Plug6way0001&#39;:[{&quot;address&quot;:address,&quot;query&quot;:query,&quot;objName&quot;:objName,&quot;status_to_set&quot;:status_to_set,&quot;user&quot;:user,&quot;priority&quot;:priority,&quot;mail_report_list&quot;:mail_report_list]}</span>
+<span class="c">#to access it:  query_to_node_dict[&#39;Plug6way0001&#39;][0][&quot;address&quot;]  to get the  first address  </span>
+
+
+
+
+<span class="k">if</span> <span class="p">(</span><span class="n">enable_mail_service</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="ow">or</span><span class="p">(</span><span class="n">enable_mail_output_service</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span> 
+  <span class="kn">import</span> <span class="nn">imaplib</span>   <span class="c">#used by mail_agent </span>
+  <span class="kn">import</span> <span class="nn">email</span>     <span class="c">#used by mail_agent </span>
+  <span class="c">#imaplib.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) # see https://aboutsimon.com/index.html%3Fp=85.html  </span>
+
+
+
+
+<span class="n">recoverycfg_json</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+
+<span class="s">{</span>
+<span class="s">  &quot;accept_only_from_white_list&quot;: 0, </span>
+<span class="s">  &quot;enable_mail_service&quot;: 1, </span>
+<span class="s">  &quot;enable_mail_output_service&quot;: 1,</span>
+<span class="s">  &quot;enable_onos_auto_update&quot;: &quot;yes&quot;, </span>
+<span class="s">  &quot;logTimeout&quot;: 15, </span>
+<span class="s">  &quot;login_required&quot;: 0, </span>
+<span class="s">  &quot;mail_whiteList&quot;: [], </span>
+<span class="s">  &quot;online_server_enable&quot;: 1, </span>
+<span class="s">  &quot;online_usersDict&quot;: {</span>
+<span class="s">    &quot;&#39;&#39;&#39;</span><span class="o">+</span><span class="n">router_sn</span><span class="o">+</span><span class="s">&#39;&#39;&#39;&quot;: {</span>
+<span class="s">      &quot;mail_control_password&quot;: &quot;&#39;&#39;&#39;</span><span class="o">+</span><span class="n">onos_online_password</span><span class="o">+</span><span class="s">&#39;&#39;&#39;&quot;, </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;pw&quot;: &quot;&#39;&#39;&#39;</span><span class="o">+</span><span class="n">onos_online_password</span><span class="o">+</span><span class="s">&#39;&#39;&#39;&quot;, </span>
+<span class="s">      &quot;user_mail&quot;: &quot;elettronicaopensource@gmail.com&quot;</span>
+<span class="s">    }</span>
+<span class="s">  }, </span>
+<span class="s">  &quot;timezone&quot;: &quot;CET-1CEST,M3.5.0,M10.5.0/3&quot;</span>
+<span class="s">}</span>
+
+
+<span class="s">&#39;&#39;&#39;</span>
+
+
+<span class="c">#banana to make a default json without all this data</span>
+<span class="n">recoverydata_json</span><span class="o">=</span><span class="s">&#39;&#39;&#39; {</span>
+<span class="s">  &quot;nodeDictionary&quot;: {</span>
+<span class="s">    &quot;Plug6way0001&quot;: {</span>
+<span class="s">      &quot;hwModelName&quot;: &quot;Plug6way&quot;, </span>
+<span class="s">      &quot;nodeAddress&quot;: &quot;192.168.101.108&quot;, </span>
+<span class="s">      &quot;node_serial_number&quot;: &quot;Plug6way0001&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;Plug6way0002&quot;: {</span>
+<span class="s">      &quot;hwModelName&quot;: &quot;Plug6way&quot;, </span>
+<span class="s">      &quot;nodeAddress&quot;: &quot;192.168.101.104&quot;, </span>
+<span class="s">      &quot;node_serial_number&quot;: &quot;Plug6way0002&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;RouterGL0000&quot;: {</span>
+<span class="s">      &quot;hwModelName&quot;: &quot;RouterGL&quot;, </span>
+<span class="s">      &quot;nodeAddress&quot;: &quot;0&quot;, </span>
+<span class="s">      &quot;node_serial_number&quot;: &quot;RouterGL0000&quot;</span>
+<span class="s">    }</span>
+<span class="s">  }, </span>
+<span class="s">  &quot;objectDictionary&quot;: {</span>
+<span class="s">    &quot;Caldaia&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;Caldaia=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;Caldaia=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;Caldaia&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        4, </span>
+<span class="s">        5</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;Casa_body&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;Casa_body=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;Casa_body=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;Casa_body&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:#A9E2F3;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:#8181F7;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;Wifi_netgear&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;Wifi_netgear=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;Wifi_netgear=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;Wifi_netgear&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        2, </span>
+<span class="s">        3</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;aaaaaaaaaaaaaaaaaaaaaaaaa&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;&quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot;&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;aaaaaaaaaaaaaaaaaaaaaaaaa=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;aaaaaaaaaaaaaaaaaaaaaaaaa=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;aaaaaaaaaaaaaaaaaaaaaaaaa&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: &quot;1&quot;, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;button0_RouterGL0000&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;button0_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;button0_RouterGL0000=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [</span>
+<span class="s">        &quot;electronicflame@gmail.com&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;RouterGL0000&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;button0_RouterGL0000&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        18</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;digital_output&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;button1_RouterGL0000&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;button1_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;button1_RouterGL0000=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;RouterGL0000&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;button1_RouterGL0000&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        22</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: &quot;onoswait&quot;, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;digital_output&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;counter1&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;counter1=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;counter1=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;counter1&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 741, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;d_sensor0_RouterGL0000&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;d_sensor0_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;d_sensor0_RouterGL0000=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;RouterGL0000&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;d_sensor0_RouterGL0000&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        21</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;digital_input&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;day&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;day=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;day=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;day&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 2, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;dayTime&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;dayTime=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;dayTime=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;dayTime&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 1301, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;hours&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;hours=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;hours=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;hours&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [</span>
+<span class="s">        &quot;scenario2&quot;, </span>
+<span class="s">        &quot;scenario3&quot;, </span>
+<span class="s">        &quot;scenario4&quot;, </span>
+<span class="s">        &quot;scenario5&quot;, </span>
+<span class="s">        &quot;scenario6&quot;, </span>
+<span class="s">        &quot;scenario7&quot;, </span>
+<span class="s">        &quot;scenario10&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;status&quot;: 21, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;minutes&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;minutes=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;minutes=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;minutes&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [</span>
+<span class="s">        &quot;scenario2&quot;, </span>
+<span class="s">        &quot;scenario3&quot;, </span>
+<span class="s">        &quot;scenario4&quot;, </span>
+<span class="s">        &quot;scenario5&quot;, </span>
+<span class="s">        &quot;scenario6&quot;, </span>
+<span class="s">        &quot;scenario7&quot;, </span>
+<span class="s">        &quot;scenario8&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;status&quot;: 41, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;month&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;month=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;month=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;month&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 1, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;onosCenterWifi&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;uci set wireless.radio0.disabled=1&amp;uci commit wireless &amp;&amp; wifi&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;uci set wireless.radio0.disabled=0&amp;uci commit wireless &amp;&amp; wifi&quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;onosCenterWifi=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;onosCenterWifi=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;onosCenterWifi&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;rergswgeg&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;&quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot;&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;rergswgeg=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;rergswgeg=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;rergswgeg&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket0_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket0_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket0_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket0_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        2, </span>
+<span class="s">        3</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket0_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket0_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket0_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket0_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        2, </span>
+<span class="s">        3</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket0_RouterGL0000&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket0_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket0_RouterGL0000=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;RouterGL0000&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket0_RouterGL0000&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        20, </span>
+<span class="s">        19</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 1, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket1_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket1_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket1_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket1_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        4, </span>
+<span class="s">        5</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket1_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket1_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket1_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket1_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        4, </span>
+<span class="s">        5</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket2_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket2_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket2_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket2_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        6, </span>
+<span class="s">        7</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket2_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket2_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket2_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket2_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        6, </span>
+<span class="s">        7</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket3_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket3_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket3_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket3_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        8, </span>
+<span class="s">        9</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket3_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket3_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket3_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket3_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        8, </span>
+<span class="s">        9</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket4_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket4_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket4_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket4_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        14, </span>
+<span class="s">        15</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket4_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket4_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket4_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket4_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        14, </span>
+<span class="s">        15</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket5_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket5_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket5_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket5_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        16, </span>
+<span class="s">        17</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;socket5_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;socket5_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;socket5_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;socket5_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        16, </span>
+<span class="s">        17</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;wifi0_Plug6way0001&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;wifi0_Plug6way0001=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;wifi0_Plug6way0001=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0001&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;wifi0_Plug6way0001&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        16, </span>
+<span class="s">        17</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [</span>
+<span class="s">        &quot;scenario9&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;status&quot;: &quot;onoswait&quot;, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;wifi0_Plug6way0002&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;wifi0_Plug6way0002=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;wifi0_Plug6way0002=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: &quot;Plug6way0002&quot;, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;wifi0_Plug6way0002&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        16, </span>
+<span class="s">        17</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;color:black;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;color: black;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;sr_relay&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;wwwwwwwwwww&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;&quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot;&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;wwwwwwwwwww=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;wwwwwwwwwww=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;wwwwwwwwwww&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 0, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;year&quot;: {</span>
+<span class="s">      &quot;cmdDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;1&quot;: &quot; &quot;, </span>
+<span class="s">        &quot;s_cmd&quot;: &quot; &quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;grp&quot;: [</span>
+<span class="s">        &quot;web_interface&quot;, </span>
+<span class="s">        &quot;onos_mail_guest&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;htmlDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;year=0&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;year=1&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;mail_l&quot;: [], </span>
+<span class="s">      &quot;node_sn&quot;: 9999, </span>
+<span class="s">      &quot;notes&quot;: &quot; &quot;, </span>
+<span class="s">      &quot;objname&quot;: &quot;year&quot;, </span>
+<span class="s">      &quot;own&quot;: &quot;onos_admin&quot;, </span>
+<span class="s">      &quot;perm&quot;: &quot;111111111&quot;, </span>
+<span class="s">      &quot;pins&quot;: [</span>
+<span class="s">        9999</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;priority&quot;: 0, </span>
+<span class="s">      &quot;scenarios&quot;: [], </span>
+<span class="s">      &quot;status&quot;: 2016, </span>
+<span class="s">      &quot;styleDict&quot;: {</span>
+<span class="s">        &quot;0&quot;: &quot;background-color:green;&quot;, </span>
+<span class="s">        &quot;1&quot;: &quot;background-color:red;&quot;, </span>
+<span class="s">        &quot;default_s&quot;: &quot;background-color:red ;color black&quot;, </span>
+<span class="s">        &quot;wait&quot;: &quot;background-color:grey ;color black&quot;</span>
+<span class="s">      }, </span>
+<span class="s">      &quot;type&quot;: &quot;b&quot;</span>
+<span class="s">    }</span>
+<span class="s">  }, </span>
+<span class="s">  &quot;roomDictionary&quot;: {</span>
+<span class="s">    &quot;Casa&quot;: {</span>
+<span class="s">      &quot;group&quot;: [], </span>
+<span class="s">      &quot;hidden&quot;: 0, </span>
+<span class="s">      &quot;objects&quot;: [</span>
+<span class="s">        &quot;Caldaia&quot;, </span>
+<span class="s">        &quot;Wifi_netgear&quot;, </span>
+<span class="s">        &quot;aaaaaaaaaaaaaaaaaaaaaaaaa&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;order&quot;: 0, </span>
+<span class="s">      &quot;owner&quot;: &quot;onos_sys&quot;, </span>
+<span class="s">      &quot;permissions&quot;: &quot;777&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;Plug6way0001&quot;: {</span>
+<span class="s">      &quot;group&quot;: [], </span>
+<span class="s">      &quot;hidden&quot;: 0, </span>
+<span class="s">      &quot;objects&quot;: [</span>
+<span class="s">        &quot;wifi0_Plug6way0001&quot;, </span>
+<span class="s">        &quot;socket0_Plug6way0001&quot;, </span>
+<span class="s">        &quot;socket1_Plug6way0001&quot;, </span>
+<span class="s">        &quot;socket2_Plug6way0001&quot;, </span>
+<span class="s">        &quot;socket3_Plug6way0001&quot;, </span>
+<span class="s">        &quot;socket4_Plug6way0001&quot;, </span>
+<span class="s">        &quot;socket5_Plug6way0001&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;order&quot;: 2, </span>
+<span class="s">      &quot;owner&quot;: &quot;onos_sys&quot;, </span>
+<span class="s">      &quot;permissions&quot;: &quot;777&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;Plug6way0002&quot;: {</span>
+<span class="s">      &quot;group&quot;: [], </span>
+<span class="s">      &quot;hidden&quot;: 0, </span>
+<span class="s">      &quot;objects&quot;: [</span>
+<span class="s">        &quot;wifi0_Plug6way0002&quot;, </span>
+<span class="s">        &quot;socket0_Plug6way0002&quot;, </span>
+<span class="s">        &quot;socket1_Plug6way0002&quot;, </span>
+<span class="s">        &quot;socket2_Plug6way0002&quot;, </span>
+<span class="s">        &quot;socket3_Plug6way0002&quot;, </span>
+<span class="s">        &quot;socket4_Plug6way0002&quot;, </span>
+<span class="s">        &quot;socket5_Plug6way0002&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;order&quot;: 3, </span>
+<span class="s">      &quot;owner&quot;: &quot;onos_sys&quot;, </span>
+<span class="s">      &quot;permissions&quot;: &quot;777&quot;</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;RouterGL0000&quot;: {</span>
+<span class="s">      &quot;group&quot;: [], </span>
+<span class="s">      &quot;hidden&quot;: 0, </span>
+<span class="s">      &quot;objects&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000&quot;, </span>
+<span class="s">        &quot;button1_RouterGL0000&quot;, </span>
+<span class="s">        &quot;d_sensor0_RouterGL0000&quot;, </span>
+<span class="s">        &quot;onosCenterWifi&quot;, </span>
+<span class="s">        &quot;socket0_RouterGL0000&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;order&quot;: 1, </span>
+<span class="s">      &quot;owner&quot;: &quot;onos_sys&quot;, </span>
+<span class="s">      &quot;permissions&quot;: &quot;777&quot;</span>
+<span class="s">    }</span>
+<span class="s">  }, </span>
+<span class="s">  &quot;scenarioDictionary&quot;: {</span>
+<span class="s">    &quot;scenario10&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==23)&amp;(#_minutes_#==30)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;Caldaia=0&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario2&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==8)&amp;(#_minutes_#==0)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=1&quot;, </span>
+<span class="s">        &quot;Wifi_netgear==1&quot;, </span>
+<span class="s">        &quot;Caldaia=0&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario21&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_minutes_#&gt;-1)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#&quot;, </span>
+<span class="s">        &quot;button1_RouterGL0000==!#_wifi0_Plug6way0001_#&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario3&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==8)&amp;(#_minutes_#==25)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;Wifi_netgear==0&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario4&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==12)&amp;(#_minutes_#==30)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=1&quot;, </span>
+<span class="s">        &quot;Wifi_netgear==1&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario5&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==14)&amp;(#_minutes_#==0)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;Wifi_netgear==0&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario6&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==18)&amp;(#_minutes_#==0)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=1&quot;, </span>
+<span class="s">        &quot;Wifi_netgear==1&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario7&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_hours_#==0)&amp;(#_minutes_#==0)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=0&quot;, </span>
+<span class="s">        &quot;Wifi_netgear==0&quot;, </span>
+<span class="s">        &quot;counter1=0&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario8&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_minutes_#&gt;-1)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#&quot;, </span>
+<span class="s">        &quot;button1_RouterGL0000==!#_wifi0_Plug6way0001_#&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenario9&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;1&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;counter1=#_counter1_#+1&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }, </span>
+<span class="s">    &quot;scenarioA&quot;: {</span>
+<span class="s">      &quot;type_after_run&quot;:&quot;0&quot;, </span>
+<span class="s">      &quot;conditions&quot;: &quot;(#_year_#==2016)&quot;, </span>
+<span class="s">      &quot;enabled&quot;: 1, </span>
+<span class="s">      &quot;functionsToRun&quot;: [</span>
+<span class="s">        &quot;button0_RouterGL0000=1&quot;, </span>
+<span class="s">        &quot;aaaaaaaaaaaaaaaaaaaaaaaaa=2016&quot;, </span>
+<span class="s">        &quot;counter1=1&quot;, </span>
+<span class="s">        &quot;socket3_Plug6way0001=1&quot;</span>
+<span class="s">      ], </span>
+<span class="s">      &quot;one_time_shot&quot;: 0, </span>
+<span class="s">      &quot;priority&quot;: 0</span>
+<span class="s">    }</span>
+<span class="s">  }</span>
+<span class="s">}</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+
+
+<span class="c">#scenarioDict[&quot;scenario1&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:1,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;delay&quot;,&quot;conditions&quot;:&quot;#_dayTime_#&gt;0&quot;,&quot;functionsToRun&quot;:[&quot;socket0_RouterGL0001=1&quot;],&quot;afterDelayFunctionsToRun&quot;:[&quot;button0_RouterGL0001=1&quot;],&quot;delayTime&quot;:1,&quot;priority&quot;:0}</span>
+
+
+<span class="c">#scenarioDict[&quot;scenario2&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;#_dayTime_#&gt;0&quot;,&quot;functionsToRun&quot;:[&quot;onosCenterWifi=0],&quot;priority&quot;:0}</span>
+
+<span class="c">#scenarioDict[&quot;scenario3&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==12)&amp;(#_minutes_#==0)&quot;,&quot;functionsToRun&quot;:[&quot;onosCenterWifi=1&quot;],&quot;priority&quot;:0}</span>
+
+
+
+<span class="c">#banana to remove</span>
+<span class="c">#scenarioDict[&quot;scenario2&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==8)&amp;(#_minutes_#==0)&quot;,&quot;functionsToRun&quot;:[&quot;button0_RouterGL0000=1&quot;,&quot;Wifi_netgear==1&quot;,&quot;Caldaia=0&quot;],&quot;priority&quot;:0}</span>
+
+<span class="c">#scenarioDict[&quot;scenario3&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==8)&amp;(#_minutes_#==25)&quot;,&quot;functionsToRun&quot;:[&quot;button0_RouterGL0000=0&quot;,&quot;Wifi_netgear==0&quot;],&quot;priority&quot;:0}</span>
+
+
+
+<span class="c">#scenarioDict[&quot;scenario4&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==12)&amp;(#_minutes_#==30)&quot;,&quot;functionsToRun&quot;:[&quot;button0_RouterGL0000=1&quot;,&quot;Wifi_netgear==1&quot;],&quot;priority&quot;:0}</span>
+
+
+
+<span class="c">#scenarioDict[&quot;scenario5&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==14)&amp;(#_minutes_#==0)&quot;,&quot;functionsToRun&quot;:[&quot;button0_RouterGL0000=0&quot;,&quot;Wifi_netgear==0&quot;],&quot;priority&quot;:0}</span>
+
+
+
+<span class="c">#scenarioDict[&quot;scenario6&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==18)&amp;(#_minutes_#==0)&quot;,&quot;functionsToRun&quot;:[&quot;button0_RouterGL0000=1&quot;,&quot;Wifi_netgear==1&quot;],&quot;priority&quot;:0}</span>
+
+
+<span class="c">#scenarioDict[&quot;scenario7&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==0)&amp;(#_minutes_#==0)&quot;,&quot;functionsToRun&quot;:[&quot;button0_RouterGL0000=0&quot;,&quot;Wifi_netgear==0&quot;,&quot;counter1=0&quot;],&quot;priority&quot;:0}</span>
+
+
+<span class="c">#scenarioDict[&quot;scenario8&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_minutes_#&gt;-1)&quot;,&quot;functionsToRun&quot;:[&quot;wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#&quot;,&quot;button1_RouterGL0000==!#_wifi0_Plug6way0001_#&quot;],&quot;priority&quot;:0}</span>
+
+<span class="c">#scenarioDict[&quot;scenario9&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;1&quot;,&quot;functionsToRun&quot;:[&quot;counter1=#_counter1_#+1&quot;],&quot;priority&quot;:0}</span>
+
+
+<span class="c">#scenarioDict[&quot;scenario10&quot;]={&quot;enabled&quot;:1,&quot;one_time_shot&quot;:0,&quot;autodelete&quot;:0,&quot;actType&quot;:&quot;nodelay&quot;,&quot;conditions&quot;:&quot;(#_hours_#==23)&amp;(#_minutes_#==0)&quot;,&quot;functionsToRun&quot;:[&quot;Caldaia=0&quot;],&quot;priority&quot;:0}</span>
+
+
+
+
+
+
+
+
+
+
+
+<span class="n">nodeDict</span><span class="o">=</span><span class="p">{}</span>
+<span class="n">usersDict</span><span class="o">=</span><span class="p">{}</span>
+<span class="n">usersDict</span><span class="p">[</span><span class="s">&quot;onos_mail_guest&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;onos&quot;</span><span class="p">,</span><span class="s">&quot;mail_control_password&quot;</span><span class="p">:</span><span class="s">&quot;onosm&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user_mail&quot;</span><span class="p">:</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">}</span>
+<span class="n">usersDict</span><span class="p">[</span><span class="s">&quot;web_interface&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;onos&quot;</span><span class="p">,</span><span class="s">&quot;mail_control_password&quot;</span><span class="p">:</span><span class="s">&quot;onosm&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user_mail&quot;</span><span class="p">:</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">}</span>
+<span class="n">usersDict</span><span class="p">[</span><span class="s">&quot;scenario&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;onos&quot;</span><span class="p">,</span><span class="s">&quot;mail_control_password&quot;</span><span class="p">:</span><span class="s">&quot;onosm&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user_mail&quot;</span><span class="p">:</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">}</span>
+<span class="n">usersDict</span><span class="p">[</span><span class="s">&quot;onos_node&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;onos&quot;</span><span class="p">,</span><span class="s">&quot;mail_control_password&quot;</span><span class="p">:</span><span class="s">&quot;onosm&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="mi">99</span><span class="p">,</span><span class="s">&quot;user_mail&quot;</span><span class="p">:</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">}</span>
+<span class="n">usersDict</span><span class="p">[</span><span class="s">&quot;marco&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;1234&quot;</span><span class="p">,</span><span class="s">&quot;mail_control_password&quot;</span><span class="p">:</span><span class="s">&quot;onosm&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user_mail&quot;</span><span class="p">:</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">}</span>
+
+
+
+
+<span class="n">online_usersDict</span><span class="p">[</span><span class="s">&quot;marco&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;1234&quot;</span><span class="p">,</span><span class="s">&quot;mail_control_password&quot;</span><span class="p">:</span><span class="s">&quot;onosm&quot;</span><span class="p">,</span><span class="s">&quot;priority&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;user_mail&quot;</span><span class="p">:</span><span class="s">&quot;elettronicaopensource@gmail.com&quot;</span><span class="p">}</span>
+
+
+<span class="n">usersDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">online_usersDict</span><span class="p">)</span> <span class="c">#insert the online users in the local dictionary</span>
+
+
+
+<span class="n">onos_mail_conf</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;mail_account&quot;</span><span class="p">:</span><span class="s">&quot;onos.beta@gmail.com&quot;</span><span class="p">,</span><span class="s">&quot;pw&quot;</span><span class="p">:</span><span class="s">&quot;gmailbeta&quot;</span><span class="p">,</span><span class="s">&quot;smtp_port&quot;</span><span class="p">:</span><span class="s">&quot;587&quot;</span><span class="p">,</span><span class="s">&quot;smtp_server&quot;</span><span class="p">:</span><span class="s">&quot;smtp.gmail.com&quot;</span><span class="p">,</span><span class="s">&quot;mail_imap&quot;</span><span class="p">:</span><span class="s">&quot;imap.gmail.com&quot;</span><span class="p">}</span>
+
+
+
+
+<span class="c">#localhost/setup/node_manager/onosRouterGL0001</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterGL&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;hwName&quot;</span><span class="p">:</span><span class="s">&quot;RouterGL&quot;</span><span class="p">,</span><span class="s">&quot;max_pin&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;hardware_type&quot;</span><span class="p">:</span><span class="s">&quot;gl.inet_only&quot;</span><span class="p">,</span><span class="s">&quot;pin_mode&quot;</span><span class="p">:{},</span><span class="s">&quot;timeout&quot;</span><span class="p">:</span><span class="mi">180</span><span class="p">}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterGL&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;sr_relay&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;socket&quot;</span><span class="p">:[(</span><span class="mi">20</span><span class="p">,</span><span class="mi">19</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterGL&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;digital_input&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;d_sensor&quot;</span><span class="p">:[(</span><span class="mi">21</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterGL&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;digital_output&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;button&quot;</span><span class="p">:[(</span><span class="mi">18</span><span class="p">),(</span><span class="mi">22</span><span class="p">)]}</span>
+
+
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;ProminiA&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;hwName&quot;</span><span class="p">:</span><span class="s">&quot;ProminiA&quot;</span><span class="p">,</span><span class="s">&quot;max_pin&quot;</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span><span class="s">&quot;hardware_type&quot;</span><span class="p">:</span><span class="s">&quot;arduino_promini&quot;</span><span class="p">,</span><span class="s">&quot;pin_mode&quot;</span><span class="p">:{},</span><span class="s">&quot;timeout&quot;</span><span class="p">:</span><span class="s">&quot;never&quot;</span><span class="p">}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;ProminiA&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;digital_input&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;d_sensor&quot;</span><span class="p">:[(</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;ProminiA&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;digital_output&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;button&quot;</span><span class="p">:[(</span><span class="mi">6</span><span class="p">),(</span><span class="mi">7</span><span class="p">),(</span><span class="mi">8</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;ProminiA&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;analog_input&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;a_sensor&quot;</span><span class="p">:[(</span><span class="mi">14</span><span class="p">),(</span><span class="mi">15</span><span class="p">),(</span><span class="mi">16</span><span class="p">),(</span><span class="mi">17</span><span class="p">),(</span><span class="mi">18</span><span class="p">),(</span><span class="mi">19</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;ProminiA&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;servo_output&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;servo&quot;</span><span class="p">:[(</span><span class="mi">5</span><span class="p">)]}</span>
+<span class="c">#hardwareModelDict[&quot;ProminiA&quot;][&quot;pin_mode&quot;][&quot;analog_output&quot;]={&quot;a_out&quot;:[(9)]}</span>
+
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;Plug6way&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;hwName&quot;</span><span class="p">:</span><span class="s">&quot;Plug6way&quot;</span><span class="p">,</span><span class="s">&quot;max_pin&quot;</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span><span class="s">&quot;hardware_type&quot;</span><span class="p">:</span><span class="s">&quot;arduino_promini&quot;</span><span class="p">,</span><span class="s">&quot;pin_mode&quot;</span><span class="p">:{},</span><span class="s">&quot;timeout&quot;</span><span class="p">:</span><span class="mi">70</span><span class="p">}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;Plug6way&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;sr_relay&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;socket&quot;</span><span class="p">:[(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">),(</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">),(</span><span class="mi">14</span><span class="p">,</span><span class="mi">15</span><span class="p">)],</span><span class="s">&quot;wifi&quot;</span><span class="p">:[(</span><span class="mi">16</span><span class="p">,</span><span class="mi">17</span><span class="p">)]}</span>
+
+
+
+
+<span class="c"># note that in the format [&quot;analog_output&quot;]={&quot;a_out&quot;:[(11),(10)]}  </span>
+<span class="c"># &quot;a_out&quot; is only the the html name that onos will add to the webobject name</span>
+<span class="c">#so the final webobject name will be for example a_out0_ProminiA0001  </span>
+<span class="c">#the web object type will be &quot;analog_output&quot;</span>
+
+
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterRB&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;hwName&quot;</span><span class="p">:</span><span class="s">&quot;RouterRB&quot;</span><span class="p">,</span><span class="s">&quot;max_pin&quot;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="s">&quot;hardware_type&quot;</span><span class="p">:</span><span class="s">&quot;rasberry_b_rev2_only&quot;</span><span class="p">,</span><span class="s">&quot;pin_mode&quot;</span><span class="p">:{},</span><span class="s">&quot;timeout&quot;</span><span class="p">:</span><span class="mi">180</span><span class="p">}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterRB&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;digital_output&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;button&quot;</span><span class="p">:[(</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">),(</span><span class="mi">7</span><span class="p">),(</span><span class="mi">8</span><span class="p">),(</span><span class="mi">9</span><span class="p">),(</span><span class="mi">10</span><span class="p">),(</span><span class="mi">23</span><span class="p">),(</span><span class="mi">24</span><span class="p">),(</span><span class="mi">25</span><span class="p">),(</span><span class="mi">27</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterRB&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;digital_input&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;d_sensor&quot;</span><span class="p">:[(</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">)]}</span>
+<span class="n">hardwareModelDict</span><span class="p">[</span><span class="s">&quot;RouterRB&quot;</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="s">&quot;sr_relay&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;socket&quot;</span><span class="p">:[(</span><span class="mi">11</span><span class="p">,</span><span class="mi">17</span><span class="p">),(</span><span class="mi">18</span><span class="p">,</span><span class="mi">22</span><span class="p">)]}</span>
+
+
+<span class="c">#to see how to setup an arduino you can read</span>
+<span class="c">#/usr/share/arduino/hardware/arduino/variants/standard/pins_arduino.h</span>
+
+<span class="c">#hardwareModelDict contain the hardware model for each hardware , each new hardware can be created modding </span>
+<span class="c">#the hardware_model.json file  todo..</span>
+
+<span class="c">#option for obj_type :</span>
+<span class="c"># sr_relay:  latch relay where the first pi in the tuple is set and the second is reset</span>
+<span class="c"># digital_output: output digital pins </span>
+<span class="c"># digital_input : input  digital pins</span>
+<span class="c"># analog_input  : analog input</span>
+<span class="c"># servo_output  : servomotor control pin</span>
+<span class="c"># analog_output    : pwm output pin</span>
+<span class="c"># time  : containing a int with a time</span>
+<span class="c"># numeric_var:   containing a numeric float varaible </span>
+<span class="c"># string_var :   containing a utf8 string varaible </span>
+<span class="c"># serial_output : serial output , allow to write to a serial port </span>
+<span class="c"># serial_input  : serial input  , allow to read  a serial port</span>
+<span class="c"># special_pin   : handled on the node arduino firmware side</span>
+
+
+
+
+<span class="c">#option for hardware_type</span>
+<span class="c">#arduino_2009</span>
+<span class="c">#arduino_promini</span>
+<span class="c">#arduino_uno</span>
+<span class="c">#arduino_mega1280</span>
+<span class="c">#arduino_mega2560</span>
+<span class="c">#gl.inet</span>
+<span class="c">#rasberry_b_rev2_only</span>
+
+
+<span class="c">#timeout:    is the time (in seconds) onos will let pass without contact with the node after which the node will be setted as inactive </span>
+
+
+<span class="c">#to get the list of varius type used in a harware configuration:</span>
+<span class="c">#print hardwareModelDict[&quot;onosProminiA&quot;][&quot;pin_mode&quot;].keys()</span>
+<span class="c">#print hardwareModelDict[&quot;onosPlug6way&quot;][&quot;pin_mode&quot;].keys()</span>
+<span class="c">#to get the pin used in a specific mode:</span>
+<span class="c">#print hardwareModelDict[&quot;onosProminiA&quot;][&quot;pin_mode&quot;][&quot;digital_input&quot;]</span>
+
+
+<span class="c"># To  get the max pin used for the  onosPlug6way  hardware you have to write:</span>
+<span class="c">#  print hardwareModelDict[&quot;onosPlug6way&quot;][&quot;max_pin&quot;]</span>
+<span class="c"># </span>
+<span class="c"># To get the hardware type for a hardware:</span>
+<span class="c">#  print hardwareModelDict[&quot;onosPlug6way&quot;][&quot;hardware_type&quot;]</span>
+<span class="c">#</span>
+<span class="c">#</span>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="viewcode-block" id="getListUsedPinsByHardwareModel"><a class="viewcode-back" href="../globalVar.html#globalVar.getListUsedPinsByHardwareModel">[docs]</a><span class="k">def</span> <span class="nf">getListUsedPinsByHardwareModel</span><span class="p">(</span><span class="n">hwName</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Given an hardware name  return a list with all the pins used by a hardware model</span>
+
+<span class="sd">  :param hwName:</span>
+
+<span class="sd">    The type of the harware node for examples: </span>
+
+<span class="sd">      - ProminiA</span>
+<span class="sd">      - Plug6way</span>
+<span class="sd">      - RouterGL</span>
+<span class="sd">      - RouterRB </span>
+<span class="sd">      - Any other hardware type added as hardwareModelDict key in globalVar.py </span>
+
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">print</span> <span class="s">&quot;executed getListUsedPinsByHardwareModel&quot;</span>
+
+  <span class="k">if</span> <span class="n">hwName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c">#if the hardware model doesn&#39;t exist</span>
+    <span class="k">print</span> <span class="s">&quot;the hardware model &quot;</span><span class="o">+</span><span class="n">hwName</span><span class="o">+</span><span class="s">&quot; doesn&#39;t exist&quot;</span>
+    <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;the hardware model &quot;</span><span class="o">+</span><span class="n">hwName</span><span class="o">+</span><span class="s">&quot; doesn&#39;t exist&quot;</span> <span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">pin_list</span><span class="o">=</span><span class="p">[]</span>
+  <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="p">[</span><span class="n">hwName</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="c">#an example of a value is  &quot;digital_output&quot;</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="p">[</span><span class="n">hwName</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="n">a</span><span class="p">]:</span>
+      <span class="c">#an example of b value is d_sensor</span>
+      <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="p">[</span><span class="n">hwName</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]:</span>
+        <span class="c">#an example of c value is 13  but if the hwtype is sr_relay then an example is (2,3)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c">#check if is a list or not</span>
+          <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>  <span class="c"># for every pin of the list </span>
+            <span class="c">#print d</span>
+            <span class="n">pin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c">#is not a list  </span>
+          <span class="n">pin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+
+  <span class="k">print</span> <span class="s">&quot;pin used:&quot;</span>
+  <span class="k">print</span> <span class="n">pin_list</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">pin_list</span><span class="p">)</span>
+
+
+</div>
+<div class="viewcode-block" id="getListPinsConfigByHardwareModel"><a class="viewcode-back" href="../globalVar.html#globalVar.getListPinsConfigByHardwareModel">[docs]</a><span class="k">def</span> <span class="nf">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="n">hwName</span><span class="p">,</span><span class="n">pin_mode</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Given hardware name and a pin mode , return a list containing the pin numbers that are configurated with that pin_mode</span>
+
+<span class="sd">  :param hwName:</span>
+
+<span class="sd">    The type of the hardware node for examples: </span>
+
+<span class="sd">      - ProminiA</span>
+<span class="sd">      - Plug6way</span>
+<span class="sd">      - RouterGL</span>
+<span class="sd">      - RouterRB </span>
+<span class="sd">      - Any other hardware type added as hardwareModelDict key in globalVar.py</span>
+
+
+<span class="sd">  :param pin_mode:</span>
+<span class="sd">    The pin mode you are searching for:</span>
+
+<span class="sd">     - sr_relay:  </span>
+<span class="sd">         Latch relay where the first pin in the tuple is set and the second is reset</span>
+<span class="sd">     - digital_output: </span>
+<span class="sd">         Output digital pins </span>
+<span class="sd">     - digital_input :</span>
+<span class="sd">         Input  digital pins</span>
+<span class="sd">     - analog_input  : </span>
+<span class="sd">         Analog input</span>
+<span class="sd">     - servo_output  :</span>
+<span class="sd">         Servomotor control pin</span>
+<span class="sd">     - analog_output    : </span>
+<span class="sd">         Pwm output pin</span>
+
+
+<span class="sd">  &quot;&quot;&quot;</span>
+
+
+
+
+  <span class="k">print</span> <span class="s">&quot;executed getListPinsConfigByHardwareModel ()&quot;</span>
+  <span class="k">if</span> <span class="n">hwName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c">#if the hardware model doesn&#39;t exist</span>
+    <span class="k">print</span> <span class="s">&quot;the hardware model &quot;</span><span class="o">+</span><span class="n">hwName</span><span class="o">+</span><span class="s">&quot; doesn&#39;t exist&quot;</span>
+    <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s">&quot;the hardware model &quot;</span><span class="o">+</span><span class="n">hwName</span><span class="o">+</span><span class="s">&quot; doesn&#39;t exist&quot;</span> <span class="p">)</span>
+    <span class="k">return</span><span class="p">([])</span>
+  <span class="k">if</span> <span class="n">pin_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="p">[</span><span class="n">hwName</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c">#if the type  doesn&#39;t exist in the hardware model </span>
+    <span class="k">print</span> <span class="s">&quot;the hardware type &quot;</span><span class="o">+</span><span class="n">pin_mode</span><span class="o">+</span><span class="s">&quot; doesn&#39;t exist in this hardware model&quot;</span><span class="o">+</span><span class="n">hwName</span>
+    <span class="c">#errorQueue.put(&quot;the hardware type &quot;+pin_mode+&quot; doesn&#39;t exist in this hardware model&quot;+hwName )</span>
+    <span class="k">return</span><span class="p">([])</span>
+ <span class="c"># else:</span>
+ <span class="c">#   print ( &quot;the hardware type &quot;+pin_mode+&quot; Exist in this hardware model&quot;)</span>
+ 
+
+
+  <span class="n">pin_list</span><span class="o">=</span><span class="p">[]</span>
+  <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="p">[</span><span class="n">hwName</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="n">pin_mode</span><span class="p">]:</span>  <span class="c">#extract a list of all the pin to use as pin_mode</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">hardwareModelDict</span><span class="p">[</span><span class="n">hwName</span><span class="p">][</span><span class="s">&quot;pin_mode&quot;</span><span class="p">][</span><span class="n">pin_mode</span><span class="p">][</span><span class="n">a</span><span class="p">]:</span>
+      <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
+        <span class="c">#an example of b value is d_sensor</span>
+          <span class="k">print</span> <span class="n">c</span>
+          <span class="n">pin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">pin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+ 
+  <span class="k">return</span><span class="p">(</span><span class="n">pin_list</span><span class="p">)</span> 
+
+</div>
+<span class="n">error_count</span><span class="o">=</span><span class="mi">0</span>
+
+<div class="viewcode-block" id="getErrorTimeString"><a class="viewcode-back" href="../globalVar.html#globalVar.getErrorTimeString">[docs]</a><span class="k">def</span> <span class="nf">getErrorTimeString</span><span class="p">():</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Called when an error occours ,return the current time and a progressive number of the error, incrementing the error_count.</span>
+<span class="sd">  Used to send the error time and error_count to debug the software.</span>
+<span class="sd"> </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">error_count</span>
+  <span class="n">error_count</span><span class="o">=</span><span class="n">error_count</span><span class="o">+</span><span class="mi">1</span> 
+  <span class="k">return</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;n:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">error_count</span><span class="p">)</span> <span class="p">)</span>
+</pre></div></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

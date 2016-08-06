@@ -1,0 +1,296 @@
+@font-face {
+   font-family: 'recharge';
+   src: url('../fonts/recharge.ttf') format('truetype');
+}
+
+@font-face {
+   font-family: 'digital';
+   src: url('../fonts/digital.ttf') format('truetype');
+}
+
+
+a, a:visited  {text-decoration:none;}
+
+@media screen  and (max-width:320px) /*Iphone4 320x480*/ {
+
+
+
+body{
+    	background: black;
+	margin:0;
+	padding:0;
+  }
+
+.flex {max-width: 100%}
+
+
+
+#upper-bar-image{
+width:150px;
+height:50px;
+position:absolute;
+top:0px;
+background-color:#0072ca;
+
+}
+
+#upper-bar-testo{
+width:170px;
+height:50px;
+position:absolute;
+top:0px;
+left:150px;
+background-color:#0072ca;
+text-align:center;
+line-height: 50px;
+
+}
+
+
+
+#container-menu{
+
+width:320px;
+height:50px;
+position:relative;
+top:50px;
+background-color:#0072ca;
+}
+
+.menu-button{
+height:30px;
+width:30px;
+}
+
+
+
+#home-button{
+position:absolute;
+top:10px;
+left:25px;
+}
+
+#play-button{
+position:absolute;
+top:10px;
+left:105px;
+}
+
+#scenario-button{
+position:absolute;
+top:10px;
+left:185px;
+}
+
+#settings-button{
+position:absolute;
+top:10px;
+left:265px;
+}
+}/*chiusura media iphone4*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media screen  and (max-width:360px) /*Note3neo 360*640*/ {
+  
+
+body{
+    	background: black;
+	margin:0;
+	padding:0;
+  }
+
+.flex {max-width: 100%}
+
+
+#upper-bar-image{
+width:150px;
+height:50px;
+position:absolute;
+top:0px;
+background-color:#0072ca;
+
+}
+
+#upper-bar-testo{
+width:210px;
+height:50px;
+position:absolute;
+top:0px;
+left:150px;
+background-color:#0072ca;
+text-align:center;
+line-height: 50px;
+
+}
+
+
+
+#container-menu{
+
+width:360px;
+height:50px;
+position:relative;
+top:50px;
+background-color:#0072ca;
+}
+
+.menu-button{
+height:30px;
+width:30px;
+}
+
+#home-button{
+position:absolute;
+top:10px;
+left:25px;
+}
+
+#play-button{
+position:absolute;
+top:10px;
+left:105px;
+}
+
+#scenario-button{
+position:absolute;
+top:10px;
+left:185px;
+}
+
+#settings-button{
+position:absolute;
+top:10px;
+left:265px;
+}
+	
+
+}/*chiusura media 360px*/
+
+
+
+@media screen  and (min-width:1000px) /*laptop*/ {
+
+
+
+
+body{
+    	background: black;
+	margin:0;
+	padding:0;
+  }
+
+
+#big-container{
+
+
+width:1000px;
+height:3000px;
+background-color:white;
+margin-left:auto;
+margin-right:auto;
+position:relative;
+
+
+}
+
+.flex {max-width: 100%}
+
+
+#upper-bar-image{
+width:375px;
+height:125px;
+position:absolute;
+left:0px;
+top:0px;
+background-color:#0072ca;
+
+}
+
+
+
+#upper-bar-testo{
+width:625px;
+height:125px;
+position:absolute;
+top:0px;
+left:375px;
+background-color:#0072ca;
+text-align:center;
+line-height: 120px;
+font-size:30px;
+
+}
+
+
+
+#container-menu{
+
+width:1000px;
+height:100px;
+position:relative;
+top:125px;
+background-color:#0072ca;
+border-bottom:3px solid black;
+border-top:3px solid black;
+}
+
+.menu-button{
+height:50px;
+width:50px;
+}
+
+.menu-button:hover {
+
+
+height:55px;
+width:55px;
+
+}
+
+#play-button{
+position:absolute;
+top:25px;
+left:100px;
+}
+
+#settings-button{
+position:absolute;
+top:25px;
+left:350px;
+}
+
+#scenario-button{
+position:absolute;
+top:25px;
+left:600px;
+}
+
+#exit-button{
+position:absolute;
+top:25px;
+left:850px;
+
+}
+	
+
+
+
+
+
+
+
+
+

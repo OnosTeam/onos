@@ -1,0 +1,114 @@
+
+<script type="text/javascript" language="javascript">
+
+var stop_update=0;
+
+
+function stopUpdate(){
+stop_update=1;
+}
+
+function startUpdatePag(){
+
+setTimeout('updatePag()',450);
+
+}
+function changePag(url){
+
+location.replace(url);
+
+}
+
+function restartUpdate(){
+stop_update=0;
+}
+
+
+
+function updatePag(){
+
+if (stop_update==1){
+setTimeout('updatePag()',512);
+return;
+}
+
+var xmlHttp;
+//var oldHtml=" ";
+	try{	
+		xmlHttp=new XMLHttpRequest();// Firefox, Opera 8.0+, Safari
+	}
+	catch (e){
+		try{
+			xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); // Internet Explorer
+		}
+		catch (e){
+		    try{
+				xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			catch (e){
+				alert("No AJAX!?");
+				return false;
+			}
+		}
+	}
+
+xmlHttp.onreadystatechange=function(){
+	if(xmlHttp.readyState==4){
+
+      if ((xmlHttp.responseText.charAt(0)=='o')||(xmlHttp.responseText.charAt(1)=='k')){
+        var newtext=xmlHttp.responseText.slice(4);   //remove the first 4 char ..'ok'+seconds
+        if (newtext!="nonews"){  // only if the html change..
+                      
+		  document.getElementById('ReloadThis').innerHTML=newtext;
+          //location.reload();
+
+          //oldHtml=xmlHttp.responseText;
+		  }
+          setTimeout('updatePag()',512);
+
+        }
+        else{     //problem in rx  , i retry 
+
+            setTimeout('updatePag()',512);
+           } 
+        
+
+ 
+	}
+}
+//(new Date()).getTime()   is in order to have every time a different request , to bypass cache
+var d = new Date();
+var n = d.getSeconds();
+xmlHttp.open("GET",location.href+"r_onos_s"+n,false);   //false for synchronous connection
+xmlHttp.send(null);
+}
+
+
+
+//window.onload=function(){
+//	updatePag()
+//}
+
+
+if(window.attachEvent) {
+    window.attachEvent('onload', startUpdatePag);
+} else {
+    if(window.onload) {
+        var curronload = window.onload;
+        var newonload = function() {
+            curronload();
+            startUpdatePag();
+        };
+        window.onload = newonload;
+    } else {
+        window.onload = startUpdatePag;
+    }
+}
+
+
+
+
+
+
+
+</script>

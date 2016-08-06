@@ -1,0 +1,896 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hw_node &mdash; ONOS  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ONOS  documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> ONOS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../arduino_handler.html">arduino_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../arduinoserial.html">arduinoserial module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../globalVar.html">globalVar module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw_node.html">hw_node module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mail_agent.html">mail_agent module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../node_query_handler.html">node_query_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pcduino.html">pcduino module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../router_handler.html">router_handler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_zone.html">time_zone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../web_object.html">web_object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webserver.html">webserver module</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ONOS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>hw_node</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for hw_node</h1><div class="highlight"><pre>
+<span class="c">#   Copyright 2014 Marco Rigoni                                               #</span>
+<span class="c">#   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #</span>
+<span class="c">#   This program is free software: you can redistribute it and/or modify      #</span>
+<span class="c">#   it under the terms of the GNU General Public License as published by      #</span>
+<span class="c">#   the Free Software Foundation, either version 3 of the License, or         #</span>
+<span class="c">#   (at your option) any later version.                                       # </span>
+<span class="c">#																			  #</span>
+<span class="c">#   This program is distributed in the hope that it will be useful,           #</span>
+<span class="c">#   but WITHOUT ANY WARRANTY; without even the implied warranty of            #</span>
+<span class="c">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #</span>
+<span class="c">#   GNU General Public License for more details.                              #</span>
+<span class="c">#                                                                             #</span>
+<span class="c">#   You should have received a copy of the GNU General Public License         #</span>
+<span class="c">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.     #</span>
+
+<span class="sd">&quot;&quot;&quot;| This module is responsable for the handling of each node in the system.</span>
+<span class="sd">   | It generates the setup pin configuration to send to the nodes.</span>
+<span class="sd">   | It stores each node pin setup and last time sync. </span>
+<span class="sd">   |  </span>
+<span class="sd">  </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<span class="kn">from</span>  <span class="nn">globalVar</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+
+<span class="c">#maxPin  is 20 for arduino 2009/uno   (14+6)  but  on wireless node   5 pin are used for comunication</span>
+
+<span class="c">#note...if you use also only one analog input as a digital pin...you can&#39;t use the left pins to read analog values!</span>
+
+
+
+
+
+<span class="c">#Pin mode description:  </span>
+<span class="c"># DOUTPUT=0  --&gt;  digital pin output setted to 0</span>
+<span class="c"># DOUTPUT=1  --&gt;  digital pin output setted to 1</span>
+<span class="c"># DINPUT=0   --&gt;  digital pin input  readed and the value is 0</span>
+<span class="c"># DINPUT=1   --&gt;  digital pin input  readed and the value is 1</span>
+<span class="c"># AINPUT=0   --&gt;  analog  pin input  readed and the value is 0</span>
+<span class="c"># AINPUT=255 --&gt;  analog  pin input  readed and the value is 255</span>
+<span class="c"># AOUTPUT=0   --&gt; pwm  output setted to 0</span>
+<span class="c"># AOUTPUT=255 --&gt; pwm  output setted to 255</span>
+<span class="c"># SOPUTPUT=180--&gt; servo moved to 180 degreese</span>
+<span class="c">#the analog pin can&#39;t be used as digital and then reused for analog unless you reboot arduino</span>
+<span class="c">#</span>
+<span class="c">#</span>
+<span class="k">class</span> <span class="nc">HwNode</span><span class="p">:</span>
+<div class="viewcode-block" id="HwNode"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode">[docs]</a>
+
+
+    <span class="n">__node_name</span><span class="o">=</span><span class="s">&quot;room0_n0&quot;</span>
+    
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">NodeSerialNumber</span><span class="p">,</span><span class="n">hwModel</span><span class="p">,</span><span class="n">address</span><span class="p">,</span><span class="n">node_fw</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span><span class="o">=</span><span class="n">NodeSerialNumber</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">=</span><span class="n">address</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">node_fw</span><span class="o">=</span><span class="n">node_fw</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="o">=</span><span class="n">hwModel</span><span class="p">[</span><span class="s">&quot;hwName&quot;</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">maxPin</span><span class="o">=</span><span class="n">hwModel</span><span class="p">[</span><span class="s">&quot;max_pin&quot;</span><span class="p">]</span> 
+      <span class="bp">self</span><span class="o">.</span><span class="n">hwType</span><span class="o">=</span><span class="n">hwModel</span><span class="p">[</span><span class="s">&quot;hardware_type&quot;</span><span class="p">]</span>  
+      <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="o">=</span><span class="n">hwModel</span><span class="p">[</span><span class="s">&quot;timeout&quot;</span><span class="p">]</span>  <span class="c">#time (in seconds) onos will let pass without contact with the node after which the node will be setted as inactive </span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">last_node_sync</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">isActive</span><span class="o">=</span><span class="mi">1</span>
+      <span class="n">j</span><span class="o">=</span><span class="mi">0</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">j</span><span class="o">&lt;</span><span class="p">(</span>  <span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="mi">9</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span> <span class="p">)</span> <span class="p">):</span>  <span class="c"># create all the unused pin #banana to use only the pin used not all till the pin number!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">j</span>
+        <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span>      
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_status_old</span><span class="o">=</span><span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="o">=</span><span class="p">[]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="o">=</span><span class="p">[]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="o">=</span><span class="p">[]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="o">=</span><span class="p">[]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="o">=</span><span class="p">[]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="o">=</span><span class="p">[]</span>  
+      <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="o">=</span><span class="n">getListUsedPinsByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">)</span>
+
+      <span class="n">tmp_digital_input_pins</span><span class="o">=</span><span class="n">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">,</span><span class="s">&quot;digital_input&quot;</span><span class="p">)</span>
+      <span class="n">tmp_digital_sr_relay_pins</span><span class="o">=</span><span class="n">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">,</span><span class="s">&quot;sr_relay&quot;</span><span class="p">)</span>
+      <span class="c">#tmp_digital_output_pins=getListPinsConfigByHardwareModel(self.hwModelName,&quot;digital_output&quot;)</span>
+      <span class="n">tmp_analog_input_pins</span><span class="o">=</span><span class="n">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">,</span><span class="s">&quot;analog_input&quot;</span><span class="p">)</span>
+      <span class="n">tmp_analog_output_pins</span><span class="o">=</span><span class="n">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">,</span><span class="s">&quot;analog_output&quot;</span><span class="p">)</span>
+      <span class="n">tmp_servo_pins</span><span class="o">=</span><span class="n">getListPinsConfigByHardwareModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">,</span><span class="s">&quot;servo_output&quot;</span><span class="p">)</span>
+      <span class="c">#tmp_special_pins=getListPinsConfigByHardwareModel(self.hwModelName,&quot;special_pin&quot;)</span>
+
+       
+
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span><span class="c">#banana to use only the pin used not all till the pin number!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;DOUTPUT=0&quot;</span>   <span class="c">#BY DEFAULT SET ALL PINS AS DIGITAL OUTPUT AND SET THEM TO 0 </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_status_old</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c">#binary mode set as output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="c">#binary pin set to 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>      <span class="c"># set as not used for servo </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># set as not used for analog input </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c"># set as not used for anolog out </span>
+        <span class="c"># 1 for output 0 for input</span>
+
+
+
+      <span class="c">#banana to add a check in order to block the setup of a pin with multiple modes </span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>   <span class="c">#  i iterates through all  pins (also the unused ones)</span>
+        <span class="n">inside_some_category</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmp_digital_input_pins</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;DINPUT=9999&quot;</span>  <span class="c"># set the pin as digital input ,9999 is a impossible value used as marker</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>  <span class="c">#binary mode set as input</span>
+  
+          
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmp_analog_input_pins</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;AINPUT=9999&quot;</span>  <span class="c"># set the pin as analog  input ,9999 is a impossible value used as marker</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>  <span class="c">#binary mode set as not digitalinput need to be so for the arduino digitalread setup code</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
+          
+          
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmp_servo_pins</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;SOUTPUT=9999&quot;</span>  <span class="c"># set the pin as servo pin    ,9999 is a impossible value used as marker</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#binary mode set as output</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
+          
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmp_analog_output_pins</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;AOUTPUT=9999&quot;</span>  <span class="c"># set the pin as analog_output ,9999 is a impossible value used as marker</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>  <span class="c">#binary mode set as not digitalinput</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">isPinOk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">):</span>
+<div class="viewcode-block" id="HwNode.isPinOk"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.isPinOk">[docs]</a>      <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      Return 1 if the given pin exist in this hardware node, 0 otherwise</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">pin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c">#pin is in the range for the hardware</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;error ,the pin is not in the range hardware&quot;</span>
+        <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error ,the pin is not in the range hardware&quot;</span> <span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c">#pin is NOT in the range for the hardware</span>
+
+
+    <span class="k">def</span> <span class="nf">setNodePinMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>  <span class="c">#</span></div>
+<div class="viewcode-block" id="HwNode.setNodePinMode"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setNodePinMode">[docs]</a> 
+      <span class="sd">&quot;&quot;&quot;| Given a pin number and a mode, set the pin mode</span>
+<span class="sd">         |  The options for mode are:</span>
+
+<span class="sd">            - &quot;DOUTPUT&quot; : digital     output </span>
+<span class="sd">            - &quot;AOUTPUT&quot; : analog      output</span>
+<span class="sd">            - &quot;SOUTPUT&quot; : servo motor output</span>
+<span class="sd">            - &quot;DINPUT&quot;  : digital input</span>
+<span class="sd">            - &quot;AINPUT&quot;  : analog  input</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span> <span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;error in setNodePinMode , passed a non string type as mode&quot;</span>
+        <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;error in setNodePinMode , passed a non string type as mode&quot;</span> <span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="n">mode</span>
+          <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;DOUTPUT&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+          <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;AOUTPUT&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
+          <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;SOUTPUT&quot;</span><span class="p">:</span>          <span class="c">#servo controll pin</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
+
+
+          <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;DINPUT&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+
+          <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s">&quot;AINPUT&quot;</span><span class="p">:</span>          <span class="c">#bug  ...error </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+          <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;hw_node() pin setting error in  node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span><span class="o">+</span><span class="s">&quot;pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; mode:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+          <span class="k">print</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+          <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&quot;hw_node() pin setting error in  node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span><span class="o">+</span><span class="s">&quot;pin:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; mode:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span> <span class="p">)</span> 
+          <span class="n">errorQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>  
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;pin out of range , cannot set the digital input pin status in  node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">setDigitalPinInputStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">,</span><span class="n">status</span><span class="p">):</span><span class="c">#the options for status are an int   obsolete</span></div>
+<div class="viewcode-block" id="HwNode.setDigitalPinInputStatus"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setDigitalPinInputStatus">[docs]</a>      <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated , not used anymore. </span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;DINPUT=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+          <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pin not setted as digital input in this in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;pin out of range , cannot set the digital input pin status &quot;</span>  
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">setAnalogPinInputStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">,</span><span class="n">status</span><span class="p">):</span><span class="c">#the options are from 0 to 255</span></div>
+<div class="viewcode-block" id="HwNode.setAnalogPinInputStatus"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setAnalogPinInputStatus">[docs]</a>      <span class="sd">&quot;&quot;&quot;  </span>
+<span class="sd">        Deprecated , not used anymore. </span>
+<span class="sd">          </span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;AINPUT=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>  <span class="c">#status are from: &quot;AINPUT=0&quot;   to &quot;AINPUT=255&quot;</span>
+          <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pin not setted as digital input in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;pin out of range , cannot set the digital input pin status &quot;</span>  
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+
+      
+    <span class="k">def</span> <span class="nf">setDigitalPinOutputStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">,</span><span class="n">status</span><span class="p">):</span><span class="c">#the options for status are int value   obsolete method</span></div>
+<div class="viewcode-block" id="HwNode.setDigitalPinOutputStatus"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setDigitalPinOutputStatus">[docs]</a>      <span class="sd">&quot;&quot;&quot;Deprecated , not used anymore &quot;&quot;&quot;</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;DOUTPUT&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>  <span class="c">#status are from: &quot;AINPUT=0&quot;   to &quot;AINPUT=255&quot;</span>
+          <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pin not setted as digital input in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;pin out of range , cannot set the digital input pin status &quot;</span>  
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c">#    def setNodeSerialNumber(self,name):             #set the node name</span>
+<span class="c">#      self.NodeSerialNumber=name</span>
+<span class="c">#      return(1)</span>
+
+
+    <span class="k">def</span> <span class="nf">setNodeAddress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">address</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.setNodeAddress"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setNodeAddress">[docs]</a>      <span class="sd">&quot;&quot;&quot;| Set the node address with the string passed </span>
+<span class="sd">         |   Example: &quot;192.168.101.10&quot;  </span>
+<span class="sd">       &quot;&quot;&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="o">=</span><span class="n">address</span>
+      <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">getPinStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">):</span>             <span class="c">#return the PinStatus </span></div>
+<div class="viewcode-block" id="HwNode.getPinStatus"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getPinStatus">[docs]</a>      <span class="sd">&quot;&quot;&quot;Deprecated , not used anymore &quot;&quot;&quot;</span> 
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+          <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pin read problem in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;read pin out of range in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+         
+
+    <span class="k">def</span> <span class="nf">getPinMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">):</span>             <span class="c">#return the Pin mode </span></div>
+<div class="viewcode-block" id="HwNode.getPinMode"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getPinMode">[docs]</a>      <span class="sd">&quot;&quot;&quot;Deprecated , not used anymore &quot;&quot;&quot;</span> 
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="c">#self.pins_status[pin]</span>
+          <span class="n">s</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">find</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">],</span><span class="s">&quot;=&quot;</span><span class="p">)</span>
+          <span class="n">s1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">s</span><span class="p">]</span>
+          <span class="k">return</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pin mode problem in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot; mode pin out of range in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+        <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+   
+
+
+
+   
+
+
+
+    <span class="k">def</span> <span class="nf">getNodeHwModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getNodeHwModel"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeHwModel">[docs]</a>      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwModelName</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">getHwType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getHwType"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getHwType">[docs]</a>      <span class="sd">&quot;&quot;&quot; Return the node hardware type like:\n</span>
+<span class="sd">              - gl.inet_only</span>
+<span class="sd">              - arduino_promini</span>
+<span class="sd">              - rasberry_b_rev2_only</span>
+<span class="sd">              - arduino2009</span>
+
+<span class="sd">      &quot;&quot;&quot;</span>   
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hwType</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setNodeFwVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nodeVersion</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.setNodeFwVersion"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setNodeFwVersion">[docs]</a>      <span class="sd">&quot;&quot;&quot;| Set the node firmware version with the given string </span>
+<span class="sd">         |   Example &quot;4.15&quot;</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">node_fw</span><span class="o">=</span><span class="n">nodeVersion</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_fw</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">getNodeFwVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getNodeFwVersion"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeFwVersion">[docs]</a>      <span class="sd">&quot;&quot;&quot;| Return a string containing the node firmware version </span>
+<span class="sd">         | An example is &quot;5.14&quot; </span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_fw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getNodeAddress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getNodeAddress"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeAddress">[docs]</a>      <span class="sd">&quot;&quot;&quot;Return the node address , if the address is 0 then the node is the arduino over usb (todo)&quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getNodeSerialNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getNodeSerialNumber"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeSerialNumber">[docs]</a>      <span class="sd">&quot;&quot;&quot;| Return the node serial number.</span>
+<span class="sd">         |  For example &quot;Plug6way0001&quot; </span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getMaxPinNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getMaxPinNumber"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getMaxPinNumber">[docs]</a>      <span class="sd">&quot;&quot;&quot;Return the number of pin present in the node&quot;&quot;&quot;</span>   
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxPin</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getUsedPins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getUsedPins"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getUsedPins">[docs]</a>      <span class="sd">&quot;&quot;&quot;Return the list of used pins&quot;&quot;&quot;</span> 
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span>
+
+
+   
+    <span class="k">def</span> <span class="nf">updateLastNodeSync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.updateLastNodeSync"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.updateLastNodeSync">[docs]</a>      <span class="sd">&quot;&quot;&quot;When called update the time from last node time sync with the given one&quot;&quot;&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">last_node_sync</span><span class="o">=</span><span class="n">time</span>
+      <span class="k">return</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">getLastNodeSync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getLastNodeSync"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getLastNodeSync">[docs]</a>      <span class="sd">&quot;&quot;&quot;Return the the time from last node time sync&quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_node_sync</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getNodeTimeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getNodeTimeout"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeTimeout">[docs]</a>      <span class="sd">&quot;&quot;&quot;| Return the time after which the node is declared inactive. </span>
+<span class="sd">         | So if getLastNodeSync() is greater than this self.timeout the node will be setted as inactive &quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setNodeActivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.setNodeActivity"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setNodeActivity">[docs]</a>      <span class="sd">&quot;&quot;&quot;Set the node activity status with the one given.</span>
+
+<span class="sd">         :param value: </span>
+<span class="sd">           - The value to set the node activity should be a integer of 0 or 1</span>
+<span class="sd">               | 0 If the node is inactive </span>
+<span class="sd">               | 1 If the node is active</span>
+
+<span class="sd">       </span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">isActive</span><span class="o">=</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">getNodeActivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getNodeActivity"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeActivity">[docs]</a>      <span class="sd">&quot;&quot;&quot;Return the node activity status. &quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">isActive</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setNodeAnalogInputStatusFromReg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin_number</span><span class="p">,</span><span class="n">low_byte</span><span class="p">,</span><span class="n">high_byte</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.setNodeAnalogInputStatusFromReg"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setNodeAnalogInputStatusFromReg">[docs]</a>      <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">      | Given a pin number, and two bytes  return the analog value in an single integer.</span>
+<span class="sd">      | Since arduino analogRead return a 10 bit analog value to send it I need to split it in two bytes (8 bit each)</span>
+<span class="sd">      | so arduino will send 2 bytes the low_byte and the high_byte , this function will rebuild the number from those two bytes   </span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPinOk</span><span class="p">(</span><span class="n">pin_number</span><span class="p">)</span> <span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin_number</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span><span class="o">==</span><span class="s">&quot;AINPUT&quot;</span><span class="p">:</span>    <span class="c">#check if the pin is a analog input       </span>
+          <span class="c">#  print (&quot;added analog status&quot;)</span>
+          <span class="n">analog_value</span><span class="o">=</span><span class="n">low_byte</span><span class="o">+</span><span class="p">(</span><span class="n">high_byte</span><span class="o">*</span><span class="mi">256</span><span class="p">)</span>  <span class="c">#the data is splitted in 2 byte  so to get it i made this math</span>
+          <span class="n">analog_value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">analog_value</span><span class="p">)</span>
+          <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">analog_value</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">4</span> <span class="p">:</span>  <span class="c">#to make the format 0000</span>
+            <span class="n">analog_value</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="o">+</span><span class="n">analog_value</span> 
+
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin_number</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;AINPUT=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">analog_value</span><span class="p">)</span> 
+          <span class="k">return</span><span class="p">(</span><span class="n">analog_value</span><span class="p">)</span> 
+                
+        <span class="k">else</span><span class="p">:</span> <span class="c"># pin not used as analog input           </span>
+          <span class="k">print</span> <span class="s">&quot;warning: the pin is not setted as analog input&quot;</span>
+          <span class="k">return</span><span class="p">(</span><span class="s">&quot;9999&quot;</span><span class="p">)</span>
+
+
+
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;pin out of range , cannot set the digital input pin status &quot;</span>  
+        <span class="k">return</span><span class="p">(</span><span class="s">&quot;9999&quot;</span><span class="p">)</span>
+
+
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">setNodeSectionDInputStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">section_number</span><span class="p">,</span><span class="n">status_byte</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.setNodeSectionDInputStatus"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.setNodeSectionDInputStatus">[docs]</a>      <span class="sd">&quot;&quot;&quot;| Set the node status pins of a section (8 bit) received from arduino.</span>
+<span class="sd">         | if the section status is different from the previous one then check</span>
+<span class="sd">         | what pins changed and ask the webserver.py to change the webobj status of the relative pins</span>
+<span class="sd">         | i don&#39;t need a setNodeSectionDoutputStatus because the output status will be saved in the webobject status. </span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="n">binary_mask</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">]</span>   
+
+      <span class="n">pin_to_update</span><span class="o">=</span><span class="p">{}</span>  
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>  <span class="c"># from 0 to 7  ,for all the pins in the section  </span>
+        <span class="n">pin</span><span class="o">=</span><span class="p">((</span><span class="n">section_number</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="n">i</span><span class="p">)</span>        
+        <span class="k">print</span> <span class="s">&quot;self.pins_status=&quot;</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+        <span class="k">print</span> <span class="s">&quot;pin=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span><span class="o">==</span><span class="s">&quot;DINPUT&quot;</span><span class="p">:</span>    <span class="c">#check if the pin is a digital input</span>
+     
+           <span class="c"># print self.pins_io_status</span>
+          <span class="n">current_state</span><span class="o">=</span><span class="n">status_byte</span> <span class="o">&amp;</span> <span class="n">binary_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c">#  make an &amp; in order to get the status of each bit of the byte</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">current_state</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">:</span>  <span class="c"># to make it boolean ,0 or 1</span>
+            <span class="n">current_state</span><span class="o">=</span><span class="mi">1</span>
+          <span class="k">print</span> <span class="s">&quot;pin_status=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>  
+          <span class="k">print</span> <span class="s">&quot;binary_mask[i]=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>            
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">==</span><span class="n">current_state</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;DINPUT=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>  
+          <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">!=</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status_old</span><span class="p">[</span><span class="n">pin</span><span class="p">]):</span>   <span class="c">#if something change from the previous update..    </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pins_status_old</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+            <span class="n">pin_to_update</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+   
+
+            <span class="k">print</span> <span class="s">&quot;pin number&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;of_node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span><span class="o">+</span><span class="s">&quot;changed status to:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+   
+
+      <span class="k">return</span><span class="p">(</span><span class="n">pin_to_update</span><span class="p">)</span>
+
+
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">getNodeSectionStatusByPin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getNodeSectionStatusByPin"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeSectionStatusByPin">[docs]</a>      <span class="sd">&quot;&quot;&quot; Given a pin  return a tuple with: </span>
+
+<span class="sd">            - The number of the section where the pin is located </span>
+<span class="sd">            - The the node status register for the section (8 bit) containing that pin</span>
+
+<span class="sd">         | Structure:</span>
+<span class="sd">         | (the section0 is relative to the first 8 pins , from pin 0 to pin 7)   msb    left </span>
+<span class="sd">         | (the section1 is relative to the pins from 8 to 15)</span>
+<span class="sd">         | (the section2 is relative to the pins from 16 to 23 )</span>
+<span class="sd">         | (the section3 is relative to the pins from 24 to 31)</span>
+<span class="sd">         | (the section4 is relative to the pins from 32 to 39 )</span>
+<span class="sd">         | (the section5 is relative to the pins from 40 to 47)</span>
+<span class="sd">         | (the section6 is relative to the pins from 48 to 55 )</span>
+<span class="sd"> </span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="n">section</span><span class="o">=</span><span class="n">pin</span><span class="o">//</span><span class="mi">8</span>    <span class="c">#get the section that is the division from pin number and 8  without remainder..</span>
+      
+
+
+      <span class="n">status_reg</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">])</span><span class="o">*</span><span class="mi">128</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">64</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mi">32</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mi">16</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span><span class="o">*</span><span class="mi">8</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span><span class="o">*</span><span class="mi">2</span>
+      <span class="n">status_reg</span><span class="o">=</span><span class="n">status_reg</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_status</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span> <span class="c">#now pins_io_status is a byte containing each pin status.</span>
+
+      <span class="n">status_reg</span><span class="o">=</span><span class="nb">unichr</span><span class="p">(</span><span class="n">status_reg</span><span class="p">)</span>
+
+      <span class="k">return</span><span class="p">((</span><span class="n">section</span><span class="p">,</span><span class="n">status_reg</span><span class="p">))</span>
+
+    
+    <span class="k">def</span> <span class="nf">getNodeStatusList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getNodeStatusList"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeStatusList">[docs]</a>      <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         :warning:  Never used</span>
+
+<span class="sd">           Return a list containing the node status for each pin.</span>
+<span class="sd">         </span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">)</span>
+
+   
+
+
+    <span class="k">def</span> <span class="nf">getPinModeList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>           </div>
+<div class="viewcode-block" id="HwNode.getPinModeList"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getPinModeList">[docs]</a>      <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         :warning:  Never used</span>
+
+<span class="sd">           Return the Pin mode list containing all the pin mode.</span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="n">b</span><span class="o">=</span><span class="p">[]</span>
+      <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins_status</span><span class="p">:</span>
+
+       
+        <span class="k">try</span><span class="p">:</span>
+
+          <span class="n">s</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">find</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="s">&quot;=&quot;</span><span class="p">)</span>
+          <span class="n">s1</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">s</span><span class="p">]</span>
+          <span class="n">b</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="k">print</span> <span class="s">&quot;pin mode problem in node:&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">NodeSerialNumber</span>
+          <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">return</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>         
+
+
+
+
+    <span class="k">def</span> <span class="nf">getNodeSectionMode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getNodeSectionMode"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeSectionMode">[docs]</a>      <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      :warning:  Never used</span>
+
+<span class="sd">      |  Return a list containing the node mode for each section (8 bit)</span>
+<span class="sd">      |  (the section0 is relative to the first 8 pins , from pin 0 to pin 7)   msb    left </span>
+<span class="sd">      |  (the section1 is relative to the pins from 8 to 15)</span>
+<span class="sd">      |  (the section2 is relative to the pins from 16 to 23 )</span>
+<span class="sd">      |  (the section3 is relative to the pins from 24 to 31)</span>
+<span class="sd">      |  (the section4 is relative to the pins from 32 to 39 )</span>
+<span class="sd">      |  (the section5 is relative to the pins from 40 to 47)</span>
+<span class="sd">      |  (the section6 is relative to the pins from 48 to 55 )</span>
+
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">print</span> <span class="s">&quot;used pins by node=&quot;</span>
+      <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span>
+
+      <span class="n">section</span><span class="o">=</span><span class="mi">0</span>
+      <span class="n">d_conf_string</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+      <span class="n">s_conf_string</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+      <span class="n">ai_conf_string</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+      <span class="n">ao_conf_string</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+      <span class="n">p_used_string</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+
+    <span class="c">#  print &quot;len self.pins_servo_mode :&quot;+str(len(self.pins_servo_mode))</span>
+    <span class="c">#  print &quot;len self.total_pin :&quot;+str(len(self.total_pin))</span>
+    <span class="c">#  print &quot;len self.pins_io_mode :&quot;+str(len(self.pins_io_mode))</span>
+    <span class="c">#  print &quot;len self.pins_analog_in_mode :&quot;+str(len(self.pins_analog_in_mode))</span>
+    <span class="c">#  print &quot;len self.pins_analog_out_mode :&quot;+str(len(self.pins_analog_out_mode))</span>
+
+      <span class="k">while</span> <span class="p">((</span><span class="mi">8</span><span class="o">*</span><span class="n">section</span><span class="p">)</span><span class="o">&lt;</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="mi">9</span><span class="p">)):</span>
+       <span class="c"># print &quot;sectionx8=&quot;+str(section*8)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span>
+        <span class="c">#print &quot;pin0=&quot;+str((self.total_pin[section*8] in self.used_pin)*1)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>
+        <span class="c">#print &quot;pin1=&quot;+str((self.total_pin[section*8+1] in self.used_pin)*2)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span>
+        <span class="c">#print &quot;pin2=&quot;+str((self.total_pin[section*8+2] in self.used_pin)*4)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span>
+        <span class="c">#print &quot;pin3=&quot;+str((self.total_pin[section*8+3] in self.used_pin)*8)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">16</span>
+        <span class="c">#print &quot;pin4=&quot;+str((self.total_pin[section*8+4] in self.used_pin)*16)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">32</span>
+        <span class="c">#print &quot;pin5=&quot;+str((self.total_pin[section*8+5] in self.used_pin)*32)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">6</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">64</span>
+        <span class="c">#print &quot;pin6=&quot;+str((self.total_pin[section*8+6] in self.used_pin)*64)</span>
+        <span class="n">p_used</span><span class="o">=</span><span class="n">p_used</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_pin</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="o">+</span><span class="mi">7</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_pin</span><span class="p">)</span><span class="o">*</span><span class="mi">128</span>
+        <span class="c">#print &quot;pin7=&quot;+str((self.total_pin[section*8+7] in self.used_pin)*128)</span>
+        <span class="c">#print &quot;p_used int=&quot;+str(p_used) </span>
+        <span class="n">p_used</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="n">p_used</span><span class="p">)</span>        
+        <span class="n">p_used_string</span><span class="o">=</span><span class="n">p_used_string</span><span class="o">+</span><span class="n">p_used</span>  
+        <span class="c">#print &quot;p_used_string=&quot;+p_used_string</span>
+
+        <span class="n">d_setup</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span>               
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">2</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mi">8</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span><span class="o">*</span><span class="mi">16</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span><span class="o">*</span><span class="mi">32</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span><span class="o">*</span><span class="mi">64</span>
+        <span class="n">d_setup</span><span class="o">=</span><span class="n">d_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">])</span><span class="o">*</span><span class="mi">128</span>      
+        <span class="n">d_setup</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="n">d_setup</span><span class="p">)</span>
+        <span class="n">d_conf_string</span><span class="o">=</span><span class="n">d_conf_string</span><span class="o">+</span><span class="n">d_setup</span>  
+
+        <span class="n">s_setup</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span>                  <span class="c">#servo setup</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">2</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mi">8</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span><span class="o">*</span><span class="mi">16</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span><span class="o">*</span><span class="mi">32</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span><span class="o">*</span><span class="mi">64</span>
+        <span class="n">s_setup</span><span class="o">=</span><span class="n">s_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_servo_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">])</span><span class="o">*</span><span class="mi">128</span>     
+        <span class="n">s_setup</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="n">s_setup</span><span class="p">)</span>
+        <span class="n">s_conf_string</span><span class="o">=</span><span class="n">s_conf_string</span><span class="o">+</span><span class="n">s_setup</span>  
+
+
+        <span class="n">ai_setup</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span>         <span class="c">#analog input setup     </span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">2</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mi">8</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span><span class="o">*</span><span class="mi">16</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span><span class="o">*</span><span class="mi">32</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span><span class="o">*</span><span class="mi">64</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="n">ai_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_in_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">])</span><span class="o">*</span><span class="mi">128</span>      
+        <span class="c">#print &quot;ai setup for section:&quot;+str(section)+&quot;==&quot;+str(ai_setup)</span>
+        <span class="n">ai_setup</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="n">ai_setup</span><span class="p">)</span>
+        <span class="n">ai_conf_string</span><span class="o">=</span><span class="n">ai_conf_string</span><span class="o">+</span><span class="n">ai_setup</span>  
+
+        <span class="n">ao_setup</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span>         <span class="c">#analog output setup        </span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">2</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mi">8</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span><span class="o">*</span><span class="mi">16</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span><span class="o">*</span><span class="mi">32</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span><span class="o">*</span><span class="mi">64</span>
+        <span class="n">ao_setup</span><span class="o">=</span><span class="n">ao_setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_analog_out_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">])</span><span class="o">*</span><span class="mi">128</span>      
+        <span class="n">ao_setup</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="n">ao_setup</span><span class="p">)</span>
+        <span class="n">ao_conf_string</span><span class="o">=</span><span class="n">ao_conf_string</span><span class="o">+</span><span class="n">ao_setup</span>  
+
+
+        <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="o">+</span><span class="mi">1</span>
+
+
+
+      <span class="n">tmp_dict</span><span class="o">=</span><span class="p">{}</span>
+      <span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;used_pins&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">p_used_string</span>
+      <span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;digital_conf&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">d_conf_string</span>
+      <span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;servo_conf&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">s_conf_string</span>
+      <span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;analog_input_conf&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ai_conf_string</span>
+      <span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;analog_output_conf&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ao_conf_string</span>
+   <span class="c">#   for n in ai_conf_string :    #banana to remove</span>
+   <span class="c">#     print &quot;an setup =&quot;+str(ord(n))          #banana to remove</span>
+
+      <span class="k">return</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">getSetupMsg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.getSetupMsg"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getSetupMsg">[docs]</a>
+      <span class="sd">&quot;&quot;&quot;Return a encoded string containing the setup mode for the node pins</span>
+
+<span class="sd">         I need to encode the pin setup in a sinmple and compact way.</span>
+<span class="sd">         Here the protocol:</span>
+
+<span class="sd">         .. code-block:: python</span>
+
+<span class="sd">           start with &#39;s=&#39;</span>
+<span class="sd">           then  add    9 bytes that rappresent the pin used (1 for pin used 0 for not used)   </span>
+<span class="sd">           after that   9 bytes that rappresent the digital pin setup from pin0 to pin 127</span>
+<span class="sd">           after that   9 bytes that tell arduino which pin to set as analog input</span>
+<span class="sd">           after that   9 bytes that tell arduino which pin to set as pwm output</span>
+<span class="sd">           after that   9 bytes that tell arduino which pin to set as servo output</span>
+<span class="sd">           then  1   byte for future use , for now &#39;#&#39;</span>
+<span class="sd">           example:&quot;s=000000000000000000000000000000000000000000000#&quot;  </span>
+<span class="sd">           the 0 are not 0 but the value corrisponding to ascii &#39;0&#39;</span>
+<span class="sd">           total 48 byte </span>
+<span class="sd">     &quot;&quot;&quot;</span>
+
+      <span class="k">print</span> <span class="s">&quot;getSetupMsg executed&quot;</span>
+      <span class="n">tmp_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getNodeSectionMode</span><span class="p">()</span>
+      <span class="n">msg</span><span class="o">=</span><span class="s">&quot;s=&quot;</span>
+      <span class="c">#msg=msg+&quot;pu&quot;</span>
+      <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="o">+</span><span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;used_pins&quot;</span><span class="p">]</span>   
+      <span class="c">#msg=msg+&quot;ds&quot;</span>
+      <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="o">+</span><span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;digital_conf&quot;</span><span class="p">]</span>   <span class="c">#get the binary digital io configuration</span>
+      <span class="c">#msg=msg+&quot;ai&quot;</span>
+      <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="o">+</span><span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;analog_input_conf&quot;</span><span class="p">]</span>
+      <span class="c">#msg=msg+&quot;ao&quot;</span>
+      <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="o">+</span><span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;analog_output_conf&quot;</span><span class="p">]</span>
+      <span class="c">#msg=msg+&quot;sm&quot;</span>
+      <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="o">+</span><span class="n">tmp_dict</span><span class="p">[</span><span class="s">&quot;servo_conf&quot;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;#&quot;</span>
+      <span class="k">print</span> <span class="s">&quot;msg=&quot;</span><span class="o">+</span><span class="n">msg</span>
+      <span class="k">print</span> <span class="s">&quot;len msg=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+      <span class="k">return</span> <span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">getNodeSectionModeByPin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pin</span><span class="p">):</span> </div>
+<div class="viewcode-block" id="HwNode.getNodeSectionModeByPin"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.getNodeSectionModeByPin">[docs]</a>      <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated , not used anymore. </span>
+<span class="sd">          Given a pin  return the node mode for the section (8 bit) containing that pin.</span>
+<span class="sd">          </span>
+<span class="sd">      &quot;&quot;&quot;</span>
+     <span class="c">#(the section0 is relative to the first 8 pins , from pin 0 to pin 7)   msb    left </span>
+     <span class="c">#(the section1 is relative to the pins from 8 to 15)</span>
+     <span class="c">#(the section2 is relative to the pins from 16 to 23 )</span>
+     <span class="c">#(the section3 is relative to the pins from 24 to 31)</span>
+     <span class="c">#(the section4 is relative to the pins from 32 to 39 )</span>
+     <span class="c">#(the section5 is relative to the pins from 40 to 47)</span>
+     <span class="c">#(the section6 is relative to the pins from 48 to 55 )</span>
+
+      <span class="n">section</span><span class="o">=</span><span class="n">pin</span><span class="o">//</span><span class="mi">8</span>    <span class="c">#get the section that is the division from pin number and 8  without remainder..</span>
+
+
+      <span class="n">setup</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">])</span><span class="o">*</span><span class="mi">128</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">64</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mi">32</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mi">16</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span><span class="o">*</span><span class="mi">8</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">6</span><span class="p">])</span><span class="o">*</span><span class="mi">2</span>
+      <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pins_io_mode</span><span class="p">[(</span><span class="n">section</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span>
+      <span class="n">setup</span><span class="o">=</span><span class="nb">unichr</span><span class="p">(</span><span class="n">setup</span><span class="p">)</span>
+
+      <span class="k">return</span><span class="p">(</span><span class="n">setup</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="HwNode.close"><a class="viewcode-back" href="../hw_node.html#hw_node.HwNode.close">[docs]</a>      <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="o">=</span><span class="mi">1</span>
+      <span class="k">print</span> <span class="s">&quot;class hw_node destroyed&quot;</span>
+</pre></div></div></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

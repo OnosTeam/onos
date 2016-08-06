@@ -1,0 +1,155 @@
+
+
+loop che dice sempre main webserver  e poi se resetto un nodo:
+timeout in receiving!!! [Errno 24] Too many open files                          
+connection  closed                                                              
+error connection, client_address = sock.accept()  in nodeTcpServer()(24, 'Too m)
+main webserver    
+
+
+
+
+
+main error in handle_new_query_to_remote_node_thread:('string indices must be integers',)
+
+
+
+(12, 'Cannot allocate memory');;;
+
+error in make_query_to_remote_node() router_handler class trying to query a node the query wasonos_r1716v1s0001_#]the number of try is 7(148, 'No route to host')at:8:23;;;
+great error the node did not answer also if tried :7times, the node will not be setted anymore(probably is not connected);;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query wasonos_r1716v0s0001_#]the number of try is 0(148, 'No route to host')at:8:23;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query wasonos_r1716v0s0001_#]the number of try is 1(148, 'No route to host')at:8:23;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query wasonos_r1716v0s0001_#]the number of try is 2(148, 'No route to host')at:8:23;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query wasonos_r1716v0s0001_#]the number of try is 3(148, 'No route to host')at:8:23;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query wasonos_r1716v0s0001_#]the number of try is 4(148, 'No route to host')at:9:23;;;
+The node:Plug6way0002 IS NOT CONNECTED ANYMORE,did you disconnected it?
+
+
+error cant send mail;;;
+(550, '5.4.5 Daily user sending quota exceeded. d4sm18107662wjk.11 - gsmtp');;;
+
+
+
+root@(none):/tmp/onos# ./onos.sh                                                
+tzset not present , timezone will work anyway                                   
+executed getListUsedPinsByHardwareModel                                         
+pin used:                                                                       
+[20, 19, 18, 22, 21]                                                            
+pin used =                                                                      
+[20, 19, 18, 22, 21]                                                            
+executed getListPinsConfigByHardwareModel ()                                    
+discovered local hardware io pins                                               
+i try to execute echo 20 > /sys/class/gpio/export                               
+i try to set the pin as output                                                  
+i try to execute echo 19 > /sys/class/gpio/export                               
+sh: write error: Invalid argument                                               
+error can't create GPIO pin and set its mode                                    
+i try to set the pin as output                                                  
+/bin/sh: can't create /sys/class/gpio/gpio19/direction: nonexistent directory   
+error setting pin19as output                                                    
+i try to execute echo 18 > /sys/class/gpio/export                               
+sh: write error: Invalid argument                                               
+error can't create GPIO pin and set its mode                                    
+i try to set the pin as output                                                  
+/bin/sh: can't create /sys/class/gpio/gpio18/direction: nonexistent directory   
+error setting pin18as output                                                    
+i try to execute echo 22 > /sys/class/gpio/export                               
+sh: write error: Invalid argument                                               
+error can't create GPIO pin and set its mode                                    
+i try to set the pin as output       
+
+
+
+
+
+
+
+error in the remote object update;;;
+error creating online user ;;;
+error in the remote object update
+
+
+
+
+error_qqqq retry
+
+
+error in the eval of for op in executionList :op=wifi0_Plug6way0001==1;;;
+('unexpected EOF while parsing', ('<string>', 0, 0, ''));;;
+the webobject has already the status value you want to set 
+
+
+error in the scen_check of onosBusThread ,scenario_name:scenario6;;;
+('unexpected EOF while parsing', ('<string>', 0, 0, ''));;;
+error in the scen_check of onosBusThread ,scenario_name:scenario6;;;
+('unexpected EOF while parsing', ('<string>', 0, 0, ''));;;
+the webobject has already the status value you want to set 
+
+
+
+error in the scen_check of onosBusThread ,scenario_name:scenario5;;;
+('unexpected EOF while parsing', ('<string>', 0, 0, ''));;;
+error in the scen_check of onosBusThread ,scenario_name:scenario5;;;
+('unexpected EOF while parsing', ('<string>', 0, 0, ''));;;
+the webobject has already the status value you want to set 
+
+
+
+onos_errors_report
+Importante
+electronicflame@gmail.com  Oggi alle 1:09 PM
+A	
+electronicflame@gmail.com
+;;;
+error creating online user ;;;
+error contacting the online server to get sync message
+
+
+
+scenario scenario_conditions :  (#_rergswgeg_#>#_counter1_#)
+no objects found in the scenario_conditions or scenario_conditions fully analyzed  e:("'NoneType' object has no attribute 'group'",)
+scenario_conditions replaced: (0>748)
+
+
+
+
+
+
+
+
+
+
+
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r1716v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r1716v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x76ff7a30>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r0504v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r0504v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x76ff78f0>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r1514v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r1514v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x76ff7ff0>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r0706v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r0706v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x76fedd90>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r0302v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r0302v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x77004350>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r0908v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r0908v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x77004110>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node;;;
+error in make_query_to_remote_node() router_handler class trying to query a node the query washttp://192.168.101.108:9000/onos_r1716v0s0001;;;
+("HTTPConnectionPool(host='192.168.101.108', port=9000): Max retries exceeded with url: /onos_r1716v0s0001 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x770040b0>, 'Connection to 192.168.101.108 timed out. (connect timeout=1.0)'))",);;;
+error the node answer with:local_error_in_router_handler_cant_connect_to_node
+
+
+
+
+
+
+
+
+
+
+

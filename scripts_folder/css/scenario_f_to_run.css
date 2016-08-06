@@ -1,0 +1,206 @@
+/*//////////////////////////////pezzo standard per ogni css////////////////*/
+
+body {
+margin: 0;
+padding: 0;
+background-color: white;
+
+}
+
+
+#body2{
+position:relative;
+margin:auto;
+}
+
+a, a:visited  {text-decoration:none;color:black;}
+
+a:hover{text-decoration:none;  font-weight: bold;}
+
+#image {
+	display: block;
+	margin: auto;
+    height: auto;
+}
+
+#container-image{
+	margin:0 auto;
+	width:100%;
+	background-color: black;
+}
+
+.divisorio{
+	height:auto;
+	margin-bottom:80px;
+	background-color: black;
+	color:#0072ca;
+	text-align: center;
+	font-weight: bold;
+	font-size: 40px;
+	text-shadow: 2px 2px gray ;/*non supportato da IE9 e precedenti*/
+}
+
+
+
+/*//////////////////////////////////inizio menu/////////////////////////*/
+
+#container{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top:15px;
+	position:relative;
+	width:400px;
+	height:70px;
+
+}
+
+.menu{
+	color:white;
+	background-color:red;
+	text-align:center;
+	
+}
+
+.flex {max-width: 100%}
+
+
+
+#play{
+	width:60px;
+	height:60px;
+	position:absolute;
+	
+}
+
+#teach{
+	width:60px;
+	height:60px;
+	position:absolute;
+	left:180px;
+	bottom:4px;
+}
+
+#setup{
+	width:60px;
+	height:60px;
+	position:absolute;
+	left:340px;
+}
+
+.button:hover{top:-10px;}
+
+
+#footer {
+	margin: auto;
+	height:100px;
+	width:100%;
+}
+
+
+/*//////////////////////////////fine menu-//////////////pezzo standard per css////////////////*/
+
+
+
+
+.container1{
+
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:30px;
+	position:relative;
+	width:450px;
+	height:50px;
+
+
+
+}
+
+
+.container1.border{border-bottom: solid 1px gray;}
+
+
+#sbutton{
+
+background-color:#0072ca;
+color:black;
+
+}
+
+.submit-button{
+
+
+	text-align:center;
+	margin:0 auto;
+	font-weight:bold;
+	width:350px;
+	height:50px;
+	position: absolute;
+	left:50px;
+	background-color:#C9C9C9;
+	border: 5px outset black;
+}
+
+
+.testo{
+	text-align:center;
+	width:50px;
+	height:50px;
+	display: block;
+	position: absolute;
+	top:8px;
+
+}
+
+
+.left_select {
+
+	position:absolute;
+	width:100px;
+	height:30px;
+	left:50px;
+}
+
+.operator_select {
+
+	position:absolute;
+	width:50px;
+	height:30px;
+	left:200px;
+
+}
+
+.operator2_select {
+
+	position:absolute;
+	width:50px;
+	height:30px;
+	left:450px;
+
+}
+
+.right_select{
+
+	position:absolute;
+	width:100px;
+	height:30px;
+	left:300px;
+
+}
+
+
+.right2_select{
+
+	position:absolute;
+	width:100px;
+	height:30px;
+	left:550px;
+
+}
+
+
+
+
+
+
+
+
