@@ -26,6 +26,9 @@ onosBusThread()  a volte si blocca?
 
 
 
+business plan  , studiare come scriverlo
+
+
 
 0) Passare tutto da tcp a udp ?  // passata la gestione nodi da richiesta http a query tcp 
 
