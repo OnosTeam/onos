@@ -31,4 +31,7 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+.. image:: https://ga-beacon.appspot.com/UA-45976563-4/beacon.en.html?pixel
+
+
 
