@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-
+from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 
 scenarios_name_comparison='(mystring=="")'
 for scenario in scenarioDict :
@@ -78,19 +78,9 @@ try:
 except:
   sel3="0"
 
-
-
-
-html='''
-<!-- pezzo standard per header menu e nome pagina -->
-
-<!DOCTYPE html>
-
-<html>
-
-    <head>
+part_to_insert_in_head='''
 	<link rel="stylesheet" href="../../css/mod_scenario.css">
-	<meta charset="utf-8">
+
 
 <script type="text/javascript">
 function checkvalue() { 
@@ -109,23 +99,16 @@ function checkvalue() {
 
 
     </head>
-    <body>
 
-	<div id="container-image">
-       <img id="image" src="../../img/header.jpg" class="image" />
-	</div>
+'''
 
 
+slashes="../../"
+html=getTopMenu(part_to_insert_in_head,slashes)
 
+html=html+'''
 
-		<div id="container">
-			<div id="play"  class="button" ><a href="/"><img class="flex" src="../../img/home.png" class="image" /></a></div>
-			<div id="teach" class="button" ><a href="/scenarios_list/"><img class="flex" src="../../img/scenario-ico.png" class="image" /></a></div>
-			<div id="setup" class="button" ><a href="/setup/"><img class="flex" src="../../img/setup-ico.gif" class="image" /></a></div>
-		</div>
-
-
-
+        <br><br><br>  
 		<div class="divisorio">MOD SCENARIO "'''+scenario_to_mod+'''"</div>
 
 

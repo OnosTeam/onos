@@ -1,5 +1,6 @@
-
 # -*- coding: UTF-8 -*-
+
+from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 
 html=scenario_to_mod
 
@@ -116,15 +117,8 @@ default_obj_sel_dx='''<option>select_an_element</option>'''+obj_sel
 
 
 
+part_to_insert_in_head='''	<link rel="stylesheet" href="../../../css/scenario_conditions.css">
 
-html='''
-<!DOCTYPE html>
-
-<html>
-
-    <head>
-	<link rel="stylesheet" href="../../css/scenario_conditions.css">
-	<meta charset="utf-8">
 
 <script type="text/javascript">
 function checkvalue() { 
@@ -139,26 +133,17 @@ function checkvalue() {
     }
 }
 </script>
-
-
-    </head>
-    <body>
-
-	<div id="container-image">
-       <img id="image" src="../../../img/header.jpg" class="image" />
-	</div>
+'''
 
 
 
-
-		<div id="container">
-			<div id="play"  class="button" ><a href="/"><img class="flex" src="../../../img/home.png" class="image" /></a></div>
-			<div id="teach" class="button" ><a href="/scenarios_list/"><img class="flex" src="../../../img/scenario-ico.png" class="image" /></a></div>
-			<div id="setup" class="button" ><a href="/setup/"><img class="flex" src="../../../img/setup-ico.gif" class="image" /></a></div>
-		</div>
+slashes="../../../"
+html=getTopMenu(part_to_insert_in_head,slashes)
 
 
 
+html=html+'''
+        <br><br><br>
 		<div class="divisorio">CONDITIONS</div>
 
 <div id="body2"><!--serve per dare un riferimento diverso dal body per il potion:relative ovvero dal menu in giù semplifica la costruzione della pagina -->

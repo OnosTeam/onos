@@ -85,7 +85,7 @@ error_log_name="erros.log"
 log_enable=0   #enable the log file size check
 check_log_len_time=datetime.datetime.today().minute
 mail_error_log_enable=1  #enable onos to send mail when an error happens
-error_log_mail_frequency=60  #seconds between a error check and another
+error_log_mail_frequency=30  #seconds between a error check and another
 last_error_check_time=0
 mail_where_to_send_errors="electronicflame@gmail.com"
 

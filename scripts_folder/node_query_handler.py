@@ -156,7 +156,7 @@ def handle_new_query_to_remote_node_thread():
       node_serial_number=current_query["node_serial_number"]
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
         print "the node"+node_serial_number+"is inactive ,so I delete its query"
-        queryToNodeQueue.put("the node"+node_serial_number+"is inactive ,so I delete its query")
+        errorQueue.put("the node"+node_serial_number+"is inactive ,so I delete its query")
         continue ##skip to the next query ..
 
       with lock1_current_node_handler_list:
@@ -201,8 +201,8 @@ def handle_new_query_to_remote_node_thread():
 
 
   except Exception, e :
-    print ("main error in handle_new_query_to_remote_node_thread"+str(e.args)) 
-    errorQueue.put("main error in handle_new_query_to_remote_node_thread:"+str(e.args)) 
+    print ("main error in handle_new_query_to_remote_node_thread"+str(e.args)+"current query:"+str(current_query)) 
+    errorQueue.put("main error in handle_new_query_to_remote_node_thread:"+str(e.args)+"current query:"+str(current_query)) 
 
 
 

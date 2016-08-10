@@ -1379,13 +1379,13 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     zone=zoneDict[room]
     namespace={} 
     web_page=""
+    roomHtml="error executing /gui/pag_creator.py"
     try:
       execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py
       roomHtml=namespace["web_page"]  
     except Exception, e: 
       print "error executing /gui/pag_creator.py e:"+str(e.args)
       errorQueue.put("error executing /gui/pag_creator.py e:"+str(e.args)) 
-    roomHtml="error executing /gui/pag_creator.py"
     return(roomHtml)
 
 
@@ -2975,7 +2975,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 print "i set"+objName+" to :"+str(status_to_set)
 
               else:
-                print "command :"+objName+" not in dictionary"
+                print "the objName :"+objName+" not in dictionary"
 
 
               address_bar=address_bar[next_point_position-2:]
@@ -3020,7 +3020,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   print "i set"+objName+" to :"+str(status_to_set)
 
                 else:
-                  print "command :"+objName+" not in dictionary"
+                  print "objName :"+objName+" not in dictionary"
                 
 
                 address_bar=address_bar[(equal_position+1):] #remove the first '?'

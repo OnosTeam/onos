@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import codecs
+from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 obj_name_list=zone["objects"]   
 
 
@@ -7,36 +8,22 @@ obj_name_list=zone["objects"]
 #    css_file = g.read()
 #    css_play_zone=css_file
 #g.close()  
- 
+part_to_insert_in_head='''<!--onos_automatic_page--><!--onos_automatic_javascript--><link rel="stylesheet" href="../css/zone.css"><style type="text/css"><!--onos_automatic_body_style--></style>
 
 
-play_zone_start_html='''<!DOCTYPE html><html><head><!--onos_automatic_meta--><!--onos_automatic_page--><title>ONOS</title><!--onos_automatic_javascript-->
-<meta charset="utf-8">
-<link rel="stylesheet" href="../css/zone.css">
-<style type="text/css">
+'''
+html=getTopMenu(part_to_insert_in_head)
 
-<!--onos_automatic_body_style-->
-    </style>
-</head>
+play_zone_html=html+'''
 <body>
 
 <div id="ReloadThis" >
-	<div id="container-image">
-       <img id="image" src="/img/header.jpg" class="image" />
-	</div>
 
-
-		<div id="container">
-			<div id="play"  class="button" ><a href="/"><img class="flex" src="/img/home.png" class="image" /></a></div>
-			<div id="teach" class="button" ><a href="/scenarios_list/"><img class="flex" src="/img/scenario-ico.png" class="image" /></a></div>
-			<div id="setup" class="button" ><a href="/setup/"><img class="flex" src="/img/setup-ico.gif" class="image" /></a></div>
-        <div id ="system_time"> <!--onos_system_time-->  </div>
-		</div>
 
  '''
 
 
-web_page=play_zone_start_html+ '''<div class="divisorio">'''+room.upper()+'''</div>'''
+web_page=play_zone_html+ '''<div class="divisorio">'''+room.upper()+'''</div>'''
 
 
 
