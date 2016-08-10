@@ -569,6 +569,12 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 bugfix: the errorlog mails contained the same errors repeated 
 
 
+5.22            Enrico has fixed the css bug on scenario gui. 
+                Marco has solved a bug in the webobject html page.
+                finished implementing the common top menu for every onos webpage!
+
+
+
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;
 ('a float is required',);;;
