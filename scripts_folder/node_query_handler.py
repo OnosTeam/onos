@@ -1,4 +1,15 @@
 # -*- coding: UTF-8 -*-
+
+"""
+| This Modules handles all the query to the nodes.
+| it will receive the data from the router_handler and it will send the query to the nodes.
+| It will also retry sending the message if the node doesn't answer right or if doesn't answer at all.
+| If the nodes confirm the command was received then this module will tell onos to set the web object status 
+| to reflect the new node status after the command was received.
+|
+"""
+
+
 from globalVar import *
 
 

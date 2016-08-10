@@ -1,5 +1,29 @@
 # -*- coding: UTF-8 -*-
 
+
+"""
+| This Modules handles all the comunication to nodes.
+| It will routes the varius commands knowing where to send them based on the node address.
+|
+| If the node_address of the given receiver is 0 the data will be written to the local OnosCenter pins.
+|
+| if the node_address of the given receiver is 1 the data will be sent to the OnosCenter serial port to an arduino (not implemented yet)
+|
+| If the node_address of the given receiver is between 2 to 255 :
+|   OnosCenter will send the command to write the data to an arduino wich will then transmit it to the desired wireless node.(not implemented yet)
+|
+| If the node_address of the given receiver is a string greater than 6 characters:
+    The data will be sent over ethernet commmunication.
+|
+
+
+
+
+"""
+
+
+
+
 from globalVar import *
 from node_query_handler import *
 
@@ -210,6 +234,8 @@ class RouterHandler:
 
 
     def composeChangeNodeOutputPinStatusQuery(self,pinNumbers,node_obj,objName,status_to_set,node_serial_number,out_type,user,priority,mail_report_list) :
+
+
       print "composeChangeNodeOutputPinStatusQuery() executed"
 
       numeric_serial_number=node_serial_number[-4:]     # example get 0001  from "ProminiA0001"

@@ -105,6 +105,17 @@
             
   <h1>Source code for node_query_handler</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: UTF-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">| This Modules handles all the query to the nodes.</span>
+<span class="sd">| it will receive the data from the router_handler and it will send the query to the nodes.</span>
+<span class="sd">| It will also retry sending the message if the node doesn&#39;t answer right or if doesn&#39;t answer at all.</span>
+<span class="sd">| If the nodes confirm the command was received then this module will tell onos to set the web object status </span>
+<span class="sd">| to reflect the new node status after the command was received.</span>
+<span class="sd">|</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
 <span class="kn">from</span> <span class="nn">globalVar</span> <span class="kn">import</span> <span class="o">*</span>
 
 
@@ -366,7 +377,18 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-   
+  
+ 
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-45976563-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
 
 </body>
 </html>

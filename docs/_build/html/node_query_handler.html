@@ -106,6 +106,14 @@
             
   <div class="section" id="module-node_query_handler">
 <span id="node-query-handler-module"></span><h1>node_query_handler module<a class="headerlink" href="#module-node_query_handler" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line">This Modules handles all the query to the nodes.</div>
+<div class="line">it will receive the data from the router_handler and it will send the query to the nodes.</div>
+<div class="line">It will also retry sending the message if the node doesn&#8217;t answer right or if doesn&#8217;t answer at all.</div>
+<div class="line">If the nodes confirm the command was received then this module will tell onos to set the web object status </div>
+<div class="line">to reflect the new node status after the command was received.</div>
+<div class="line"><br /></div>
+</div>
 <dl class="function">
 <dt id="node_query_handler.handle_new_query_to_remote_node_thread">
 <tt class="descclassname">node_query_handler.</tt><tt class="descname">handle_new_query_to_remote_node_thread</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/node_query_handler.html#handle_new_query_to_remote_node_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#node_query_handler.handle_new_query_to_remote_node_thread" title="Permalink to this definition">¶</a></dt>
@@ -198,7 +206,18 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-   
+  
+ 
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-45976563-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
 
 </body>
 </html>
