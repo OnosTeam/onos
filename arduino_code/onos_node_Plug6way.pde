@@ -185,7 +185,7 @@ void server_handler(EthernetClient client_query ){
                
               if ((status_value<0)||(status_value>255)){ //status check
                 status_value=0;
-                answer="err_status_#]";
+                answer="er0_status_#]";
                 quit=1;
                 continue;
               }
@@ -236,7 +236,7 @@ void server_handler(EthernetClient client_query ){
 #if defined(DEVMODE)
                    Serial.println(status);
 #endif
-                   answer="err_status_#]";                    
+                   answer="er1_status_#]";                    
                    if ((status==0)||(status==1)){ //status check
                      digitalWrite(pin_number_used, status); 
                      digitalWrite(second_pin_number_used,!status); 

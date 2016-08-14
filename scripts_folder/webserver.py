@@ -5517,7 +5517,7 @@ def nodeTcpServer():
 
   while (exit==0):   #if exit ==1  then close the webserver
     wait_because_node_is_talking=0  
-    time.sleep(0.2)
+    time.sleep(0.3)# was 0.2
     try:
       # Create a TCP/IP socket
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

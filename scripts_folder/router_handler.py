@@ -121,8 +121,10 @@ class RouterHandler:
           if pin in self.router_input_pin:
             self.pins_mode[pin]=0  # set the pin as input
             try:
-              with lock_bash_cmd:
-                subprocess.call('echo in > /sys/class/gpio/gpio'+str(pin)+'/direction', shell=True,close_fds=True)   
+              #with lock_bash_cmd:
+              with open('/sys/class/gpio/gpio'+str(pin)+'/direction', 'w') as f:   #read the pin status
+                f.write('in')
+                #subprocess.call('echo in > /sys/class/gpio/gpio'+str(pin)+'/direction', shell=True,close_fds=True)   
               #os.popen('echo in > /sys/class/gpio/gpio'+str(pin)+'/direction').read()  #set the GPIO as input  
             except Exception, e :
               print "error trying to read a router pin :"+str(e.args)
@@ -131,25 +133,31 @@ class RouterHandler:
             
             time.sleep(1)
 
+
             try:
               print "i try to read the status with: cat /sys/class/gpio/gpio"+str(pin)+"/value"
-              with lock_bash_cmd:
-                status=subprocess.check_output("cat /sys/class/gpio/gpio"+str(pin)+"/value", shell=True,close_fds=True)
+              #with lock_bash_cmd:
+              with open('/sys/class/gpio/gpio'+str(pin)+'/value', 'r') as f:   #read the pin status
+                read_data = f.read()
+              status=read_data[0] 
+                #status=subprocess.check_output("cat /sys/class/gpio/gpio"+str(pin)+"/value", shell=True,close_fds=True)
               #status=os.popen("cat /sys/class/gpio/gpio"+str(pin)+"/value").read()
-              self.pins_status[pin]=int(status[0])
+              self.pins_status[pin]=int(status)
             except Exception, e :
               self.pins_status[pin]=0
               print "error in reading pin"+str(pin)
-              errorQueue.put("error in reading pin"+str(pin) ) 
+              errorQueue.put("error00 in reading pin"+str(pin) ) 
               error_number=error_number+1
 
           else:
             self.pins_mode[pin]=1  # set the pin as output
             print "i try to set the pin as output"
             try:
-              with lock_bash_cmd:
+              #with lock_bash_cmd:
+              with open('/sys/class/gpio/gpio'+str(pin)+'/direction', 'w') as f:   #read the pin status
+                f.write('out')
                 #os.popen('echo out > /sys/class/gpio/gpio'+str(pin)+'/direction').read()  #set the GPIO as output 
-                subprocess.call('echo out > /sys/class/gpio/gpio'+str(pin)+'/direction', shell=True,close_fds=True)
+                #subprocess.call('echo out > /sys/class/gpio/gpio'+str(pin)+'/direction', shell=True,close_fds=True)
             except Exception, e :
               error_number=error_number+1
               print "error setting pin"+str(pin)+ "as output"
@@ -206,10 +214,19 @@ class RouterHandler:
             #total_in_pin=total_in_pin+1 
             #print "foud a input pin in the router, pin number"+str(pin)
             #try:
-            with lock_bash_cmd:
-              status=subprocess.check_output("cat /sys/class/gpio/gpio"+str(pin)+"/value", shell=True,close_fds=True)
-            #status=os.popen("cat /sys/class/gpio/gpio"+str(pin)+"/value").read()
-            current_state=int(status[0])
+            #with lock_bash_cmd:
+            try:
+              with open('/sys/class/gpio/gpio'+str(pin)+'/value', 'r') as f:   #read the pin status
+                read_data = f.read()
+              status=read_data[0]
+              #status=subprocess.check_output("cat /sys/class/gpio/gpio"+str(pin)+"/value", shell=True,close_fds=True)
+            except Exception, e:
+              current_state=-1 
+              print "error reading router pin status  "+str(pin)+", e:"+str(e.args)
+              errorQueue.put("error reading router pin status  "+str(pin)+", e:"+str(e.args))  
+            
+
+            current_state=int(status)
               #print "the current pin status is: "+str(current_state)
             #except:
             #  print "error in reading pin"+str(pin)
@@ -401,8 +418,12 @@ class RouterHandler:
               errorQueue.put("pin setted as input i try to set it as output") 
               try:
                 #os.system('echo out > /sys/class/gpio/gpio'+str(pinNumber)+'/direction')  #set the GPIO as output   
-                with lock_bash_cmd:
-                  subprocess.call('echo out > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
+                #with lock_bash_cmd:
+                with open('/sys/class/gpio/gpio'+str(pinNumber)+'/direction', 'w') as f:   #read the pin status
+                  f.write('out')
+
+
+                  #subprocess.call('echo out > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
                 print "pin"+str(pinNumber)+" setted as output "
               except Exception, e :
                 print "error can't configure the pin:"+str(pinNumber)+" as output and set it to "+str(tmp_status_to_set)   
@@ -412,8 +433,13 @@ class RouterHandler:
                 return(-1)
             try:
               #os.popen('echo '+str(tmp_status_to_set)+' > /sys/class/gpio/gpio'+str(pinNumber)+'/value').read() 
-              with lock_bash_cmd:
-                subprocess.check_output('echo '+str(tmp_status_to_set)+' > /sys/class/gpio/gpio'+str(pinNumber)+'/value', shell=True,close_fds=True) 
+            #  with lock_bash_cmd:
+
+              with open('/sys/class/gpio/gpio'+str(pinNumber)+'/value', 'w') as f:   #read the pin status
+                f.write(str(tmp_status_to_set))
+
+
+                #subprocess.check_output('echo '+str(tmp_status_to_set)+' > /sys/class/gpio/gpio'+str(pinNumber)+'/value', shell=True,close_fds=True) 
               print "pin"+str(pinNumber)+" setted to "+str(tmp_status_to_set)
             except Exception, e :
               print "error can't set the pin:"+str(pinNumber)+" to "+str(tmp_status_to_set)   
@@ -524,8 +550,11 @@ class RouterHandler:
             if mode=="DOUTPUT":
               self.pins_mode[pinNumber]=1
               try:
-                with lock_bash_cmd:
-                  subprocess.check_output('echo "out" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
+                #with lock_bash_cmd:
+                with open('/sys/class/gpio/gpio'+str(pinNumber)+'/direction', 'w') as f:   #read the pin status
+                  f.write('out')
+
+                  #subprocess.check_output('echo "out" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
                 #os.popen('echo "out" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction').read()  #set the GPIO as output
               except Exception, e :
                 print "error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber)
@@ -539,7 +568,9 @@ class RouterHandler:
             if mode=="DINPUT":
               self.pins_mode[pinNumber]=0
               try:
-                with lock_bash_cmd:
+                #with lock_bash_cmd:
+                with open('/sys/class/gpio/gpio'+str(pinNumber)+'/direction', 'w') as f:   #read the pin status
+                  f.write('in')
                   subprocess.check_output('echo "in" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
                 #os.popen('echo "in" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction').read()  #set the GPIO as input  
               except Exception, e :

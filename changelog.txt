@@ -573,6 +573,9 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Marco has solved a bug in the webobject html page.
                 finished implementing the common top menu for every onos webpage!
 
+5.23            Removed the bash command to control hardware pins and used python to write to them as files,
+                so the error Cannot allocate memory will not happen again
+
 
 
 (110, 'Connection timed out');;;
