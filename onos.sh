@@ -16,6 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 
 cd scripts_folder
+ifup lan
+ifup wan
 while [ true ]
 
 do  nice -n -16 python time_zone.py 

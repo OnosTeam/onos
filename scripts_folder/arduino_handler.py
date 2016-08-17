@@ -40,10 +40,17 @@ class ArduinoHandler():
 
 
 
-  def grepPort(self,port_to_search,port_exluded):
-    result=os.popen("ls /dev/ | grep -v "+port_exluded+" | grep "+port_to_search).read()
-    
-    return (result)
+  def verifyPort(self,port_to_search,port_exluded):
+    if port_to_search!=port_exluded:
+      result=os.path.os.path.exists("/dev/"+port_to_search) 
+    else:
+      return("no")
+
+    #result=os.popen("ls /dev/ | grep -v "+port_exluded+" | grep "+port_to_search).read()
+    if result:
+      return (port_to_search)
+    else
+      return ("no")
 
 
 
@@ -52,8 +59,8 @@ class ArduinoHandler():
     port=self.searchForSerialCable("nothing") 
     if port!="null":   # if i found the port then use it
       try:
-        old_port=port[0:len(port)-1] 
-        port='/dev/'+port[0:len(port)-1]   #remove /n of ls
+        old_port=port       #  [0:len(port)-1] 
+        port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, 115200)     
         print "arduino connected corectly to onos system" 
         return(1)
@@ -63,7 +70,7 @@ class ArduinoHandler():
         if port!="null":   # if i found the port then use it
           try:
             old_port=port[0:len(port)-1] 
-            port='/dev/'+port[0:len(port)-1]   #remove /n of ls
+            port='/dev/'+port    #[0:len(port)-1]   #remove /n of ls
             self.ser =arduinoserial.SerialPort(port, 115200)     
             print "arduino connected corectly to onos system" 
             return(1)
@@ -81,28 +88,28 @@ class ArduinoHandler():
 
   def searchForSerialCable(self,exluded_port):
 
-    port=self.grepPort("ttyUSB0",exluded_port)
+    port=self.verifyPort("ttyUSB0",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyUSB1",exluded_port)
+      port=self.verifyPort("ttyUSB1",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyUSB2",exluded_port)
+      port=self.verifyPort("ttyUSB2",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyUSB3",exluded_port)
+      port=self.verifyPort("ttyUSB3",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyUSB4",exluded_port)
+      port=self.verifyPort("ttyUSB4",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyUSB",exluded_port)
+      port=self.verifyPort("ttyUSB",exluded_port)
 
     if len (port)<3:
-      port=self.grepPort("ttyACM0",exluded_port)
+      port=self.verifyPort("ttyACM0",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyACM1",exluded_port)
+      port=self.verifyPort("ttyACM1",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyACM2",exluded_port)
+      port=self.verifyPort("ttyACM2",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyACM3",exluded_port)
+      port=self.verifyPort("ttyACM3",exluded_port)
     if len (port)<3:
-      port=self.grepPort("ttyACM",exluded_port)
+      port=self.verifyPort("ttyACM",exluded_port)
     if len (port)<3:
       return("null")
 

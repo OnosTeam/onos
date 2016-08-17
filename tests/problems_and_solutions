@@ -23,7 +23,7 @@ onos allarms must remain active also if the current went out
   no problem , each node tells onos its serial number and its node_fw
   (if the node_fw number is newer use the new method else use the old one)
 
-5)need to encode the pin setup in a sinmple and compact way:
+5)need to encode the pin setup in a simple and compact way:
 #  here the protocol:
 #  start with 's='
 #  then  add    9 bytes that rappresent the pin used (1 for pin used 0 for not used)   
@@ -144,7 +144,7 @@ I will use post instead that get message
 16)Onos has to set the nodes digital out /analog out /servo control   pins of all nodes.
   here the protocol:
   onos will send a get query to the nodes with a type of data (digital ,analog ,servo,specialcmd) then will send a data 
-  and then will send 's' + 4 char containing the onos node (see point 14) 
+  and then will send 's' + 4 char containing the onos node serial number (an exadecimal number so 16^4 combinations) (see point 14) 
  
   made by :
   "onos_"   this start string

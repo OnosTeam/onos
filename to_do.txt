@@ -70,6 +70,8 @@ sudo md5sum -c checksum2.md5
 3,6)grafica per configurare onos_mail_conf in globalvar per mandare mail
 
 
+3.61) log di tutti le attuazioni fatte da onos con successo  consultabile dall'utente con utente che ha fatto l'azione, ora ..
+
 
 ------------------------------------------da fare dopo:
 

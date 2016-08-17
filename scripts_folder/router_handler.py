@@ -252,12 +252,33 @@ class RouterHandler:
 
     def composeChangeNodeOutputPinStatusQuery(self,pinNumbers,node_obj,objName,status_to_set,node_serial_number,out_type,user,priority,mail_report_list) :
 
+      """
+      | Compose the correct query to change an output pin status on a remote node.
+      | The examples are:
+      |
+      | "onos_r"+pin0+pin1+"v"+status_to_set+"s"+numeric_serial_number+"_#]" to set a sr_relay to  status_to_set (0 or 1)
+      |   onos_r0607v1s0001_#]  pin6 and 7 used to control a s/r relay and turn it to set 
+      |
+      | "onos_d"+pin_number+"v"+"00"+status_to_set+"s"+numeric_serial_number+"_#]" to set a digital pin to 0 or 1 
+      |   onos_d07v001s0001_#]  set digital pin7 to 1
+      |
+      | "onos_s"+pin_number+"v"+status_to_set+"s"+numeric_serial_number+"_#]" to set a servopin from 0 to 180 
+      |   onos_s07v180s0001_#]  set servo pin7 to 180
+      |
+      | "onos_a"+pin_number+"v"+status_to_set+"s"+numeric_serial_number+"_#]" to set a analogpin from 0 to 255 
+      |   onos_a05v100s0001_#]  set analog pin5 to 100
+      |
+      | The numeric_serial_number is a hexadecimal number refering to the node serial number 
+
+
+
+      """
 
       print "composeChangeNodeOutputPinStatusQuery() executed"
 
       numeric_serial_number=node_serial_number[-4:]     # example get 0001  from "ProminiA0001"
       address=node_obj.getNodeAddress()
-      base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port)
+      base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
       if (out_type=="sr_relay"):
         pin1=str(pinNumbers[0])
         pin0=str(pinNumbers[1])
