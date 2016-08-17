@@ -60,18 +60,18 @@ String  serial_number="0000";
 
 
 
-   //onos_d07v001s0000_#]
+   //onos_d07v001s0001_#]
 
 char serial_message_type_of_onos_cmd;
 uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
-int serial_message_value;
-String serial_message_answer="er00_#]";
+uint8_t serial_message_value;
+String serial_message_answer="er01";
 String serial_message_sn="";
 
 uint8_t serial_msg_lenght=19;
 uint8_t counter;
-boolean enable_print=0;
+
 
 
 
@@ -79,7 +79,7 @@ boolean enable_print=0;
 void decodeOnosCmd(char received_message[]){
 
  // Serial.println(F("decodeOnosCmd executed"));
-  serial_message_answer="err01_#]";
+  serial_message_answer="err0";
   if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
   { // the onos cmd was found           onos_d07v001s0001_#]
     serial_message_answer="cmdRx_#]";                  
@@ -96,19 +96,18 @@ void decodeOnosCmd(char received_message[]){
     serial_message_second_pin_used=-1;
                                     
 
-    serial_message_value=(received_message[9]-48)*100+(received_message[10]-48)*10+(received_message[11]-48)*1;
+    serial_message_value=(received_message[9]-'0')*100+(received_message[10]-'0')*10+(received_message[11]-'0')*1;
 
-               
+              
     if ((serial_message_value<0)||(serial_message_value>255)){ //status check
       serial_message_value=0;
-      //Serial.println(F("onos_cmd_value_error"));  
       serial_message_answer="er0_status_#]";
       return;
     }
  
 
     if (serial_message_sn!=serial_number) {//onos command for a remote arduino node
-      //serial_message_answer="remote_#]"; 
+      serial_message_answer="remote_#]"; 
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
     }
 
@@ -146,7 +145,6 @@ void decodeOnosCmd(char received_message[]){
    }//end of the switch case
 
 
-    /*
 
     Serial.print(F("onos_cmd:"));
     Serial.println(serial_message_type_of_onos_cmd);
@@ -164,7 +162,7 @@ void decodeOnosCmd(char received_message[]){
     Serial.println(serial_message_value);
 
 
-    */
+
 
 
 
@@ -244,7 +242,7 @@ void loop()
   unsigned long timeout=millis()+200;
 
   while (Serial.available() > 0) {
-    enable_print=1;
+
   // Serial.println(F("im"));
    //Serial.println(counter);
    // read the incoming byte:
@@ -322,7 +320,7 @@ void loop()
         }
         else{// error decoding the serial message
      //     serial_answer="er02";
-     //     Serial.print(serial_message_answer);
+     //     Serial.print(serial_answer);
           break;
         }
 
@@ -332,11 +330,11 @@ void loop()
       else{//no onos_ cmd found
 
         serial_message_answer="nocmd1_#]";
-
+       //Serial.print(serial_answer);
       }
 
 
-
+     Serial.print(serial_message_answer);
 
      counter=0;
      continue;
@@ -352,13 +350,10 @@ void loop()
 
   }
 
-  if (enable_print==1){ //write if there is a not recognise message  shorter...
 
-    Serial.print(serial_message_answer);
-    enable_print=0;
 
-  }
- 
+
+
 
 
 }

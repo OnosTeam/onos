@@ -68,6 +68,135 @@ EthernetServer server = EthernetServer(9000); //port number 9000
 
 
 
+   //onos_d07v001s0001_#]
+
+char serial_message_type_of_onos_cmd;
+uint8_t serial_message_first_pin_used;
+uint8_t serial_message_second_pin_used;
+uint8_t serial_message_value;
+String serial_message_answer="er01";
+String serial_message_sn="";
+
+uint8_t serial_msg_lenght=19;
+uint8_t counter;
+
+
+
+
+
+void decodeOnosCmd(char received_message[]){
+
+ // Serial.println(F("decodeOnosCmd executed"));
+  serial_message_answer="err0";
+  if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
+  { // the onos cmd was found           onos_d07v001s0001_#]
+    serial_message_answer="cmdRx_#]";                  
+
+    serial_message_sn="";
+
+    serial_message_sn=serial_message_sn+received_message[13]+received_message[14]+received_message[15]+received_message[16];
+
+
+    serial_message_type_of_onos_cmd=received_message[5];
+         
+    serial_message_first_pin_used=((received_message[6])-48)*10+(  (received_message[7])-48);
+
+    serial_message_second_pin_used=-1;
+                                    
+
+    serial_message_value=(received_message[9]-'0')*100+(received_message[10]-'0')*10+(received_message[11]-'0')*1;
+
+              
+    if ((serial_message_value<0)||(serial_message_value>255)){ //status check
+      serial_message_value=0;
+      serial_message_answer="er0_status_#]";
+      return;
+    }
+ 
+
+    if (serial_message_sn!=serial_number) {//onos command for a remote arduino node
+      serial_message_answer="remote_#]"; 
+      return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
+    }
+
+
+    switch (serial_message_type_of_onos_cmd) {
+
+      case 'd':{     //digital write       onos_d07v001s0001_#]
+        serial_message_answer="ok_#]";
+        break;
+      }
+
+      case 'a':{     //pwm write           onos_a07v100s0001_#]
+        serial_message_answer="ok_#]";
+        break;
+      }
+              
+      case 's':{     //servo controll      onos_s07v180s0001_#]
+        serial_message_answer="ok_#]";
+        break;
+      }  
+
+      case 'r':{     //relay               onos_r1716v1s0004_#]
+        serial_message_answer="ok_#]";
+        serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+        serial_message_value=(received_message[11]-'0');
+        break;
+      } 
+
+      default:{
+        serial_message_answer="type_err";
+        Serial.println(F("onos_cmd_type_error"));  
+      }
+  
+
+   }//end of the switch case
+
+
+
+    Serial.print(F("onos_cmd:"));
+    Serial.println(serial_message_type_of_onos_cmd);
+
+    Serial.print(F("serial_number:"));
+    Serial.print(serial_message_sn);
+
+
+    Serial.println(F("pin_used:"));
+    Serial.println(serial_message_first_pin_used);
+    Serial.println(F("pin_used2:"));
+    Serial.println(serial_message_second_pin_used);
+
+    Serial.print(F("message_value:"));
+    Serial.println(serial_message_value);
+
+
+
+
+
+
+
+
+
+
+
+
+ } // end of if message start with onos_   
+
+
+
+
+
+
+}// end of decodeOnosCmd()
+
+
+
+
+
+
+
+
+
 //server part
 
 
@@ -83,22 +212,45 @@ void server_handler(EthernetClient client_query ){
   String answer="nocmd1_#]";
   uint8_t quit=0;
 
+
+  counter=0;
+  char data_from_serial [25];
+  char second_array[21];
+  unsigned long timeout=millis()+200;
+
+
   while (client_query.connected() ) {
 
     //banana  make watchdog
     
 
-    if((client_query.available() > 0)&&(quit==0)){  
+    if(client_query.available() > 0){  
 
-
+/*
       if (i>23){  // make the buffer long only 24 char
         //Serial.println(received_query);
         i=0;
       }
       
+*/    
+
+      if ( millis()>timeout){
+        Serial.println(F("serial_timeout---------------------------------"));
+        break;
+      }
+
+
 
         
       received_query[i]=client_query.read(); 
+
+
+      if (i<2){
+        i=i+1;
+        continue;     
+      }
+
+
       //Serial.println(received_query[i]);
       //i=i+1;
         // if you've gotten to the end of the line (received the series of "_#]"
@@ -120,18 +272,19 @@ void server_handler(EthernetClient client_query ){
 
 
 
-      if ((i>msg_lenght-1)){//   onos_a05v2550001_#]
+      if  ((i>msg_lenght-1)||((received_query[i-1]=='#')&&(received_query[i]==']')  ) ){//   ){//   onos_a05v2550001_#]
 
+/*
         Serial.println("im here-------------------------------");
         Serial.print(received_query[i-msg_lenght]);
         Serial.print(received_query[i-msg_lenght+1]);
 
-
-        if ((received_query[i-msg_lenght]=='o')&&(received_query[i-msg_lenght+1]=='n')&&(received_query[i-msg_lenght+2]=='o')&&(received_query[i-msg_lenght+3]=='s')&&(received_query[i-msg_lenght+4]=='_'))
+*/
+        if ((received_query[i-serial_msg_lenght]=='o')&&(received_query[i-serial_msg_lenght+1]=='n')&&(received_query[i-serial_msg_lenght+2]=='o')&&(received_query[i-serial_msg_lenght+3]=='s')&&(received_query[i-serial_msg_lenght+4]=='_'))
         { // the onos cmd was found
           answer="cmdRx_#]";
-          String sn="";
-          sn=sn+received_query[i-msg_lenght+13]+received_query[i-msg_lenght+14]+received_query[i-msg_lenght+15]+received_query[i-msg_lenght+16];
+
+          
 
 
 #if defined(DEVMODE)
@@ -149,22 +302,25 @@ void server_handler(EthernetClient client_query ){
           Serial.print(received_query[i-msg_lenght+11]);  //5
 
 */
+
+
+          for (uint8_t pointer = 0; pointer < serial_msg_lenght; pointer++) {
+            second_array[pointer]=received_query[i-serial_msg_lenght+pointer];
+         //Serial.println("mmm");
+         //Serial.println(second_array[pointer]);
+          }    
+
+          decodeOnosCmd(second_array);
          
-          pin_number_used=((received_query[i-msg_lenght+6])-48)*10+(  (received_query[i-msg_lenght+7])-48);
-          //if (true){//{(pin_number_used>0)&&(pin_number_used<80)){ //pin check
-
- 
-         //   }
-
 
 #if defined(DEVMODE)
           Serial.println(F("sn:"));
           Serial.println(sn);
 #endif
 
-          if (serial_number==sn){   
-            char reg =pin_number_used/8;
-            char pos =pin_number_used%8;
+          if (serial_message_sn==serial_number){   
+            char reg =serial_message_first_pin_used/8;
+            char pos =serial_message_first_pin_used%8;
 
 
             if ( (  (bitRead(used_pins[reg],pos))==1 )&&(  (bitRead(digital_setup[reg],pos))==1 )){// the pin is used and not as digital input
