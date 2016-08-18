@@ -28,16 +28,16 @@ Wire up as following (ENC = module side):
 
 //uncomment this for dev mode
 
-#define DEVMODE 1
+//#define DEVMODE 1
  
 
 //pin setup print
-#define DEVMODE2 1    
+//#define DEVMODE2 1    
 
-#define DEVMODE3 1          
+//#define DEVMODE3 1          
 
 #define onos_center_port 81
-String setup_msg="";
+
 EthernetClient client;
 uint8_t first_time=1;
 uint8_t only_digital_out=1;  //set to 0 if the node is not only a digital out type
@@ -54,9 +54,14 @@ uint16_t analog_values[17];// store the  values from analog input   2 bytes for 
 //banana read eeprom and retrieve the node_type and serial umber then compose the mac address 
 char node_type='a';     //banana temp 'a' for arduino pro mini
 char serial_char=1 ;   //banana to read from eprom
-String node_fw="5.13";
-String node_code_name="Plug6way0001";
-String serial_number=node_code_name.substring(8);  //BANANA TO READ FROM EEPROM
+char node_fw[]="5.13";
+char node_code_name[]="Plug6way0002";
+char serial_number[]="0002"; //BANANA TO READ FROM EEPROM
+
+
+
+
+
 uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};  //BANANA to change for each node
 uint8_t analog_count=0;
 //uint8_t pins_to_reset1=99;  //pin used with a set reset relay pin
@@ -66,35 +71,65 @@ EthernetServer server = EthernetServer(9000); //port number 9000
 
 
 
-
-
+    
+   //onos_r1716v1s0004_#]
    //onos_d07v001s0001_#]
 
 char serial_message_type_of_onos_cmd;
 uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
-uint8_t serial_message_value;
-String serial_message_answer="er01";
-String serial_message_sn="";
+int serial_message_value;
+char serial_message_answer[21]="er00_#]";
+char serial_message_sn[5]="";
 
 uint8_t serial_msg_lenght=19;
 uint8_t counter;
+boolean enable_print=0;
 
 
 
+
+
+
+boolean is_pin_setup_as_do(uint8_t pin_number_to_check){
+  char reg =pin_number_to_check/8;
+  char pos =pin_number_to_check%8;
+  boolean is_digital_out=0; 
+  if ( (  (bitRead(used_pins[reg],pos))==1 )&&(  (bitRead(digital_setup[reg],pos))==1 )){// the pin is used and not as digital input
+
+
+#if defined(DEVMODE)
+      Serial.print(F("pin used:"));
+      Serial.print(pin_number_to_check);
+#endif
+
+
+      is_digital_out=1;  
+  }
+  return(is_digital_out);
+}
 
 
 void decodeOnosCmd(char received_message[]){
+#if defined(DEVMODE)
+  Serial.println(F("decodeOnosCmd executed"));
+#endif
 
- // Serial.println(F("decodeOnosCmd executed"));
-  serial_message_answer="err0";
+  strcpy(serial_message_answer,"err01_#]");
   if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
   { // the onos cmd was found           onos_d07v001s0001_#]
-    serial_message_answer="cmdRx_#]";                  
 
-    serial_message_sn="";
 
-    serial_message_sn=serial_message_sn+received_message[13]+received_message[14]+received_message[15]+received_message[16];
+    strcpy(serial_message_answer,"cmdRx_#]");               
+
+
+    strcpy(serial_message_sn,""); 
+
+    serial_message_sn[0]=received_message[13];
+    serial_message_sn[1]=received_message[14];
+    serial_message_sn[2]=received_message[15];
+    serial_message_sn[3]=received_message[16];
+
 
 
     serial_message_type_of_onos_cmd=received_message[5];
@@ -104,18 +139,52 @@ void decodeOnosCmd(char received_message[]){
     serial_message_second_pin_used=-1;
                                     
 
-    serial_message_value=(received_message[9]-'0')*100+(received_message[10]-'0')*10+(received_message[11]-'0')*1;
+    if (received_message[8]=='v'){
+      serial_message_value=(received_message[9]-48)*100+(received_message[10]-48)*10+(received_message[11]-48)*1;
 
-              
-    if ((serial_message_value<0)||(serial_message_value>255)){ //status check
-      serial_message_value=0;
-      serial_message_answer="er0_status_#]";
-      return;
+      if ((serial_message_value<0)||(serial_message_value>255)){ //status check
+        serial_message_value=0;
+      //Serial.println(F("onos_cmd_value_error"));  
+        strcpy(serial_message_answer,"er0_status_#]"); 
+        return;
+      }
+
+
+
     }
+    else{
+ 
+      if (received_message[10]=='v'){
+
+        serial_message_value=(received_message[11]-'0');
+
+        if ((serial_message_value==0)||(serial_message_value==1)){ //status check  
+          strcpy(serial_message_answer,"cmdRx_#]");
+        }
+        else{
+          strcpy(serial_message_answer,"er1_status_#]");  
+          return;                 
+        }
+
+      }
+
+    }
+
+
+
+               
+
+
+
+
+
+
+
+
  
 
-    if (serial_message_sn!=serial_number) {//onos command for a remote arduino node
-      serial_message_answer="remote_#]"; 
+    if (strcmp(serial_message_sn,serial_number)!=0) {//onos command for a remote arduino node
+      strcpy(serial_message_answer,"ersn0_#]");
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
     }
 
@@ -123,29 +192,92 @@ void decodeOnosCmd(char received_message[]){
     switch (serial_message_type_of_onos_cmd) {
 
       case 'd':{     //digital write       onos_d07v001s0001_#]
-        serial_message_answer="ok_#]";
+        strcpy(serial_message_answer,"ok_#]");
+        if (is_pin_setup_as_do(serial_message_first_pin_used)==0) { //if the pin is not setted up as digital out
+          strcpy(serial_message_answer,"er_ds_#]");
+          return;
+        }
+
+        pinMode(serial_message_first_pin_used, OUTPUT); 
+        digitalWrite(serial_message_first_pin_used, serial_message_value); 
         break;
       }
 
       case 'a':{     //pwm write           onos_a07v100s0001_#]
-        serial_message_answer="ok_#]";
+        analogWrite(serial_message_first_pin_used, serial_message_value); 
+        strcpy(serial_message_answer,"ok_#]");
         break;
       }
               
       case 's':{     //servo controll      onos_s07v180s0001_#]
-        serial_message_answer="ok_#]";
+        strcpy(serial_message_answer,"ok_#]");
+        if (is_pin_setup_as_do==0) { //if the pin is not setted up as digital out
+          strcpy(serial_message_answer,"er_ds_#]");
+
+        }
+        analogWrite(serial_message_first_pin_used, serial_message_value); //todo:  to add servo
+        break;
+      }  
+
+      case 'g':{     //get digital status  onos_g0708v0s0001_#]  
+        pinMode(serial_message_first_pin_used, INPUT); 
+        pinMode(serial_message_second_pin_used, INPUT); 
+        char val_first_pin=digitalRead(serial_message_first_pin_used)+48;
+        char val_second_pin=digitalRead(serial_message_second_pin_used)+48;
+        strcpy(serial_message_answer,""); 
+        strcpy(serial_message_answer,"ok_s="); 
+        serial_message_answer[5]=val_first_pin;
+        serial_message_answer[6]=val_second_pin;
+        serial_message_answer[7]='_';
+        serial_message_answer[8]='#';
+        serial_message_answer[9]=']';
+
+        //strcat(serial_message_answer,"_#]");
+        // answer will be like:   ok_s=00_#] 
+        
+        
         break;
       }  
 
       case 'r':{     //relay               onos_r1716v1s0004_#]
-        serial_message_answer="ok_#]";
+        strcpy(serial_message_answer,"ok_#]");
         serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
-        serial_message_value=(received_message[11]-'0');
+
+
+        if (is_pin_setup_as_do(serial_message_first_pin_used)==0) { //if the pin is not setted up as digital out
+          strcpy(serial_message_answer,"er_ds1_#]");
+
+        }
+        if (is_pin_setup_as_do(serial_message_second_pin_used)==0) { //if the pin is not setted up as digital out
+          strcpy(serial_message_answer,"er_ds2_#]");
+
+        }
+
+
+        pinMode(serial_message_first_pin_used, OUTPUT); 
+        pinMode(serial_message_second_pin_used, OUTPUT); 
+        //note to se a relay you have to transmit before the set pin and after the reset pin , the lessere first
+        //  so for example serial_message_first_pin_used =14   serial_message_second_pin_used=15
+        digitalWrite(serial_message_first_pin_used,!serial_message_value); 
+        digitalWrite(serial_message_second_pin_used,serial_message_value); 
+                     //attention with this only one relay per message can be setted!!!
+                     //pins_to_reset1=pin_number_used;
+                     //pins_to_reset2=second_pin_number_used;
+        delay(150);
+        digitalWrite(serial_message_first_pin_used,0); 
+        digitalWrite(serial_message_second_pin_used,0);  
+
+
+
+         
+
+
+
         break;
       } 
 
       default:{
-        serial_message_answer="type_err";
+        strcpy(serial_message_answer,"type_err");
         Serial.println(F("onos_cmd_type_error"));  
       }
   
@@ -153,6 +285,7 @@ void decodeOnosCmd(char received_message[]){
    }//end of the switch case
 
 
+    /*
 
     Serial.print(F("onos_cmd:"));
     Serial.println(serial_message_type_of_onos_cmd);
@@ -170,7 +303,7 @@ void decodeOnosCmd(char received_message[]){
     Serial.println(serial_message_value);
 
 
-
+    */
 
 
 
@@ -209,7 +342,6 @@ void server_handler(EthernetClient client_query ){
   uint8_t i=0;
   uint8_t pin_number_used;
   char msg_lenght=18;
-  String answer="nocmd1_#]";
   uint8_t quit=0;
 
 
@@ -224,246 +356,150 @@ void server_handler(EthernetClient client_query ){
     //banana  make watchdog
     
 
-    if(client_query.available() > 0){  
+    while(client_query.available() > 0){  
 
-/*
-      if (i>23){  // make the buffer long only 24 char
-        //Serial.println(received_query);
-        i=0;
-      }
-      
-*/    
 
-      if ( millis()>timeout){
-        Serial.println(F("serial_timeout---------------------------------"));
-        break;
-      }
 
+    enable_print=1;
+  // Serial.println(F("im"));
+   //Serial.println(counter);
+   // read the incoming byte:
+    delayMicroseconds(100);  //the serial doesnt work without this delay...
 
+    data_from_serial[counter] = client_query.read(); 
 
-        
-      received_query[i]=client_query.read(); 
-
-
-      if (i<2){
-        i=i+1;
-        continue;     
-      }
-
-
-      //Serial.println(received_query[i]);
-      //i=i+1;
-        // if you've gotten to the end of the line (received the series of "_#]"
-        // characters)  the  request has ended,
-        // so you can send a reply
-       
-        if (i >2){
-
-
-          if (  (received_query[i] == ']') && (received_query[i-1] == '#')&(received_query[i-2] == '_')) {
-            Serial.println("received end of packet-------------------------------");
-            // send a standard http response header
-            quit=1;
-
-            //continue; 
-          }
-        } 
-
-
-
-
-      if  ((i>msg_lenght-1)||((received_query[i-1]=='#')&&(received_query[i]==']')  ) ){//   ){//   onos_a05v2550001_#]
-
-/*
-        Serial.println("im here-------------------------------");
-        Serial.print(received_query[i-msg_lenght]);
-        Serial.print(received_query[i-msg_lenght+1]);
-
-*/
-        if ((received_query[i-serial_msg_lenght]=='o')&&(received_query[i-serial_msg_lenght+1]=='n')&&(received_query[i-serial_msg_lenght+2]=='o')&&(received_query[i-serial_msg_lenght+3]=='s')&&(received_query[i-serial_msg_lenght+4]=='_'))
-        { // the onos cmd was found
-          answer="cmdRx_#]";
-
-          
-
-
-#if defined(DEVMODE)
-          Serial.println(F("onos cmd received:"));
-#endif
-/*
-
-
-          Serial.print(received_query[i-msg_lenght+5]);  //a
-          Serial.print(received_query[i-msg_lenght+6]);  //0
-          Serial.print(received_query[i-msg_lenght+7]);  //5
-          Serial.print(received_query[i-msg_lenght+8]);  //v
-          Serial.print(received_query[i-msg_lenght+9]);  //2
-          Serial.print(received_query[i-msg_lenght+10]);  //5
-          Serial.print(received_query[i-msg_lenght+11]);  //5
-
-*/
-
-
-          for (uint8_t pointer = 0; pointer < serial_msg_lenght; pointer++) {
-            second_array[pointer]=received_query[i-serial_msg_lenght+pointer];
-         //Serial.println("mmm");
-         //Serial.println(second_array[pointer]);
-          }    
-
-          decodeOnosCmd(second_array);
-         
-
-#if defined(DEVMODE)
-          Serial.println(F("sn:"));
-          Serial.println(sn);
-#endif
-
-          if (serial_message_sn==serial_number){   
-            char reg =serial_message_first_pin_used/8;
-            char pos =serial_message_first_pin_used%8;
-
-
-            if ( (  (bitRead(used_pins[reg],pos))==1 )&&(  (bitRead(digital_setup[reg],pos))==1 )){// the pin is used and not as digital input
-
-#if defined(DEVMODE)
-              Serial.print(F("pin used:"));
-              Serial.print(pin_number_used);
-#endif
-
-              answer="err_#]";                                             
-
-              uint8_t status_value=(received_query[i-msg_lenght+9]-'0')*100+(received_query[i-msg_lenght+10]-'0')*10+(received_query[i-msg_lenght+11]-'0')*1;
-
-#if defined(DEVMODE)
-              Serial.print(F("s_toSet:"));
-              Serial.println(status_value);
-#endif
-               
-              if ((status_value<0)||(status_value>255)){ //status check
-                status_value=0;
-                answer="er0_status_#]";
-                quit=1;
-                continue;
-              }
-
-
-
-              if (received_query[i-msg_lenght+5]=='d'){     //digital write      onos_d07v001s0001
-
-                pinMode(pin_number_used, OUTPUT); 
-                digitalWrite(pin_number_used, status_value); 
-                answer="ok_#]";
-                quit=1;
-                continue;
-              }
-
-
-
-
-
-               if (received_query[i-msg_lenght+5]=='a'){     //pwm write     onos_a07v100s0001
-                 analogWrite(pin_number_used, status_value); 
-                 answer="ok_#]";
-                 quit=1;
-                 continue;
-               }
-
-              
-               if (received_query[i-msg_lenght+5]=='s'){     //servo controll      onos_s07v180s0001
-                 analogWrite(pin_number_used, status_value); //banana  to add servo
-                 answer="ok_#]";
-                 quit=1;
-                 continue;
-               }  
-
-
-               if (received_query[i-msg_lenght+5]=='r'){     //relay      onos_r0607v1s0001  onos_r1716v1s0004_#]
-                 uint8_t second_pin_number_used=((received_query[i-msg_lenght+8])-48)*10+(  (received_query[i-msg_lenght+9])-48)*1;
-                 //ram?
-#if defined(DEVMODE)
-                 Serial.println(F("relay"));
-#endif
-                 reg =second_pin_number_used/8;
-                 pos =second_pin_number_used%8;
-
-                 if (true){//( (  (bitRead(used_pins[reg],pos))==1 )&&(  (bitRead(digital_setup[reg],pos))==1 )){//also the second pin is used and not as digital input
-
-                   uint8_t status=(received_query[i-msg_lenght+11])-48;
-#if defined(DEVMODE)
-                   Serial.println(status);
-#endif
-                   answer="er1_status_#]";                    
-                   if ((status==0)||(status==1)){ //status check
-                     digitalWrite(pin_number_used, status); 
-                     digitalWrite(second_pin_number_used,!status); 
-                     //attention with this only one relay per message can be setted!!!
-                     //pins_to_reset1=pin_number_used;
-                     //pins_to_reset2=second_pin_number_used;
-                     delay(150);
-                     digitalWrite(pin_number_used,0); 
-                     digitalWrite(second_pin_number_used,0);  
-                     answer="ok_#]";
-                     quit=1;
-                     continue;
-                   }
-                 }       
-               }
-
-
-              }
-              else{
-#if defined(DEVMODE)    
-                Serial.print(F("pin NOT  used:"));
-#endif
-                answer="err_pin_#]";   
-                quit=1;
-                continue;
-                }
-
-
-              }// end if sn
-              else{
-#if defined(DEVMODE)    
-                Serial.print(F("err_sn:"));
-#endif
-                answer="err_sn"+serial_number+"_#]";  
-                quit=1;
-                continue; 
-              }
-         
-
-            }//end if onos_
-
-            /*Serial.print(F("pin selected:"));
-            Serial.println(pin_number_used); 
-            delay(2000); */ //banana to remove
-
-
-          }
-
-
-      
-
-
-
-    i=i+1;
-
-    }
-    else{
-     
-
-
-      client_query.println(answer);
-      client_query.flush();    
-      client_query.stop();
+    if ( millis()>timeout){
+      Serial.println(F("serial_timeout---------------------------------"));
       break;
     }
 
+
+    if (counter<2){
+      counter=counter+1;
+      continue;     
+    }
+
+
+    if  ((counter>serial_msg_lenght-1)||((data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')  ) ){//   
+
+     // onos_s07v180s0001_#]
+
+/*
+     Serial.println("im here-------------------------------");
+     Serial.println(data_from_serial[counter-serial_msg_lenght-3]);
+     Serial.println(data_from_serial[counter-serial_msg_lenght-2]);
+     Serial.println(data_from_serial[counter-serial_msg_lenght-1]);
+     Serial.println(data_from_serial[counter-serial_msg_lenght]);
+     Serial.println(data_from_serial[counter-serial_msg_lenght+1]);
+     Serial.println(data_from_serial[counter-serial_msg_lenght+2]);
+     Serial.println("ddd here-------------------------------");   
+
+*/
+
+      if ((data_from_serial[counter-serial_msg_lenght]=='o')&&(data_from_serial[counter-serial_msg_lenght+1]=='n')&&(data_from_serial[counter-serial_msg_lenght+2]=='o')&&(data_from_serial[counter-serial_msg_lenght+3]=='s')&&(data_from_serial[counter-serial_msg_lenght+4]=='_')){
+
+#if defined(DEVMODE)
+       Serial.println(F("onos cmd received0:"));
+#endif
+
+
+        for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
+          second_array[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
+
+#if defined(DEVMODE)
+          Serial.println(second_array[pointer]);
+
+#endif
+    
+        }
+       
+        decodeOnosCmd(second_array);
+
+        if(((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k'))||(strcmp(serial_message_answer,"remote_#]")==0)){
+          char onos_cmd_type= serial_message_type_of_onos_cmd;   
+          uint8_t onos_first_pin_used=serial_message_first_pin_used;
+          uint8_t onos_second_pin_used=serial_message_second_pin_used;
+          uint8_t onos_status_to_set=serial_message_value;
+
+
+/*
+         Serial.println("sn");
+         Serial.println(serial_message_sn);
+         Serial.println("__sn");
+*/
+
+          if (strcmp(serial_message_sn,serial_number)==0) {//onos command for this arduino node
+          //  Serial.print("ok_local");
+            counter=0;
+          } 
+          else{ //onos command to send to a remote node
+
+#if defined(DEVMODE)
+            Serial.print("wrong_sn");
+#endif
+            strcpy(serial_message_answer,"ersn1_#]");
+            counter=0;
+          }
+
+
+
+  
+        }
+        else{// error decoding the serial message
+  
+          break;
+        }
+
+
+
+      }
+      else{//no onos_ cmd found
+
+        strcpy(serial_message_answer,"nocmd1_#]");
+
+      }
+
+
+
+
+     counter=0;
+     continue;
+  }
+ 
+   
+  counter=counter+1;
+
+
+
+
+     
+    }//end while  client_query.available()
+
+
+    if (enable_print==1){ //write if there is a not recognise message  shorter...
+
+      client_query.println(serial_message_answer);
+      client_query.flush();    
+      client_query.stop();
+      enable_print=0;
+
+#if defined(DEVMODE)
+      Serial.print(F("answer:"));
+      Serial.println(serial_message_answer);
+#endif
+
+
+      break;
+
+
+    }
 
 
 
 
   }
+
+
 }
 
 
@@ -480,91 +516,7 @@ void server_handler(EthernetClient client_query ){
 
 //client part
 
-void sendInputPinData(){
-  //banana to add analog to msgToSend
-  String a_status_string;
-  String d_status_string;
- // a_status_string.reserve(33); //reserve the memory
- // d_status_string.reserve(10); //reserve the memory
-  a_status_string="a";
-  d_status_string="d";
-  String msg_input_data="onos";
-  //uint16_t analog_values[17];// store the  values from analog input   2 bytes for each data
-  uint8_t i=0;
 
-
-  while (i<9){
-    d_status_string=d_status_string+digital_status[i];
-    i=i+1;
-  }
-  #if defined(DEVMODE3)
-  Serial.println(F("d lenght:"));  //banana to remove
-  Serial.println(d_status_string.length());
-  #endif
-  i=0;
-  while (i<16){
-#if defined(DEVMODE)    
-    Serial.print(F("arr ="));
-
-    Serial.println(analog_values[i]);  
-#endif
-    uint8_t tmp_byte0=lowByte(analog_values[i]); //tmp_byte0 now contain the half lower 8 bytes from the 16 byte data
-    uint8_t tmp_byte1=highByte(analog_values[i]);  //tmp_byte1 now contain the half upper 8 bytes from the 16
-    a_status_string=a_status_string+char(tmp_byte1);
-    a_status_string=a_status_string+char(tmp_byte0);
-/*
-    Serial.print(F("a pin ="));  
-    Serial.print(i);  
-    Serial.print(F(" af value ="));  
-    Serial.print(tmp_byte0);  
-    Serial.print(F("as value ="));  
-    Serial.println(tmp_byte1);  
-    delay(100);
-*/
-    i=i+1;
-
-  }
-
- // Serial.println(F("analog lenght:")); 
- // Serial.println(a_status_string.length());
-  msg_input_data=msg_input_data+node_code_name+node_fw+d_status_string+a_status_string+"_#]"; //msg_input_data contain 9/10 byte for digital status and 16 for analog
-
-//example :onosProminiA00014.92d000000000a00000000000000000000000000000000_#]
-
-
-  #if defined(DEVMODE3)
-  Serial.println(F("d lenght2:")); 
-  Serial.println(d_status_string.length());
-  Serial.println(F("msg size:")); 
-  Serial.println(msg_input_data.length());
-  #endif
-
-
-  if (client.connect(IPAddress(192,168,101,1),onos_center_port)){
-    //client.println("POST /index.html HTTP/1.1"); 
-//	client.println("Host: 192.168.101.1"); // SERVER ADDRESS HERE TOO
-//	client.println("Content-Type: onos/form-data"); 
-//	client.print("Content-Length: "); 
-//	client.println(msg_input_data.length()); 
-//	client.println(); 
-	client.print(msg_input_data); 
-    client.stop();	// DISCONNECT FROM THE SERVER
-    //pin_status_to_update=0;  //message sent 
-    pin_status_to_update=pin_status_to_update-1;
-#if defined(DEVMODE)
-    Serial.println(F(" connected to onos "));
-#endif
-	} 
-
-	if (client.connected()) { 
-		client.stop();	// DISCONNECT FROM THE SERVER
-	}
-
-#if defined(DEVMODE)
-  Serial.println(F("i send data! "));
-#endif
-
-}
 
 
 void usePinSetup(uint8_t number,uint8_t d_conf,uint8_t an_conf,uint8_t used,char mode,boolean isSetup){
@@ -775,7 +727,22 @@ void pinsSetup(){
 
 
 //    "pinsetup?sn=ProminiA0001&fw=4.85_#]"
-      client.print("pinsetup?sn="+node_code_name+"&fw="+node_fw+"_#]");
+
+      char ask_setup[37]; 
+      strcpy(ask_setup,"pinsetup?sn=");
+      strcat(ask_setup,node_code_name);
+      strcat(ask_setup,"&fw=");
+      strcat(ask_setup,node_fw);
+      strcat(ask_setup,"_#]");
+
+
+    #if defined(DEVMODE)
+      Serial.print(F(" setup:"));
+
+      Serial.println(ask_setup);
+    #endif
+
+      client.println(ask_setup);
       client.flush();
       boolean en=1;
       next = millis() + 1000;
@@ -1074,12 +1041,8 @@ if (pins_to_reset2!=99){
   if (0){
     #if defined(DEVMODE3)
     Serial.print(F("pin_status_to_update= "));
-    Serial.println(pin_status_to_update);
-    #endif
-    sendInputPinData();
-    #if defined(DEVMODE3)
-    Serial.print(F("pin_status_to_update= "));
-    Serial.println(pin_status_to_update);
+    Serial.println("deleted.....not_used");
+
     #endif    
  
       
@@ -1097,7 +1060,15 @@ if (pins_to_reset2!=99){
 //	    client.print(F( "Host: " ));
 //        client.println(F("192.168.101.1"));
 //  	    client.println(F( "Connection: close" ));
-        client.print("n_sync?sn="+node_code_name+"&fw="+node_fw+"_#]");
+        //n_sync?sn=ProminiA0001&fw=4.85_#]
+        char ask_sync[33]="n_sync?sn=";
+
+        strcat(ask_sync,node_code_name);
+        strcat(ask_sync,"&fw=");
+        strcat(ask_sync,node_fw);
+        strcat(ask_sync,"_#]");
+
+        client.print(ask_sync);
         client.flush();
 
 

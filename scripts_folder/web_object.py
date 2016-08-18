@@ -46,15 +46,15 @@ class WebObject:
 
     def __init__(self,name,obj_type="b",start_status=0,styleDictionary={},htmlDictionary={},cmdDictionary={},note=" ",hardware_pin=[9999],HwNodeSerialNumber=0,spareDict={}):
       self.__object_type=obj_type
-      self.__style0="background-color:green ;"
-      self.__style1="background-color:red ;"
+      self.__style0="background-color:red ;"
+      self.__style1="background-color:green ;"
       self.styleDict={u"0":self.__style0,u"1":self.__style1,u"onoswait":"background-color:grey ;color black","default_s":"background-color:red ;color black"}
       self.styleDict.update(styleDictionary)
-      self.__style0=self.styleDict[u"0"]
-      self.__style1=self.styleDict[u"1"]
+      self.__style0=self.styleDict[u"1"]
+      self.__style1=self.styleDict[u"0"]
       self.style_wait=self.styleDict[u"onoswait"] #banana to remove
 
-      self.htmlDict={u"0":name+"=0",u"1":name+"=1"}
+      self.htmlDict={u"0":name+"=0",u"1":name+"=1"} 
 
       self.htmlDict.update(htmlDictionary)
 

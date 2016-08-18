@@ -134,6 +134,7 @@ def readDictionaryFromSavedFile(key):
     json_file = codecs.open(base_cfg_path+"config_files/data.json",'r',"utf8")
     readed_data = json_file.read()
     json_file.close() 
+    readed_dict=json.loads(readed_data)
   except:
     print "can't import data.json file , i will load the recovery one "
     readed_data=recoverydata_json  # is in globalVar.py
@@ -236,12 +237,12 @@ def importConfig():
 
 
 
-  tmp_node_dict=readDictionaryFromSavedFile("nodeDictionary")
+  tmp_node_dict=readDictionaryFromSavedFile(u"nodeDictionary")
   for a in tmp_node_dict.keys():  #for each node in the file
-    node_serial_number=tmp_node_dict[a]["node_serial_number"]
-    node_type=tmp_node_dict[a]["hwModelName"]
+    node_serial_number=tmp_node_dict[a][u"node_serial_number"]
+    node_type=tmp_node_dict[a][u"hwModelName"]
     #node_sn=tmp_node_dict[a]["node_serial_number"]
-    node_address=tmp_node_dict[a]["nodeAddress"]   
+    node_address=tmp_node_dict[a][u"nodeAddress"]   
     hardware_node_type=hardwareModelDict[node_type]
     nodeDict[node_serial_number]=hw_node.HwNode(node_serial_number,hardware_node_type,node_address,router_hardware_fw_version)  
   #ricreate the nodeDict from the json backup

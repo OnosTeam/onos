@@ -280,8 +280,8 @@ class RouterHandler:
       address=node_obj.getNodeAddress()
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
       if (out_type=="sr_relay"):
-        pin1=str(pinNumbers[0])
-        pin0=str(pinNumbers[1])
+        pin1=str(pinNumbers[1])
+        pin0=str(pinNumbers[0])
         if (len (pin0) <2):
           pin0='0'+pin0
         if (len (pin1) <2):
@@ -381,7 +381,7 @@ class RouterHandler:
 
 
 
-    def outputWrite(self,node_serial_number,pinList,statusList,node_obj,objName,previous_status,statusToSet,output_type,user,priority,mail_report_list):
+    def outputWrite(self,node_serial_number,pinList,statusList,node_obj,objName,previous_status,statusToSetWebObject,output_type,user,priority,mail_report_list):
       
       
       print "executed router_handler digitalwrite()"
@@ -474,7 +474,7 @@ class RouterHandler:
 
 
       
-          priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSet,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
+          priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
           return(1) 
           
         else: #the router has't got  IO pins
@@ -484,7 +484,7 @@ class RouterHandler:
         
 
 
-      if ((str(node_address))=="1"): #a local arduino selected   not implemented yet 
+      if ((str(node_address))=="0001"): #a local arduino selected   not implemented yet 
         print "i write to/from a remote node selected"
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
         if ((self.arduino_used==1)&(node_address=="1")):  #check if arduino is enabled correctly and is selected with 1
@@ -527,7 +527,7 @@ class RouterHandler:
 
         if (output_type=="sr_relay"):
           if (len(pinList)==2):
-            self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusToSet,node_serial_number,output_type,user,priority,mail_report_list)
+            self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,output_type,user,priority,mail_report_list)
             return(1)
           else:
             print "error number of pins !=2"

@@ -1400,22 +1400,32 @@ def updateOneRoom(room):
     file0.write(fileToWrite)
     file0.close()
     #os.system("chmod 777 "+html_file_location)
-    with lock_bash_cmd:
-      subprocess.call("chmod 777 "+html_file_location, shell=True,close_fds=True)
+    #with lock_bash_cmd:
+    #  subprocess.call("chmod 777 "+html_file_location, shell=True,close_fds=True)
+    os.chmod(html_file_location, 0o777)
+
 
   else:
     print "i make the directory"+room
     #os.system("mkdir "+baseRoomPath+room) 
-    with lock_bash_cmd:
-      subprocess.call("mkdir "+baseRoomPath+room, shell=True,close_fds=True) 
+    #with lock_bash_cmd:
+    #  subprocess.call("mkdir "+baseRoomPath+room, shell=True,close_fds=True) 
+
+
+    try:
+      os.stat(baseRoomPath+room)
+    except:
+      os.mkdir(baseRoomPath+room)  
+
     fileToWrite=getRoomHtml(room,object_dict,"",zoneDict)
     file0 = open(baseRoomPath+room+"/index.html", "w")
     file0.write(fileToWrite)
 
     file0.close()
     #os.system("chmod 777 "+html_file_location)
-    with lock_bash_cmd:
-      subprocess.call("chmod 777 "+html_file_location, shell=True,close_fds=True)  
+    #with lock_bash_cmd:
+    #  subprocess.call("chmod 777 "+html_file_location, shell=True,close_fds=True)  
+    os.chmod(html_file_location, 0o777)
   return
 
 def updateDir():
@@ -1433,20 +1443,28 @@ def updateDir():
       file0.write(fileToWrite)
       file0.close()
       #os.system("chmod 777 "+baseRoomPath+zone+"/index.html")
-      with lock_bash_cmd:
-        subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
+      #with lock_bash_cmd:
+      #  subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
+      os.chmod(baseRoomPath+zone, 0o777)
     else:
       print "create the file"+index
       #os.system("mkdir "+baseRoomPath+zone)
-      with lock_bash_cmd: 
-        subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True)  
+      #with lock_bash_cmd: 
+      #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True)  
+
+      try:
+        os.stat(baseRoomPath+zone)
+      except:
+        os.mkdir(baseRoomPath+zone) 
+
       fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
       try:
         file0 = open(index, "w")
         file0.write(fileToWrite)
         file0.close()
-        with lock_bash_cmd: 
-          subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
+        #with lock_bash_cmd: 
+        #  subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
+        os.chmod(baseRoomPath+zone, 0o777)
       except Exception, e: 
         print "error creating "+baseRoomPath+zone+"/index.html  e:" +str(e.args)
         errorQueue.put("error creating "+baseRoomPath+zone+"/index.html  e:" +str(e.args)) 
@@ -1495,8 +1513,14 @@ def createNewNode(node_sn,node_ip,node_fw):
 
             #create a new web_object and insert only his name          
           #os.system("mkdir "+baseRoomPath+node_sn) 
-          with lock_bash_cmd:
-            subprocess.check_output("mkdir "+baseRoomPath+node_sn, shell=True,close_fds=True)
+          #with lock_bash_cmd:
+          #  subprocess.check_output("mkdir "+baseRoomPath+node_sn, shell=True,close_fds=True)
+
+
+          try:
+            os.stat(baseRoomPath+node_sn)
+          except:
+            os.mkdir(baseRoomPath+node_sn)  
 
           createNewWebObjFromNode(hwType,node_sn)
           try:
@@ -1510,8 +1534,10 @@ def createNewNode(node_sn,node_ip,node_fw):
 
           #os.system("cat "+getRoomHtml(node_sn,object_dict,"",zoneDict)+" >> "+baseRoomPath+node_sn+"/index.html")          
           #os.system("chmod 777 "+baseRoomPath+node_sn)
-          with lock_bash_cmd:
-            subprocess.check_output("chmod 777 "+baseRoomPath+node_sn, shell=True,close_fds=True)
+          #with lock_bash_cmd:
+          #  subprocess.check_output("chmod 777 "+baseRoomPath+node_sn, shell=True,close_fds=True)
+
+          os.chmod(baseRoomPath+node_sn, 0o777)
           print "create a new zone"+node_sn
           #print zoneDict
           updateOneRoom(node_sn) 
@@ -3776,8 +3802,10 @@ class MyHandler(BaseHTTPRequestHandler):
 
                      try : 
                        #os.system("mv "+baseRoomPath+room+" "+baseRoomPath+new_name)   #rename the directory
-                       with lock_bash_cmd:
-                         subprocess.check_output("mv "+baseRoomPath+room+" "+baseRoomPath+new_name, shell=True,close_fds=True)  
+                       #with lock_bash_cmd:
+                       #  subprocess.check_output("mv "+baseRoomPath+room+" "+baseRoomPath+new_name, shell=True,close_fds=True) 
+                       os.rename(baseRoomPath+room, baseRoomPath+new_name,)
+ 
                        updateOneRoom(new_name)
                        
                        print ("mv "+room+" "+new_name) 
@@ -3801,11 +3829,16 @@ class MyHandler(BaseHTTPRequestHandler):
                   #os.system("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html")
                   #os.system("chmod 777 "+new_name)
 
-                  with lock_bash_cmd:
-                    subprocess.check_output("mkdir "+baseRoomPath+new_name, shell=True,close_fds=True)  
-                    subprocess.check_output("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
-                    subprocess.check_output("chmod 777 "+new_name, shell=True,close_fds=True)  
+                  try:
+                    os.stat(baseRoomPath+new_name)
+                  except:
+                    os.mkdir(baseRoomPath+new_name)  
 
+                  with lock_bash_cmd:
+                    #subprocess.check_output("mkdir "+baseRoomPath+new_name, shell=True,close_fds=True)  
+                    subprocess.check_output("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
+                    #subprocess.check_output("chmod 777 "+new_name, shell=True,close_fds=True)  
+                  os.chmod(new_name, 0o777)
                   updateOneRoom(new_name)       
                   print "create a new room"+new_name 
                   data_to_update=1

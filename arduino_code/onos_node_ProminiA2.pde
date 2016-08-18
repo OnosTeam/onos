@@ -38,7 +38,7 @@ Wire up as following (ENC = module side):
 
 //#define DEVMODE3 1          
 
-String setup_msg="";
+
 EthernetClient client;
 signed long next;
 uint8_t digital_setup[10];
