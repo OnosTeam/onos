@@ -155,8 +155,13 @@ I will use post instead that get message
   1 byte to separe the pin number from the value , it will be 'v'
   1 byte to tell arduino the status (0 or 1 ) to set the pin
   1 byte to tell the node serial number
-  example : onos_d04v001s0001_#]         to set pin 4 to 1  onos_d04v001s0001_#]
-            onos_d04v000s0001_#]         to set pin 4 to 0  onos_d04v000s0001_#]
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+
+
+  example : onos_d04v001s0001f001_#]         to set pin 4 to 1  onos_d04v001s0001f001_#]
+            onos_d04v000s0001f001_#]         to set pin 4 to 0  onos_d04v000s0001f001_#]
 
   
   for analog pin it will be
@@ -166,8 +171,11 @@ I will use post instead that get message
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the value (0 or 255 ) to set the pin (to set 10 it will send '010',to set 255 it will send '255')
   1 byte to tell the node serial number
-  example : onos_a11v255s0001_#]         to set pin 11 to 255
-            onos_a11v099s0001_#]         to set pin 11 to 99
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+  example : onos_a11v255s0001f001_#]         to set pin 11 to 255
+            onos_a11v099s0001f001_#]         to set pin 11 to 99
 
 
 
@@ -178,8 +186,11 @@ I will use post instead that get message
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the value (0 or 180 ) to set the pin (to set 10 it will send '010',to set 180 it will send '180')
   1 byte to tell the node serial number
-  example : onos_s05v180s0001_#]         to set pin 5 to 180
-            onos_s05v090s0001_#]         to set pin 5 to  90
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+  example : onos_s05v180s0001f001_#]         to set pin 5 to 180
+            onos_s05v090s0001f001_#]         to set pin 5 to  90
 
 
   for set/reset latch relay control it will be:
@@ -189,8 +200,11 @@ I will use post instead that get message
   1 byte to separe the pin number from the value , it will be 'v'
   1 byte to tell arduino the value (0 or 1 ) to set the relay
   1 byte to tell the node serial number 
-  example : onos_r0405v1s0001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 1
-            onos_r0405v0s0001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 0  
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+  example : onos_r0405v1s0001f001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 1
+            onos_r0405v0s0001f001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 0  
 
 
 

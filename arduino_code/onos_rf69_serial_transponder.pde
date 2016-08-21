@@ -110,10 +110,12 @@ void decodeOnosCmd(const char *received_message){
 
     serial_node_address=(received_message[18]-48)*100+(received_message[19]-48)*10+(received_message[20]-48)*1;
 
+/*
+
     Serial.println(serial_message_sn); 
     Serial.println(serial_message_flag); 
     Serial.println(serial_node_address);
-
+*/
 
 
 

@@ -71,15 +71,19 @@ EthernetServer server = EthernetServer(9000); //port number 9000
 
 
 
-#define serial_msg_lenght 21
+#define serial_msg_lenght 23
+
 
 char serial_message_type_of_onos_cmd;
+char serial_message_flag;
 uint8_t serial_message_address;
 uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
 int serial_message_value;
 char serial_message_answer[24]="er00_#]";
 char serial_message_sn[5]="";
+uint8_t serial_node_address=0;
+
 
 uint8_t counter;
 boolean enable_print=0;
@@ -127,6 +131,18 @@ void decodeOnosCmd(char received_message[]){
     serial_message_sn[1]=received_message[14];
     serial_message_sn[2]=received_message[15];
     serial_message_sn[3]=received_message[16];
+
+    serial_message_flag=received_message[17];
+
+    serial_node_address=(received_message[18]-48)*100+(received_message[19]-48)*10+(received_message[20]-48)*1;
+
+/*
+
+    Serial.println(serial_message_sn); 
+    Serial.println(serial_message_flag); 
+    Serial.println(serial_node_address);
+*/
+
 
 
 
@@ -415,10 +431,7 @@ void server_handler(EthernetClient client_query ){
         decodeOnosCmd(filtered_onos_message);
 
         if(((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k'))||(strcmp(serial_message_answer,"remote_#]")==0)){
-          char onos_cmd_type= serial_message_type_of_onos_cmd;   
-          uint8_t onos_first_pin_used=serial_message_first_pin_used;
-          uint8_t onos_second_pin_used=serial_message_second_pin_used;
-          uint8_t onos_status_to_set=serial_message_value;
+
 
 
 /*
