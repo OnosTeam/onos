@@ -71,18 +71,16 @@ EthernetServer server = EthernetServer(9000); //port number 9000
 
 
 
-    
-   //onos_r1716v1s0004_#]
-   //onos_d07v001s0001_#]
+#define serial_msg_lenght 21
 
 char serial_message_type_of_onos_cmd;
+uint8_t serial_message_address;
 uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
 int serial_message_value;
-char serial_message_answer[21]="er00_#]";
+char serial_message_answer[24]="er00_#]";
 char serial_message_sn[5]="";
 
-uint8_t serial_msg_lenght=19;
 uint8_t counter;
 boolean enable_print=0;
 
@@ -117,7 +115,7 @@ void decodeOnosCmd(char received_message[]){
 
   strcpy(serial_message_answer,"err01_#]");
   if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
-  { // the onos cmd was found           onos_d07v001s0001_#]
+  { // the onos cmd was found           onos_d07v001s0001f000_#]
 
 
     strcpy(serial_message_answer,"cmdRx_#]");               
@@ -191,7 +189,7 @@ void decodeOnosCmd(char received_message[]){
 
     switch (serial_message_type_of_onos_cmd) {
 
-      case 'd':{     //digital write       onos_d07v001s0001_#]
+      case 'd':{     //digital write       onos_d07v001s0001f000_#]
         strcpy(serial_message_answer,"ok_#]");
         if (is_pin_setup_as_do(serial_message_first_pin_used)==0) { //if the pin is not setted up as digital out
           strcpy(serial_message_answer,"er_ds_#]");
@@ -203,13 +201,13 @@ void decodeOnosCmd(char received_message[]){
         break;
       }
 
-      case 'a':{     //pwm write           onos_a07v100s0001_#]
+      case 'a':{     //pwm write           onos_a07v100s0001f000_#]
         analogWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok_#]");
         break;
       }
               
-      case 's':{     //servo controll      onos_s07v180s0001_#]
+      case 's':{     //servo controll      onos_s07v180s0001f000_#]
         strcpy(serial_message_answer,"ok_#]");
         if (is_pin_setup_as_do==0) { //if the pin is not setted up as digital out
           strcpy(serial_message_answer,"er_ds_#]");
@@ -219,7 +217,7 @@ void decodeOnosCmd(char received_message[]){
         break;
       }  
 
-      case 'g':{     //get digital status  onos_g0708v0s0001_#]  
+      case 'g':{     //get digital status  onos_g0708v0s0001f000_#]  
         pinMode(serial_message_first_pin_used, INPUT); 
         pinMode(serial_message_second_pin_used, INPUT); 
         char val_first_pin=digitalRead(serial_message_first_pin_used)+48;
@@ -239,7 +237,7 @@ void decodeOnosCmd(char received_message[]){
         break;
       }  
 
-      case 'r':{     //relay               onos_r1716v1s0004_#]
+      case 'r':{     //relay               onos_r1716v1s0004f000_#]
         strcpy(serial_message_answer,"ok_#]");
         serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
 
@@ -346,8 +344,8 @@ void server_handler(EthernetClient client_query ){
 
 
   counter=0;
-  char data_from_serial [25];
-  char filtered_onos_message[21];
+  char data_from_serial [serial_msg_lenght+5];
+  char filtered_onos_message[serial_msg_lenght+3];
   unsigned long timeout=millis()+200;
 
 
@@ -382,7 +380,7 @@ void server_handler(EthernetClient client_query ){
 
     if  ((counter>serial_msg_lenght-1)||((data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')  ) ){//   
 
-     // onos_s07v180s0001_#]
+     // onos_s07v180s0001f000_#]
 
 /*
      Serial.println("im here-------------------------------");
@@ -402,9 +400,10 @@ void server_handler(EthernetClient client_query ){
        Serial.println(F("onos cmd received0:"));
 #endif
 
-
+        uint8_t message_copy[serial_msg_lenght+1];
         for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
           filtered_onos_message[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
+          message_copy[pointer]=data_from_serial[counter-serial_msg_lenght+pointer]; 
 
 #if defined(DEVMODE)
           Serial.println(filtered_onos_message[pointer]);

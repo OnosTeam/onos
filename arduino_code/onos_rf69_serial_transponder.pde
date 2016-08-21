@@ -32,6 +32,9 @@
 #include <RHReliableDatagram.h>
 #include <RH_RF69.h>
 #include <SPI.h>
+//#include <SoftwareServo.h> 
+
+
 
 #define CLIENT_ADDRESS 2
 #define SERVER_ADDRESS 1
@@ -50,6 +53,10 @@ RH_RF69 driver;
 RHReliableDatagram manager(driver, SERVER_ADDRESS);
 
 
+//SoftwareServo myservo;  // create servo object to control a servo 
+
+
+
 
 boolean radio_enabled=1;
 
@@ -58,21 +65,23 @@ boolean radio_enabled=1;
 
 char serial_number[5]="0001";
 
+uint8_t this_node_address=1;
+
+   //onos_d07v001s0000f000_#]
 
 
-   //onos_d07v001s0000_#]
-
-
-//#define serial_message_lenght 21
+#define serial_msg_lenght 23
 
 char serial_message_type_of_onos_cmd;
+char serial_message_flag;
+uint8_t serial_message_address;
 uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
 int serial_message_value;
-char serial_message_answer[21]="er00_#]";
+char serial_message_answer[24]="er00_#]";
 char serial_message_sn[5]="";
+uint8_t serial_node_address=0;
 
-uint8_t serial_msg_lenght=19;
 uint8_t counter;
 boolean enable_print=0;
 
@@ -85,7 +94,7 @@ void decodeOnosCmd(const char *received_message){
 
   strcpy(serial_message_answer,"err01_#]");
   if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
-  { // the onos cmd was found           onos_d07v001s0001_#]
+  { // the onos cmd was found           onos_d07v001s0001f000_#]
 
     strcpy(serial_message_answer,"cmdRx_#]");               
 
@@ -96,6 +105,15 @@ void decodeOnosCmd(const char *received_message){
     serial_message_sn[1]=received_message[14];
     serial_message_sn[2]=received_message[15];
     serial_message_sn[3]=received_message[16];
+ 
+    serial_message_flag=received_message[17];
+
+    serial_node_address=(received_message[18]-48)*100+(received_message[19]-48)*10+(received_message[20]-48)*1;
+
+    Serial.println(serial_message_sn); 
+    Serial.println(serial_message_flag); 
+    Serial.println(serial_node_address);
+
 
 
 
@@ -142,7 +160,7 @@ void decodeOnosCmd(const char *received_message){
     }
  
 
-    if (strcmp(serial_message_sn,serial_number)!=0) {//onos command for a remote arduino node
+    if ((serial_node_address!=this_node_address)||((strcmp(serial_message_sn,serial_number)!=0))) {//onos command for a remote arduino node
       strcpy(serial_message_answer,"remote_#]");
 /*
       Serial.print(F("serial_number:")); 
@@ -158,26 +176,28 @@ void decodeOnosCmd(const char *received_message){
 
     switch (serial_message_type_of_onos_cmd) {
 
-      case 'd':{     //digital write       onos_d05v001s0001_#]
+      case 'd':{     //digital write       onos_d05v001s0001f001_#]  where the last'a' will be a char from 0 to 255 indicating the address of the node
         pinMode(serial_message_first_pin_used, OUTPUT); 
         digitalWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok_#]");
         break;
       }
 
-      case 'a':{     //pwm write           onos_a07v100s0001_#]
+      case 'a':{     //pwm write           onos_a07v100s0001f001_#]
         analogWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok_#]");
         break;
       }
 
-      case 's':{     //servo controll      onos_s07v180s0000_#]
-        analogWrite(serial_message_first_pin_used, serial_message_value); //todo:  to add servo
+      case 's':{     //servo controll      onos_s07v180s0001f001_#]
+        //servo are not supported yet
+        //myservo.attach(serial_message_first_pin_used);  // attaches the servo on pin 2 to the servo object 
+        //myservo.write(serial_message_value);              // tell servo to go to position in variable 'pos'
         strcpy(serial_message_answer,"ok_#]");
         break;
       }  
 
-      case 'g':{     //get digital status  onos_g0403v0s0001_#]  
+      case 'g':{     //get digital status  onos_g0403v0s0001f001_#]  
         pinMode(serial_message_first_pin_used, INPUT); 
         pinMode(serial_message_second_pin_used, INPUT);
         digitalWrite(serial_message_first_pin_used,1); //enable internal pullup resistors
@@ -200,7 +220,7 @@ void decodeOnosCmd(const char *received_message){
         break;
       }  
                                            
-      case 'r':{     //relay               onos_r1415v1s0000_#]
+      case 'r':{     //relay               onos_r1415v1s0000f000_#]
         strcpy(serial_message_answer,"ok_#]");
         serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
 
@@ -291,6 +311,8 @@ void setup()
 
   }
 
+
+  
   Serial.println(F("ready"));
 
 
@@ -338,8 +360,8 @@ void loop()
 
 
   counter=0;
-  char data_from_serial [25];
-  char filtered_onos_message[21];
+  char data_from_serial [serial_msg_lenght+5];
+  char filtered_onos_message[serial_msg_lenght+3];
   unsigned long timeout=millis()+200;
 
   while (Serial.available() > 0) {
@@ -365,7 +387,7 @@ void loop()
 
     if  ((counter>serial_msg_lenght-1)||((data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')  ) ){//   
 
-     // onos_s07v180s0001_#]
+     // onos_s07v180s0001f000_#]
 
 /*
      Serial.println("im here-------------------------------");
@@ -385,7 +407,7 @@ void loop()
        Serial.println(F("onos cmd received0:"));
 #endif
 
-        uint8_t message_copy[21];
+        uint8_t message_copy[serial_msg_lenght+1];
 
         for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
           filtered_onos_message[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
@@ -398,10 +420,7 @@ void loop()
         decodeOnosCmd(filtered_onos_message);
 
         if(((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k'))||(strcmp(serial_message_answer,"remote_#]")==0)){
-          char onos_cmd_type= serial_message_type_of_onos_cmd;   
-          uint8_t onos_first_pin_used=serial_message_first_pin_used;
-          uint8_t onos_second_pin_used=serial_message_second_pin_used;
-          uint8_t onos_status_to_set=serial_message_value;
+
 
 
 /*
@@ -410,21 +429,29 @@ void loop()
          Serial.println("__sn");
 */
 
-          if (strcmp(serial_message_sn,serial_number)==0) {//onos command for this arduino node
+
+
+          
+
+          if (strcmp(serial_message_answer,"remote_#]")!=0) {//onos command for this arduino node
             //Serial.print("ok_local");
             strcpy(serial_message_answer,"ok_local_#]");
             counter=0;
           } 
           else{ //onos command to send to a remote node
-            if (radio_enabled==1){
+            if ((radio_enabled==1)&&(serial_message_flag=='f')){ // if radio is active and the flag is setted as forward..
 
 
               //put here the radio  transmit part
 
 
-              uint8_t remote_node_address=(serial_message_sn[0]-48)*1000+(serial_message_sn[1]-48)*100+(serial_message_sn[2]-48)*10+(serial_message_sn[3]-48)*1;
+
+
+
+
+              
              // Send a message to manager_server
-              if (manager.sendtoWait(message_copy, sizeof(message_copy),remote_node_address)) {
+              if (manager.sendtoWait(message_copy, sizeof(message_copy),serial_node_address)) {
               // Now wait for a reply from the server
                 uint8_t len = sizeof(buf);
                 uint8_t from;   
@@ -450,7 +477,7 @@ void loop()
 
             }
             else {//radio is disabled or not working
-              strcpy(serial_message_answer,"radio_er0_#]");
+              strcpy(serial_message_answer,"ertx3_#]");
             }
 
               
