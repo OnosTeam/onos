@@ -33,8 +33,8 @@
 #include <RH_RF69.h>
 #include <SPI.h>
 
-#define CLIENT_ADDRESS 1
-#define SERVER_ADDRESS 2
+#define CLIENT_ADDRESS 2
+#define SERVER_ADDRESS 1
 
 //#define DEVMODE 0
 
@@ -158,14 +158,14 @@ void decodeOnosCmd(const char *received_message){
 
     switch (serial_message_type_of_onos_cmd) {
 
-      case 'd':{     //digital write       onos_d07v001s0000_#]
+      case 'd':{     //digital write       onos_d05v001s0001_#]
         pinMode(serial_message_first_pin_used, OUTPUT); 
         digitalWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok_#]");
         break;
       }
 
-      case 'a':{     //pwm write           onos_a07v100s0000_#]
+      case 'a':{     //pwm write           onos_a07v100s0001_#]
         analogWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok_#]");
         break;
@@ -177,9 +177,12 @@ void decodeOnosCmd(const char *received_message){
         break;
       }  
 
-      case 'g':{     //get digital status  onos_g0708v0s0001_#]  
+      case 'g':{     //get digital status  onos_g0403v0s0001_#]  
         pinMode(serial_message_first_pin_used, INPUT); 
-        pinMode(serial_message_second_pin_used, INPUT); 
+        pinMode(serial_message_second_pin_used, INPUT);
+        digitalWrite(serial_message_first_pin_used,1); //enable internal pullup resistors
+        digitalWrite(serial_message_second_pin_used,1);//enable internal pullup resistors
+        delayMicroseconds(20);  //wait a bit
         char val_first_pin=digitalRead(serial_message_first_pin_used)+48;
         char val_second_pin=digitalRead(serial_message_second_pin_used)+48;
         strcpy(serial_message_answer,""); 
@@ -279,9 +282,18 @@ void setup()
   if (!manager.init()){
     Serial.println("init failed");
     radio_enabled=0;
+
+    uint8_t key[] = { 0x05, 0x02, 0x03, 0x07, 0x05, 0x06, 0x07, 0x08,
+                    0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08};
+    driver.setEncryptionKey(key);
+
+
+
   }
 
   Serial.println(F("ready"));
+
+
 
   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
 
@@ -327,7 +339,7 @@ void loop()
 
   counter=0;
   char data_from_serial [25];
-  char second_array[21];
+  char filtered_onos_message[21];
   unsigned long timeout=millis()+200;
 
   while (Serial.available() > 0) {
@@ -373,14 +385,17 @@ void loop()
        Serial.println(F("onos cmd received0:"));
 #endif
 
+        uint8_t message_copy[21];
 
         for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
-          second_array[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
+          filtered_onos_message[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
+          message_copy[pointer]=data_from_serial[counter-serial_msg_lenght+pointer]; 
+
          //Serial.println("mmm");
-         //Serial.println(second_array[pointer]);
+         //Serial.println(filtered_onos_message[pointer]);
         }
        
-        decodeOnosCmd(second_array);
+        decodeOnosCmd(filtered_onos_message);
 
         if(((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k'))||(strcmp(serial_message_answer,"remote_#]")==0)){
           char onos_cmd_type= serial_message_type_of_onos_cmd;   
@@ -394,8 +409,10 @@ void loop()
          Serial.println(serial_message_sn);
          Serial.println("__sn");
 */
-          if (serial_message_sn==serial_number) {//onos command for this arduino node
-            Serial.print("ok_local");
+
+          if (strcmp(serial_message_sn,serial_number)==0) {//onos command for this arduino node
+            //Serial.print("ok_local");
+            strcpy(serial_message_answer,"ok_local_#]");
             counter=0;
           } 
           else{ //onos command to send to a remote node
@@ -403,6 +420,33 @@ void loop()
 
 
               //put here the radio  transmit part
+
+
+              uint8_t remote_node_address=(serial_message_sn[0]-48)*1000+(serial_message_sn[1]-48)*100+(serial_message_sn[2]-48)*10+(serial_message_sn[3]-48)*1;
+             // Send a message to manager_server
+              if (manager.sendtoWait(message_copy, sizeof(message_copy),remote_node_address)) {
+              // Now wait for a reply from the server
+                uint8_t len = sizeof(buf);
+                uint8_t from;   
+                if (manager.recvfromAckTimeout(buf, &len, 2000, &from)){
+                  //Serial.print("got reply from : 0x");
+                  //Serial.print(from, HEX);
+                  //Serial.print(": ");
+                  //Serial.println((char*)buf);
+                  strcpy(serial_message_answer,(char*)buf);  
+                }
+                else{
+                 // Serial.println("No reply, is rf69_reliable_datagram_server running?");
+                  strcpy(serial_message_answer,"ertx0_#]");   
+                }
+              }
+              else{
+               // Serial.println("sendtoWait failed");
+                strcpy(serial_message_answer,"ertx1_#]");  
+                 //delay(500);
+              }
+
+
 
             }
             else {//radio is disabled or not working

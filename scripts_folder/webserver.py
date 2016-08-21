@@ -5252,8 +5252,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             continue #skip
 
           nodeDict[a].setNodeActivity(0)  #set the node as inactive
-          print "the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnected it?"
-          errorQueue.put( "The node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnected it?"+"at:" +getErrorTimeString())
+          print "the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"
+          errorQueue.put( "The node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"+"at:" +getErrorTimeString())
           for b in object_dict.keys():
             if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
               #object_dict[b].setStatus("inactive")
@@ -5263,6 +5263,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           if nodeDict[a].getNodeActivity()==0: #the node was not connected but now it is
             nodeDict[a].setNodeActivity(1)  #set the node as active
             print "node:"+a+" returned active" 
+            errorQueue.put( "The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString())
             for b in object_dict.keys():
               print "object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber())
               if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it

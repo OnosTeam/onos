@@ -55,8 +55,8 @@ uint16_t analog_values[17];// store the  values from analog input   2 bytes for 
 char node_type='a';     //banana temp 'a' for arduino pro mini
 char serial_char=1 ;   //banana to read from eprom
 char node_fw[]="5.13";
-char node_code_name[]="Plug6way0002";
-char serial_number[]="0002"; //BANANA TO READ FROM EEPROM
+char node_code_name[]="Plug6way0001";
+char serial_number[]="0001"; //BANANA TO READ FROM EEPROM
 
 
 
@@ -347,7 +347,7 @@ void server_handler(EthernetClient client_query ){
 
   counter=0;
   char data_from_serial [25];
-  char second_array[21];
+  char filtered_onos_message[21];
   unsigned long timeout=millis()+200;
 
 
@@ -404,16 +404,16 @@ void server_handler(EthernetClient client_query ){
 
 
         for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
-          second_array[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
+          filtered_onos_message[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
 
 #if defined(DEVMODE)
-          Serial.println(second_array[pointer]);
+          Serial.println(filtered_onos_message[pointer]);
 
 #endif
     
         }
        
-        decodeOnosCmd(second_array);
+        decodeOnosCmd(filtered_onos_message);
 
         if(((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k'))||(strcmp(serial_message_answer,"remote_#]")==0)){
           char onos_cmd_type= serial_message_type_of_onos_cmd;   

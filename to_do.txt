@@ -77,7 +77,7 @@ sudo md5sum -c checksum2.md5
 
 3.7) Gestione carichi e pannelli solari,lettura contatore enel  
 
-4)  Sviluppo nodi wireless con wifi o altro modulo wireless
+4)  Sviluppo nodi wireless con wifi o altro modulo wireless , sviluppo gestore indirizzi e 
 
 5)  Cercare di permettere all'utente di scrivere nomi non ashii per gli oggetti, gli scenari,gli utenti...
 

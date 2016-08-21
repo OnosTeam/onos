@@ -365,7 +365,8 @@ class HwNode:
 
     def getNodeTimeout(self):
       """| Return the time after which the node is declared inactive. 
-         | So if getLastNodeSync() is greater than this self.timeout the node will be setted as inactive """
+         | So if getLastNodeSync() is greater than this self.timeout the node will be setted as inactive 
+         | self.timeout is readed from hardwareModelDict  in globalVar.py"""
       return(self.timeout)
 
     def setNodeActivity(self,value):

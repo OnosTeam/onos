@@ -1640,7 +1640,7 @@ hardwareModelDict["ProminiA"]["pin_mode"]["analog_input"]={"a_sensor":[(14),(15)
 hardwareModelDict["ProminiA"]["pin_mode"]["servo_output"]={"servo":[(5)]}
 #hardwareModelDict["ProminiA"]["pin_mode"]["analog_output"]={"a_out":[(9)]}
 
-hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":70}
+hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":90}
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15)],"wifi":[(16,17)]}
 
 

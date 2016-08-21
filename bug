@@ -10,6 +10,9 @@ main webserver
 
 
 
+se si si accende onoscenter senza internet l'ora resta sbagliata anche quando poi si collega internet ..falso?
+
+
 main error in handle_new_query_to_remote_node_thread:('string indices must be integers',)
 
 
