@@ -1604,6 +1604,8 @@ recoverydata_json=''' {
 
 
 nodeDict={}
+nodeNumericSerialTofullSerial={} #contain as key the numeric part of the serial number and as content the full serialnumber 
+next_node_free_adress_list=[1,2]   #list of free node adresses from 2 to 254
 usersDict={}
 usersDict["onos_mail_guest"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["web_interface"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
@@ -1626,7 +1628,7 @@ onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta","smtp_port
 
 
 
-#localhost/setup/node_manager/onosRouterGL0001
+#localhost/setup/node_manager/RouterGL0001
 hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"timeout":180}
 hardwareModelDict["RouterGL"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
@@ -1695,7 +1697,7 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 
 
 #to get the list of varius type used in a harware configuration:
-#print hardwareModelDict["onosProminiA"]["pin_mode"].keys()
+#print hardwareModelDict["ProminiA"]["pin_mode"].keys()
 #print hardwareModelDict["onosPlug6way"]["pin_mode"].keys()
 #to get the pin used in a specific mode:
 #print hardwareModelDict["onosProminiA"]["pin_mode"]["digital_input"]
@@ -1716,6 +1718,58 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 
 
 
+
+
+
+def updateNodeAddress(node_sn0,address):
+  """
+  Given a node serialnumber and a address update the node in the nodeDict with the current address. 
+
+  """
+  try: #if (node_sn0 in nodeDict.keys()):
+
+    nodeNumericSerialTofullSerial[node_sn0[-4:]]==node_sn0  #get the 0001 from ProminiA0001  and assign to that key the full serial number ProminiA0007
+
+    nodeDict[node_sn0].updateLastNodeSync(time.time())
+
+    if (nodeDict[node_sn0].getNodeAddress())!=address:
+      print "node "+node_sn0+" address changed to "+address
+      nodeDict[node_sn0].setNodeAddress(address)
+
+      
+    else:
+      print "the node has still the same ip"
+
+  except:
+    print "error in updateNodeAddress()"
+    errorQueue.put( "error in updateNodeAddress()")  
+
+  return()
+
+
+def getNextFreeAdress(node_sn0):# get the next free address 
+  """
+  | Given a node serialnumber this function will return the first free address to assign to the node. 
+  | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
+  | Used only for the radio nodes since the ethernet nodes 
+  """
+  for number in range(2,254):
+    if number not in next_node_free_adress_list:# if the address is not used then assign it
+      next_node_free_adress_list.append(number)
+      updateNodeAddress(node_sn0,number)
+      print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
+      return(str(number))
+
+    for node in nodeDict.keys():
+      address=nodeDict[node].getNodeAddress()
+      if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
+        updateNodeAddress(node_sn0,address) 
+        updateNodeAddress(node,"reassigned")
+        errorQueue.put( "I had finished all the free adresses so I recycled a not used one") 
+        return(address)
+
+    errorQueue.put( "I had finished all the free adresses i'm sorry but you have to disconnect one node to connect another one")  
+    return(254)
 
 
 

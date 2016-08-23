@@ -491,7 +491,7 @@ class RouterHandler:
         
 
 
-      if ((str(node_address))=="0001"): #a local arduino selected   not implemented yet 
+      if ((str(node_address))=="1"): #a local arduino selected   not implemented yet 
         print "i write to/from a remote node selected"
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
         if ((self.arduino_used==1)&(node_address=="1")):  #check if arduino is enabled correctly and is selected with 1

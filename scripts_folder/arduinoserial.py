@@ -58,11 +58,10 @@ import os
 import sys
 import time
 import getopt
-from globalVar import *           # import parameter globalVar.py
+#from globalVar import *           # import parameter globalVar.py
 import thread,threading,time,string
-import hw_node
 
-hwNodeDict={}     #dictionary containing all the hw nodes objects   the key is the node address
+
 
 
 
@@ -110,7 +109,7 @@ class SerialPort:
 #the error controll is done by the arduin_handler.py     
     self.fd = os.open(serialport, os.O_RDWR | os.O_NOCTTY | os.O_NDELAY)
     self.status=1
-
+    self.write_to_serial_enable=1  #enable or disable the writing to the port if the port is receiving
 
 
     #except:
@@ -146,7 +145,7 @@ class SerialPort:
     attrs[CC][termios.VMIN] = 0;
     attrs[CC][termios.VTIME] = 20;
     termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
-    os.system("cat "+self.port)
+    #os.system("cat "+self.port)
     self.usb=""
     #n = os.read(self.fd)
 
@@ -171,13 +170,88 @@ class SerialPort:
 
 
 
+  def read_data0(self):   # read  function
+
+    timeout=1
+    old_time=time.time()
+    done=0
+    count=0
+    buf=""
+    while done==0:
+      if (time.time()-old_time)>timeout:
+        done=1 
+        print "timeout"  
+        return(-1)  #timeout
+      try:
+        byte = self.usb.read(1)
+      except:
+        byte=-1
+        self.status=0
+        self.write_to_serial_enable=1
+        continue
+
+      
+
+
+
+      if not byte:  #nothing on incoming serial buffer
+        done=1
+        print "end of serial packet1"
+
+
+
+
+      if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
+        done=1
+        print "end of serial packet len=0"
+      else:   
+        #print "in byte="+byte+" end of in byte"
+        buf=buf+byte
+        if len(buf)==0:
+          done=0
+          continue
+
+
+        count=count+1
+          #at this point i should have a full packet message
+
+
+      if len(buf)>0:
+            
+        if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+ 
+          cmd_start=buf.find("onos_")
+          cmd_end=buf.find("_#]")
+          cmd=buf[cmd_start:cmd_end+3]
+          done=1
+ 
+      if len(buf)>3:
+
+        if ( (byte[count-2]=='_')and(byte[count-1]=='#')and(byte[count]==']') ):
+          done=1
+          print "end of serial packet:_#] " 
+
+
+        self.dataAvaible=1
+        print "serial input="+buf
+        self.incomingBuffer=self.incomingBuffer+buf
+        print "incoming buffer="+self.incomingBuffer
+      else:
+        self.dataAvaible=0
+
+    return(buf)  
+
+
+
+
+
   def read_data(self):   # thread  function
       '''Outputs data from serial port to sys.stdout.'''
       print "read_data thread executed"
       ignore = ''   #'\r'
       filedev=self.port
       self.dataAvaible=0
-      
+
       while (self.exit==0):
 
           if self.exit==1:
@@ -189,6 +263,8 @@ class SerialPort:
             self.removeFromInBuffer=''
           buf=''
           done=0
+          count=0
+          self.write_to_serial_enable=1
           while done==0:
             if self.exit==1:
               break
@@ -197,15 +273,30 @@ class SerialPort:
             except:
               byte=-1
               self.status=0
+              self.write_to_serial_enable=1
+ 
               continue
-          
 
-            if byte in ignore:
-              continue
+
+            #here the buffer have received at least one byte
+            self.write_to_serial_enable=0   #i diseble the write to the serial port since i'm receiving from it
+
+
+
+          
+            #    end of packet is  "_#]" 
+
 
             if not byte:  #nothing on incoming serial buffer
               done=1
-              print "end of serial packet"
+              print "end of serial packet1"
+              continue
+
+            #if byte:  #nothing on incoming serial buffer
+            #  done=1
+            #  print "end of serial packet2"
+            #  continue
+            
 
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
               done=1
@@ -213,63 +304,64 @@ class SerialPort:
             else:   
               #print "in byte="+byte+" end of in byte"
               buf=buf+byte
+              count=len(buf)
+
+              if len(buf)==0:
+                done=0
+                continue
+
+
+              if len(buf)>1:
+                if ( (buf[count-2]=='_')and(buf[count-1]=='#')and(buf[count-1]==']') ):
+                  done=1
+                  print "end of serial packet:_#] "
+                  continue 
+
+
+
           #at this point i should have a full packet message
           if len(buf)>0:
-
-            #a=bin(a)
-
-            if len(buf)>5:
-
-              if (buf[0]=='U')&(buf[2]=='r'):    #arduino is sending a digital status pins byte
-                received_node_address=buf[1]
-                section_index=buf[3]
-                data_register=buf[4]
-                rx_check_byte=buf[5]
-                check_byte=checksum(('U',received_node_address,'r',section_index,data_register))
-                if check_byte==rx_check_byte:
-                  print "check ok"
+            
 
 
 
-                answer_byte='U'+node_address+'C'+check_byte
-                self.write(answer_byte)  #send the check byte
+
+            if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+ 
+              cmd_start=buf.find("onos_")
+              cmd_end=buf.find("_#]")
+              cmd=buf[cmd_start:cmd_end+3]
+              done=1
+
+              #onos_s3.05v1s0001f001_#]
+              if (cmd[5]=="s"): #sync message
+                numeric_serial_number=cmd[13:17]
+                full_sn=nodeNumericSerialTofullSerial[numeric_serial_number]
+                node_fw=cmd[6:10]
+                node_current_address=cmd[18:21]
+                message_to_send="onos_ssyncv1s"+numeric_serial_number+"f"+node_current_address+"_#]"
+                if node_current_address=="254":  #the node is looking for a free address
+                  new_address=getNextFreeAdress(full_sn)
+                  message_to_send="onos_g"+new_address+"v1s"+numeric_serial_number+"f"+node_current_address+"_#]"
+                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeFw":node_fw}) 
+
+
+              #onos_g3.05v1s0001f001_#]
+              if (cmd[5]=="g"):
+                numeric_serial_number=cmd[13:17]
+                full_sn=nodeNumericSerialTofullSerial[numeric_serial_number]
+                node_fw=cmd[6:10]
+                node_current_address=cmd[18:21]
+                new_address=getNextFreeAdress(full_sn)
+                message_to_send="onos_g"+new_address+"v1s"+numeric_serial_number+"f"+node_current_address+"_#]"
+                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeAdress":new_address,"nodeFw":node_fw}) 
+
+                self.write(message_to_send)
 
 
 
-            if len(buf)>4:
 
-              if (buf[0]=='U')&(buf[2]=='q'):    #arduino is asking for pins mode configuration (input or output)
-                received_node_address=buf[1]
-                hw_type=buf[3]
-                rx_check_byte=buf[4]
 
-                if received_node_address in hwNodeDict:  # a node with that address exist yet
-                  pin_mode_list=hwNodeDict[received_node_address].getNodeSectionMode()
-                  k=0
-                  for a in pin_mode_list:   #for each section of the pin mode list send it to arduino
-                    check_byte=checksum(('U',received_node_address,'m',k,a))
-                    self.write('U'+received_node_address+'m'+k+a+check_byte)
-                    k=k+1
-                else: # address not in the dictionary
-                  if hw_type==0:
-                    hw_type="arduino_2009"
-                  if hw_type==1:
-                    hw_type="arduino_promini"
-                  #a=hw_node.HwNode('new_node'+received_node_address,hw_type,received_node_address)
-                  #hwNodeDict[received_node_address]=a
-                  #banana insert here a url query to create the node
-                  pin_mode_list=hwNodeDict[received_node_address].getNodeSectionMode()
-                  k=0
-                  for b in pin_mode_list:   #for each section of the pin mode list send it to arduino
-                    check_byte=checksum(('U',received_node_address,'m',k,b))
-                    self.write('U'+received_node_address+'m'+k+b+check_byte)
-                    k=k+1
-                check_byte=checksum(('U',received_node_address,'f')) #tell arduino that the pins configuration is ended 
-                self.write('U'+received_node_address+'f'+check_byte)
-     
-                  
-              #self.write(byte)  send the configuration
-              #self.write('\n')
 
 
             self.dataAvaible=1
@@ -282,6 +374,7 @@ class SerialPort:
 
   def waitForData(self,times):
     j=0
+    self.disable_uart_queue=1  # I disable the auto queue add because I want to read the data directly
     while j<(times*1000000):
       if (self.dataAvaible==1):
         return(1)
@@ -303,6 +396,7 @@ class SerialPort:
     self.removeFromInBuffer=self.removeFromInBuffer+tmp
     self.incomingBuffer=''
     print "readed serial port="+tmp
+    self.disable_uart_queue=0           # after the read of the data I reenable the auto queue of the incoming uart data
     return tmp
 
 
@@ -317,6 +411,9 @@ class SerialPort:
       msg="U0s"+str(section)+section_pins_status+'0'
       print "writing register to arduino pin"
 
+
+      rx_check_byte=0
+      check_byte=-1
       while (rx_check_byte!=check_byte):
         print ("wait for correct answer to dw")
         os.system("echo "+msg+" >> "+self.port) #write the message
@@ -327,58 +424,30 @@ class SerialPort:
       print "error address node not in node dictionary" 
     return    
 
-  def write(self, str):
-
-    if str[0:2]=="dw":    #if the cmd is to set arduino pins...then make sure arduino answer ok
-      print "writing to arduino pin"
-      #check_byte=checksum(str2....)
-      while (rx_check_byte!=check_byte):
-        print ("wait for correct answer to dw")
-        os.system("echo "+str+" >> "+self.port)
-        os.system("echo \n >> "+self.port)
-        self.waitForData(10)
-        rx_check_byte=self.read()
-      return    
 
 
-    if (str[0]=='U')&(str[2]=='m'):    #if the cmd is to change pin mode of arduino...then make sure arduino answer ok
-      print "writing  pin configuration to arduino"
-      #check_byte=checksum(str2....)
-      rx_check_byte=0
-      j=0
-      while (rx_check_byte!=check_byte)&(j<15):
-        j=j+1
-        os.system("echo "+str+" >> "+self.port)
-        os.system("echo \n >> "+self.port)
-        self.waitForData(10)
-        rx_message=self.read()
-        rx_check_byte=rx_message[3]  
-      return  
+
+  def write0(self, str):
+    print "i write"+str
+    os.system("echo "+str+" >> "+self.port)
+
+  
+    return()  
+
+  
+
+  def write(self, data):
+    print "i write:"+data
+    with open(self.port, 'w') as f:   #read the pin status
+      f.write(data+"\n")
+    self.waitForData(10)
+   
+    tmp=self.incomingBuffer
+    self.removeFromInBuffer=tmp
+
+    return(tmp)    
 
 
-    if (str[0]=='U')&(str[2]=='f'):    #if the cmd is to write end of the change pin mode of arduino...then make sure arduino answer ok
-      print "writing  pin configuration to arduino"
-      #check_byte=checksum(str2....)
-      rx_check_byte=0
-      j=0
-      while (rx_check_byte!=check_byte)&(j<15):
-        j=j+1
-        os.system("echo "+str+" >> "+self.port)
-        os.system("echo \n >> "+self.port)
-        self.waitForData(10)
-        rx_message=self.read()
-        rx_check_byte=rx_message[3]  
-      return    
-    
-
-
-     #os.write(self.fd, str)
-#    while self.busy==1:
-#      time.sleep(0.01)
-#    self.busy=1
-    #os.system("echo "+str+" >> "+self.port)
-    #self.busy=0
-    return
 
 
 
@@ -404,30 +473,6 @@ class SerialPort:
  #     os.close(self.fd)
  #   except:
  #     print "tried to close serial port"
-
-
-  def make_new_node(self,node_name,hwType,node_address):  
-    if node_address not in hwNodeDict:
-      hwNodeDict[node_address]=hw_node.HwNode(node_name,hwType,node_address)
-      return(1)
-    else:
-      print "address already used"
-      return(-1)
-
-
-
-  def setPinMode(self,node_address,pinNumber,mode):
-    if node_address in hwNodeDict:
-      hwNodeDict[node_address].setPinMode(pinNumber,mode)  #set the pin mode in the hardware_node
-      self.sendPinModeToArduino() # to implement
-
-    else:
-      print "error node address not found in the dictionary"
-      return (-1)      
-
-
-
-
 
 
 

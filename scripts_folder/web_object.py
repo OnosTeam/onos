@@ -256,7 +256,7 @@ class WebObject:
 
         return(result)   #banana     to remove in the future
 
-    def setHwNodeSerialNumber(self,HwNodeSerialNumber):  # set the hwnode address
+    def setHwNodeSerialNumber(self,HwNodeSerialNumber):  # set the hwnode serial number not used
 
       self.HwNodeSerialNumber=HwNodeSerialNumber
       return(1)   

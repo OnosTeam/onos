@@ -23,9 +23,12 @@
 
 
 
-//   WARNING   DON'T USE THE VARIABLE I BECAUSE IS ALREDY USED BY THE RADIO LIBRARY AND WILL BE RESETTED OFTEN...
+//   WARNING   DON'T USE THE VARIABLE i BECAUSE IS ALREDY USED BY THE RADIO LIBRARY AND WILL BE RESETTED OFTEN...
 
 
+    /// If the destination address is the broadcast address RH_BROADCAST_ADDRESS (255), the message will 
+    /// be sent as a broadcast, but receiving nodes do not acknowledge, and sendtoWait() returns true immediately
+    /// without waiting for any acknowledgements.
 
 
 
@@ -64,6 +67,7 @@ boolean radio_enabled=1;
 
 
 char serial_number[5]="0001";
+char node_fw[]="5.13";
 
 uint8_t this_node_address=1;
 

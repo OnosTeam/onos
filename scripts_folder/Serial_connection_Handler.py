@@ -8,7 +8,7 @@
 import arduinoserial
 import os
 import time,string
-from globalVar import *           # import parameter globalVar.py
+#from globalVar import *           # import parameter globalVar.py
 
 exit=0
 
@@ -17,11 +17,12 @@ exit=0
 HIGH=1
 LOW=0
 ser=0
-class ArduinoHandler():
+class Serial_connection_Handler():
 
   def __init__(self):
      
     self.status=self.connectToPort()
+
     i=0
     while self.status ==0 :  #while port is not connected retry to connect
       self.status=self.connectToPort()
@@ -42,14 +43,14 @@ class ArduinoHandler():
 
   def verifyPort(self,port_to_search,port_exluded):
     if port_to_search!=port_exluded:
-      result=os.path.os.path.exists("/dev/"+port_to_search) 
+      result=os.path.exists("/dev/"+port_to_search) 
     else:
       return("no")
 
     #result=os.popen("ls /dev/ | grep -v "+port_exluded+" | grep "+port_to_search).read()
     if result:
       return (port_to_search)
-    else
+    else:
       return ("no")
 
 
@@ -63,7 +64,7 @@ class ArduinoHandler():
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, 115200)     
         print "arduino connected corectly to onos system" 
-        return(1)
+        return(self.ser)
       except:  #some error occured while using the port i found 
         print "port error i will retry with another port" 
         port=self.searchForSerialCable(old_port)  
@@ -73,7 +74,7 @@ class ArduinoHandler():
             port='/dev/'+port    #[0:len(port)-1]   #remove /n of ls
             self.ser =arduinoserial.SerialPort(port, 115200)     
             print "arduino connected corectly to onos system" 
-            return(1)
+            return(self.ser)
           except:
             print "port problem onos will be only a webserver and will not controll the hardware nodes , please reconnect arduino to the usb port!"
         else:#no port found after the error 
@@ -87,6 +88,17 @@ class ArduinoHandler():
 
 
   def searchForSerialCable(self,exluded_port):
+
+    list_of_dev=os.listdir("/dev")
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyUSB")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyACM")!=-1)and(dev!=exluded_port):
+        return(dev)
+
 
     port=self.verifyPort("ttyUSB0",exluded_port)
     if len (port)<3:
@@ -120,29 +132,6 @@ class ArduinoHandler():
 
 
 
-  def setPinMode(self,node_address,pinNumber,mode):
-    if self.status==1:  #if the serial port is connected then..
-      self.ser.setPinMode(node_address,pinNumber,mode)
-    else:
-      print "arduino not connected please connect it"
-
-
-
-  def digitalWrite(self,node_address,pinNumber,status_to_set,objName,previous_status):
-    self.ser.sendDigitalWrite(node_address,pinNumber,status_to_set)
-
-
-
-  def digitalWriteSection(self,node_address,pin_section,section_status_register,objName,previous_status): #write to arduino a section status reg  
-    print "void "
-
-
-
-
-
-
-  def getRouterName(self):
-    return("not implemented yet")
 
 
 

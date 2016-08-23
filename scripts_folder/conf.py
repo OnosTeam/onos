@@ -93,29 +93,6 @@ object_dict["dayTime"]=newDefaultWebObj("dayTime")  #hours of the day expressed 
 
 
 
-def GetfirstFreeNodeAddress(tmpnodeDictionary):
-  """
-Return the first free address like a dhcp server.. not used   because i use a real dhcp on the gl.inet or in the main router
-
-"""
-
-  print "GetfirstFreeNodeAddress() executed"
-  i=2
-  free_address=0
-  while free_address==0:
-    for b in tmpnodeDictionary.keys():
-      a=tmpnodeDictionary[b]  
-      if a.getNodeAddress()!=i:
-        free_address=i
-      else:
-        free_address=0
-        i=i+1
-  if free_address < 254: 
-    return (free_address)
-  else:
-    print "all node address used , from 0 to 253"
-    return (-1) 
-
 
 
 
@@ -244,7 +221,8 @@ def importConfig():
     #node_sn=tmp_node_dict[a]["node_serial_number"]
     node_address=tmp_node_dict[a][u"nodeAddress"]   
     hardware_node_type=hardwareModelDict[node_type]
-    nodeDict[node_serial_number]=hw_node.HwNode(node_serial_number,hardware_node_type,node_address,router_hardware_fw_version)  
+    nodeDict[node_serial_number]=hw_node.HwNode(node_serial_number,hardware_node_type,node_address,router_hardware_fw_version) 
+ 
   #ricreate the nodeDict from the json backup
   #note that the io config will be done in webserver.py where i add the objectList elements to object_dict
 

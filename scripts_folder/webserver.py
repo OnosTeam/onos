@@ -1047,20 +1047,7 @@ def updateNodeInputStatusFromReg(node_sn0,register):
 
 
 
-def updateNodeAddress(node_sn0,node_ip):# update the node address 
-  try: #if (node_sn0 in nodeDict.keys()):
-    nodeDict[node_sn0].updateLastNodeSync(time.time())
-    if (nodeDict[node_sn0].getNodeAddress())!=node_ip:
-      print "node "+node_sn0+" ip changed to "+node_ip
-      nodeDict[node_sn0].setNodeAddress(node_ip)
-    else:
-      print "the node has still the same ip"
 
-  except:
-    print "error in updateNodeAddress()"
-    errorQueue.put( "error in updateNodeAddress()")  
-
-  return()
 
 
 
@@ -1475,12 +1462,12 @@ def updateDir():
   return
 
 
-def createNewNode(node_sn,node_ip,node_fw):
+def createNewNode(node_sn,node_address,node_fw):
   msg=""
   if node_sn in nodeDict.keys():
     print "found node in the dict"
-    #nodeDict[node_sn].setNodeAddress(node_ip)
-    updateNodeAddress(node_sn,node_ip)
+    #nodeDict[node_sn].setNodeAddress(node_address)
+    updateNodeAddress(node_sn,node_address)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #created a new node
     print "requested setup for a node not existing yet "                  
@@ -1494,9 +1481,10 @@ def createNewNode(node_sn,node_ip,node_fw):
 
       if((len(node_sn)>0)&((node_sn)!=" ")): 
           
-        nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_ip,node_fw) 
-        nodeDict[node_sn].updateLastNodeSync(time.time())
-        #nodeDict[node_sn].setNodeAddress(node_ip)
+        nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
+        #nodeDict[node_sn].updateLastNodeSync(time.time())
+        updateNodeAddress(node_sn,node_address)  
+        #nodeDict[node_sn].setNodeAddress(node_address)
         msg=nodeDict[node_sn].getSetupMsg() 
 
         #if the room doesn't exist yet ...then:
@@ -1632,8 +1620,7 @@ def updateJson(object_dictionary,roomDictionary,scenarioDictionary):  # save the
 
 
   node_tmp_Dict={}
-  for b in nodeDict.keys():
-    a=nodeDict[b]  
+  for a in nodeDict:
     sn=a.getNodeSerialNumber() 
     node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":a.getNodeHwModel(),u"nodeAddress":a.getNodeAddress()}
     # note that the i/o modes for the node pins will be saved in the relative webobjects .
@@ -2513,7 +2500,7 @@ class MyHandler(BaseHTTPRequestHandler):
 #localhost/onos_cmd?cmd=pinsetup&node_sn=ProminiA0002&node_fw=4.85__
 
 
-              #OBSOLETE!!! 
+              #OBSOLETE I use pure tcp message now!!! 
 
               if string.find(url,"onos_cmd?cmd=pinsetup&")!=-1:
                 print "received a onos_cmd?cmd=pinsetup  query"
@@ -2995,8 +2982,9 @@ class MyHandler(BaseHTTPRequestHandler):
                     #print "make the opposite"
                   status_to_set=not (object_dict[objName].getStatus())
 
-                #changeWebObjectStatus(objName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1})  
+
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})  
+ 
 
                 print "i set"+objName+" to :"+str(status_to_set)
 
@@ -3041,7 +3029,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   print "path="+address_bar
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1})  
+                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})    
 
                   print "i set"+objName+" to :"+str(status_to_set)
 
@@ -5417,6 +5405,21 @@ def executeQueueFunction(dataExchanged):
       errorQueue.put("error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args))
 
 
+  if (dataExchanged["cmd"]=="createNewNode"):
+
+    try:
+      node_sn=dataExchanged["nodeSn"]
+      node_address=dataExchanged["nodeAdress"]
+      node_fw=dataExchanged["nodeFw"]
+      msg=createNewNode(node_sn,node_address,node_fw)+"_#]" 
+
+    except Exception, e:
+      print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_name)+" e:"+str(e.args)
+      errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_name)+" e:"+str(e.args))
+
+    
+      
+     
 
 
   print "dataExchanged = : ", dataExchanged
@@ -5731,6 +5734,9 @@ def main():
         w2.daemon = True  #make the thread a daemon thread
         w2.start()
 
+
+
+        Serial_connection_Handler serial_communication
         w1 = threading.Thread(target=hardwareHandlerThread)
         w1.daemon = True  #make the thread a daemon thread
         w1.start()

@@ -38,7 +38,7 @@ onos allarms must remain active also if the current went out
 
 5 New)Need a simpler way to code the setup:
 
-# here a protocol we coul use:#not implemented
+# here a protocol we could use:#not implemented
 # start with 's='
 # then  add    1 byte to tell the msg length
 # then  add    1 byte to tell the pin number (from 0 to 255) 
@@ -144,7 +144,7 @@ I will use post instead that get message
 16)Onos has to set the nodes digital out /analog out /servo control   pins of all nodes.
   here the protocol:
   onos will send a get query to the nodes with a type of data (digital ,analog ,servo,specialcmd) then will send a data 
-  and then will send 's' + 4 char containing the onos node serial number (an exadecimal number so 16^4 combinations) (see point 14) 
+  and then will send 's' + 4 char containing the onos node serial number (only 9999 nodes will be possible) (see point 14) 
  
   made by :
   "onos_"   this start string
@@ -153,8 +153,8 @@ I will use post instead that get message
   1 byte with 'd' for the modes (digital out)
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
-  1 byte to tell arduino the status (0 or 1 ) to set the pin
-  1 byte to tell the node serial number
+  3 byte to tell arduino the status (000 or 001 ) to set the pin
+  4 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
@@ -170,7 +170,7 @@ I will use post instead that get message
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the value (0 or 255 ) to set the pin (to set 10 it will send '010',to set 255 it will send '255')
-  1 byte to tell the node serial number
+  4 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
@@ -185,7 +185,7 @@ I will use post instead that get message
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the value (0 or 180 ) to set the pin (to set 10 it will send '010',to set 180 it will send '180')
-  1 byte to tell the node serial number
+  4 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
@@ -199,7 +199,7 @@ I will use post instead that get message
   4 byte for the number of pins  (for pin 4 as set and pin 5 as reset it will send '0405')
   1 byte to separe the pin number from the value , it will be 'v'
   1 byte to tell arduino the value (0 or 1 ) to set the relay
-  1 byte to tell the node serial number 
+  4 byte to tell the node serial number 
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
@@ -213,9 +213,71 @@ I will use post instead that get message
   (like if the pin doesn't support the mode requested will answer with "ep"  --> error pin)
   In order to make sure the html changes only if the node answers with "ok" and to avoid the stop of the webserver until 
   the message is received , the request will be made in a new thread created and destroyed after the use.
-  After the thread has received the ok msg it will make a query with urlib to the onos webserver to change the html.. 
+  After the thread has received the ok msg it will append a command in the queue to the onos webserver to change the html.. 
   Note !!! this will not allow to set 2 or more pin status at the same time,because after each pin status set will pass some time..
   So there will be some coding like onos_cmd....  
+
+
+  if a node needs to communicate a input status pin to onos it will write:
+
+  1 byte with 't' for the modes (transmit data )
+  2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
+  1 byte to separe the pin number from the value , it will be 'v'
+  3 byte to tell onos the status (from  000 to 255) of the pin
+  4 byte to tell the node numeric serial number
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+
+  example : onos_t04v001s0001f001_#]         to tell pin 4 is at 1  
+            onos_t04v000s0001f001_#]         to tell pin 4 is at 0 
+
+
+
+  if a node needs to communicate that is still connected it will write:
+    
+  1 byte with 's' for the modes (sync node )
+  4 byte with the fw version for example 5.23
+  1 byte with 'v'  just for to make the message long enaught
+  4 byte to tell the node numeric serial number
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+
+  example :  onos_s3.05v1s0001f001_#]          to update last sync_time 
+
+
+
+
+
+  if a node needs to get a free address to use it will write:
+    
+  1 byte with 'g' for the modes (get address )
+  4 byte with the fw version for example 5.23
+  1 byte with 'v'  just for to make the message long enaught
+  4 byte to tell the node numeric serial number
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+
+  example :  onos_g3.05v1s0001f001_#]          to update last sync_time 
+
+
+     
+
+  if a node needs to communicate a webobject status:
+    
+  1 byte with 'o' for the modes (transmit object status )
+  2 byte for the number of the object status  (00 is the first webobject in the node...01 is the second..)
+  1 byte to separe the object number from the value , it will be 'v'
+  3 byte to tell onos the status (from 000 to 255)  
+  1 byte to tell the node numeric serial number
+  1 byte for a flag  ,if flag=='f' then forward incoming message
+  3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
+  3 byte to close the message "_#]"
+
+  example : onos_o01v001s0001f001_#]         to tell that the second object of the node is at 1 
+            onos_o01v000s0001f001_#]         to tell that the second object of the node is at 0  
 
 
 
@@ -734,7 +796,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
      Each node "timeout" will be loaded from hardwareModelDict{}    
 
 
-35)  Sometimes the communication with a node fail :
+35)  Sometimes the communication with a node fail :  #to implement?
      In order to have one and only one query for each node , a query handler will be implemented.
      Passing node_address,query,objName,status_to_set,user,priority,mail_report_list
      If different queries are to be done to the same address , they will be added to a list and then excuted one after one 
@@ -769,7 +831,8 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
  
 
 
-
+38) The current serial number format for example "ProminiA0007"  support only 9999 producted objects because to the final node I ha ve to pass only the numeric value...
+    I will think about it when I have producted 9998 nodes :p  
 
 
 
