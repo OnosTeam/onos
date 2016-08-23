@@ -37,7 +37,7 @@ global hardwareModelDict
 global scenarioDict
 
 
-router_hardware=hardwareModelDict[router_hardware_type]
+router_hardware=hardwareModelDict[router_hardware_type]   #router_hardware_type is in globalVar.py
 
 
 hardware_labels=hardwareModelDict.keys()

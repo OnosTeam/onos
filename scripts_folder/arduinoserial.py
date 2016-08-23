@@ -154,7 +154,8 @@ class SerialPort:
     self.incomingBuffer=''
     self.removeFromInBuffer=''
     try:
-      self.usb = open(self.port, 'rw')
+      self.usbR = open(self.port, 'rw')
+      self.usbW = open(self.port, 'w')
       self.status=1
     except:
       print "no device"+self.port+"found"
@@ -183,7 +184,7 @@ class SerialPort:
         print "timeout"  
         return(-1)  #timeout
       try:
-        byte = self.usb.read(1)
+        byte = self.usbR.read(1)
       except:
         byte=-1
         self.status=0
@@ -269,7 +270,7 @@ class SerialPort:
             if self.exit==1:
               break
             try:
-              byte = self.usb.read(1)
+              byte = self.usbR.read(1)
             except:
               byte=-1
               self.status=0
@@ -438,12 +439,13 @@ class SerialPort:
 
   def write(self, data):
     print "i write:"+data
-    with open(self.port, 'w') as f:   #read the pin status
-      f.write(data+"\n")
+    #with open(self.port, 'w') as f:   #read the pin status
+    self.usbW.write(data+"\n")
     self.waitForData(10)
-   
+
     tmp=self.incomingBuffer
     self.removeFromInBuffer=tmp
+
 
     return(tmp)    
 
@@ -484,6 +486,8 @@ class SerialPort:
     print "class arduinoserial destroyed"
     try:
       os.close(self.fd)
+      os.close(self.usbW)     
+      os.close(self.usbR)     
     except:
       print "tried to close serial port"
 

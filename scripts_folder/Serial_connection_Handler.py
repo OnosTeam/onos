@@ -8,7 +8,7 @@
 import arduinoserial
 import os
 import time,string
-#from globalVar import *           # import parameter globalVar.py
+from globalVar import *           # import parameter globalVar.py
 
 exit=0
 
@@ -22,9 +22,9 @@ class Serial_connection_Handler():
   def __init__(self):
      
     self.status=self.connectToPort()
-
+    self.working=1
     i=0
-    while self.status ==0 :  #while port is not connected retry to connect
+    while (self.status ==0) :  #while port is not connected retry to connect
       self.status=self.connectToPort()
       if self.status==1:
         break
@@ -33,6 +33,12 @@ class Serial_connection_Handler():
         time.sleep(30)
       if i>120:        #after 120 tries i increase the time between the tries
         time.sleep(60) 
+
+      if i >200:
+        if (searchForSerialCable!="null"):
+          print "error serial connection, no serial ports found"
+          self.working=0
+          return(-1)
 
 
 

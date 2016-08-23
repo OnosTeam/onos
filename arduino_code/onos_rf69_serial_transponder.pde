@@ -385,6 +385,17 @@ void loop()
     }
 
 
+   
+
+    if (counter>serial_msg_lenght){  //prevent overflow
+      Serial.println(F("array_overflow---------------------------------"));
+      Serial.println(counter);
+      Serial.println(F("end"));
+      counter=0;
+      continue;     
+    }
+
+
     if (counter<2){
       counter=counter+1;
       continue;     

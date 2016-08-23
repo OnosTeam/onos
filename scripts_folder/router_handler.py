@@ -26,7 +26,7 @@
 
 from globalVar import *
 from node_query_handler import *
-
+import arduinoserial,Serial_connection_Handler
 
 
 # Note for raspberry users, the GPIO numbers that you program here refer to the pins
@@ -86,7 +86,11 @@ class RouterHandler:
 
       if self.__hardware_type=="gl.inet_with_arduino2009":
         self.arduino_used=1
-        arduino=arduino_handler.ArduinoHandler()
+        self.bash_pin_enable=1
+
+
+      if self.__hardware_type=="pc_with_arduino2009":
+        self.arduino_used=1
         self.bash_pin_enable=1
 
 
@@ -96,6 +100,20 @@ class RouterHandler:
       else:
         self.bash_pin_enable=0   #disable embedded pins because the harware hasn't got any
         print "no embedded IO pins founded , are you running onos on a pc?"
+
+
+      if self.arduino_used==1:
+        self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
+
+        if self.serial_communication.working==1:
+          print "serial communication working"
+          data=self.serial_communication.status.write('onos_d06v000s0001f001_#]')
+          data=self.serial_communication.status.write('onos_d06v001s0001f001_#]')          
+
+          #todo: read nodeFw from the serial arduino node..
+          priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":"ProminiS0001","nodeAdress":"1","nodeFw":"5.23"})  
+      
+
 
       error_number=0   #count how many errors..
       if self.bash_pin_enable==1:
@@ -342,9 +360,11 @@ class RouterHandler:
 
 
 
-
+      if node_address=="1":#  arduino serial node
+        return(query)
 
       print "query to remote node:"+query
+
 
      
       queryToNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
@@ -428,7 +448,6 @@ class RouterHandler:
           print "the router has the pin io enabled"
 
           i=0
-
           print "len pinlist="+str(len(pinList))
           while i <len(pinList) :
             pinNumber=pinList[i]
@@ -492,42 +511,60 @@ class RouterHandler:
 
 
       if ((str(node_address))=="1"): #a local arduino selected   not implemented yet 
-        print "i write to/from a remote node selected"
+        print "i write to serial arduino node"
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
-        if ((self.arduino_used==1)&(node_address=="1")):  #check if arduino is enabled correctly and is selected with 1
-          print "digital write used on arduino"
-          if len(pinList) >1: 
-            print "i have to set more than a pin at the same time"
-              
-            packet_list=[]
-              
-            i=0 
-            pinList=pinList.sort() #order the list by pin number
-            previus_section=-1
-            section=previus_section
-            while (i<len(pinList)):
-              section=node_obj.getNodeSectionStatusByPin(pinList[i])[0]
-              if(section!=previus_section):
-                previus_section=section
-                section_status=node_obj.getNodeSectionStatusByPin(pinList[i])[1]#get the section status 
-                packet_list.append(section,section_status)
-              i=i+1
-              #now inside  packet_list i have a tuple 
-              #where the first element is the pin byte section and the second the data is the status byte for that section
-            i=0
-            for a in packet_list:  #write to arduino all the registers
-              arduino.digitalWriteSection(node_address,a[0],a[1],objName,previous_status,statusToSet)
 
 
-          else: #only one pin to set           
-            arduino.digitalWrite(node_address,pinList[0],statusList[0],objName,previous_status,statusToSet)#write to arduino to set a pin        
+        if self.serial_communication.working!=1: 
+          print "error no serial cable"
+          errorQueue.put("error no serial cable")  
+          return(-1)
+
+        if (output_type=="sr_relay"):
+          if (len(pinList)==2):
+            query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+
+            data=self.serial_communication.status.write(query)
+            print data
 
 
+            return(1)
+          else:
+            print "error number of pins !=2"
+            errorQueue.put("error number of pins !=2" ) 
+            return(-1)
+
+        i=0 
+        while i <len(pinList) : 
+          #print "pinnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"+str(i)
+          pinNumber=pinList[i]
+          tmp_status_to_set=statusList[i]
+          if (pinNumber not in node_obj.getUsedPins()):
+            print 'error the  pin value is out of range of node :'+remoteNodeHwModel+"pin_number="+str(pinNumber)
+            errorQueue.put('error the  pin value is out of range of node :'+remoteNodeHwModel+"pin_number="+str(pinNumber) )
+            print "status to set="+str(tmp_status_to_set)
+            errorQueue.put("status to set="+str(tmp_status_to_set) )
+            print str(pinNumber)
+            errorQueue.put(str(pinNumber))
+            return(-1)
+
+
+
+          query=self.composeChangeNodeOutputPinStatusQuery(pinNumber,node_obj,objName,tmp_status_to_set,node_serial_number,node_address,output_type,user,priority,mail_report_list)  
+
+          data=self.serial_communication.status.write(query)
+          print data
+
+
+          priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
+          return(1) 
+
+          print "received_data_from_serial:"+data
 
       else: #str(node_address))!="1" and !=0 --->    remote node selected
         print "i write to/from a remote node with address:"+str(node_address)
 
-        i=0
+        
         print "len address="+str(len(node_address))
         print "len pinlist="+str(len(pinList))
         
@@ -540,8 +577,8 @@ class RouterHandler:
             print "error number of pins !=2"
             errorQueue.put("error number of pins !=2" ) 
             return(-1)
-
-        while i <len(pinList) :
+        i=0
+        while i <len(pinList) : 
           pinNumber=pinList[i]
           tmp_status_to_set=statusList[i]
           if (pinNumber not in node_obj.getUsedPins()):

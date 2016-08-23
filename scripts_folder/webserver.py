@@ -2709,6 +2709,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             #from here to the end the login is required , the above part is for the onos node use.
+            current_username="nobody"
             if (login_required==1):
               current_username=getUserFromIp(self.client_address[0])
 
@@ -3610,8 +3611,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 
         except Exception, e  :
             self.send_error(404,'File Not Found: %s' % self.path)
-            print "404,'File Not Found"+" e:"+str(e.args)
-            errorQueue.put("404,'File Not Found"+" e:"+str(e.args) ) 
+            print "error 404 File Not Found"+" e:"+str(e.args)
+            errorQueue.put("err 404 File Not Found"+" e:"+str(e.args) ) 
 
 
               
@@ -5561,7 +5562,7 @@ def nodeTcpServer():
       sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   #    sock.setsockopt(socket.IPPROTO_TCP,socket.TCP_NODELAY, True) #disable_nagle_algorithm'):   #http://pydoc.net/Python/mrs-mapreduce/0.9/mrs.http/  https://aboutsimon.com/index.html%3Fp=85.html
 
-      server_address = (onos_center_internal_ip, service_webserver_port) #stored in globalVar.py
+      server_address = (get_ip_address(), service_webserver_port) #stored in globalVar.py
       print >>sys.stderr, 'starting up on %s port %s' % server_address
 
 
@@ -5736,7 +5737,7 @@ def main():
 
 
 
-        Serial_connection_Handler serial_communication
+
         w1 = threading.Thread(target=hardwareHandlerThread)
         w1.daemon = True  #make the thread a daemon thread
         w1.start()

@@ -93,8 +93,8 @@ baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
-router_sn="RouterGL0000"
-router_hardware_type="RouterGL" #select the type of hardware
+router_sn="RouterGA0000"
+router_hardware_type="RouterGA" #select the type of hardware
 router_hardware_fw_version="5.14"
 gui_webserver_port=80
 service_webserver_port=81
@@ -1635,6 +1635,17 @@ hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
 
 
+hardwareModelDict["RouterGA"]={"hwName":"RouterGA","max_pin":5,"hardware_type":"gl.inet_with_arduino2009","pin_mode":{},"timeout":180}
+hardwareModelDict["RouterGA"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
+hardwareModelDict["RouterGA"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
+hardwareModelDict["RouterGA"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
+
+hardwareModelDict["ProminiS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":180}
+hardwareModelDict["ProminiS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
+hardwareModelDict["ProminiS"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
+hardwareModelDict["ProminiS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
+
+
 hardwareModelDict["ProminiA"]={"hwName":"ProminiA","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":"never"}
 hardwareModelDict["ProminiA"]["pin_mode"]["digital_input"]={"d_sensor":[(2),(3),(4)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["digital_output"]={"button":[(6),(7),(8)]}
@@ -1895,5 +1906,8 @@ def getErrorTimeString():
   error_count=error_count+1 
   return(str(datetime.datetime.today().hour)+":"+str(datetime.datetime.today().minute)+"n:"+str(error_count) )
 
-
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
 
