@@ -103,15 +103,26 @@ class RouterHandler:
 
 
       if self.arduino_used==1:
-        self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
 
+        for retry in range(0,10):
+     
+          try:
+            self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
+            break
+          except Exception, e:
+            print "error in opening arduino serial port e:"+str(e.args)
+            errorQueue.put("error in opening arduino serial port e:"+str(e.args))
+          time.sleep(1)
+
+
+    
         if self.serial_communication.working==1:
           print "serial communication working"
           data=self.serial_communication.status.write('onos_d06v000s0001f001_#]')
           data=self.serial_communication.status.write('onos_d06v001s0001f001_#]')          
 
           #todo: read nodeFw from the serial arduino node..
-          priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":"ProminiS0001","nodeAdress":"1","nodeFw":"5.23"})  
+          #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":"ProminiS0001","nodeAdress":"001","nodeFw":"5.23"})  
       
 
 
@@ -298,8 +309,7 @@ class RouterHandler:
 
       print "composeChangeNodeOutputPinStatusQuery() executed"
      
-      if (len(node_address) >3):  #to ignore powerline addresses..
-        node_address="999"
+
 
       numeric_serial_number=node_serial_number[-4:]     # example get 0001  from "ProminiA0001"
       address=node_obj.getNodeAddress()
@@ -360,7 +370,8 @@ class RouterHandler:
 
 
 
-      if node_address=="1":#  arduino serial node
+      if  (node_address=="001"):#  arduino serial node
+        print "the node is serial"
         return(query)
 
       print "query to remote node:"+query
@@ -510,7 +521,7 @@ class RouterHandler:
         
 
 
-      if ((str(node_address))=="1"): #a local arduino selected   not implemented yet 
+      if (node_address=="001"): #a local arduino selected   not implemented yet 
         print "i write to serial arduino node"
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
 
@@ -524,11 +535,22 @@ class RouterHandler:
           if (len(pinList)==2):
             query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
 
-            data=self.serial_communication.status.write(query)
-            print data
 
 
-            return(1)
+
+
+            for m in range(0,8):   #retry n times to get the answer from node
+              data=self.serial_communication.status.write(query)
+              time.sleep(0.01) 
+              if data.find("ok"+query)==-1:
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })              
+                return(1) 
+              print "answer received from serial port is wrong:"+data
+              time.sleep(0.1*m) 
+
+             
+
+            return(-1)
           else:
             print "error number of pins !=2"
             errorQueue.put("error number of pins !=2" ) 
@@ -551,15 +573,25 @@ class RouterHandler:
 
 
           query=self.composeChangeNodeOutputPinStatusQuery(pinNumber,node_obj,objName,tmp_status_to_set,node_serial_number,node_address,output_type,user,priority,mail_report_list)  
-
-          data=self.serial_communication.status.write(query)
-          print data
+          print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end" 
 
 
-          priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
-          return(1) 
 
-          print "received_data_from_serial:"+data
+
+          for m in range(0,8):   #retry n times to get the answer from node
+            data=self.serial_communication.status.write(query)
+            time.sleep(0.01) 
+            if data.find("ok"+query)==-1:
+              print "answer received from serial port is :"+data
+              priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })          
+              return(1) 
+            print "answer received from serial port is wrong:"+data
+            time.sleep(0.1*m) 
+             
+          return(-1)
+
+
+
 
       else: #str(node_address))!="1" and !=0 --->    remote node selected
         print "i write to/from a remote node with address:"+str(node_address)

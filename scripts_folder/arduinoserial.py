@@ -58,7 +58,7 @@ import os
 import sys
 import time
 import getopt
-#from globalVar import *           # import parameter globalVar.py
+from globalVar import *           # import parameter globalVar.py
 import thread,threading,time,string
 
 
@@ -89,6 +89,8 @@ OSPEED = 5
 CC = 6
 
 
+serial_incomingBuffer=""
+
 def bps_to_termios_sym(bps):
   return BPS_SYMS[bps]
 
@@ -107,9 +109,20 @@ class SerialPort:
     self.port=serialport
     self.busy=0
 #the error controll is done by the arduin_handler.py     
-    self.fd = os.open(serialport, os.O_RDWR | os.O_NOCTTY | os.O_NDELAY)
+    #self.fd = os.open(serialport, os.O_RDWR | os.O_NOCTTY | os.O_NDELAY)
     self.status=1
     self.write_to_serial_enable=1  #enable or disable the writing to the port if the port is receiving
+
+
+    try:
+      self.usbR = open(self.port, 'r' ,os.O_RDONLY | os.O_NOCTTY | os.O_NDELAY)
+      self.usbW = open(self.port, 'w' ,os.O_WRONLY)
+
+      self.status=1
+    except:
+      print "no device"+self.port+"found"
+      self.status=0
+
 
 
     #except:
@@ -117,49 +130,70 @@ class SerialPort:
    #   self.fd =""
    #   self.status=0
 
-    attrs = termios.tcgetattr(self.fd)
+    #attrs = termios.tcgetattr(self.fd)
+    attrsR = termios.tcgetattr(self.usbR)
+    attrsW = termios.tcgetattr(self.usbW)
     bps_sym = bps_to_termios_sym(bps)
     # Set I/O speed.
-    attrs[ISPEED] = bps_sym
-    attrs[OSPEED] = bps_sym
+    attrsR[ISPEED] = bps_sym
+    attrsW[ISPEED] = bps_sym
+
+    attrsR[OSPEED] = bps_sym
+    attrsW[OSPEED] = bps_sym
 
     # 8N1
-    attrs[CFLAG] &= ~termios.PARENB
-    attrs[CFLAG] &= ~termios.CSTOPB
-    attrs[CFLAG] &= ~termios.CSIZE
-    attrs[CFLAG] |= termios.CS8
+    attrsR[CFLAG] &= ~termios.PARENB
+    attrsW[CFLAG] &= ~termios.PARENB
+
+    attrsR[CFLAG] &= ~termios.CSTOPB
+    attrsW[CFLAG] &= ~termios.CSTOPB
+
+    attrsR[CFLAG] &= ~termios.CSIZE
+    attrsW[CFLAG] &= ~termios.CSIZE
+
+    attrsR[CFLAG] |= termios.CS8
+    attrsW[CFLAG] |= termios.CS8
     # No flow control
-    attrs[CFLAG] &= ~termios.CRTSCTS
+    attrsR[CFLAG] &= ~termios.CRTSCTS
+    attrsW[CFLAG] &= ~termios.CRTSCTS
 
     # Turn on READ & ignore contrll lines.
-    attrs[CFLAG] |= termios.CREAD | termios.CLOCAL
+    attrsR[CFLAG] |= termios.CREAD | termios.CLOCAL
+    attrsW[CFLAG] |= termios.CREAD | termios.CLOCAL
+
     # Turn off software flow control.
-    attrs[IFLAG] &= ~(termios.IXON | termios.IXOFF | termios.IXANY)
+    attrsR[IFLAG] &= ~(termios.IXON | termios.IXOFF | termios.IXANY)
+    attrsW[IFLAG] &= ~(termios.IXON | termios.IXOFF | termios.IXANY)
 
     # Make raw.
-    attrs[LFLAG] &= ~(termios.ICANON | termios.ECHO | termios.ECHOE | termios.ISIG)
-    attrs[OFLAG] &= ~termios.OPOST
+    attrsR[LFLAG] &= ~(termios.ICANON | termios.ECHO | termios.ECHOE | termios.ISIG)
+    attrsW[LFLAG] &= ~(termios.ICANON | termios.ECHO | termios.ECHOE | termios.ISIG)
+
+
+    attrsR[OFLAG] &= ~termios.OPOST
+    attrsW[OFLAG] &= ~termios.OPOST
 
     # It's complicated--See
     # http://unixwiz.net/techtips/termios-vmin-vtime.html
-    attrs[CC][termios.VMIN] = 0;
-    attrs[CC][termios.VTIME] = 20;
-    termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
+    attrsR[CC][termios.VMIN] = 0;
+    attrsW[CC][termios.VMIN] = 0;
+
+    attrsR[CC][termios.VTIME] = 20;
+    attrsW[CC][termios.VTIME] = 20;
+
+    #termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
+    termios.tcsetattr(self.usbR, termios.TCSANOW, attrsR)
+    termios.tcsetattr(self.usbW, termios.TCSANOW, attrsW)
+
     #os.system("cat "+self.port)
     self.usb=""
     #n = os.read(self.fd)
 
 
     
-    self.incomingBuffer=''
+    serial_incomingBuffer=''
     self.removeFromInBuffer=''
-    try:
-      self.usbR = open(self.port, 'rw')
-      self.usbW = open(self.port, 'w')
-      self.status=1
-    except:
-      print "no device"+self.port+"found"
-      self.status=0
+
     
     self.dataAvaible=0
     self.t_read = threading.Thread(target=self.read_data)
@@ -171,76 +205,6 @@ class SerialPort:
 
 
 
-  def read_data0(self):   # read  function
-
-    timeout=1
-    old_time=time.time()
-    done=0
-    count=0
-    buf=""
-    while done==0:
-      if (time.time()-old_time)>timeout:
-        done=1 
-        print "timeout"  
-        return(-1)  #timeout
-      try:
-        byte = self.usbR.read(1)
-      except:
-        byte=-1
-        self.status=0
-        self.write_to_serial_enable=1
-        continue
-
-      
-
-
-
-      if not byte:  #nothing on incoming serial buffer
-        done=1
-        print "end of serial packet1"
-
-
-
-
-      if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
-        done=1
-        print "end of serial packet len=0"
-      else:   
-        #print "in byte="+byte+" end of in byte"
-        buf=buf+byte
-        if len(buf)==0:
-          done=0
-          continue
-
-
-        count=count+1
-          #at this point i should have a full packet message
-
-
-      if len(buf)>0:
-            
-        if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
- 
-          cmd_start=buf.find("onos_")
-          cmd_end=buf.find("_#]")
-          cmd=buf[cmd_start:cmd_end+3]
-          done=1
- 
-      if len(buf)>3:
-
-        if ( (byte[count-2]=='_')and(byte[count-1]=='#')and(byte[count]==']') ):
-          done=1
-          print "end of serial packet:_#] " 
-
-
-        self.dataAvaible=1
-        print "serial input="+buf
-        self.incomingBuffer=self.incomingBuffer+buf
-        print "incoming buffer="+self.incomingBuffer
-      else:
-        self.dataAvaible=0
-
-    return(buf)  
 
 
 
@@ -249,6 +213,8 @@ class SerialPort:
   def read_data(self):   # thread  function
       '''Outputs data from serial port to sys.stdout.'''
       print "read_data thread executed"
+ 
+      global serial_incomingBuffer
       ignore = ''   #'\r'
       filedev=self.port
       self.dataAvaible=0
@@ -257,18 +223,17 @@ class SerialPort:
 
           if self.exit==1:
             break
-          tmpRm=self.removeFromInBuffer
           buf=''
-          if len(tmpRm)>0:
-            self.incomingBuffer.replace(tmpRm, "");  #remove from buffer the part just readed
-            self.removeFromInBuffer=''
-          buf=''
+
           done=0
           count=0
           self.write_to_serial_enable=1
           while done==0:
             if self.exit==1:
               break
+            if len(self.removeFromInBuffer)>0:
+              serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
+              self.removeFromInBuffer=''
             try:
               byte = self.usbR.read(1)
             except:
@@ -276,6 +241,13 @@ class SerialPort:
               self.status=0
               self.write_to_serial_enable=1
  
+              continue
+
+
+            if not byte:  #nothing on incoming serial buffer
+              done=1
+              print "end of serial packet1"
+              print "incoming buffer="+serial_incomingBuffer
               continue
 
 
@@ -288,10 +260,7 @@ class SerialPort:
             #    end of packet is  "_#]" 
 
 
-            if not byte:  #nothing on incoming serial buffer
-              done=1
-              print "end of serial packet1"
-              continue
+
 
             #if byte:  #nothing on incoming serial buffer
             #  done=1
@@ -302,6 +271,7 @@ class SerialPort:
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
               done=1
               print "end of serial packet len=0"
+              continue
             else:   
               #print "in byte="+byte+" end of in byte"
               buf=buf+byte
@@ -312,8 +282,8 @@ class SerialPort:
                 continue
 
 
-              if len(buf)>1:
-                if ( (buf[count-2]=='_')and(buf[count-1]=='#')and(buf[count-1]==']') ):
+              if len(buf)>2:
+                if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   done=1
                   print "end of serial packet:_#] "
                   continue 
@@ -322,11 +292,7 @@ class SerialPort:
 
           #at this point i should have a full packet message
           if len(buf)>0:
-            
-
-
-
-
+           
             if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
  
               cmd_start=buf.find("onos_")
@@ -334,48 +300,64 @@ class SerialPort:
               cmd=buf[cmd_start:cmd_end+3]
               done=1
 
-              #onos_s3.05v1s0001f001_#]
+              #onos_s3.05v1sProminiS0001f001_#]
+
+
+
               if (cmd[5]=="s"): #sync message
-                numeric_serial_number=cmd[13:17]
-                full_sn=nodeNumericSerialTofullSerial[numeric_serial_number]
-                node_fw=cmd[6:10]
-                node_current_address=cmd[18:21]
-                message_to_send="onos_ssyncv1s"+numeric_serial_number+"f"+node_current_address+"_#]"
-                if node_current_address=="254":  #the node is looking for a free address
-                  new_address=getNextFreeAdress(full_sn)
-                  message_to_send="onos_g"+new_address+"v1s"+numeric_serial_number+"f"+node_current_address+"_#]"
-                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeFw":node_fw}) 
+                print "serial cmd="+cmd
+
+                try:
+                  numeric_serial_number=cmd[13:25]
+
+                  full_sn=numeric_serial_number=cmd[13:25]     # nodeNumericSerialTofullSerial[numeric_serial_number]
+
+                  node_fw=cmd[6:10]
+                  address=cmd[26:29]
+                  message_to_send="onos_ssyncv1s"+numeric_serial_number+"f"+address+"_#]"
+
+                  if address=="254":  #the node is looking for a free address
+                    address=getNextFreeAdress(full_sn)
+                    message_to_send="onos_g"+address+"v1s"+numeric_serial_number+"f"+address+"_#]"
+
+
+
+                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeAdress":address,"nodeFw":node_fw}) 
+
+                except Exception, e  :               
+                  print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
+                  errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
 
 
               #onos_g3.05v1s0001f001_#]
-              if (cmd[5]=="g"):
-                numeric_serial_number=cmd[13:17]
-                full_sn=nodeNumericSerialTofullSerial[numeric_serial_number]
-                node_fw=cmd[6:10]
-                node_current_address=cmd[18:21]
-                new_address=getNextFreeAdress(full_sn)
-                message_to_send="onos_g"+new_address+"v1s"+numeric_serial_number+"f"+node_current_address+"_#]"
-                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeAdress":new_address,"nodeFw":node_fw}) 
-
-                self.write(message_to_send)
+              if (cmd[5]=="g"):#to implement
+                print "to implement"
 
 
 
 
 
+           # print "serial input="+buf
+            with lock_serial_input:
+              serial_incomingBuffer=serial_incomingBuffer+buf
 
-
-            self.dataAvaible=1
-            print "serial input="+buf
-            self.incomingBuffer=self.incomingBuffer+buf
-            print "incoming buffer="+self.incomingBuffer
-          else:
+            self.dataAvaible=1 
+            print "incoming buffer="+serial_incomingBuffer
+            buf=""
+          else: #len buf ==0
+            
             self.dataAvaible=0
+
+      os.close(self.usbR)                  
+      print "serial port closed"               
+
+
 
 
   def waitForData(self,times):
     j=0
     self.disable_uart_queue=1  # I disable the auto queue add because I want to read the data directly
+    
     while j<(times*1000000):
       if (self.dataAvaible==1):
         return(1)
@@ -383,6 +365,7 @@ class SerialPort:
         return(-1)
       
       j=j+0.1
+      time.sleep(0.001) 
     return(-1) 
     
 
@@ -393,37 +376,15 @@ class SerialPort:
     #buf = ""
     #buf=os.popen("cat < "+self.port).read()
     
-    tmp=self.incomingBuffer
+    tmp=serial_incomingBuffer
     self.removeFromInBuffer=self.removeFromInBuffer+tmp
-    self.incomingBuffer=''
+    serial_incomingBuffer=''
     print "readed serial port="+tmp
     self.disable_uart_queue=0           # after the read of the data I reenable the auto queue of the incoming uart data
     return tmp
 
 
 
-  def sendDigitalWrite(self,node_address,pin,status):
-    # tells arduino to write  the register pins as readed from the hw_node class where the status of the pin is modified
-    # according the parameter passed to sendDigitalWrite()
-    if node_address in hwNodeDict.keys():
-      hwNodeDict[node_address].setDigitalPinOutputStatus(pin,status)  #set the pin status in the class according to the parameter received
-      section=pin//8
-      section_pins_status=str(hwNodeDict[node_address].getNodeSectionStatusByPin(pin))
-      msg="U0s"+str(section)+section_pins_status+'0'
-      print "writing register to arduino pin"
-
-
-      rx_check_byte=0
-      check_byte=-1
-      while (rx_check_byte!=check_byte):
-        print ("wait for correct answer to dw")
-        os.system("echo "+msg+" >> "+self.port) #write the message
-        os.system("echo \n >> "+self.port)      #write the closing message byte    \n
-        self.waitForData(10)
-        rx_check_byte=self.read()
-    else:
-      print "error address node not in node dictionary" 
-    return    
 
 
 
@@ -439,13 +400,21 @@ class SerialPort:
 
   def write(self, data):
     print "i write:"+data
+    global serial_incomingBuffer
     #with open(self.port, 'w') as f:   #read the pin status
-    self.usbW.write(data+"\n")
-    self.waitForData(10)
+    self.usbW.write(data+'\n')
+    if self.waitForData(10)==1:
+      #tmp=serial_incomingBuffer
+      #self.removeFromInBuffer=tmp
+      with lock_serial_input: 
+        tmp=serial_incomingBuffer
+        self.removeFromInBuffer=self.removeFromInBuffer+tmp
+        serial_incomingBuffer=""
 
-    tmp=self.incomingBuffer
-    self.removeFromInBuffer=tmp
 
+        
+    else:
+      print "rx timeout0"
 
     return(tmp)    
 
@@ -485,7 +454,7 @@ class SerialPort:
 
     print "class arduinoserial destroyed"
     try:
-      os.close(self.fd)
+     
       os.close(self.usbW)     
       os.close(self.usbR)     
     except:

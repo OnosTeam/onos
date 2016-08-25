@@ -174,6 +174,10 @@ errorQueue=Queue.Queue()  # this queue will contain all the error happened
 
 lock_bash_cmd= threading.Lock()
 
+lock_serial_input=threading.Lock()
+
+
+
 lock1_current_node_handler_list= threading.Lock()  #lock to access current_node_handler_list
 #lock2_query_threads = threading.Lock()  #lock to access query_to_nodeDict{}
 wait_because_node_is_talking=0
@@ -1640,7 +1644,7 @@ hardwareModelDict["RouterGA"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["RouterGA"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGA"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
 
-hardwareModelDict["ProminiS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":180}
+hardwareModelDict["ProminiS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":360}
 hardwareModelDict["ProminiS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["ProminiS"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["ProminiS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
@@ -1737,10 +1741,22 @@ def updateNodeAddress(node_sn0,address):
   Given a node serialnumber and a address update the node in the nodeDict with the current address. 
 
   """
+
+  try:
+    numeric_sn=node_sn0[-4:]
+    nodeNumericSerialTofullSerial[numeric_sn]=node_sn0  #get the 0001 from ProminiA0001  and assign to that key the full serial number ProminiA0007
+
+
+
+  except Exception, e :
+
+    print "error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
+
+
   try: #if (node_sn0 in nodeDict.keys()):
 
-    nodeNumericSerialTofullSerial[node_sn0[-4:]]==node_sn0  #get the 0001 from ProminiA0001  and assign to that key the full serial number ProminiA0007
-
+    
     nodeDict[node_sn0].updateLastNodeSync(time.time())
 
     if (nodeDict[node_sn0].getNodeAddress())!=address:
@@ -1751,9 +1767,10 @@ def updateNodeAddress(node_sn0,address):
     else:
       print "the node has still the same ip"
 
-  except:
-    print "error in updateNodeAddress()"
-    errorQueue.put( "error in updateNodeAddress()")  
+  except Exception, e :
+
+    print "error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
 
   return()
 
@@ -1796,6 +1813,7 @@ def getListUsedPinsByHardwareModel(hwName):
       - ProminiA
       - Plug6way
       - RouterGL
+      - RouterGA 
       - RouterRB 
       - Any other hardware type added as hardwareModelDict key in globalVar.py 
 
@@ -1838,6 +1856,7 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
       - ProminiA
       - Plug6way
       - RouterGL
+      - RouterGA
       - RouterRB 
       - Any other hardware type added as hardwareModelDict key in globalVar.py
 

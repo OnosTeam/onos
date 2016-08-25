@@ -64,12 +64,24 @@ RHReliableDatagram manager(driver, SERVER_ADDRESS);
 boolean radio_enabled=1;
 
 
+unsigned long sync_time=0;
 
+
+char full_serial_number[13]="ProminiS0001";
 
 char serial_number[5]="0001";
+
+/*
+serial_number[0]=full_serial_number[8];
+serial_number[1]=full_serial_number[9];
+serial_number[2]=full_serial_number[10];
+serial_number[3]=full_serial_number[11];
+
+*/
+
 char node_fw[]="5.13";
 
-uint8_t this_node_address=1;
+int this_node_address=1; //must be int..
 
    //onos_d07v001s0000f000_#]
 
@@ -82,15 +94,20 @@ uint8_t serial_message_address;
 uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
 int serial_message_value;
-char serial_message_answer[24]="er00_#]";
+char serial_message_answer[serial_msg_lenght+6]="er00_#]";
 char serial_message_sn[5]="";
-uint8_t serial_node_address=0;
+int serial_node_address=0; //must be int..
 
 uint8_t counter;
 boolean enable_print=0;
 
 
-
+int freeRam () 
+{
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
 
 void decodeOnosCmd(const char *received_message){
 
@@ -185,13 +202,13 @@ void decodeOnosCmd(const char *received_message){
       case 'd':{     //digital write       onos_d05v001s0001f001_#]  where the last'a' will be a char from 0 to 255 indicating the address of the node
         pinMode(serial_message_first_pin_used, OUTPUT); 
         digitalWrite(serial_message_first_pin_used, serial_message_value); 
-        strcpy(serial_message_answer,"ok_#]");
+        strcpy(serial_message_answer,"ok");
         break;
       }
 
       case 'a':{     //pwm write           onos_a07v100s0001f001_#]
         analogWrite(serial_message_first_pin_used, serial_message_value); 
-        strcpy(serial_message_answer,"ok_#]");
+        strcpy(serial_message_answer,"ok");
         break;
       }
 
@@ -199,7 +216,7 @@ void decodeOnosCmd(const char *received_message){
         //servo are not supported yet
         //myservo.attach(serial_message_first_pin_used);  // attaches the servo on pin 2 to the servo object 
         //myservo.write(serial_message_value);              // tell servo to go to position in variable 'pos'
-        strcpy(serial_message_answer,"ok_#]");
+        strcpy(serial_message_answer,"ok");
         break;
       }  
 
@@ -227,7 +244,7 @@ void decodeOnosCmd(const char *received_message){
       }  
                                            
       case 'r':{     //relay               onos_r1415v1s0000f000_#]
-        strcpy(serial_message_answer,"ok_#]");
+        strcpy(serial_message_answer,"ok");
         serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
 
         pinMode(serial_message_first_pin_used, OUTPUT); 
@@ -320,9 +337,11 @@ void setup()
 
   
   Serial.println(F("ready"));
+/*
+  Serial.print("memory:");
+  Serial.println(freeRam ());
 
-
-
+*/
   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
 
   // If you are using a high power RF69, you *must* set a Tx power in the
@@ -425,14 +444,21 @@ void loop()
 #endif
 
         uint8_t message_copy[serial_msg_lenght+1];
+        strcpy(filtered_onos_message,"");
 
         for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
           filtered_onos_message[pointer]=data_from_serial[counter-serial_msg_lenght+pointer];
           message_copy[pointer]=data_from_serial[counter-serial_msg_lenght+pointer]; 
+          //Serial.println(filtered_onos_message[pointer]);
+          if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
+            break;
+          }
 
          //Serial.println("mmm");
          //Serial.println(filtered_onos_message[pointer]);
         }
+       // Serial.println("filtered_onos_message:");
+        //Serial.println(filtered_onos_message);
        
         decodeOnosCmd(filtered_onos_message);
 
@@ -481,12 +507,14 @@ void loop()
                 }
                 else{
                  // Serial.println("No reply, is rf69_reliable_datagram_server running?");
-                  strcpy(serial_message_answer,"ertx0_#]");   
+                  strcpy(serial_message_answer,"ertx0_#]");  
+                  break; 
                 }
               }
               else{
                // Serial.println("sendtoWait failed");
                 strcpy(serial_message_answer,"ertx1_#]");  
+                break;
                  //delay(500);
               }
 
@@ -495,6 +523,7 @@ void loop()
             }
             else {//radio is disabled or not working
               strcpy(serial_message_answer,"ertx3_#]");
+              break;
             }
 
               
@@ -517,6 +546,7 @@ void loop()
       else{//no onos_ cmd found
 
         strcpy(serial_message_answer,"nocmd1_#]");
+        break;
 
       }
 
@@ -526,7 +556,11 @@ void loop()
      counter=0;
      continue;
   }
- 
+  else{
+
+    strcpy(serial_message_answer,"nocmd2_#]");
+
+  }
 
 
 
@@ -537,13 +571,76 @@ void loop()
 
   }
 
-  if (enable_print==1){ //write if there is a not recognise message  shorter...
 
-    Serial.print(serial_message_answer);
+
+
+  if (enable_print==1){ //write if there is a not recognise message  shorter...
+    if((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k')){
+      //strcpy(serial_message_answer,""); 
+      //strcat(serial_message_answer,filtered_onos_message);
+      Serial.print("ok");
+      for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
+        Serial.print(filtered_onos_message[pointer]);
+
+        if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
+          break;
+        }
+      }   
+      Serial.println(""); 
+      enable_print=0;
+      // the answer will be : "ok"+receivedmesssage for example: okonos_d05v001s0001f001_#]
+
+    }
+
+  }
+
+  if (enable_print==1){ //write if there is a not recognise message  shorter...
+    if((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k')){
+      //strcpy(serial_message_answer,""); 
+      //strcat(serial_message_answer,filtered_onos_message);
+      Serial.println(filtered_onos_message);
+
+      // the answer will be : "ok"+receivedmesssage for example: okonos_d05v001s0001f001_#]
+
+    }
+    Serial.println(serial_message_answer);
+    //Serial.print("memory:");
+   // Serial.println(freeRam ());
+
+    strcpy(serial_message_answer,"VOID");
+    strcpy(filtered_onos_message,""); 
     enable_print=0;
 
   }
  
+
+
+  unsigned long t=millis();
+  if ( (t-sync_time)>120000){   //each 12 sec time contact the onosCenter and update the current ip address
+    sync_time=t;
+  // onos_s3.05v1sProminiS0001f001_#]
+
+  //note: only this time i transmitt the full serial number..
+
+
+    char str_this_node_address_hundreds=(this_node_address/100)+'0';
+    char str_this_node_address_tens=(this_node_address/10)+'0';
+    char str_this_node_address_units=(this_node_address/1)+'0';
+
+    Serial.print("onos_s");
+    Serial.print(node_fw);
+    Serial.print("v1s");
+    Serial.print(full_serial_number);
+    Serial.print("f");
+    Serial.print(str_this_node_address_hundreds);
+    Serial.print(str_this_node_address_tens);
+    Serial.print(str_this_node_address_units);
+    Serial.println("_#]");
+
+
+  }
+
+
 
 
 }

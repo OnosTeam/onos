@@ -5415,8 +5415,8 @@ def executeQueueFunction(dataExchanged):
       msg=createNewNode(node_sn,node_address,node_fw)+"_#]" 
 
     except Exception, e:
-      print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_name)+" e:"+str(e.args)
-      errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_name)+" e:"+str(e.args))
+      print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_sn)+" e:"+str(e.args)
+      errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_sn)+" e:"+str(e.args))
 
     
       

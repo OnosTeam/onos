@@ -20,7 +20,7 @@ ser=0
 class Serial_connection_Handler():
 
   def __init__(self):
-     
+    self.exit=0 
     self.status=self.connectToPort()
     self.working=1
     i=0
@@ -69,7 +69,7 @@ class Serial_connection_Handler():
         old_port=port       #  [0:len(port)-1] 
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, 115200)     
-        print "arduino connected corectly to onos system" 
+        print "arduino connected correctly to onos system" 
         return(self.ser)
       except:  #some error occured while using the port i found 
         print "port error i will retry with another port" 
@@ -79,7 +79,7 @@ class Serial_connection_Handler():
             old_port=port[0:len(port)-1] 
             port='/dev/'+port    #[0:len(port)-1]   #remove /n of ls
             self.ser =arduinoserial.SerialPort(port, 115200)     
-            print "arduino connected corectly to onos system" 
+            print "arduino connected correctly to onos system" 
             return(self.ser)
           except:
             print "port problem onos will be only a webserver and will not controll the hardware nodes , please reconnect arduino to the usb port!"
