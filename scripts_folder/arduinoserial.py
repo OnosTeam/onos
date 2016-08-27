@@ -44,7 +44,7 @@
 """
     This module will be used to setup the proper serial configurations and to read and write the data from the serial port.
     
-
+ 
 """
 
 import termios
