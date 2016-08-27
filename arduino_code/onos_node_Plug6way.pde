@@ -51,18 +51,19 @@ uint8_t analog_in_setup[10];
 uint8_t analog_tolerance=20;
 uint16_t analog_values[17];// store the  values from analog input   2 bytes for each data
 
-//banana read eeprom and retrieve the node_type and serial umber then compose the mac address 
-char node_type='a';     //banana temp 'a' for arduino pro mini
-char serial_char=1 ;   //banana to read from eprom
+//banana read eeprom and retrieve the node_type and serial number then compose the mac address 
+
 char node_fw[]="5.13";
-char node_code_name[]="Plug6way0001";
-char serial_number[]="0001"; //BANANA TO READ FROM EEPROM
+char serial_number[]="Plug6way0001"; //BANANA TO READ FROM EEPROM
+
+
+
+uint8_t mac[6]; // {0x00,0x01,0x02,0x03,0x04,0x05};  //BANANA to change for each node
 
 
 
 
 
-uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};  //BANANA to change for each node
 uint8_t analog_count=0;
 //uint8_t pins_to_reset1=99;  //pin used with a set reset relay pin
 //uint8_t pins_to_reset2=99;  //pin used with a set reset relay pin
@@ -119,7 +120,7 @@ void decodeOnosCmd(char received_message[]){
 
   strcpy(serial_message_answer,"err01_#]");
   if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
-  { // the onos cmd was found           onos_d07v001s0001f000_#]
+  { // the onos cmd was found           onos_d07v001sPlug6way0001f000_#]
 
 
     strcpy(serial_message_answer,"cmdRx_#]");               
@@ -131,10 +132,19 @@ void decodeOnosCmd(char received_message[]){
     serial_message_sn[1]=received_message[14];
     serial_message_sn[2]=received_message[15];
     serial_message_sn[3]=received_message[16];
+    serial_message_sn[4]=received_message[17];
+    serial_message_sn[5]=received_message[18];
+    serial_message_sn[6]=received_message[19];
+    serial_message_sn[7]=received_message[20];
+    serial_message_sn[8]=received_message[21];
+    serial_message_sn[9]=received_message[22];
+    serial_message_sn[10]=received_message[23];
+    serial_message_sn[11]=received_message[24];
 
-    serial_message_flag=received_message[17];
 
-    serial_node_address=(received_message[18]-48)*100+(received_message[19]-48)*10+(received_message[20]-48)*1;
+    serial_message_flag=received_message[25];
+
+    serial_node_address=(received_message[26]-48)*100+(received_message[27]-48)*10+(received_message[28]-48)*1;
 
 /*
 
@@ -205,7 +215,7 @@ void decodeOnosCmd(char received_message[]){
 
     switch (serial_message_type_of_onos_cmd) {
 
-      case 'd':{     //digital write       onos_d07v001s0001f000_#]
+      case 'd':{     //digital write       onos_d07v001sPlug6way0001f000_#]
         strcpy(serial_message_answer,"ok_#]");
         if (is_pin_setup_as_do(serial_message_first_pin_used)==0) { //if the pin is not setted up as digital out
           strcpy(serial_message_answer,"er_ds_#]");
@@ -217,13 +227,13 @@ void decodeOnosCmd(char received_message[]){
         break;
       }
 
-      case 'a':{     //pwm write           onos_a07v100s0001f000_#]
+      case 'a':{     //pwm write           onos_a07v100sPlug6way0001f000_#]
         analogWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok_#]");
         break;
       }
               
-      case 's':{     //servo controll      onos_s07v180s0001f000_#]
+      case 's':{     //servo controll      onos_s07v180sPlug6way0001f000_#]
         strcpy(serial_message_answer,"ok_#]");
         if (is_pin_setup_as_do==0) { //if the pin is not setted up as digital out
           strcpy(serial_message_answer,"er_ds_#]");
@@ -233,7 +243,7 @@ void decodeOnosCmd(char received_message[]){
         break;
       }  
 
-      case 'g':{     //get digital status  onos_g0708v0s0001f000_#]  
+      case 'g':{     //get digital status  onos_g0708v0sPlug6way0001f000_#]  
         pinMode(serial_message_first_pin_used, INPUT); 
         pinMode(serial_message_second_pin_used, INPUT); 
         char val_first_pin=digitalRead(serial_message_first_pin_used)+48;
@@ -253,7 +263,7 @@ void decodeOnosCmd(char received_message[]){
         break;
       }  
 
-      case 'r':{     //relay               onos_r1716v1s0004f000_#]
+      case 'r':{     //relay               onos_r1716v1sPlug6way0004f000_#]
         strcpy(serial_message_answer,"ok_#]");
         serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
 
@@ -396,7 +406,7 @@ void server_handler(EthernetClient client_query ){
 
     if  ((counter>serial_msg_lenght-1)||((data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')  ) ){//   
 
-     // onos_s07v180s0001f000_#]
+     // onos_s07v180sPlug6way0001f000_#]
 
 /*
      Serial.println("im here-------------------------------");
@@ -724,7 +734,7 @@ void usePinSetup(uint8_t number,uint8_t d_conf,uint8_t an_conf,uint8_t used,char
 void pinsSetup(){
 
 
-  //node_code_name="ProminiA0001";
+  //serial_number="ProminiA0001";
   boolean setup_done=0;
 
 
@@ -742,7 +752,7 @@ void pinsSetup(){
 
       char ask_setup[37]; 
       strcpy(ask_setup,"pinsetup?sn=");
-      strcat(ask_setup,node_code_name);
+      strcat(ask_setup,serial_number);
       strcat(ask_setup,"&fw=");
       strcat(ask_setup,node_fw);
       strcat(ask_setup,"_#]");
@@ -953,7 +963,14 @@ void setup() {
 
 #endif
 
-  //banana ask the user to set the node_type and serial number and save them in the eeprom
+
+  mac[0] =serial_number[11];  
+  mac[1] =serial_number[10];
+  mac[2] =serial_number[9];
+  mac[3] =serial_number[8];
+  mac[4] =serial_number[7];
+  mac[5] =serial_number[6];
+
   delay(200); //wait for the ethernet module to power on 
 
    //IPAddress myIP(192,168,0,26);
@@ -1067,7 +1084,7 @@ if (pins_to_reset2!=99){
       sync_time=t;
       if (client.connect(IPAddress(192,168,101,1),onos_center_port)){
 
-//        client.println("GET /onos_cmd?cmd=sync&node_sn="+node_code_name+"&node_fw="+node_fw+"&node_ip="+Ethernet.localIP()+"__");
+//        client.println("GET /onos_cmd?cmd=sync&node_sn="+serial_number+"&node_fw="+node_fw+"&node_ip="+Ethernet.localIP()+"__");
 //        client.println(F( " HTTP/1.1"));
 //	    client.print(F( "Host: " ));
 //        client.println(F("192.168.101.1"));
@@ -1075,7 +1092,7 @@ if (pins_to_reset2!=99){
         //n_sync?sn=ProminiA0001&fw=4.85_#]
         char ask_sync[33]="n_sync?sn=";
 
-        strcat(ask_sync,node_code_name);
+        strcat(ask_sync,serial_number);
         strcat(ask_sync,"&fw=");
         strcat(ask_sync,node_fw);
         strcat(ask_sync,"_#]");

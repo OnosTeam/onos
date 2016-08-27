@@ -14,6 +14,7 @@ exit=0
 HIGH=1
 LOW=0
 ser=0
+baud_rate=115200
 class Serial_connection_Handler():
 
   def __init__(self):
@@ -65,7 +66,7 @@ class Serial_connection_Handler():
       try:
         old_port=port       #  [0:len(port)-1] 
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
-        self.ser =arduinoserial.SerialPort(port, 115200)     
+        self.ser =arduinoserial.SerialPort(port, baud_rate)     
         print "arduino connected correctly to onos system" 
         return(self.ser)
       except:  #some error occured while using the port i found 
@@ -75,7 +76,7 @@ class Serial_connection_Handler():
           try:
             old_port=port[0:len(port)-1] 
             port='/dev/'+port    #[0:len(port)-1]   #remove /n of ls
-            self.ser =arduinoserial.SerialPort(port, 115200)     
+            self.ser =arduinoserial.SerialPort(port, baud_rate)     
             print "arduino connected correctly to onos system" 
             return(self.ser)
           except:

@@ -154,14 +154,14 @@ I will use post instead that get message
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the status (000 or 001 ) to set the pin
-  4 byte to tell the node serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
 
 
-  example : onos_d04v001s0001f001_#]         to set pin 4 to 1  onos_d04v001s0001f001_#]
-            onos_d04v000s0001f001_#]         to set pin 4 to 0  onos_d04v000s0001f001_#]
+  example : onos_d04v001sProminiS0001f001_#]         to set pin 4 to 1  onos_d04v001s0001f001_#]
+            onos_d04v000sProminiS0001f001_#]         to set pin 4 to 0  onos_d04v000s0001f001_#]
 
   
   for analog pin it will be
@@ -170,12 +170,12 @@ I will use post instead that get message
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the value (0 or 255 ) to set the pin (to set 10 it will send '010',to set 255 it will send '255')
-  4 byte to tell the node serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
-  example : onos_a11v255s0001f001_#]         to set pin 11 to 255
-            onos_a11v099s0001f001_#]         to set pin 11 to 99
+  example : onos_a11v255sProminiS0001f001_#]         to set pin 11 to 255
+            onos_a11v099sProminiS0001f001_#]         to set pin 11 to 99
 
 
 
@@ -185,12 +185,12 @@ I will use post instead that get message
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell arduino the value (0 or 180 ) to set the pin (to set 10 it will send '010',to set 180 it will send '180')
-  4 byte to tell the node serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
-  example : onos_s05v180s0001f001_#]         to set pin 5 to 180
-            onos_s05v090s0001f001_#]         to set pin 5 to  90
+  example : onos_s05v180sProminiS0001f001_#]         to set pin 5 to 180
+            onos_s05v090sProminiS0001f001_#]         to set pin 5 to  90
 
 
   for set/reset latch relay control it will be:
@@ -199,12 +199,12 @@ I will use post instead that get message
   4 byte for the number of pins  (for pin 4 as set and pin 5 as reset it will send '0405')
   1 byte to separe the pin number from the value , it will be 'v'
   1 byte to tell arduino the value (0 or 1 ) to set the relay
-  4 byte to tell the node serial number 
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
-  example : onos_r0405v1s0001f001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 1
-            onos_r0405v0s0001f001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 0  
+  example : onos_r0405v1sProminiS0001f001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 1
+            onos_r0405v0sProminiS0001f001_#]         to set the relay (set on pin 4 , reset on pin 5)  to 0  
 
 
 
@@ -224,13 +224,13 @@ I will use post instead that get message
   2 byte for the number of pin  (for pin 13 it will send '13'  ,for pin 3 it will send '03')
   1 byte to separe the pin number from the value , it will be 'v'
   3 byte to tell onos the status (from  000 to 255) of the pin
-  4 byte to tell the node numeric serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
 
-  example : onos_t04v001s0001f001_#]         to tell pin 4 is at 1  
-            onos_t04v000s0001f001_#]         to tell pin 4 is at 0 
+  example : onos_t04v001sProminiS0001f001_#]         to tell pin 4 is at 1  
+            onos_t04v000sProminiS0001f001_#]         to tell pin 4 is at 0 
 
 
 
@@ -239,12 +239,12 @@ I will use post instead that get message
   1 byte with 's' for the modes (sync node )
   4 byte with the fw version for example 5.23
   1 byte with 'v'  just for to make the message long enaught
-  4 byte to tell the node numeric serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
 
-  example :  onos_s3.05v1s0001f001_#]          to update last sync_time 
+  example :  onos_s3.05v1sProminiS0001f001_#]          to update last sync_time 
 
 
 
@@ -255,12 +255,12 @@ I will use post instead that get message
   1 byte with 'g' for the modes (get address )
   4 byte with the fw version for example 5.23
   1 byte with 'v'  just for to make the message long enaught
-  4 byte to tell the node numeric serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
 
-  example :  onos_g3.05v1s0001f001_#]          to update last sync_time 
+  example :  onos_g3.05v1sProminiS0001f001_#]          to update last sync_time 
 
 
      
@@ -271,13 +271,13 @@ I will use post instead that get message
   2 byte for the number of the object status  (00 is the first webobject in the node...01 is the second..)
   1 byte to separe the object number from the value , it will be 'v'
   3 byte to tell onos the status (from 000 to 255)  
-  1 byte to tell the node numeric serial number
+  12 byte to tell the node serial number
   1 byte for a flag  ,if flag=='f' then forward incoming message
   3 byte for node address (used only for the wireless nodes but included also in the ethernet nodes..)
   3 byte to close the message "_#]"
 
-  example : onos_o01v001s0001f001_#]         to tell that the second object of the node is at 1 
-            onos_o01v000s0001f001_#]         to tell that the second object of the node is at 0  
+  example : onos_o01v001sProminiS0001f001_#]         to tell that the second object of the node is at 1 
+            onos_o01v000sProminiS0001f001_#]         to tell that the second object of the node is at 0  
 
 
 
@@ -855,7 +855,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
     The protocol will allow also control over the local pin a like it was a simple remote node.
 
-    To write to the serial node (to change its pins) you must select the "001" address like this: onos_d05v001s0001f001_#]
+    To write to the serial node (to change its pins) you must select the "001" address like this: onos_d05v001sProminiS0001f001_#]
 
 
 41)    

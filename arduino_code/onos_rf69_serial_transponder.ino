@@ -67,26 +67,19 @@ boolean radio_enabled=1;
 unsigned long sync_time=0;
 
 
-char full_serial_number[13]="ProminiS0001";
+char serial_number[13]="ProminiS0001";
 
-char serial_number[5]="0001";
 
-/*
-serial_number[0]=full_serial_number[8];
-serial_number[1]=full_serial_number[9];
-serial_number[2]=full_serial_number[10];
-serial_number[3]=full_serial_number[11];
 
-*/
+
 
 char node_fw[]="5.13";
 
 int this_node_address=1; //must be int..
 
-   //onos_d07v001s0000f000_#]
 
 
-#define serial_msg_lenght 23
+#define serial_msg_lenght 31
 
 char serial_message_type_of_onos_cmd;
 char serial_message_flag;
@@ -95,7 +88,7 @@ uint8_t serial_message_first_pin_used;
 uint8_t serial_message_second_pin_used;
 int serial_message_value;
 char serial_message_answer[serial_msg_lenght+6]="er00_#]";
-char serial_message_sn[5]="";
+char serial_message_sn[13]="";
 int serial_node_address=0; //must be int..
 
 uint8_t counter;
@@ -109,13 +102,44 @@ int freeRam ()
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
 
+
+
+
+void syncMessage(){
+
+  // onos_s3.05v1sProminiS0001f001_#]
+  char str_this_node_address_hundreds=(this_node_address/100)+'0';
+  char str_this_node_address_tens=(this_node_address/10)+'0';
+  char str_this_node_address_units=(this_node_address/1)+'0';
+  Serial.print("onos_s");
+  Serial.print(node_fw);
+  Serial.print("v1s");
+  Serial.print(serial_number);
+  Serial.print("f");
+  Serial.print(str_this_node_address_hundreds);
+  Serial.print(str_this_node_address_tens);
+  Serial.print(str_this_node_address_units);
+  Serial.print("_#]");
+  Serial.print("\n");
+
+
+
+}
+
+
+
+
+
+
+
+
 void decodeOnosCmd(const char *received_message){
 
  // Serial.println(F("decodeOnosCmd executed"));
 
   strcpy(serial_message_answer,"err01_#]");
   if ((received_message[0]=='o')&&(received_message[1]=='n')&&(received_message[2]=='o')&&(received_message[3]=='s')&&(received_message[4]=='_'))
-  { // the onos cmd was found           onos_d07v001s0001f000_#]
+  { // the onos cmd was found           onos_d07v001sProminiS0001f001_#] 
 
     strcpy(serial_message_answer,"cmdRx_#]");               
 
@@ -126,10 +150,19 @@ void decodeOnosCmd(const char *received_message){
     serial_message_sn[1]=received_message[14];
     serial_message_sn[2]=received_message[15];
     serial_message_sn[3]=received_message[16];
- 
-    serial_message_flag=received_message[17];
+    serial_message_sn[4]=received_message[17];
+    serial_message_sn[5]=received_message[18];
+    serial_message_sn[6]=received_message[19];
+    serial_message_sn[7]=received_message[20];
+    serial_message_sn[8]=received_message[21];
+    serial_message_sn[9]=received_message[22];
+    serial_message_sn[10]=received_message[23];
+    serial_message_sn[11]=received_message[24];
 
-    serial_node_address=(received_message[18]-48)*100+(received_message[19]-48)*10+(received_message[20]-48)*1;
+ 
+    serial_message_flag=received_message[25];  
+
+    serial_node_address=(received_message[26]-48)*100+(received_message[27]-48)*10+(received_message[28]-48)*1;
 
 /*
 
@@ -185,6 +218,14 @@ void decodeOnosCmd(const char *received_message){
 
     if ((serial_node_address!=this_node_address)||((strcmp(serial_message_sn,serial_number)!=0))) {//onos command for a remote arduino node
       strcpy(serial_message_answer,"remote_#]");
+
+
+      if  ( strcmp(serial_message_sn,serial_number)==0 ){// wrong sn but address for this node
+        strcpy(serial_message_answer,"er2_sn#]"); 
+      }
+
+
+
 /*
       Serial.print(F("serial_number:")); 
       Serial.print(serial_message_sn);
@@ -198,21 +239,21 @@ void decodeOnosCmd(const char *received_message){
 
 
     switch (serial_message_type_of_onos_cmd) {
-
-      case 'd':{     //digital write       onos_d05v001s0001f001_#]  where the last'a' will be a char from 0 to 255 indicating the address of the node
+                                         //onos_d05v001sProminiS0001f001_#] 
+      case 'd':{     //digital write       onos_d05v001sProminiS0001f001_#]  where the last'a' will be a char from 0 to 255 indicating the address of the node
         pinMode(serial_message_first_pin_used, OUTPUT); 
         digitalWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok");
         break;
       }
 
-      case 'a':{     //pwm write           onos_a07v100s0001f001_#]
+      case 'a':{     //pwm write           onos_a07v100sProminiS0001f001_#]
         analogWrite(serial_message_first_pin_used, serial_message_value); 
         strcpy(serial_message_answer,"ok");
         break;
       }
 
-      case 's':{     //servo controll      onos_s07v180s0001f001_#]
+      case 's':{     //servo controll      onos_s07v180sProminiS0001f001_#]
         //servo are not supported yet
         //myservo.attach(serial_message_first_pin_used);  // attaches the servo on pin 2 to the servo object 
         //myservo.write(serial_message_value);              // tell servo to go to position in variable 'pos'
@@ -220,7 +261,7 @@ void decodeOnosCmd(const char *received_message){
         break;
       }  
 
-      case 'g':{     //get digital status  onos_g0403v0s0001f001_#]  
+      case 'g':{     //get digital status  onos_g0403v0sProminiS0001f001_#]
         pinMode(serial_message_first_pin_used, INPUT); 
         pinMode(serial_message_second_pin_used, INPUT);
         digitalWrite(serial_message_first_pin_used,1); //enable internal pullup resistors
@@ -243,7 +284,7 @@ void decodeOnosCmd(const char *received_message){
         break;
       }  
                                            
-      case 'r':{     //relay               onos_r1415v1s0000f000_#]
+      case 'r':{     //relay               onos_r1415v1sProminiS0001f001_#]
         strcpy(serial_message_answer,"ok");
         serial_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
 
@@ -330,7 +371,7 @@ void setup()
                     0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08};
     driver.setEncryptionKey(key);
 
-
+    syncMessage();
 
   }
 
@@ -586,57 +627,35 @@ void loop()
           break;
         }
       }   
-      Serial.println(""); 
+      Serial.print("\n"); 
+      sync_time=millis();
       enable_print=0;
-      // the answer will be : "ok"+receivedmesssage for example: okonos_d05v001s0001f001_#]
+      // the answer will be : "ok"+receivedmesssage for example: okonos_d05v001sProminiS0001f001_#]
 
     }
 
-  }
+    else{
 
-  if (enable_print==1){ //write if there is a not recognise message  shorter...
-    if((serial_message_answer[0]=='o')&&(serial_message_answer[1]=='k')){
-      //strcpy(serial_message_answer,""); 
-      //strcat(serial_message_answer,filtered_onos_message);
-      Serial.println(filtered_onos_message);
-
-      // the answer will be : "ok"+receivedmesssage for example: okonos_d05v001s0001f001_#]
-
+      Serial.print(serial_message_answer); 
+      Serial.print("\n"); 
+      enable_print=0;
     }
-    Serial.println(serial_message_answer);
-    //Serial.print("memory:");
-   // Serial.println(freeRam ());
+    
 
-    strcpy(serial_message_answer,"VOID");
+    strcpy(serial_message_answer,"VOID");  
     strcpy(filtered_onos_message,""); 
-    enable_print=0;
 
   }
- 
 
+
+ 
 
   unsigned long t=millis();
   if ( (t-sync_time)>12000){   //each 120 sec time contact the onosCenter and update the current ip address
     sync_time=t;
   // onos_s3.05v1sProminiS0001f001_#]
 
-  //note: only this time i transmitt the full serial number..
-
-
-    char str_this_node_address_hundreds=(this_node_address/100)+'0';
-    char str_this_node_address_tens=(this_node_address/10)+'0';
-    char str_this_node_address_units=(this_node_address/1)+'0';
-
-    Serial.print("onos_s");
-    Serial.print(node_fw);
-    Serial.print("v1s");
-    Serial.print(full_serial_number);
-    Serial.print("f");
-    Serial.print(str_this_node_address_hundreds);
-    Serial.print(str_this_node_address_tens);
-    Serial.print(str_this_node_address_units);
-    Serial.println("_#]");
-
+  syncMessage();
 
   }
 

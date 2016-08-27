@@ -273,6 +273,7 @@ class SerialPort:
             else:   
               #print "in byte="+byte+" end of in byte"
               buf=buf+byte
+              
               count=len(buf)
 
               if len(buf)==0:
@@ -281,6 +282,7 @@ class SerialPort:
 
 
               if len(buf)>2:
+                waitTowriteUntilIReceive=1 
                 if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   done=1
                   print "end of serial packet:_#] "
@@ -292,7 +294,7 @@ class SerialPort:
           if len(buf)>0:
 
 
-            waitTowriteUntilIReceive=1 
+
 
            
             if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
@@ -341,10 +343,10 @@ class SerialPort:
 
            # print "serial input="+buf
 
-            with lock_serial_input:
-              serial_incomingBuffer=buf
-              self.dataAvaible=1 
-              waitTowriteUntilIReceive=0
+            #with lock_serial_input:
+            serial_incomingBuffer=buf
+            self.dataAvaible=1 
+            waitTowriteUntilIReceive=0
             time.sleep(0.18)  #important to not remove..
 
             timeout=time.time()
@@ -366,12 +368,12 @@ class SerialPort:
 
 
 
-  def waitForData(self,times):
+  def waitForData(self,timeout):
     j=0
     self.disable_uart_queue=1  # I disable the auto queue add because I want to read the data directly
-    timeout=time.time()
+    start_time=time.time()
     while self.dataAvaible==0:
-      if (time.time>(timeout+5) ): #timeout to exit the loop
+      if (time.time>(start_time+timeout) ): #timeout to exit the loop
         return(-1)
       time.sleep(0.001) 
     return(1) 
@@ -401,7 +403,7 @@ class SerialPort:
 
 
     waitToReceiveUntilIRead=1
-    time.sleep(0.001) 
+    time.sleep(0.02) 
     print "i write:"+data
     global serial_incomingBuffer
     #with open(self.port, 'w') as f:   #read the pin status
@@ -412,9 +414,9 @@ class SerialPort:
       #tmp=serial_incomingBuffer
       #self.removeFromInBuffer=tmp
 
-      with lock_serial_input: 
-        tmp=serial_incomingBuffer
-        serial_incomingBuffer=""
+     # with lock_serial_input: 
+      tmp=serial_incomingBuffer
+      serial_incomingBuffer=""
       waitToReceiveUntilIRead=0
 
 

@@ -118,8 +118,8 @@ class RouterHandler:
     
         if self.serial_communication.working==1:
           print "serial communication working"
-          data=self.serial_communication.status.write('onos_d06v000s0001f001_#]')
-          data=self.serial_communication.status.write('onos_d06v001s0001f001_#]')          
+          data=self.serial_communication.status.write('onos_d06v000sProminiS0001f001_#]')
+          data=self.serial_communication.status.write('onos_d06v001sProminiS0001f001_#]')          
 
           #todo: read nodeFw from the serial arduino node..
           #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":"ProminiS0001","nodeAdress":"001","nodeFw":"5.23"})  
@@ -285,19 +285,19 @@ class RouterHandler:
       | Compose the correct query to change an output pin status on a remote node.
       | The examples are:
       |
-      | "onos_r"+pin0+pin1+"v"+status_to_set+"s"+numeric_serial_number+"_#]" to set a sr_relay to  status_to_set (0 or 1)
-      |   onos_r0607v1s0001f000_#]  pin6 and 7 used to control a s/r relay and turn it to set 
+      | "onos_r"+pin0+pin1+"v"+status_to_set+"s"+node_serial_number+"_#]" to set a sr_relay to  status_to_set (0 or 1)
+      |   onos_r0607v1sProminiS0001f000_#]  pin6 and 7 used to control a s/r relay and turn it to set 
       |
-      | "onos_d"+pin_number+"v"+"00"+status_to_set+"s"+numeric_serial_number+"_#]" to set a digital pin to 0 or 1 
-      |   onos_d07v001s0001f000_#]  set digital pin7 to 1
+      | "onos_d"+pin_number+"v"+"00"+status_to_set+"s"+node_serial_number+"_#]" to set a digital pin to 0 or 1 
+      |   onos_d07v001sProminiS0001f000_#]  set digital pin7 to 1
       |
-      | "onos_s"+pin_number+"v"+status_to_set+"s"+numeric_serial_number+"_#]" to set a servopin from 0 to 180 
-      |   onos_s07v180s0001f000_#]  set servo pin7 to 180
+      | "onos_s"+pin_number+"v"+status_to_set+"s"+node_serial_number+"_#]" to set a servopin from 0 to 180 
+      |   onos_s07v180sProminiS0001f000_#]  set servo pin7 to 180
       |
-      | "onos_a"+pin_number+"v"+status_to_set+"s"+numeric_serial_number+"_#]" to set a analogpin from 0 to 255 
-      |   onos_a05v100s0001f000_#]  set analog pin5 to 100
+      | "onos_a"+pin_number+"v"+status_to_set+"s"+node_serial_number+"_#]" to set a analogpin from 0 to 255 
+      |   onos_a05v100sProminiS0001f000_#]  set analog pin5 to 100
       |
-      | The numeric_serial_number is a hexadecimal number refering to the node serial number 
+      | The node_serial_number is a hexadecimal number refering to the node serial number 
       | The node_address is a 3 byte ashii that rappresend the wireless node address(if the node is wireless,otherwise is ignored)
       |   the value must be between 0 and 255 it will be setted to "999" if is not used..
 
@@ -311,7 +311,7 @@ class RouterHandler:
      
 
 
-      numeric_serial_number=node_serial_number[-4:]     # example get 0001  from "ProminiA0001"
+
       address=node_obj.getNodeAddress()
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
       if (out_type=="sr_relay"):
@@ -323,7 +323,7 @@ class RouterHandler:
           pin1='0'+pin1
 
   
-        query=base_query+'''onos_r'''+pin0+pin1+'''v'''+str(status_to_set)+'''s'''+numeric_serial_number+"f"+node_address+'''_#]'''
+        query=base_query+'''onos_r'''+pin0+pin1+'''v'''+str(status_to_set)+'''s'''+node_serial_number+"f"+node_address+'''_#]'''
 
       if (out_type=="digital_output"):
 
@@ -334,7 +334,7 @@ class RouterHandler:
           pin='0'+pin
 
         #onos_d07v001s0001_#]
-        query=base_query+'''onos_d'''+pin+'''v'''+'''00'''+str(status_to_set)+'''s'''+numeric_serial_number+"f"+node_address+'''_#]'''
+        query=base_query+'''onos_d'''+pin+'''v'''+'''00'''+str(status_to_set)+'''s'''+node_serial_number+"f"+node_address+'''_#]'''
 
       if (out_type=="servo_output"):
 
@@ -348,7 +348,7 @@ class RouterHandler:
           status_to_set='0'+status_to_set 
 
         #onos_s07v180s0001_#]
-        query=base_query+'''onos_s'''+pin+'''v'''+status_to_set+'''s'''+numeric_serial_number+"f"+node_address+'''_#]''' 
+        query=base_query+'''onos_s'''+pin+'''v'''+status_to_set+'''s'''+node_serial_number+"f"+node_address+'''_#]''' 
 
 
       if (out_type=="analog_output"):
@@ -363,7 +363,7 @@ class RouterHandler:
           status_to_set='0'+status_to_set 
 
         #onos_a07v100s0001_#]
-        query=base_query+'''onos_a'''+pin+'''v'''+status_to_set+'''s'''+numeric_serial_number+"f"+node_address+'''_#]''' 
+        query=base_query+'''onos_a'''+pin+'''v'''+status_to_set+'''s'''+node_serial_number+"f"+node_address+'''_#]''' 
 
 
 
@@ -512,6 +512,7 @@ class RouterHandler:
 
       
           priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
+
           return(1) 
           
         else: #the router has't got  IO pins
@@ -543,7 +544,8 @@ class RouterHandler:
               data=self.serial_communication.status.write(query)
               time.sleep(0.01) 
               if data.find("ok"+query)!=-1:
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })              
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
+                updateNodeAddress(node_serial_number,node_address)#since onos was able to talk to the node I update the LastNodeSync
                 return(1) 
               print "answer received from serial port is wrong:"+data
               time.sleep(0.1*m) 
@@ -592,7 +594,8 @@ class RouterHandler:
             time.sleep(0.02) # don't remove this wait
             if data.find("ok"+query)!=-1:
               print "answer received from serial port is ok:"+data
-              priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })          
+              priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })             
+              updateNodeAddress(node_serial_number,node_address)#since onos was able to talk to the node I update the LastNodeSync
               return(1) 
             print "answer received from serial port is wrong:"+data
             errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
