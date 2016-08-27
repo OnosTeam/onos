@@ -616,7 +616,7 @@ void loop()
 
 
   unsigned long t=millis();
-  if ( (t-sync_time)>120000){   //each 12 sec time contact the onosCenter and update the current ip address
+  if ( (t-sync_time)>12000){   //each 120 sec time contact the onosCenter and update the current ip address
     sync_time=t;
   // onos_s3.05v1sProminiS0001f001_#]
 

@@ -1,8 +1,5 @@
 """ 
-..Note::
-
-    Module not used , deprecated and to implement in the future
-
+  This module will find the first working usb serial port avaible and will try to connect to it.
 """
 
 import arduinoserial
@@ -83,6 +80,7 @@ class Serial_connection_Handler():
             return(self.ser)
           except:
             print "port problem onos will be only a webserver and will not controll the hardware nodes , please reconnect arduino to the usb port!"
+            return(0)
         else:#no port found after the error 
           print "port not found onos will be only a webserver and will not controll the hardware nodes , please connect an arduino to the usb port!" 
           return(0)

@@ -175,7 +175,8 @@ errorQueue=Queue.Queue()  # this queue will contain all the error happened
 lock_bash_cmd= threading.Lock()
 
 lock_serial_input=threading.Lock()
-
+waitToReceiveUntilIRead=0  #stop the incoming uart reading until the data has been readed
+waitTowriteUntilIReceive=0 
 
 
 lock1_current_node_handler_list= threading.Lock()  #lock to access current_node_handler_list

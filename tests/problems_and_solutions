@@ -838,12 +838,27 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 
+39) I need to contro lamps sockets and lamps, but the powerline hardware is too big to fit in a bulb or lamp socket, so I will develop a radio network based on RMF69 radio modules.
 
 
+40) I need to control the radio modules from the onosCenter :
+    The simple way is to connect an arduino to the onosCenter and then make it router all the messages betweens the nodes and the onosCenter.
+
+    To do so I implemented :
+   
+    Serial_connection_Handler.py : It will handle the usb serial connection and usb reconnection.
+
+    arduinoserial.py: It will setup the proper serial configurations and read and write the data from the serial port.
 
 
+    To control the arduino connected to the serial port I used  onos_rf69_serial_transponder.ino program on the arduino.
+
+    The protocol will allow also control over the local pin a like it was a simple remote node.
+
+    To write to the serial node (to change its pins) you must select the "001" address like this: onos_d05v001s0001f001_#]
 
 
+41)    
 
 
 

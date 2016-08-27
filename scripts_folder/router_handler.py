@@ -542,7 +542,7 @@ class RouterHandler:
             for m in range(0,8):   #retry n times to get the answer from node
               data=self.serial_communication.status.write(query)
               time.sleep(0.01) 
-              if data.find("ok"+query)==-1:
+              if data.find("ok"+query)!=-1:
                 priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })              
                 return(1) 
               print "answer received from serial port is wrong:"+data
@@ -577,17 +577,28 @@ class RouterHandler:
 
 
 
+          max_retry=20
 
-          for m in range(0,8):   #retry n times to get the answer from node
-            data=self.serial_communication.status.write(query)
-            time.sleep(0.01) 
-            if data.find("ok"+query)==-1:
-              print "answer received from serial port is :"+data
+          
+          for m in range(0,max_retry):   #retry n times to get the answer from node
+            try:
+              data=self.serial_communication.status.write(query)
+            except Exception, e  :
+              print "answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+"the error was:"+str(e.args)+" at:" +getErrorTimeString()
+              errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+"the error was:"+str(e.args)+" at:" +getErrorTimeString() )   
+              time.sleep(0.1*m) 
+              continue 
+
+            time.sleep(0.02) # don't remove this wait
+            if data.find("ok"+query)!=-1:
+              print "answer received from serial port is ok:"+data
               priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })          
               return(1) 
             print "answer received from serial port is wrong:"+data
+            errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
             time.sleep(0.1*m) 
              
+          errorQueue.put("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
           return(-1)
 
 

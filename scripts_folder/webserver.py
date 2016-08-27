@@ -5379,7 +5379,7 @@ def executeQueueFunction(dataExchanged):
       objName=dataExchanged["webObjectName"]
       status_to_set=dataExchanged["status_to_set"]
       write_hw_enable=dataExchanged["write_to_hw"]
-      usr="onos_sys"
+      usr=dataExchanged["user"]#"onos_sys"
       priority=0
       mail_list_to_report_to=[]
       if "mail_report_list" in dataExchanged.keys():

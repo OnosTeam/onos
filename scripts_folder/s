@@ -37,13 +37,18 @@
 #                                                                             #
 #   You should have received a copy of the GNU General Public License         #
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
-#<http://todbot.com/blog/2006/12/06/arduino-serial-c-code-to-talk-to-arduino/>
-# A port of Tod E. Kurt's arduino-serial.c.
-
 
 """
-    This module will be used to setup the proper serial configurations and to read and write the data from the serial port.
-    
+
+..Note::
+
+    Module not used , deprecated and to implement in the future
+
+
+A port of Tod E. Kurt's arduino-serial.c.
+<http://todbot.com/blog/2006/12/06/arduino-serial-c-code-to-talk-to-arduino/>
+
+
 
 """
 
@@ -106,9 +111,8 @@ class SerialPort:
 #the error controll is done by the arduin_handler.py     
     #self.fd = os.open(serialport, os.O_RDWR | os.O_NOCTTY | os.O_NDELAY)
     self.status=1
-
     self.write_to_serial_enable=1  #enable or disable the writing to the port if the port is receiving
-    
+
 
     try:
       self.usbR = open(self.port, 'r' ,os.O_RDONLY | os.O_NOCTTY | os.O_NDELAY)
@@ -192,9 +196,9 @@ class SerialPort:
 
     
     self.dataAvaible=0
-    self.t_read = threading.Thread(target=self.read_data)
-    self.t_read.daemon = True  #make the thread a daemon thread
-    self.t_read.start()
+    #self.t_read = threading.Thread(target=self.read_data)
+    #self.t_read.daemon = True  #make the thread a daemon thread
+    #self.t_read.start()
     self.exit=0
 
 
@@ -208,10 +212,9 @@ class SerialPort:
 
   def read_data(self):   # thread  function
       '''Outputs data from serial port to sys.stdout.'''
-      print "read_data thread executed"
+     # print "read_data thread executed"
  
       global serial_incomingBuffer
-      global waitTowriteUntilIReceive
       ignore = ''   #'\r'
       filedev=self.port
       self.dataAvaible=0
@@ -225,13 +228,12 @@ class SerialPort:
           done=0
           count=0
           self.write_to_serial_enable=1
-    
           while done==0:
             if self.exit==1:
               break
             #if len(self.removeFromInBuffer)>0:
-            #  serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
-            #  self.removeFromInBuffer=''
+              #serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
+              #self.removeFromInBuffer=''
             try:
               byte = self.usbR.read(1)
             except:
@@ -268,7 +270,7 @@ class SerialPort:
 
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
               done=1
-              print "end of serial packet len=0"
+              print "end of serial packet with /n"
               continue
             else:   
               #print "in byte="+byte+" end of in byte"
@@ -280,27 +282,23 @@ class SerialPort:
                 continue
 
 
-              if len(buf)>2:
+              if len(buf)>8:
                 if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   done=1
                   print "end of serial packet:_#] "
-                  continue 
+                  return (buf) 
 
 
 
           #at this point i should have a full packet message
-          if len(buf)>0:
-
-
-            waitTowriteUntilIReceive=1 
-
+          if len(buf)>8:
            
             if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
  
               cmd_start=buf.find("onos_")
               cmd_end=buf.find("_#]")
               cmd=buf[cmd_start:cmd_end+3]
-
+              done=1
 
               #onos_s3.05v1sProminiS0001f001_#]
 
@@ -315,16 +313,16 @@ class SerialPort:
                   full_sn=numeric_serial_number=cmd[13:25]     # nodeNumericSerialTofullSerial[numeric_serial_number]
 
                   node_fw=cmd[6:10]
-                  node_address=cmd[26:29]
-                  message_to_send="onos_ssyncv1s"+numeric_serial_number+"f"+node_address+"_#]"
+                  address=cmd[26:29]
+                  message_to_send="onos_ssyncv1s"+numeric_serial_number+"f"+address+"_#]"
 
-                  if node_address=="254":  #the node is looking for a free address
-                    node_address=getNextFreeAdress(full_sn)
-                    message_to_send="onos_g"+node_address+"v1s"+numeric_serial_number+"f"+node_address+"_#]"
+                  if address=="254":  #the node is looking for a free address
+                    address=getNextFreeAdress(full_sn)
+                    message_to_send="onos_g"+address+"v1s"+numeric_serial_number+"f"+address+"_#]"
 
 
 
-                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeAdress":node_address,"nodeFw":node_fw}) 
+                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeAdress":address,"nodeFw":node_fw}) 
 
                 except Exception, e  :               
                   print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
@@ -341,21 +339,12 @@ class SerialPort:
 
            # print "serial input="+buf
 
-            with lock_serial_input:
-              serial_incomingBuffer=buf
-              self.dataAvaible=1 
-              waitTowriteUntilIReceive=0
-            time.sleep(0.18)  #important to not remove..
+            serial_incomingBuffer=serial_incomingBuffer+buf
 
-            timeout=time.time()
-            while waitToReceiveUntilIRead==1:
-              time.sleep(0.001)
-              #print "i wait until you read"
-              if (time.time>(timeout+10) ): #timeout to exit the loop
-                break
-
+            self.dataAvaible=1 
             print "incoming buffer="+serial_incomingBuffer
             buf=""
+            return (serial_incomingBuffer)
           else: #len buf ==0
             
             self.dataAvaible=0
@@ -369,13 +358,34 @@ class SerialPort:
   def waitForData(self,times):
     j=0
     self.disable_uart_queue=1  # I disable the auto queue add because I want to read the data directly
-    timeout=time.time()
-    while self.dataAvaible==0:
-      if (time.time>(timeout+5) ): #timeout to exit the loop
-        return(-1)
-      time.sleep(0.001) 
-    return(1) 
     
+    while j<(times*1000000):
+      if (self.dataAvaible==1):
+        return(1)
+      if (self.exit==1):
+        return(-1)
+      
+      j=j+0.1
+      time.sleep(0.001) 
+    return(-1) 
+    
+
+
+
+  def read(self):
+    print "arduinoserial read executed"
+    #buf = ""
+    #buf=os.popen("cat < "+self.port).read()
+    
+    tmp=serial_incomingBuffer
+    self.removeFromInBuffer=self.removeFromInBuffer+tmp
+    serial_incomingBuffer=''
+    print "readed serial port="+tmp
+    self.disable_uart_queue=0           # after the read of the data I reenable the auto queue of the incoming uart data
+    return tmp
+
+
+
 
 
 
@@ -390,45 +400,35 @@ class SerialPort:
   
 
   def write(self, data):
-    global waitToReceiveUntilIRead
-    timeout=time.time()
-    while waitTowriteUntilIReceive==1 : #wait because there are half packet in serial receiving
-      time.sleep(0.001)
-      if (time.time>(timeout+10) ): #timeout to exit the loop
-        break
-
-
-
-
-    waitToReceiveUntilIRead=1
-    time.sleep(0.001) 
     print "i write:"+data
     global serial_incomingBuffer
     #with open(self.port, 'w') as f:   #read the pin status
-
-    tmp="void"
     self.usbW.write(data+'\n')
-    if self.waitForData(10)==1:
+
+    rx_data=self.read_data()
+
+      #if self.waitForData(10)==1:
       #tmp=serial_incomingBuffer
       #self.removeFromInBuffer=tmp
+      #with lock_serial_input: 
+      #  tmp=serial_incomingBuffer
+      #  self.removeFromInBuffer=self.removeFromInBuffer+tmp
+      #  serial_incomingBuffer=""
 
-      with lock_serial_input: 
-        tmp=serial_incomingBuffer
-        serial_incomingBuffer=""
-      waitToReceiveUntilIRead=0
 
-
-        
-    else:
-      print "rx timeout0"
-
-    return(tmp)    
+    return(rx_data)    
 
 
 
 
 
+  def digitalWriteSection(self,node_address,section,section_status):
+    print "i write a section status to arduino"
+    
+ 
 
+ # def write_byte(self, byte):
+ #   os.write(self.fd, chr(byte))
 
   def isOpen(self):
     #print " called  isOpen"
