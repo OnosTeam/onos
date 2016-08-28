@@ -1,5 +1,6 @@
 /*
  * O.N.O.S.  node firmware by Marco Rigoni 28-4-15  elettronicaopensource@gmail.com 
+ * more info on www.myonos.com 
  * UIPEthernet is a TCP/IP stack that can be used with a enc28j60 based
  * Ethernet-shield.
  *

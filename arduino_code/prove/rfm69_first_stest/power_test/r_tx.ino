@@ -32,13 +32,13 @@
  
 #include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <SPI.h>
- 
+#include <RFM69_ATC.h> 
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/ONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
 #define NETWORKID     100  // The same on all nodes that talk to each other
-#define NODEID        2    // The unique identifier of this node
-#define RECEIVER      1    // The recipient of packets
+#define NODEID        3    // The unique identifier of this node
+#define RECEIVER      2    // The recipient of packets
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
@@ -53,14 +53,15 @@
 #define RFM69_CS      10
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     9
+#define RFM69_RST     3
  
 #define LED           5  // onboard blinky
  
+#define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
  
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  
-RFM69 radio = RFM69(RFM69_CS, RFM69_IRQ, IS_RFM69HCW, RFM69_IRQN);
+RFM69_ATC radio;
  
 void setup() {
   while (!Serial); // wait until serial console is open, remove if not tethered to computer
@@ -80,25 +81,30 @@ void setup() {
   if (IS_RFM69HCW) {
     radio.setHighPower();    // Only for RFM69HCW & HW!
   }
-  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
+  radio.setPowerLevel(6); // power output ranges from 0 (5dBm) to 31 (20dBm)
   
   radio.encrypt(ENCRYPTKEY);
   
+
+  radio.enableAutoPower(ATC_RSSI);
+
+
   pinMode(LED, OUTPUT);
   Serial.print("\nTransmitting at ");
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(" MHz");
+
 }
  
  
 void loop() {
   delay(1000);  // Wait 1 second between transmits, could also 'sleep' here!
     
-  char radiopacket[20] = "Hello Wold #";
+  char radiopacket[20] = "Hello World #";
   itoa(packetnum++, radiopacket+13, 10);
   Serial.print("Sending "); Serial.println(radiopacket);
     
-  if (radio.sendWithRetry(RECEIVER, radiopacket, strlen(radiopacket),10,120)) { //target node Id, message as string or byte array, message length , number of retries , ms of delay between two try
+  if (radio.sendWithRetry(RECEIVER, radiopacket, strlen(radiopacket))) { //target node Id, message as string or byte array, message length
     Serial.println("OK");
     Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
   }
