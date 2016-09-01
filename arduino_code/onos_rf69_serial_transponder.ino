@@ -151,7 +151,7 @@ int freeRam ()
 
 
 
-void sendSyncMessage(){
+void makeSyncMessage(){
 
   // onos_s3.05v1sProminiS0001f001_#]
   char syncMessage[rx_msg_lenght+3];
@@ -751,12 +751,12 @@ void loop()
 
  
 
-  unsigned long t=millis();
-  if ( (t-sync_time)>12000){   //each 120 sec time contact the onosCenter and update the current ip address
-    sync_time=t;
+
+  if ( (millis()-sync_time)>12000){   //each 120 sec time contact the onosCenter and update the current ip address
+    sync_time=millis();
   // onos_s3.05v1sProminiS0001f001_#]
 
-  sendSyncMessage();
+  makeSyncMessage();
 
   }
 

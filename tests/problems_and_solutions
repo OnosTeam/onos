@@ -246,6 +246,9 @@ I will use post instead that get message
   12 byte to tell the node serial number
   3 bytes with "_#]" to close the message 
   example:   [S_001ga3.05ProminiS0001_#]    
+
+  OnosCenter will answer witha : [S_123sa3.05ProminiS0001_#]  to tell the node to set its address to 123 for example
+
              
 
 

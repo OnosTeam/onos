@@ -74,9 +74,12 @@ char node_fw[]="5.13";
 
 int this_node_address=254; //i start with 254
 
+int old_address=254; 
 
+unsigned long get_address_timeout=0;
 
 #define rx_msg_lenght 31
+# define gateway_address 1
 
 char received_message_type_of_onos_cmd;
 char received_message_flag;
@@ -86,6 +89,9 @@ int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
 char received_message_sn[13]="";
 int received_message_address=0; //must be int..
+
+char syncMessage[28];
+char str_this_node_address[4];
 
 uint8_t counter;
 boolean enable_answer_back=0;
@@ -101,36 +107,20 @@ int freeRam ()
 
 
 
-void syncMessage(){
+void makeSyncMessage(){
 
-  // onos_s3.05v1sProminiS0001f001_#]
-
-  char syncMessage[serial_msg_lenght+3];
-  char str_this_node_address[4];
+  //[S_001sy3.05ProminiS0001_#] 
 
   str_this_node_address[0]=(this_node_address/100)+'0';
   str_this_node_address[1]=(this_node_address/10)+'0';
   str_this_node_address[2]=(this_node_address/1)+'0';
 
-  strcpy(syncMessage, "onos_s ");
-  strcat(syncMessage, node_fw);
-  strcat(syncMessage, "v1s");
-  strcat(syncMessage, serial_number);
-  strcat(syncMessage, "f");
+  strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
-
+  strcat(syncMessage, "sy");
+  strcat(syncMessage, node_fw);
+  strcat(syncMessage, serial_number);
   strcat(syncMessage, "_#]");
-
-  for (uint8_t pointer = 0; pointer <= serial_msg_lenght; pointer++) {
-    Serial.print(syncMessage[pointer]);
-
-    if ((syncMessage[pointer-1]=='#')&&(syncMessage[pointer]==']')  ) {//  
-        break;
-      }
-    }   
-    Serial.print('\n'); 
-
-
 
 }
 
@@ -141,24 +131,27 @@ void syncMessage(){
 
 void getAddressFromGateway(){
 
-  char syncMessage[serial_msg_lenght+3];
-  char str_this_node_address[4];
+  //[S_001ga3.05ProminiS0001_#]
+  makeSyncMessage();
 
-  while
 
-  syncMessage[5]='g'; //modify the message to get a address instead of just sync.
-  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),10,200)) {
+
+  syncMessage[6]='g'; //modify the message to get a address instead of just sync.
+  syncMessage[7]='a'; //modify the message to get a address instead of just sync.
+
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),10,500)) {
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
     Serial.println("sent_get_address");
     Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
   }
 
-  syncMessage[5]='s'; //modify the message back to original to just sync.  
+  syncMessage[6]='s'; //modify the message to get a address instead of just sync.
+  syncMessage[7]='y'; //modify the message to get a address instead of just sync.
 
   //decode message
 
-
+/*
   if (radio.receiveDone())
   {
     //print message received to serial
@@ -166,8 +159,13 @@ void getAddressFromGateway(){
     Serial.print((char*)radio.DATA);
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
  
-    //check if received message contains Hello World
-    if (strstr((char *)radio.DATA, "Hello World"))
+
+
+
+    //check if received message contains address
+    //[S_123sa3.05ProminiS0001_#]
+   
+    if( (strstr((char *)radio.DATA[6],'s'))&&(strstr((char *)radio.DATA[7],'a') ) )
     {
       //check if sender wanted an ACK
       if (radio.ACKRequested())
@@ -179,6 +177,8 @@ void getAddressFromGateway(){
     }  
   }
  
+*/
+
   radio.receiveDone(); //put radio in RX mode
    
 
@@ -189,6 +189,8 @@ void getAddressFromGateway(){
 
  
 void setup() {
+
+
   while (!Serial); // wait until serial console is open, remove if not tethered to computer
   Serial.begin(SERIAL_BAUD);
  
@@ -218,6 +220,43 @@ void setup() {
 }
  
 void loop() {
+
+
+  if (old_address==254){// i have not the proper address yet..
+
+
+
+    if (old_address!=this_node_address){//the address has changed and i restart radio to use it
+ 
+      radio.initialize(FREQUENCY,NODEID,this_node_address);
+      if (IS_RFM69HCW) {
+        radio.setHighPower();    // Only for RFM69HCW & HW!
+      }
+      radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
+  
+      radio.encrypt(ENCRYPTKEY);
+      old_address=this_node_address;
+      get_address_timeout=millis();
+
+    }
+
+
+
+    if ((millis()-get_address_timeout)>500){ //every 500 ms
+   
+      get_address_timeout=millis();
+
+      getAddressFromGateway();  //ask the gateway for a proper address
+
+
+
+
+    }
+
+
+  }
+
+
   //check if something was received (could be an interrupt from the radio)
   if (radio.receiveDone())
   {
