@@ -5013,7 +5013,7 @@ def mailCheckThread():
 
     if mailList==-1:
       print "error mailagent ,  wrong username/password or no internet connection"
-      errorQueue.put( "error mailagent ,  wrong username/password or no internet connection,i disable the mail service")
+      errorQueue.put( "error mailagent ,  wrong username/password or no internet connection,i disable the incoming mail service")
       print "i disable the mail service"
       enable_mail_service=0  
       return() 
