@@ -72,16 +72,19 @@ char serial_number[13]="WLightSS0003";
 
 char node_fw[]="5.13";
 
-int this_node_address=254; //i start with 254
+int this_node_address=2; //i start with 254
 
-int old_address=254; 
+int old_address=2; 
 
 unsigned long get_address_timeout=0;
 
 #define rx_msg_lenght 31
 # define gateway_address 1
 
-char received_message_type_of_onos_cmd;
+int onos_cmd_start_position=-99;  
+int onos_cmd_end_position=-99;  
+
+char received_message_type_of_onos_cmd[3];
 char received_message_flag;
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
@@ -89,7 +92,7 @@ int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
 char received_message_sn[13]="";
 int received_message_address=0; //must be int..
-
+char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[28];
 char str_this_node_address[4];
 
@@ -186,6 +189,161 @@ void getAddressFromGateway(){
 
 
 
+void decodeOnosCmd(const char *received_message){
+/*
+  Serial.println(F("decodeOnosCmd executed"));
+
+  Serial.println(received_message[0]);
+  Serial.println(received_message[1]);
+  Serial.println(received_message[2]);
+  Serial.println(received_message[3]);
+  Serial.println(received_message[4]);
+  Serial.println(received_message[5]);
+  Serial.println(received_message[6]);
+
+*/
+
+  strcpy(received_message_answer,"err01_#]");
+
+
+
+  if ((received_message[0]=='[')&&(received_message[1]=='S')&&(received_message[2]=='_') ) {
+ // the onos cmd was found           [S_001dw06001_#]
+
+
+    strcpy(received_message_answer,"cmdRx_#]");               
+
+
+    received_message_type_of_onos_cmd[0]=received_message[6];
+    received_message_type_of_onos_cmd[1]=received_message[7];
+
+    received_message_address=(received_message[3]-48)*100+(received_message[4]-48)*10+(received_message[5]-48)*1;
+
+
+         
+
+    if (received_message_address!=this_node_address) {//onos command for a remote arduino node
+      strcpy(received_message_answer,"remote_#]");
+
+/*
+      Serial.print(F("serial_number:")); 
+      Serial.print(received_message_sn);
+
+      Serial.print(F("serial_number222:")); 
+      Serial.print(serial_number);
+      Serial.println(F("end")); 
+*/
+      return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
+    }
+
+
+    //[S_001dw06001_#]
+    if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
+
+      received_message_value=received_message[12]-48;
+      if (received_message_value>1){ 
+        strcpy(received_message_answer,"er0_status_#]"); 
+        return;
+      }
+
+      received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+
+      pinMode(received_message_first_pin_used, OUTPUT); 
+      digitalWrite(received_message_first_pin_used, received_message_value); 
+      strcpy(received_message_answer,"ok");
+      return;
+    }
+    
+    //[S_001aw06125_#]
+    else if( received_message_type_of_onos_cmd[0]=='a' && received_message_type_of_onos_cmd[1]=='w' ){
+ 
+      received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
+
+      if ((received_message_value<0)||(received_message_value>255)){ //status check
+        received_message_value=0;
+      //Serial.println(F("onos_cmd_value_error"));  
+        strcpy(received_message_answer,"er0_status_#]"); 
+        return;
+      }
+
+      received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+      analogWrite(received_message_first_pin_used, received_message_value); 
+      strcpy(received_message_answer,"ok");
+      return;
+    } 
+
+ 
+    //[S_001sr04051_#] 
+    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='r' ){
+
+      received_message_value=received_message[12]-48;      
+
+      if (received_message_value>1){ 
+        strcpy(received_message_answer,"er0_status_#]"); 
+        return;
+      }
+
+      received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+      received_message_second_pin_used=((received_message[10])-48)*10+(  (received_message[11])-48)*1;
+
+      pinMode(received_message_first_pin_used, OUTPUT); 
+      pinMode(received_message_second_pin_used, OUTPUT); 
+      //note to se a relay you have to transmit before the set pin and after the reset pin , the lessere first
+      //  so for example received_message_first_pin_used =14   received_message_second_pin_used=15
+      digitalWrite(received_message_first_pin_used, !received_message_value); 
+      digitalWrite(received_message_second_pin_used,received_message_value); 
+      //attention with this only one relay per message can be setted!!!
+      //pins_to_reset1=pin_number_used;
+      //pins_to_reset2=second_pin_number_used;
+      delay(150);
+      digitalWrite(received_message_first_pin_used,0); 
+      digitalWrite(received_message_second_pin_used,0);  
+
+      strcpy(received_message_answer,"ok");
+      return;
+    }
+
+
+
+    
+/*
+    Serial.print(F("onos_cmd:"));
+    Serial.println(received_message_type_of_onos_cmd);
+
+    Serial.print(F("serial_number:"));
+    Serial.print(received_message_sn);
+
+
+    Serial.println(F("pin_used:"));
+    Serial.println(received_message_first_pin_used);
+    Serial.println(F("pin_used2:"));
+    Serial.println(received_message_second_pin_used);
+
+    Serial.print(F("message_value:"));
+    Serial.println(received_message_value);
+
+
+    
+*/
+
+
+
+
+
+
+
+
+ } // end of if message start with onos_   
+
+
+
+
+
+
+}// end of decodeOnosCmd()
+
+
+
 
  
 void setup() {
@@ -258,30 +416,76 @@ void loop() {
 
 
   //check if something was received (could be an interrupt from the radio)
-  if (radio.receiveDone())
-  {
+  
+  if (radio.receiveDone()){
     //print message received to serial
     Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
     Serial.print((char*)radio.DATA);
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+
  
     //check if received message contains Hello World
-    if (radio.DATA[0]=='o')
-    {
-      //check if sender wanted an ACK
-      if (radio.ACKRequested())
-      {
-        radio.sendACK();
-        Serial.println(" - ACK sent");
+
+    uint8_t message_copy[rx_msg_lenght+1];
+
+    strcpy(filtered_onos_message,"");
+
+    for (uint8_t counter0 = 0; counter0 <= rx_msg_lenght; counter0++) {
+      filtered_onos_message[counter0]=radio.DATA[counter0];
+      message_copy[counter0]=radio.DATA[counter0]; 
+      Serial.println(filtered_onos_message[counter0]);
+
+    //[S_001dw06001_#]
+      if (counter0<2){
+        continue;
       }
-      Blink(LED, 40, 3); //blink LED 3 times, 40ms between blinks
-    }  
+      if ( (filtered_onos_message[counter0-2]=='[')&&(filtered_onos_message[counter0-1]=='S')&&(filtered_onos_message[counter0]=='_')  ){//   
+        Serial.println("cmd start found-------------------------------");
+        onos_cmd_start_position=counter0-2;
+      }
 
-    else{
 
-      Serial.println("serial_message_received_is_wrong");
+      if( (filtered_onos_message[counter0-2]=='_')&&(filtered_onos_message[counter0-1]=='#')&&(filtered_onos_message[counter0]==']')  ){//   
+        Serial.println("cmd end found-------------------------------");
+        onos_cmd_end_position=counter0-2;
+        break;// now the message has ended
+      }
+
 
     }
+
+
+
+    if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+      Serial.println("onos cmd  found-------------------------------");
+      decodeOnosCmd(filtered_onos_message);
+
+      if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){//if the message was ok...
+      //check if sender wanted an ACK
+        if (radio.ACKRequested()){
+          radio.sendACK();
+          Serial.println(" - ACK sent");
+        }
+
+      }
+      else{
+        Serial.println("error in message decode i will not send the ACK");
+      }
+
+
+
+    }
+    else{
+      strcpy(received_message_answer,"nocmd0_#]");
+      Serial.println("error in message nocmd0_#]");
+    }
+
+  
+
+
+     // Blink(LED, 40, 3); //blink LED 3 times, 40ms between blinks
+    
+
   }
  
   radio.receiveDone(); //put radio in RX mode
@@ -298,3 +502,4 @@ void Blink(byte PIN, byte DELAY_MS, byte loops)
     delay(DELAY_MS);
   }
 }
+

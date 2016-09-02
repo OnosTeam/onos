@@ -641,7 +641,7 @@ void loop()
               //target node Id, message as string or byte array, message length,retries, milliseconds before retry
               //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 
-
+/*
             for (uint8_t rx_try = 0; rx_try <= 10; rx_try++) {
               if (radio.receiveDone()){
                 Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
@@ -659,10 +659,12 @@ void loop()
 
 
 
+
             if (radio.ACKRequested()){
               radio.sendACK();
               Serial.print(" - ACK sent");
             }
+*/
 
 
                // Serial.println("OK");
