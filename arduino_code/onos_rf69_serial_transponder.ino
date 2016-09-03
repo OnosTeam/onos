@@ -116,7 +116,7 @@ char serial_number[13]="ProminiS0001";
 char node_fw[]="5.13";
 
 int this_node_address=1; //must be int..
-
+unsigned long timeout;
 
 
 #define rx_msg_lenght 61
@@ -134,8 +134,8 @@ int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
 //char received_message_sn[13]="";
 int received_message_address=0; //must be int..
-
-
+char filtered_onos_message[rx_msg_lenght+3];
+char data_from_serial [rx_msg_lenght+5];
 
 uint8_t counter;
 boolean enable_answer_back=0;
@@ -503,13 +503,6 @@ void loop()
 {
 
 
-  if (radio_enabled==1){
-
-      // Wait for a message addressed to us from the client
-      uint8_t a = 0;//noop
-   
-
-  }
 
 
 
@@ -518,9 +511,14 @@ void loop()
 
 
 
-  char data_from_serial [rx_msg_lenght+5];
-  char filtered_onos_message[rx_msg_lenght+3];
-  unsigned long timeout=millis()+200;
+
+
+
+  strcpy(data_from_serial,"");
+
+  strcpy(filtered_onos_message,"");
+
+  timeout=millis()+200;
 
 
   uint8_t counter0=0;
@@ -578,7 +576,7 @@ void loop()
 
     counter0=counter0+1;
 
-  }
+  }// end of while rx receive
 
 
 
@@ -731,7 +729,7 @@ void loop()
       Serial.print('\n'); 
       sync_time=millis();
       enable_answer_back=0;
-      // the answer will be : "ok"+receivedmesssage for example: okonos_d05v001sProminiS0001f001_#]
+      // the answer will be : "ok"+receivedmessage for example: okonos_d05v001sProminiS0001f001_#]
 
     }
 
@@ -749,6 +747,125 @@ void loop()
     Serial.flush(); //make sure all serial data is clocked out before sleeping the
     enable_answer_back=0;
   }
+
+
+
+
+
+//uart reception part concluded
+
+
+
+
+//radio part started
+
+
+  if (radio_enabled==1){
+
+      // Wait for a message addressed to us from the client
+    if (radio.receiveDone()){
+    //print message received to serial
+      Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
+      Serial.print((char*)radio.DATA);
+      Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+
+ 
+    //check if received message contains Hello World
+
+
+
+      strcpy(filtered_onos_message,"");
+
+      for (uint8_t counter0 = 0; counter0 <= rx_msg_lenght; counter0++) {
+        filtered_onos_message[counter0]=radio.DATA[counter0];
+      //  Serial.println(filtered_onos_message[counter0]);
+
+    //[S_001dw06001_#]
+        if (counter0<2){
+          continue;
+        }
+        if ( (filtered_onos_message[counter0-2]=='[')&&(filtered_onos_message[counter0-1]=='S')&&(filtered_onos_message[counter0]=='_')  ){//   
+          Serial.println("cmd start found-------------------------------");
+          onos_cmd_start_position=counter0-2;
+        }
+
+
+        if( (filtered_onos_message[counter0-2]=='_')&&(filtered_onos_message[counter0-1]=='#')&&(filtered_onos_message[counter0]==']')  ){//   
+          Serial.println("cmd end found-------------------------------");
+          onos_cmd_end_position=counter0-2;
+          break;// now the message has ended
+        }
+
+
+      }
+
+
+
+      if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+        Serial.println("onos cmd  found-------------------------------");
+        decodeOnosCmd(filtered_onos_message);
+
+        if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')||(strcmp(received_message_answer,"remote_#]")==0)){//if the message was ok...
+      //check if sender wanted an ACK
+          if (radio.ACKRequested()){
+            radio.sendACK();
+            Serial.println(" - ACK sent");
+          }
+
+        }
+        else{
+          Serial.println("error in message decode i will not send the ACK");
+        }
+
+
+
+      }
+      else{
+        strcpy(received_message_answer,"nocmd0_#]");
+        Serial.println("error in message nocmd0_#]");
+      }
+
+  
+
+
+     // Blink(LED, 40, 3); //blink LED 3 times, 40ms between blinks
+    
+
+    }
+
+
+    if(strcmp(received_message_answer,"remote_#]")==0){ //transmit the received data from the node to the serial port
+
+
+      for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+        Serial.print(filtered_onos_message[pointer]);
+
+        if (pointer<2){
+          continue;
+        }
+
+        if ((filtered_onos_message[pointer-2]=='_')&&(filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
+          break;
+        }
+
+      }   
+
+    }
+
+
+ 
+    radio.receiveDone(); //put radio in RX mode
+    Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
+
+  
+  }// END OF   if (radio_enabled==1){
+
+
+
+
+
+
+
 
 
  

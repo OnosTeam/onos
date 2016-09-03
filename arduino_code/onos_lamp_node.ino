@@ -37,7 +37,7 @@
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
 #define NETWORKID     100  //the same on all nodes that talk to each other
-#define NODEID        2  
+
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
@@ -72,9 +72,9 @@ char serial_number[13]="WLightSS0003";
 
 char node_fw[]="5.13";
 
-int this_node_address=2; //i start with 254
+int this_node_address=254; //i start with 254
 
-int old_address=2; 
+int old_address=254; 
 
 unsigned long get_address_timeout=0;
 
@@ -92,6 +92,7 @@ int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
 char received_message_sn[13]="";
 int received_message_address=0; //must be int..
+char received_serial_number[13];
 char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[28];
 char str_this_node_address[4];
@@ -133,6 +134,7 @@ void makeSyncMessage(){
 
 
 void getAddressFromGateway(){
+   Serial.println("getAddressFromGateway executed");
 
   //[S_001ga3.05ProminiS0001_#]
   makeSyncMessage();
@@ -142,7 +144,7 @@ void getAddressFromGateway(){
   syncMessage[6]='g'; //modify the message to get a address instead of just sync.
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
 
-  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),10,500)) {
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage))) {
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
     Serial.println("sent_get_address");
@@ -304,6 +306,45 @@ void decodeOnosCmd(const char *received_message){
     }
 
 
+    //[S_254sa123WLightSS0003_#]
+
+    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
+
+      received_message_value=(received_message[8]-48)*100+(received_message[9]-48)*10+(received_message[10]-48)*1;
+
+      received_serial_number[0]= received_message[11];
+      received_serial_number[1]= received_message[12];
+      received_serial_number[2]= received_message[13];
+      received_serial_number[3]= received_message[14];
+      received_serial_number[4]= received_message[15];
+      received_serial_number[5]= received_message[16]; 
+      received_serial_number[6]= received_message[17];
+      received_serial_number[7]= received_message[18];
+      received_serial_number[8]= received_message[19];
+      received_serial_number[9]= received_message[20];
+      received_serial_number[10]= received_message[21]; 
+      received_serial_number[11]= received_message[22];
+
+
+
+      if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
+        strcpy(received_message_answer,"er1_sn_#]"); 
+        return;
+      } 
+
+
+      if ((received_message_value<0)||(received_message_value>254)){ //status check
+        received_message_value=0;
+      //Serial.println(F("onos_cmd_value_error"));  
+        strcpy(received_message_answer,"er0_status_#]"); 
+        return;
+      }
+
+
+      this_node_address=received_message_value;
+      strcpy(received_message_answer,"ok");
+
+    }
 
     
 /*
@@ -362,7 +403,7 @@ void setup() {
   delay(100);
   
   // Initialize radio
-  radio.initialize(FREQUENCY,NODEID,NETWORKID);
+  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
   if (IS_RFM69HCW) {
     radio.setHighPower();    // Only for RFM69HCW & HW!
   }
@@ -378,41 +419,6 @@ void setup() {
 }
  
 void loop() {
-
-
-  if (old_address==254){// i have not the proper address yet..
-
-
-
-    if (old_address!=this_node_address){//the address has changed and i restart radio to use it
- 
-      radio.initialize(FREQUENCY,NODEID,this_node_address);
-      if (IS_RFM69HCW) {
-        radio.setHighPower();    // Only for RFM69HCW & HW!
-      }
-      radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-  
-      radio.encrypt(ENCRYPTKEY);
-      old_address=this_node_address;
-      get_address_timeout=millis();
-
-    }
-
-
-
-    if ((millis()-get_address_timeout)>500){ //every 500 ms
-   
-      get_address_timeout=millis();
-
-      getAddressFromGateway();  //ask the gateway for a proper address
-
-
-
-
-    }
-
-
-  }
 
 
   //check if something was received (could be an interrupt from the radio)
@@ -490,7 +496,51 @@ void loop() {
  
   radio.receiveDone(); //put radio in RX mode
   Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
-}
+
+
+
+
+
+  if (old_address==254){// i have not the proper address yet..
+
+
+
+    if (old_address!=this_node_address){//the address has changed and i restart radio to use it
+ 
+      radio.initialize(FREQUENCY,this_node_address,NETWORKID);
+      if (IS_RFM69HCW) {
+        radio.setHighPower();    // Only for RFM69HCW & HW!
+      }
+      radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
+  
+      radio.encrypt(ENCRYPTKEY);
+      old_address=this_node_address;
+      get_address_timeout=millis();
+
+    }
+
+
+    if ((millis()-get_address_timeout)>5000){ //every 5000 ms
+   
+      get_address_timeout=millis();
+
+      getAddressFromGateway();  //ask the gateway for a proper address
+
+
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
+}//END OF LOOP()
 
 void Blink(byte PIN, byte DELAY_MS, byte loops)
 {

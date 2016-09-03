@@ -247,7 +247,7 @@ I will use post instead that get message
   3 bytes with "_#]" to close the message 
   example:   [S_001ga3.05ProminiS0001_#]    
 
-  OnosCenter will answer with a : [S_123sa3.05ProminiS0001_#]  to tell the node to set its address to 123 for example
+  OnosCenter will then send a message with a : [S_254sa123ProminiS0001_#]  to tell the node to set its address to 123 for example
 
              
 
@@ -915,9 +915,11 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 41) To solve problem in the tx rx of the radio network this will be the flow:
-    The arduino gateway  will listen to the serial, if there is no messages there it will listen to the radio for incoming data(in Promiscuous mode)
+    The arduino gateway  will listen to the serial, if there is no messages there it will listen to the radio for incoming data(in Promiscuous mode???)
     if there is an incoming radio data it will try to decode it, if is it a valid data it will send the ack to the tranmitter
-    and then the data will be passed to the OnosCenter by serial port (with 6 retry).
+    and then the data will be passed to the OnosCenter by serial port (with 6 retry ,retry not implemented).
+    Note that in this way the nodes will not have the assurance that the data has been received from the OnosCenter..
+
 
 
     If there is an incoming data on the serial port the arduino gateway will decode it and if necessary the data will be sent to
@@ -989,7 +991,13 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 
-
+46) Lamp hardware, how to implement it? :
+   The enclosure will be the one from lithium led lamps
+   The lamp will have a photoresistor to detect the lumos of the room
+     It will have also a connector to update the onos firmware.
+   Each time the lamp turns on the micro will read a flag in the eprom
+     then it will turn on the lamp if the previous status is 0 ,then it will write the status in the eprom and send the status to onos.
+    
 
 
 
