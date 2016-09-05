@@ -77,6 +77,7 @@ int this_node_address=254; //i start with 254
 int old_address=254; 
 
 unsigned long get_address_timeout=0;
+unsigned long sync_timeout;
 
 #define rx_msg_lenght 31
 # define gateway_address 1
@@ -111,13 +112,38 @@ int freeRam ()
 
 
 
-void makeSyncMessage(){
+
+
+
+void composeSyncMessage(){
 
   //[S_001sy3.05ProminiS0001_#] 
+  int tmp_number=0;
+  strcpy(str_this_node_address,"");
 
-  str_this_node_address[0]=(this_node_address/100)+'0';
-  str_this_node_address[1]=(this_node_address/10)+'0';
-  str_this_node_address[2]=(this_node_address/1)+'0';
+  str_this_node_address[0]='0';
+  str_this_node_address[1]='0';
+  str_this_node_address[2]='0';
+  if (this_node_address>99){
+    str_this_node_address[0]=(this_node_address/100)+48;
+    tmp_number=this_node_address%100;
+    str_this_node_address[1]=(tmp_number/10)+48;
+    tmp_number=this_node_address%10; 
+    str_this_node_address[2]=tmp_number+48;
+
+  }
+
+  else if (this_node_address>9){
+    str_this_node_address[1]=(tmp_number/10)+48;
+    tmp_number=this_node_address%10; 
+    str_this_node_address[2]=tmp_number+48;
+
+  }
+  else{ 
+    str_this_node_address[2]=this_node_address+48;
+  }
+  
+
 
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
@@ -126,9 +152,40 @@ void makeSyncMessage(){
   strcat(syncMessage, serial_number);
   strcat(syncMessage, "_#]");
 
+/*
+  for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+    Serial.print(syncMessage[pointer]);
+    if (pointer<2){
+      continue;
+    }
+
+    if ((syncMessage[pointer-2]=='_')&&(syncMessage[pointer-1]=='#')&&(syncMessage[pointer]==']')  ) {//  
+        break;
+      }
+    }   
+    Serial.print('\n'); 
+
+*/
+
 }
 
 
+
+
+void sendSyncMessage(){
+
+  composeSyncMessage();
+
+
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage))) {
+    //target node Id, message as string or byte array, message length,retries, milliseconds before retry
+    //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
+    Serial.println("sent_sync_message");
+    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
+  }
+
+
+}
 
 
 
@@ -137,9 +194,7 @@ void getAddressFromGateway(){
    Serial.println("getAddressFromGateway executed");
 
   //[S_001ga3.05ProminiS0001_#]
-  makeSyncMessage();
-
-
+  composeSyncMessage();
 
   syncMessage[6]='g'; //modify the message to get a address instead of just sync.
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
@@ -310,7 +365,7 @@ void decodeOnosCmd(const char *received_message){
 
     else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
 
-      received_message_value=(received_message[8]-48)*100+(received_message[9]-48)*10+(received_message[10]-48)*1;
+      received_message_value=(received_message[8]-48)*100+(received_message[9]-48)*10+(received_message[10]-48);
 
       received_serial_number[0]= received_message[11];
       received_serial_number[1]= received_message[12];
@@ -343,6 +398,8 @@ void decodeOnosCmd(const char *received_message){
 
       this_node_address=received_message_value;
       strcpy(received_message_answer,"ok");
+      Serial.print("i will change radio address to:");
+      Serial.println(this_node_address);
 
     }
 
@@ -507,15 +564,15 @@ void loop() {
 
     if (old_address!=this_node_address){//the address has changed and i restart radio to use it
  
-      radio.initialize(FREQUENCY,this_node_address,NETWORKID);
-      if (IS_RFM69HCW) {
-        radio.setHighPower();    // Only for RFM69HCW & HW!
-      }
-      radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-  
-      radio.encrypt(ENCRYPTKEY);
+
+      radio.setAddress(this_node_address);
       old_address=this_node_address;
       get_address_timeout=millis();
+      old_address=this_node_address;
+      Serial.print("radio address changed to:");
+      Serial.println(this_node_address);
+      sendSyncMessage();
+
 
     }
 
@@ -532,9 +589,14 @@ void loop() {
 
   }
 
+  else if ((millis()-sync_timeout)>5000){ //every 5000 ms
+   
+    sync_timeout=millis();
+
+    sendSyncMessage();
 
 
-
+  }
 
 
 

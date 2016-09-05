@@ -1,5 +1,9 @@
 avvio di onos anche senza internet?  update_check...
 
+
+salvare indirizzi nodi su file json a parte...per non dover salvare tutte le config ogni volta..
+
+
 bug  no internet cpu > 85 %
 
 onos updater in onos.sh

@@ -1,4 +1,7 @@
 
+the zoneDict json is deleted sometimes..
+
+
 
 loop che dice sempre main webserver  e poi se resetto un nodo:
 timeout in receiving!!! [Errno 24] Too many open files                          

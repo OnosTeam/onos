@@ -29,6 +29,7 @@ global scenarioDict
 global object_dict
 global zoneDict
 global exit  #exit is on conf.py  f exit ==1 all the program stop and exit
+global hardware
 
 exit=0
 check_log_len_time=1
@@ -182,6 +183,7 @@ def compareText(a,b): #return true if a==b
 def sortZonesByOrderNumber():
   print "sortZonesByOrderNumber() executed"
   zone_list=[]
+  print "zoneDict"
   print zoneDict
   for a in range (0,len(zoneDict.keys())):
     for b in zoneDict.keys():
@@ -926,8 +928,11 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
   except Exception, e  : # the webobject does not exist
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print(exc_type, fname, exc_tb.tb_lineno)
     print "the webobject:"+objName+" doesn't exist,or others error happened"+" e:"+str(e.args)
-    errorQueue.put("the webobject:"+objName+" doesn't exist,or others error happened"+" e:"+str(e.args))
+    errorQueue.put("the webobject:"+objName+" doesn't exist,or others error happened"+" e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
     return(-1)
 
   return(1)
@@ -1462,6 +1467,11 @@ def updateDir():
   return
 
 
+
+
+
+
+
 def createNewNode(node_sn,node_address,node_fw):
   msg=""
   if node_sn in nodeDict.keys():
@@ -1477,10 +1487,9 @@ def createNewNode(node_sn,node_address,node_fw):
     if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
       print "added node_hw from url :"+hwType
       print "obj_type_to_add_from_node="+hwType
-      hardware_node_model=hardwareModelDict[hwType]
 
       if((len(node_sn)>0)&((node_sn)!=" ")): 
-          
+        hardware_node_model=hardwareModelDict[hwType]  
         nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
         #nodeDict[node_sn].updateLastNodeSync(time.time())
         updateNodeAddress(node_sn,node_address)  
@@ -1529,6 +1538,14 @@ def createNewNode(node_sn,node_address,node_fw):
           print "create a new zone"+node_sn
           #print zoneDict
           updateOneRoom(node_sn) 
+
+
+    else:
+
+      print "error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict "
+      errorQueue.put("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict" )  
+
+
 
   return(msg)
 
@@ -1581,71 +1598,6 @@ createNewNode(router_sn,"0",router_hardware_fw_version) #make the router node
 
 
 
-
-
-
-def transform_object_to_dict(object_dictionary):
-
-
-  obj_tmp_dict={}
-
-  for b in object_dictionary.keys():
-    a=object_dictionary[b]   #bug  return ascii and not unicode?
-    name=a.getName()
-    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
-  return (obj_tmp_dict)  
-
-
-def transform_object_to_dict_to_backup(object_dictionary):
-
-
-  obj_tmp_dict={}
-
-  for b in object_dictionary.keys():
-    a=object_dictionary[b]   #bug  return ascii and not unicode?
-    name=a.getName()
-    obj_tmp_dict[name]=a.getObjectDictionary()
-  return (obj_tmp_dict)  
-
-
-
-def updateJson(object_dictionary,roomDictionary,scenarioDictionary):  # save the current config to a json file named data.json
-
-  print "updateJson executed"
-
-#json doesn't support saving objects  ..so i save all the variables of each objects
-#to get back the pin of the object you have to write:
-#  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
-  obj_tmp_dict=transform_object_to_dict_to_backup(object_dictionary)
-
-
-  node_tmp_Dict={}
-  for a in nodeDict:
-    sn=a.getNodeSerialNumber() 
-    node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":a.getNodeHwModel(),u"nodeAddress":a.getNodeAddress()}
-    # note that the i/o modes for the node pins will be saved in the relative webobjects .
-    # the pins not used by a webobject will be configured as output and cleared to 0 
-        
-
-
-
-  #print object_dictionary
-  #print roomDictionary
-  dictionary_group={u"objectDictionary":obj_tmp_dict,u"roomDictionary":roomDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
-  #to add a new dictionary just add it in dictionary_group
-
-  #print dictionary_group
-  dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
-  file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
-  file_to_save.write(dictionary_group_json)
-  file_to_save.close()
-
-  conf_option={u"online_server_enable":online_server_enable,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update}
-  conf_option_json=json.dumps(conf_option, indent=2,sort_keys=True) #make the json structure
-  file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
-  file_to_save2.write(conf_option_json)
-  file_to_save2.close()
-  #banana to load
 
 
 
@@ -3078,7 +3030,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
                 
   
-            if self.path.endswith("gui/new_user.py"): # render the scenario list 
+            if self.path.endswith("gui/new_user.py"): # render  
               namespace={}
               message=""
               cgi_name="gui/new_user.py"       
@@ -3337,7 +3289,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if self.path.endswith("setup/save_configuration/"): #     
               print "json saved"
-              updateJson( object_dict,zoneDict,scenarioDict)
+              updateJson()
                   
               try:              
                 b1 = open('setup/select_config_menu.html','r')    
@@ -3365,8 +3317,10 @@ class MyHandler(BaseHTTPRequestHandler):
             if self.path.endswith("setup/restore_default_conf/"): #     
               print "JSON RESTORED TO DEFAULT"
               #os.system('cp -f config_files/default.json config_files/data.json')
-              with lock_bash_cmd:
-                subprocess.check_output('cp -f config_files/default.json config_files/data.json', shell=True,close_fds=True)    
+             # with lock_bash_cmd:               
+             #   subprocess.check_output('cp -f config_files/default.json config_files/data.json', shell=True,close_fds=True)    
+              shutil.copyfile("config_files/default.json", "config_files/data.json")
+
               try:              
                 b1 = open('setup/restored_configuration.html','r')    
                 web_page=b1.read()    
@@ -3823,10 +3777,15 @@ class MyHandler(BaseHTTPRequestHandler):
                   except:
                     os.mkdir(baseRoomPath+new_name)  
 
-                  with lock_bash_cmd:
+                  #with lock_bash_cmd:
                     #subprocess.check_output("mkdir "+baseRoomPath+new_name, shell=True,close_fds=True)  
-                    subprocess.check_output("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
+                  #  subprocess.check_output("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
+                  
                     #subprocess.check_output("chmod 777 "+new_name, shell=True,close_fds=True)  
+
+                  with open(baseRoomPath+new_name, 'w') as f:
+                    f.write(getRoomHtml(new_name,object_dict,"",zoneDict))
+
                   os.chmod(new_name, 0o777)
                   updateOneRoom(new_name)       
                   print "create a new room"+new_name 
@@ -3852,9 +3811,14 @@ class MyHandler(BaseHTTPRequestHandler):
                     
                     #os.system("rm "+baseRoomPath+a+"/*")
                     #os.system("rmdir "+baseRoomPath+a)
-                    with lock_bash_cmd:
-                      subprocess.check_output("rm "+baseRoomPath+a+"/*", shell=True,close_fds=True)  
-                      subprocess.check_output("rmdir "+baseRoomPath+a, shell=True,close_fds=True)  
+                    try:
+                      shutil.rmtree(baseRoomPath+a)
+                    except:
+                      print "error deleting folder:"+baseRoomPath+a 
+                      errorQueue.put("error deleting folder:"+baseRoomPath+a+" e:"+str(e.args)  )    
+                    #with lock_bash_cmd:
+                    #  subprocess.check_output("rm "+baseRoomPath+a+"/*", shell=True,close_fds=True)  
+                    #  subprocess.check_output("rmdir "+baseRoomPath+a, shell=True,close_fds=True)  
                     data_to_update=1
   
 
@@ -3873,7 +3837,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 pass
                 print "error29 in send_header "+" e:"+str(e.args) 
                 errorQueue.put("error29 in send_header "+" e:"+str(e.args)  )      
-              #updateJson( object_dict,zoneDict)
+              #updateJson()
               updateDir()     
      
 
@@ -3968,7 +3932,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 pass
                 print "error31 in send_header "+" e:"+str(e.args)  
                 errorQueue.put( "error31 in send_header "+" e:"+str(e.args))
-              #updateJson( object_dict,zoneDict)      
+              #updateJson()      
 
             if "current_room" in postvars:#if the current location is /setup/AnyRoomName  because "current_room"  is a post of that page
               currentRoom=self.clear_PostData(postvars["current_room"][0])
@@ -4037,7 +4001,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 pass
                 print "error32 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error32 in send_header "+" e:"+str(e.args) )
-              #updateJson( object_dict,zoneDict)
+              #updateJson()
               #updateOneRoom(currentRoom)        
               
 
@@ -4066,7 +4030,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 pass
                 print "error33 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error33 in send_header "+" e:"+str(e.args)  )
-              #updateJson( object_dict,zoneDict)
+              #updateJson()
 
 
 
@@ -4136,7 +4100,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 pass
                 print "error34 in send_header "+" e:"+str(e.args)  
                 errorQueue.put( "error34 in send_header "+" e:"+str(e.args))
-              #updateJson( object_dict,zoneDict)
+              #updateJson()
               updateDir()
                 
 
@@ -4723,7 +4687,7 @@ class MyHandler(BaseHTTPRequestHandler):
   
 
             if (data_to_update==100):
-              #updateJson( object_dict,zoneDict)
+              #updateJson()
               updateDir()
               data_to_update=0   
              
@@ -5359,12 +5323,12 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 def executeQueueFunction(dataExchanged):
   if ((dataExchanged["cmd"])=="setNodePin"):
     try: 
-      node_sn=dataExchanged["node_sn"]
+      node_serial_number=dataExchanged["nodeSn"]
       pin_number=dataExchanged["pinNumber"]
       pin_status=dataExchanged["status_to_set"]
       write_hw_enable=dataExchanged["write_to_hw"]
       mail_list_to_report_to=dataExchanged["mail_report_list"]
-      setNodePin(node_sn,pin_number,pin_status,write_hw_enable)
+      setNodePin(node_serial_number,pin_number,pin_status,write_hw_enable)
     except Exception, e :
       print "error in the setNodePin of onosBusThread "+" e:"+str(e.args)
       errorQueue.put("error in the setNodePin of onosBusThread "+" e:"+str(e.args))
@@ -5409,17 +5373,32 @@ def executeQueueFunction(dataExchanged):
   if (dataExchanged["cmd"]=="createNewNode"):
 
     try:
-      node_sn=dataExchanged["nodeSn"]
-      node_address=dataExchanged["nodeAdress"]
+      node_serial_number=dataExchanged["nodeSn"]
+      node_address=dataExchanged["nodeAddress"]
       node_fw=dataExchanged["nodeFw"]
-      msg=createNewNode(node_sn,node_address,node_fw)+"_#]" 
+      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
 
     except Exception, e:
-      print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_sn)+" e:"+str(e.args)
-      errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_sn)+" e:"+str(e.args))
+      print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)+" e:"+str(e.args)
+      errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)+" e:"+str(e.args))
 
     
-      
+  if (dataExchanged["cmd"]=="sendNewAddressToNode"):
+
+    try:
+      node_serial_number=dataExchanged["nodeSn"]
+      node_address=dataExchanged["nodeAddress"]
+      node_fw=dataExchanged["nodeFw"]
+
+      #   [S_254sa123WLightSS0003_#]
+
+      result=hardware.setAddressToNode(node_serial_number,node_address) 
+      if result==1:
+        print "i save the new address in the config memory"
+
+    except Exception, e:
+      print "error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
+      errorQueue.put("error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args))
      
 
 
@@ -5747,7 +5726,7 @@ def main():
 
 
     except KeyboardInterrupt:
-         #updateJson(object_dict,zoneDict)
+         #updateJson()
         print '^C received, shutting down server'
 
         hardware.close()

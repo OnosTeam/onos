@@ -295,47 +295,58 @@ class SerialPort:
 
 
 
-
            
-            if ( (buf.find("onos_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+           
+            if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
  
-              cmd_start=buf.find("onos_")
+              cmd_start=buf.find("[S_")
               cmd_end=buf.find("_#]")
               cmd=buf[cmd_start:cmd_end+3]
 
 
-              #onos_s3.05v1sProminiS0001f001_#]
+              if( (cmd[6]=="s")&(cmd[7]=="y") ): # [S_001sy3.05ProminiS0001_#] 
+                print "serial cmd="+cmd
+
+                try:
+                  serial_number=numeric_serial_number=cmd[12:24]   
+                  node_fw=cmd[8:12]
+                  node_address=cmd[3:6]
+                  if node_address=="254":  #the node is looking for a free address
+                    priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+
+                except Exception, e  :               
+                  print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
+                  errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
+
+                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
 
 
 
-              if (cmd[5]=="s"): #sync message
+
+              if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001_#]
                 print "serial cmd="+cmd
 
                 try:
                   numeric_serial_number=cmd[13:25]
 
-                  full_sn=numeric_serial_number=cmd[13:25]     # nodeNumericSerialTofullSerial[numeric_serial_number]
+                  serial_number=numeric_serial_number=cmd[12:24]   
 
-                  node_fw=cmd[6:10]
-                  node_address=cmd[26:29]
-                  message_to_send="onos_ssyncv1s"+numeric_serial_number+"f"+node_address+"_#]"
+                  node_fw=cmd[8:12]
+                  node_address=cmd[3:6]
 
                   if node_address=="254":  #the node is looking for a free address
-                    node_address=getNextFreeAdress(full_sn)
-                    message_to_send="onos_g"+node_address+"v1s"+numeric_serial_number+"f"+node_address+"_#]"
+                    priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
 
+                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
 
-                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":full_sn,"nodeAdress":node_address,"nodeFw":node_fw}) 
+
 
                 except Exception, e  :               
                   print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
                   errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
 
 
-              #onos_g3.05v1s0001f001_#]
-              if (cmd[5]=="g"):#to implement
-                print "to implement"
 
 
 

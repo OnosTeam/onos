@@ -45,8 +45,12 @@ hardware_labels=hardwareModelDict.keys()
 
 #router_sn is in globalVar.py
 
-hardware=router_handler.RouterHandler(router_hardware,router_sn)
 
+try:
+  hardware=router_handler.RouterHandler(router_hardware,router_sn)
+except Exception, e  :               
+  print "error in the init of class router_handler  e:"+str(e.args)  
+  errorQueue.put("error in the init of class router_handler  e:"+str(e.args) )
 
 
 print "router hardware selected is"+router_hardware_type
@@ -112,14 +116,21 @@ def readDictionaryFromSavedFile(key):
     readed_data = json_file.read()
     json_file.close() 
     readed_dict=json.loads(readed_data)
-  except:
+    value=readed_dict[key]
+  except Exception, e: 
+    print "error in readDictionaryFromSavedFile with key: "+str(key)+" e:"+str(e.args)
+    errorQueue.put( "error in readDictionaryFromSavedFile with key: "+str(key)+" e:"+str(e.args)) 
     print "can't import data.json file , i will load the recovery one "
     readed_data=recoverydata_json  # is in globalVar.py
+    readed_dict=json.loads(readed_data)
+    value=readed_dict[key]
+
+  return(value)
 
 
-  readed_dict=json.loads(readed_data)
-  
-  return(readed_dict[key])
+
+
+
 
 def readConfigurationsFromSavedFile(key):
   """
@@ -132,13 +143,16 @@ def readConfigurationsFromSavedFile(key):
     cfg_json_file = codecs.open(base_cfg_path+"config_files/cfg.json",'r',"utf8")
     cfg_readed_data = cfg_json_file.read()
     cfg_json_file.close() 
-  except:
+    data=json.loads(cfg_readed_data)
+    value=data[key] 
+  except Exception, e: 
+    print "error in readConfigurationsFromSavedFile with key: "+str(key)+" e:"+str(e.args)
+    errorQueue.put( "error in readConfigurationsFromSavedFile with key: "+str(key)+" e:"+str(e.args))  
     print "can't import cfg.json file , i will load the recovery one "
     cfg_readed_data=recoverycfg_json # is in globalVar.py
-
-  data=json.loads(cfg_readed_data)
-  
-  return(data[key])
+    data=json.loads(cfg_readed_data)
+    value=data[key]
+  return(value)
 
 
 
@@ -155,6 +169,7 @@ def importConfig():
   global zoneDict
   global nodeDicts
   global scenarioDict
+  global scenarios_enable
   global accept_only_from_white_list  
   global enable_mail_service
   global enable_mail_output_service
@@ -176,8 +191,9 @@ def importConfig():
   online_usersDict.update(readConfigurationsFromSavedFile(u"online_usersDict"))  
   timezone=readConfigurationsFromSavedFile(u"timezone")  
   enable_onos_auto_update=readConfigurationsFromSavedFile(u"enable_onos_auto_update")  
+  scenarios_enable=readConfigurationsFromSavedFile(u"scenarios_enable") 
 
-  zoneDict.update(readDictionaryFromSavedFile(u"roomDictionary"))
+  zoneDict.update(readDictionaryFromSavedFile(u"zoneDictionary"))
   scenarioDict.update(readDictionaryFromSavedFile(u"scenarioDictionary"))
   tmp_obj_dict=readDictionaryFromSavedFile(u"objectDictionary")
 

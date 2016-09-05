@@ -1,17 +1,23 @@
 {
   "accept_only_from_white_list": 0, 
+  "enable_mail_output_service": 1, 
   "enable_mail_service": 1, 
-  "enable_mail_output_service": 1,
   "enable_onos_auto_update": "yes", 
   "logTimeout": 15, 
-  "login_required": 0, 
+  "login_required": 1, 
   "mail_whiteList": [
     "elettronicaopensource@gmail.com", 
     "electronicflame@gmail.com", 
     "marco_righe@yahoo.it"
   ], 
-  "online_server_enable": 0, 
+  "online_server_enable": 1, 
   "online_usersDict": {
+    "RouterGA0000": {
+      "mail_control_password": "1234", 
+      "priority": 0, 
+      "pw": "1234", 
+      "user_mail": "elettronicaopensource@gmail.com"
+    }, 
     "marco": {
       "mail_control_password": "onosm", 
       "priority": 0, 
@@ -19,5 +25,6 @@
       "user_mail": "elettronicaopensource@gmail.com"
     }
   }, 
+  "scenarios_enable": 0, 
   "timezone": "CET-1CEST,M3.5.0,M10.5.0/3"
 }

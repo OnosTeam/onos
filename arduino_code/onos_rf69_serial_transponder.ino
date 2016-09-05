@@ -135,7 +135,9 @@ char received_message_answer[rx_msg_lenght+6]="er00_#]";
 //char received_message_sn[13]="";
 int received_message_address=0; //must be int..
 char filtered_onos_message[rx_msg_lenght+3];
+char syncMessage[28];
 char data_from_serial [rx_msg_lenght+5];
+char str_this_node_address[4];
 
 uint8_t counter;
 boolean enable_answer_back=0;
@@ -153,28 +155,50 @@ int freeRam ()
 
 void makeSyncMessage(){
 
-  // onos_s3.05v1sProminiS0001f001_#]
-  char syncMessage[rx_msg_lenght+3];
+  //[S_001sy3.05ProminiS0001_#] 
 
-  char str_this_node_address[4];
+  
+  strcpy(str_this_node_address,"");
+  int tmp_number=0;
+  strcpy(str_this_node_address,"");
 
-  str_this_node_address[0]=(this_node_address/100)+'0';
-  str_this_node_address[1]=(this_node_address/10)+'0';
-  str_this_node_address[2]=(this_node_address/1)+'0';
+  str_this_node_address[0]='0';
+  str_this_node_address[1]='0';
+  str_this_node_address[2]='0';
+  if (this_node_address>99){
+    str_this_node_address[0]=(this_node_address/100)+48;
+    tmp_number=this_node_address%100;
+    str_this_node_address[1]=(tmp_number/10)+48;
+    tmp_number=this_node_address%10; 
+    str_this_node_address[2]=tmp_number+48;
 
-  strcpy(syncMessage, "onos_s ");
-  strcat(syncMessage, node_fw);
-  strcat(syncMessage, "v1s");
-  strcat(syncMessage, serial_number);
-  strcat(syncMessage, "f");
+  }
+
+  else if (this_node_address>9){
+    str_this_node_address[1]=(tmp_number/10)+48;
+    tmp_number=this_node_address%10; 
+    str_this_node_address[2]=tmp_number+48;
+
+  }
+  else{ 
+    str_this_node_address[2]=this_node_address+48;
+  }
+
+
+  strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
-
+  strcat(syncMessage, "sy");
+  strcat(syncMessage, node_fw);
+  strcat(syncMessage, serial_number);
   strcat(syncMessage, "_#]");
 
   for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
     Serial.print(syncMessage[pointer]);
+    if (pointer<2){
+      continue;
+    }
 
-    if ((syncMessage[pointer-1]=='#')&&(syncMessage[pointer]==']')  ) {//  
+    if ((syncMessage[pointer-2]=='_')&&(syncMessage[pointer-1]=='#')&&(syncMessage[pointer]==']')  ) {//  
         break;
       }
     }   
@@ -547,7 +571,7 @@ void loop()
    
 
     if (counter0>rx_msg_lenght){  //prevent overflow
-      Serial.println(F("array_overflow---------------------------------"));
+      Serial.println(F("array_overflow prevented---"));
       Serial.println(counter0);
       Serial.println(F("end"));
       counter0=0;
@@ -562,13 +586,13 @@ void loop()
     }
 
     if ( (data_from_serial[counter0-2]=='[')&&(data_from_serial[counter0-1]=='S')&&(data_from_serial[counter0]=='_')  ){//   
-       Serial.println("cmd start found-------------------------------");
+      // Serial.println("cmd start found-------------------------------");
        onos_cmd_start_position=counter0-2;
     }
 
 
     if( (data_from_serial[counter0-2]=='_')&&(data_from_serial[counter0-1]=='#')&&(data_from_serial[counter0]==']')  ){//   
-       Serial.println("cmd end found-------------------------------");
+    //   Serial.println("cmd end found-------------------------------");
       onos_cmd_end_position=counter0-2;
     }
 
@@ -598,8 +622,8 @@ void loop()
     strcpy(filtered_onos_message,"");
 
   
-    Serial.println(onos_cmd_start_position);
-    Serial.println(onos_cmd_end_position);
+ //   Serial.println(onos_cmd_start_position);
+ //   Serial.println(onos_cmd_end_position);
 
     for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
       filtered_onos_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
@@ -718,8 +742,12 @@ void loop()
     if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
       //strcat(received_message_answer,filtered_onos_message);
-      Serial.print("ok");
+      Serial.print("[S_ok");
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+ 
+        if (pointer<3){//to skip the "[S_"  because I have just sent it..
+          continue;
+        }
         Serial.print(filtered_onos_message[pointer]);
 
         if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
@@ -729,7 +757,7 @@ void loop()
       Serial.print('\n'); 
       sync_time=millis();
       enable_answer_back=0;
-      // the answer will be : "ok"+receivedmessage for example: okonos_d05v001sProminiS0001f001_#]
+      // the answer will be : [S_ok+ message received
 
     }
 
@@ -765,10 +793,12 @@ void loop()
       // Wait for a message addressed to us from the client
     if (radio.receiveDone()){
     //print message received to serial
+
+/*
       Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
       Serial.print((char*)radio.DATA);
       Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
-
+*/
  
     //check if received message contains Hello World
 
@@ -785,13 +815,13 @@ void loop()
           continue;
         }
         if ( (filtered_onos_message[counter0-2]=='[')&&(filtered_onos_message[counter0-1]=='S')&&(filtered_onos_message[counter0]=='_')  ){//   
-          Serial.println("cmd start found-------------------------------");
+         // Serial.println("cmd start found-------------------------------");
           onos_cmd_start_position=counter0-2;
         }
 
 
         if( (filtered_onos_message[counter0-2]=='_')&&(filtered_onos_message[counter0-1]=='#')&&(filtered_onos_message[counter0]==']')  ){//   
-          Serial.println("cmd end found-------------------------------");
+        //  Serial.println("cmd end found-------------------------------");
           onos_cmd_end_position=counter0-2;
           break;// now the message has ended
         }
@@ -802,14 +832,14 @@ void loop()
 
 
       if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
-        Serial.println("onos cmd  found-------------------------------");
+    //    Serial.println("onos cmd  found-------------------------------");
         decodeOnosCmd(filtered_onos_message);
 
         if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')||(strcmp(received_message_answer,"remote_#]")==0)){//if the message was ok...
       //check if sender wanted an ACK
           if (radio.ACKRequested()){
             radio.sendACK();
-            Serial.println(" - ACK sent");
+  //          Serial.println(" - ACK sent");
           }
 
         }
@@ -871,7 +901,7 @@ void loop()
  
 
 
-  if ( (millis()-sync_time)>12000){   //each 120 sec time contact the onosCenter and update the current ip address
+  if ( (millis()-sync_time)>12000){   //each 4 sec time contact the onosCenter and update the current ip address
     sync_time=millis();
   // onos_s3.05v1sProminiS0001f001_#]
 

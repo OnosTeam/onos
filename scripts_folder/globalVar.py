@@ -14,6 +14,8 @@ from signal import signal, SIGPIPE, SIG_DFL  # to prevent [Errno 32] Broken pipe
 import unicodedata
 import os,sys,datetime,subprocess
 from os import curdir, sep
+import shutil 
+
 import BaseHTTPServer
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from time import gmtime, strftime
@@ -136,7 +138,7 @@ mail_retry_timeout=120  #seconds between retry after error in sending mail
 
 
 enable_onos_auto_update="yes" # possible value: "yes","no","ask_me"  # banana ask_me not implemented yet
-scenarios_enable=1  # tell onos if it have to check the scenarios or not
+scenarios_enable=0  # tell onos if it have to check the scenarios or not
 online_server_enable=1  #enable the remote online server to controll onos from internet without opening the router ports
 #will be overwritten by /scripts_folder/config_files/cf.json
 
@@ -158,7 +160,7 @@ onos_online_site_url="http://www.myonos.com/onos/"  #remote online server url (w
 internet_connection=0  #tell onos if there is internet connection, do not change it..onos will change it if there is internet
 
 
-queryToNodeQueue=Queue.Queue()
+queryToNetworkNodeQueue=Queue.Queue()
 node_query_threads_executing=0# 
 max_number_of_node_query_threads_executing=3 #tells onos the maximun number of thread it can executes to handle node queries
 
@@ -218,6 +220,7 @@ recoverycfg_json='''
       "user_mail": "elettronicaopensource@gmail.com"
     }
   }, 
+  "scenarios_enable": 0, 
   "timezone": "CET-1CEST,M3.5.0,M10.5.0/3"
 }
 
@@ -1371,7 +1374,7 @@ recoverydata_json=''' {
       "type": "b"
     }
   }, 
-  "roomDictionary": {
+  "zoneDictionary": {
     "Casa": {
       "group": [], 
       "hidden": 0, 
@@ -1610,7 +1613,7 @@ recoverydata_json=''' {
 
 nodeDict={}
 nodeNumericSerialTofullSerial={} #contain as key the numeric part of the serial number and as content the full serialnumber 
-next_node_free_adress_list=[1,2]   #list of free node adresses from 2 to 254
+next_node_free_address_list=[1,2]   #list of free node addresses from 2 to 254
 usersDict={}
 usersDict["onos_mail_guest"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["web_interface"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
@@ -1661,7 +1664,9 @@ hardwareModelDict["ProminiA"]["pin_mode"]["servo_output"]={"servo":[(5)]}
 hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":90}
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15)],"wifi":[(16,17)]}
 
-
+hardwareModelDict["WLightSS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":360}
+hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
+hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
 # note that in the format ["analog_output"]={"a_out":[(11),(10)]}  
@@ -1735,6 +1740,75 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 
 
 
+def transform_object_to_dict(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
+  return (obj_tmp_dict)  
+
+
+def transform_object_to_dict_to_backup(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]=a.getObjectDictionary()
+  return (obj_tmp_dict)  
+
+
+
+def updateJson():  # save the current config to a json file named data.json
+
+  print "updateJson executed"
+
+#json doesn't support saving objects  ..so i save all the variables of each objects
+#to get back the pin of the object you have to write:
+#  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
+  obj_tmp_dict=transform_object_to_dict_to_backup(object_dict)
+
+
+  node_tmp_Dict={}
+  for a in nodeDict.keys():
+    try: 
+      sn=nodeDict[a].getNodeSerialNumber() 
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDict[a].getNodeHwModel(),u"nodeAddress":nodeDict[a].getNodeAddress()}
+    except:
+      print "error in updateJson, with node:"+str(a)
+    # note that the i/o modes for the node pins will be saved in the relative webobjects .
+    # the pins not used by a webobject will be configured as output and cleared to 0 
+        
+
+
+
+  #print object_dictionary
+  #print roomDictionary
+  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDict,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDict}  #combined dictionary
+  #to add a new dictionary just add it in dictionary_group
+
+  #print dictionary_group
+  #note base_cfg_path is in the globalVar.py 
+  dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
+  file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+  file_to_save.write(dictionary_group_json)
+  file_to_save.close()
+
+  conf_option={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
+  conf_option_json=json.dumps(conf_option, indent=2,sort_keys=True) #make the json structure
+  file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+  file_to_save2.write(conf_option_json)
+  file_to_save2.close()
+  #banana to load
+
+
+
 
 
 def updateNodeAddress(node_sn0,address):
@@ -1757,12 +1831,17 @@ def updateNodeAddress(node_sn0,address):
 
   try: #if (node_sn0 in nodeDict.keys()):
 
-    
+    if len(address)==3:  #if is a radio node
+      if address not in next_node_free_address_list: 
+        next_node_free_address_list.append(address)   
+
+ 
     nodeDict[node_sn0].updateLastNodeSync(time.time())
 
     if (nodeDict[node_sn0].getNodeAddress())!=address:
       print "node "+node_sn0+" address changed to "+address
       nodeDict[node_sn0].setNodeAddress(address)
+      updateJson() #save all the new data
 
       
     else:
@@ -1776,29 +1855,39 @@ def updateNodeAddress(node_sn0,address):
   return()
 
 
-def getNextFreeAdress(node_sn0):# get the next free address 
+def getNextFreeAddress(node_sn0):# get the next free address 
   """
   | Given a node serialnumber this function will return the first free address to assign to the node. 
   | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
   | Used only for the radio nodes since the ethernet nodes 
   """
+
+  print "getNextFreeAddress executed"
+  print next_node_free_address_list
+
   for number in range(2,254):
-    if number not in next_node_free_adress_list:# if the address is not used then assign it
-      next_node_free_adress_list.append(number)
-      updateNodeAddress(node_sn0,number)
+    if number not in next_node_free_address_list:# if the address is not used then assign it
+     # next_node_free_address_list.append(number)
+     # updateNodeAddress(node_sn0,number)
       print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
-      return(str(number))
+      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
+      str_address=str(number)
+      while (len(str_address)<3):
+        str_address="0"+str_address
+      return(str_address)
 
-    for node in nodeDict.keys():
-      address=nodeDict[node].getNodeAddress()
-      if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
-        updateNodeAddress(node_sn0,address) 
-        updateNodeAddress(node,"reassigned")
-        errorQueue.put( "I had finished all the free adresses so I recycled a not used one") 
-        return(address)
+  for node in nodeDict.keys():
+    address=nodeDict[node].getNodeAddress()
+    if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
+        #updateNodeAddress(node_sn0,address) 
+      updateNodeAddress(node,"reassigned")
+      print( "I had finished all the free addresses so I recycled a not used one") 
+      errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
+      return(address)
 
-    errorQueue.put( "I had finished all the free adresses i'm sorry but you have to disconnect one node to connect another one")  
-    return(254)
+    print "I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one"
+    errorQueue.put( "I had finished all the free addresses i'm sorry but you have to disconnect one node to connect another one")  
+    return("254")
 
 
 

@@ -268,7 +268,7 @@ class RouterHandler:
 
               #priority=99   usersDict["onos_node"]["priority"]               
               priority=99   #99 will allow the x but will not increase the object priority       
-              priorityCmdQueue.put( {"cmd":"setNodePin","node_sn":self.router_sn,"pinNumber":int(pin),"status_to_set":int(current_state),"write_to_hw":0,"user":"onos_node","priority":priority,"mail_report_list":[] } )
+              priorityCmdQueue.put( {"cmd":"setNodePin","nodeSn":self.router_sn,"pinNumber":int(pin),"status_to_set":int(current_state),"write_to_hw":0,"user":"onos_node","priority":priority,"mail_report_list":[] } )
 
               
 
@@ -325,7 +325,7 @@ class RouterHandler:
   
         query=base_query+'''onos_r'''+pin0+pin1+'''v'''+str(status_to_set)+'''s'''+node_serial_number+"f"+node_address+'''_#]'''
 
-      if (out_type=="digital_output"):
+      if (out_type=="digital_output"):#[S_001dw06001_#]
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -334,7 +334,7 @@ class RouterHandler:
           pin='0'+pin
 
         #onos_d07v001s0001_#]
-        query=base_query+'''onos_d'''+pin+'''v'''+'''00'''+str(status_to_set)+'''s'''+node_serial_number+"f"+node_address+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+'''_#]'''
 
       if (out_type=="servo_output"):
 
@@ -370,7 +370,7 @@ class RouterHandler:
 
 
 
-      if  (node_address=="001"):#  arduino serial node
+      if  (len(node_address)==len("001")):#  arduino serial node or a node that communicate by radio serial gateway
         print "the node is serial"
         return(query)
 
@@ -378,7 +378,7 @@ class RouterHandler:
 
 
      
-      queryToNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
+      queryToNetworkNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
 
       with lock1_current_node_handler_list:
         print "lock1a from router_handler"+node_serial_number
@@ -394,7 +394,7 @@ class RouterHandler:
         #handle_new_query_to_remote_node(node_serial_number,address,query,objName,status_to_set,user,priority,mail_report_list)
 
         if (node_query_threads_executing<max_number_of_node_query_threads_executing): # there are less than x node query thread running
-          tr_handle_new_query_to_remote_node = threading.Thread(target=handle_new_query_to_remote_node_thread)
+          tr_handle_new_query_to_remote_node = threading.Thread(target=handle_new_query_to_network_node_thread)
           tr_handle_new_query_to_remote_node.daemon = True  #make the thread a daemon thread
           tr_handle_new_query_to_remote_node.start()   
         else:
@@ -404,20 +404,28 @@ class RouterHandler:
       else:#there is already a query thread running for this node  
         print "there is already a query thread running for this node :"+node_serial_number 
 
-      return() 
+      return(query) 
+
+
+    def setAddressToNode(self,node_serial_number,node_address):
+      new_address=getNextFreeAddress(node_serial_number)
+      print "new address for the node:"+str(new_address)
+      msg="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"
+      result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
+      if result ==1:
+        int_address=int(new_address)
+        if int_address not in next_node_free_address_list:
+          next_node_free_address_list.append(int_address)
+      return(result)
 
 
 
 
+    def writeRawMsgToNode(self,node_serial_number,node_address,msg):
+      result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
+      return(result)
 
-
-
-
-
-
-
-
-
+    
 
     def outputWrite(self,node_serial_number,pinList,statusList,node_obj,objName,previous_status,statusToSetWebObject,output_type,user,priority,mail_report_list):
       
@@ -522,7 +530,7 @@ class RouterHandler:
         
 
 
-      if (node_address=="001"): #a local arduino selected   not implemented yet 
+      if (len(node_address)==len("001")): #a local arduino selected or a node with radio ,that uses the serial gateway
         print "i write to serial arduino node"
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
 
@@ -532,82 +540,37 @@ class RouterHandler:
           errorQueue.put("error no serial cable")  
           return(-1)
 
-        if (output_type=="sr_relay"):
-          if (len(pinList)==2):
-            query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+
+        else:
+
+
+          if (output_type=="sr_relay"):
+            if (len(pinList)!=2):
+              print "error number of pins !=2"
+              errorQueue.put("error number of pins !=2  in router_handler" ) 
+              return(-1)
+
+
+          query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+          print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end"  
+          result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
+          if result==1:  #if the query was accepted from the radio/serial node
+            
+            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
+            updateNodeAddress(node_serial_number,node_address)#since onos was able to talk to the node I update the LastNodeSync
+
+
+
+          return(result)
 
 
 
 
 
-            for m in range(0,8):   #retry n times to get the answer from node
-              data=self.serial_communication.status.write(query)
-              time.sleep(0.01) 
-              if data.find("ok"+query)!=-1:
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
-                updateNodeAddress(node_serial_number,node_address)#since onos was able to talk to the node I update the LastNodeSync
-                return(1) 
-              print "answer received from serial port is wrong:"+data
-              time.sleep(0.1*m) 
-
-             
-
-            return(-1)
-          else:
-            print "error number of pins !=2"
-            errorQueue.put("error number of pins !=2" ) 
-            return(-1)
-
-        i=0 
-        while i <len(pinList) : 
-          #print "pinnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"+str(i)
-          pinNumber=pinList[i]
-          tmp_status_to_set=statusList[i]
-          if (pinNumber not in node_obj.getUsedPins()):
-            print 'error the  pin value is out of range of node :'+remoteNodeHwModel+"pin_number="+str(pinNumber)
-            errorQueue.put('error the  pin value is out of range of node :'+remoteNodeHwModel+"pin_number="+str(pinNumber) )
-            print "status to set="+str(tmp_status_to_set)
-            errorQueue.put("status to set="+str(tmp_status_to_set) )
-            print str(pinNumber)
-            errorQueue.put(str(pinNumber))
-            return(-1)
 
 
 
-          query=self.composeChangeNodeOutputPinStatusQuery(pinNumber,node_obj,objName,tmp_status_to_set,node_serial_number,node_address,output_type,user,priority,mail_report_list)  
-          print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end" 
-
-
-
-          max_retry=20
-
-          
-          for m in range(0,max_retry):   #retry n times to get the answer from node
-            try:
-              data=self.serial_communication.status.write(query)
-            except Exception, e  :
-              print "answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+"the error was:"+str(e.args)+" at:" +getErrorTimeString()
-              errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+"the error was:"+str(e.args)+" at:" +getErrorTimeString() )   
-              time.sleep(0.1*m) 
-              continue 
-
-            time.sleep(0.02) # don't remove this wait
-            if data.find("ok"+query)!=-1:
-              print "answer received from serial port is ok:"+data
-              priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })             
-              updateNodeAddress(node_serial_number,node_address)#since onos was able to talk to the node I update the LastNodeSync
-              return(1) 
-            print "answer received from serial port is wrong:"+data
-            errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
-            time.sleep(0.1*m) 
-             
-          errorQueue.put("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
-          return(-1)
-
-
-
-
-      else: #str(node_address))!="1" and !=0 --->    remote node selected
+      else: #str(node_address))!="1" and !=0 --->    remote network node selected
         print "i write to/from a remote node with address:"+str(node_address)
 
         

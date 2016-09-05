@@ -14,10 +14,43 @@ from globalVar import *
 
 
 
+def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
+  """
+  | This function make a query to a radio/serial node and wait the answer from the serial gateway.
+  | If the answer is positive 
+  |   it will add to the priorityCmdQueue the command to change the web_object status
+  |   from pending to succesfully changed .
+  | If the answer from the node is an error or the node is not responding
+  |   the query will be repeated x times before giving up.
+
+
+  """
+
+  max_retry=20
+  for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
+    
+    # [S_001dw06001_#]
+    query=query[0:3]+nodeDict[node_serial_number].getNodeAddress()+query[6:] #change the address query if the node get a new one
+
+    data=serialCom.status.write(query)
+    time.sleep(0.01) 
+    if data.find("ok"+query[3:])!=-1:      
+      return(1) 
+    print "answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was:"+query[3:]+"end,the number of try is "+str(m) 
+    errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
+    time.sleep(0.1*m) 
+
+
+  print("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
+             
+  errorQueue.put("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
+  return(-1) 
 
 
 
-def make_query_to_remote_node(node_serial_number,query,objName,status_to_set,user,priority,mail_report_list):
+
+
+def make_query_to_network_node(node_serial_number,query,objName,status_to_set,user,priority,mail_report_list):
   """
   | This function make a query to a powerline/ethernet node and wait the answer from the node.
   | If the answer is positive 
@@ -30,7 +63,7 @@ def make_query_to_remote_node(node_serial_number,query,objName,status_to_set,use
   """
 
     #time.sleep(0.1) 
-  print "make_query_to_remote_node() thread executed"
+  print "make_query_to_network_node() thread executed"
   print "i try this query:"+query
   timeout=0.1
   html_response="local_error_in_router_handler_cant_connect_to_node"    
@@ -38,6 +71,7 @@ def make_query_to_remote_node(node_serial_number,query,objName,status_to_set,use
   #wait_timeout=1000
 
   for m in range(0,8):   #retry n times to get the answer from node
+   
     node_address=nodeDict[node_serial_number].getNodeAddress()  #update the node address ..maybe has changed..
     print "connection try number:"+str(m)+"to ip number"+str(node_address)
     html_response="local_error_in_router_handler_cant_connect_to_node"  
@@ -66,7 +100,7 @@ def make_query_to_remote_node(node_serial_number,query,objName,status_to_set,use
           resp = s.recv(1024) 
         except Exception, e  :
           print "error_qqqq retry",e
-          errorQueue.put("error0 in make_query_to_remote_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)+"error:"+str(e.args)+"at:" +getErrorTimeString() )
+          errorQueue.put("error0 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)+"error:"+str(e.args)+"at:" +getErrorTimeString() )
           break
 
         print "after s.recv(1024)"
@@ -93,7 +127,7 @@ def make_query_to_remote_node(node_serial_number,query,objName,status_to_set,use
 
     except Exception, e  :
       print "error_i retry",e
-      errorQueue.put("error2 in make_query_to_remote_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m) +str(e.args)+"at:" +getErrorTimeString() )    
+      errorQueue.put("error2 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m) +str(e.args)+"at:" +getErrorTimeString() )    
       print"the query was"+query+"number of try  "+str(m)  
 
       s.close()
@@ -130,10 +164,10 @@ def make_query_to_remote_node(node_serial_number,query,objName,status_to_set,use
 
 
 
-def handle_new_query_to_remote_node_thread(): 
+def handle_new_query_to_network_node_thread(): 
   """
-  | This is a thread function that will run until every request in the queryToNodeQueue is done.
-  | It will get each query from queryToNodeQueue and call make_query_to_remote_node() 
+  | This is a thread function that will run until every request in the queryToNetworkNodeQueue is done.
+  | It will get each query from queryToNetworkNodeQueue and call make_query_to_network_node() 
   | While the query is running the current_node_handler_list will contain the node serialnumber being queried
   | In this way onos will avoid to make multiple simultaneos query to the same node.
   
@@ -142,7 +176,7 @@ def handle_new_query_to_remote_node_thread():
   """
 
 
-  print "executed handle_new_query_to_remote_node_thread() "
+  print "executed handle_new_query_to_network_node_thread() "
 
 
   global node_query_threads_executing
@@ -150,9 +184,9 @@ def handle_new_query_to_remote_node_thread():
     #with lock2_query_threads:
     node_query_threads_executing=node_query_threads_executing+1
 
-    while not queryToNodeQueue.empty():   #banana maybe to implement Queue.PriorityQueue() to give priority to certain queries
-      current_query=queryToNodeQueue.get()
-      #queryToNodeQueue.task_done() #banana maybe to remove because not usefull
+    while not queryToNetworkNodeQueue.empty():   #banana maybe to implement Queue.PriorityQueue() to give priority to certain queries
+      current_query=queryToNetworkNodeQueue.get()
+      #queryToNetworkNodeQueue.task_done() #banana maybe to remove because not usefull
       node_serial_number=current_query["node_serial_number"]
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
         print "the node"+node_serial_number+"is inactive ,so I delete its query"
@@ -162,10 +196,10 @@ def handle_new_query_to_remote_node_thread():
       with lock1_current_node_handler_list:
         if ((node_serial_number not in current_node_handler_list)): #or (node_query_threads_executing==1)):
           current_node_handler_list.append(node_serial_number)
-          print "handle_new_query_to_remote_node_thread excuted with "+node_serial_number
+          print "handle_new_query_to_network_node_thread excuted with "+node_serial_number
         else:
           print "node is already being contacted:q->",current_query
-          queryToNodeQueue.put(current_query)
+          queryToNetworkNodeQueue.put(current_query)
           continue
       print "node_query_threads_executing:",node_query_threads_executing
       #address=current_query["address"]
@@ -180,11 +214,11 @@ def handle_new_query_to_remote_node_thread():
         time.sleep(0.1)  
         #print "wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"  
 
-      make_query_to_remote_node(node_serial_number,query,objName,status_to_set,user,priority,mail_report_list)
+      make_query_to_network_node(node_serial_number,query,objName,status_to_set,user,priority,mail_report_list)
 
     
       with lock1_current_node_handler_list:
-        print "lock2b from handle_new_query_to_remote_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number
+        print "lock2b from handle_new_query_to_network_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number
         current_node_handler_list.remove(node_serial_number)
 
 
@@ -201,14 +235,14 @@ def handle_new_query_to_remote_node_thread():
 
 
   except Exception, e :
-    print ("main error in handle_new_query_to_remote_node_thread"+str(e.args)+"current query:"+str(current_query)) 
-    errorQueue.put("main error in handle_new_query_to_remote_node_thread:"+str(e.args)+"current query:"+str(current_query)) 
+    print ("main error in handle_new_query_to_network_node_thread"+str(e.args)+"current query:"+str(current_query)) 
+    errorQueue.put("main error in handle_new_query_to_network_node_thread:"+str(e.args)+"current query:"+str(current_query)) 
 
 
 
     with lock1_current_node_handler_list:
       try:
-        print "lock2c from handle_new_query_to_remote_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number
+        print "lock2c from handle_new_query_to_network_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number
         current_node_handler_list.remove(node_serial_number)
         query_threads_number=query_threads_number-1
       except:
