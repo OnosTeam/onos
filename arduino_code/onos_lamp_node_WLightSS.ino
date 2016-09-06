@@ -1,3 +1,30 @@
+/*
+ * O.N.O.S.  arduino WlightSS node  firmware by Marco Rigoni 27-8-16  onos.info@gmail.com 
+ * more info on www.myonos.com 
+ *
+ */
+
+
+/*
+
+
+/*
+*                  Arduino      RFM69W
+*                  GND----------GND   (ground in)
+*                  3V3----------3.3V  (3.3V in)
+*  interrupt 0 pin D2-----------DIO0  (interrupt request out)
+*              pin D9-----------RST   (radio module reset)   
+*           SS pin D10----------NSS   (chip select in)
+*          SCK pin D13----------SCK   (SPI clock in)
+*         MOSI pin D11----------MOSI  (SPI Data in)
+*         MISO pin D12----------MISO  (SPI Data out)
+
+
+*/
+
+
+
+
 /* RFM69 library and code by Felix Rusu - felix@lowpowerlab.com
 // Get libraries at: https://github.com/LowPowerLab/
 // Make sure you adjust the settings in the configuration section below !!!
@@ -53,8 +80,10 @@
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
 #define RFM69_RST     3
- 
+
 #define LED           5  // onboard blinky
+
+#define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
  
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  
@@ -64,9 +93,7 @@ RFM69_ATC radio;
 
 boolean radio_enabled=1;
 
-
 unsigned long sync_time=0;
-
 
 char serial_number[13]="WLightSS0003";
 
@@ -77,29 +104,29 @@ int this_node_address=254; //i start with 254
 int old_address=254; 
 
 unsigned long get_address_timeout=0;
-unsigned long sync_timeout;
 
-#define rx_msg_lenght 31
-# define gateway_address 1
 
+
+
+//////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
+#define rx_msg_lenght 61
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
-
 char received_message_type_of_onos_cmd[3];
-char received_message_flag;
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
-char received_message_sn[13]="";
 int received_message_address=0; //must be int..
-char received_serial_number[13];
 char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[28];
 char str_this_node_address[4];
+//////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
-uint8_t counter;
-boolean enable_answer_back=0;
+
+char received_serial_number[13];
+# define gateway_address 1
+
 
 
 int freeRam () 
@@ -118,6 +145,7 @@ int freeRam ()
 void composeSyncMessage(){
 
   //[S_001sy3.05ProminiS0001_#] 
+
   int tmp_number=0;
   strcpy(str_this_node_address,"");
 
@@ -144,7 +172,7 @@ void composeSyncMessage(){
   }
   
 
-
+  strcpy(syncMessage, "");
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
   strcat(syncMessage, "sy");
@@ -174,7 +202,7 @@ void composeSyncMessage(){
 
 void sendSyncMessage(){
 
-  composeSyncMessage();
+
 
 
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage))) {
@@ -194,7 +222,7 @@ void getAddressFromGateway(){
    Serial.println("getAddressFromGateway executed");
 
   //[S_001ga3.05ProminiS0001_#]
-  composeSyncMessage();
+
 
   syncMessage[6]='g'; //modify the message to get a address instead of just sync.
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
@@ -282,14 +310,6 @@ void decodeOnosCmd(const char *received_message){
     if (received_message_address!=this_node_address) {//onos command for a remote arduino node
       strcpy(received_message_answer,"remote_#]");
 
-/*
-      Serial.print(F("serial_number:")); 
-      Serial.print(received_message_sn);
-
-      Serial.print(F("serial_number222:")); 
-      Serial.print(serial_number);
-      Serial.println(F("end")); 
-*/
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
     }
 
@@ -408,8 +428,6 @@ void decodeOnosCmd(const char *received_message){
     Serial.print(F("onos_cmd:"));
     Serial.println(received_message_type_of_onos_cmd);
 
-    Serial.print(F("serial_number:"));
-    Serial.print(received_message_sn);
 
 
     Serial.println(F("pin_used:"));
@@ -473,6 +491,10 @@ void setup() {
   Serial.print("\nListening at ");
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(" MHz");
+  
+  composeSyncMessage();
+
+
 }
  
 void loop() {
@@ -493,24 +515,24 @@ void loop() {
 
     strcpy(filtered_onos_message,"");
 
-    for (uint8_t counter0 = 0; counter0 <= rx_msg_lenght; counter0++) {
-      filtered_onos_message[counter0]=radio.DATA[counter0];
-      message_copy[counter0]=radio.DATA[counter0]; 
-      Serial.println(filtered_onos_message[counter0]);
+    for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
+      filtered_onos_message[counter]=radio.DATA[counter];
+      message_copy[counter]=radio.DATA[counter]; 
+      Serial.println(filtered_onos_message[counter]);
 
     //[S_001dw06001_#]
-      if (counter0<2){
+      if (counter<2){
         continue;
       }
-      if ( (filtered_onos_message[counter0-2]=='[')&&(filtered_onos_message[counter0-1]=='S')&&(filtered_onos_message[counter0]=='_')  ){//   
+      if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
         Serial.println("cmd start found-------------------------------");
-        onos_cmd_start_position=counter0-2;
+        onos_cmd_start_position=counter-2;
       }
 
 
-      if( (filtered_onos_message[counter0-2]=='_')&&(filtered_onos_message[counter0-1]=='#')&&(filtered_onos_message[counter0]==']')  ){//   
+      if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
         Serial.println("cmd end found-------------------------------");
-        onos_cmd_end_position=counter0-2;
+        onos_cmd_end_position=counter-2;
         break;// now the message has ended
       }
 
@@ -571,6 +593,7 @@ void loop() {
       old_address=this_node_address;
       Serial.print("radio address changed to:");
       Serial.println(this_node_address);
+      composeSyncMessage();
       sendSyncMessage();
 
 
@@ -589,9 +612,12 @@ void loop() {
 
   }
 
-  else if ((millis()-sync_timeout)>5000){ //every 5000 ms
+  else if ((millis()-sync_time)>5000){ //every 5000 ms
    
-    sync_timeout=millis();
+   
+    sync_time=millis();
+
+    composeSyncMessage();
 
     sendSyncMessage();
 

@@ -1,10 +1,6 @@
 /*
  * O.N.O.S.  arduino serial gateway  firmware by Marco Rigoni 27-8-16  onos.info@gmail.com 
  * more info on www.myonos.com 
- * UIPEthernet is a TCP/IP stack that can be used with a enc28j60 based
- * Ethernet-shield.
- *
- * UIPEthernet uses the fine uIP stack by Adam Dunkels <adam@sics.se>
  *
  */
 
@@ -70,8 +66,6 @@
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/ONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
 #define NETWORKID     100  // The same on all nodes that talk to each other
-#define NODEID        1    // The unique identifier of this node
-#define RECEIVER      2    // The recipient of packets
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
@@ -97,49 +91,42 @@ int16_t packetnum = 0;  // packet counter, we increment per xmission
 RFM69_ATC radio;
  
 
-//#define DEVMODE 0
-
-
-uint8_t i;
-
-
 
 
 boolean radio_enabled=1;
 
-
 unsigned long sync_time=0;
-
 
 char serial_number[13]="ProminiS0001";
 
 char node_fw[]="5.13";
 
 int this_node_address=1; //must be int..
+
+
 unsigned long timeout;
 
 
+
+
+//////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
 #define rx_msg_lenght 61
-#define rx_msg_minimum_lenght 11
-
-
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
-
 char received_message_type_of_onos_cmd[3];
-//char received_message_flag;
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
-//char received_message_sn[13]="";
 int received_message_address=0; //must be int..
 char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[28];
-char data_from_serial [rx_msg_lenght+5];
 char str_this_node_address[4];
+//////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
-uint8_t counter;
+
+uint8_t counter=0;
+char data_from_serial[rx_msg_lenght+5];
 boolean enable_answer_back=0;
 boolean message_to_decode_avaible=0;
 
@@ -153,12 +140,10 @@ int freeRam ()
 
 
 
-void makeSyncMessage(){
+void composeSyncMessage(){
 
   //[S_001sy3.05ProminiS0001_#] 
 
-  
-  strcpy(str_this_node_address,"");
   int tmp_number=0;
   strcpy(str_this_node_address,"");
 
@@ -183,14 +168,37 @@ void makeSyncMessage(){
   else{ 
     str_this_node_address[2]=this_node_address+48;
   }
+  
 
-
+  strcpy(syncMessage, "");
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
   strcat(syncMessage, "sy");
   strcat(syncMessage, node_fw);
   strcat(syncMessage, serial_number);
   strcat(syncMessage, "_#]");
+
+/*
+  for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+    Serial.print(syncMessage[pointer]);
+    if (pointer<2){
+      continue;
+    }
+
+    if ((syncMessage[pointer-2]=='_')&&(syncMessage[pointer-1]=='#')&&(syncMessage[pointer]==']')  ) {//  
+        break;
+      }
+    }   
+    Serial.print('\n'); 
+
+*/
+
+}
+
+void makeSyncMessage(){
+
+  //[S_001sy3.05ProminiS0001_#] 
+  
 
   for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
     Serial.print(syncMessage[pointer]);
@@ -261,8 +269,7 @@ void decodeOnosCmd(const char *received_message){
       strcpy(received_message_answer,"remote_#]");
 
 /*
-      Serial.print(F("serial_number:")); 
-      Serial.print(received_message_sn);
+
 
       Serial.print(F("serial_number222:")); 
       Serial.print(serial_number);
@@ -430,8 +437,7 @@ void decodeOnosCmd(const char *received_message){
     Serial.print(F("onos_cmd:"));
     Serial.println(received_message_type_of_onos_cmd);
 
-    Serial.print(F("serial_number:"));
-    Serial.print(received_message_sn);
+
 
 
     Serial.println(F("pin_used:"));
@@ -519,24 +525,17 @@ void setup() {
   // If you are using a high power RF69, you *must* set a Tx power in the
   // range 14 to 20 like this:
   // driver.setTxPower(14);
+
+
+  composeSyncMessage();
+
+
 }
 
 
 
 void loop()
 {
-
-
-
-
-
-
-
-
-
-
-
-
 
   strcpy(data_from_serial,"");
 
@@ -545,9 +544,9 @@ void loop()
   timeout=millis()+200;
 
 
-  uint8_t counter0=0;
 
 
+  counter=0;
   message_to_decode_avaible=0;
 
   
@@ -555,12 +554,12 @@ void loop()
     message_to_decode_avaible=1;
     enable_answer_back=1;
   // Serial.println(F("im"));
-   //Serial.println(counter0);
+   //Serial.println(counter);
    // read the incoming byte:
-    //if (counter0==0){
+    //if (counter==0){
     delayMicroseconds(110);  //the serial doesnt work without this delay...
     //}  
-    data_from_serial[counter0] = Serial.read();
+    data_from_serial[counter] = Serial.read();
 
     if ( millis()>timeout){
       Serial.println(F("serial_timeout---------------------------------"));
@@ -570,35 +569,35 @@ void loop()
 
    
 
-    if (counter0>rx_msg_lenght){  //prevent overflow
+    if (counter>rx_msg_lenght){  //prevent overflow
       Serial.println(F("array_overflow prevented---"));
-      Serial.println(counter0);
+      Serial.println(counter);
       Serial.println(F("end"));
-      counter0=0;
+      counter=0;
       continue;     
     }
 
 
 
-    if (counter0<2){
-      counter0=counter0+1;
+    if (counter<2){
+      counter=counter+1;
       continue;
     }
 
-    if ( (data_from_serial[counter0-2]=='[')&&(data_from_serial[counter0-1]=='S')&&(data_from_serial[counter0]=='_')  ){//   
+    if ( (data_from_serial[counter-2]=='[')&&(data_from_serial[counter-1]=='S')&&(data_from_serial[counter]=='_')  ){//   
       // Serial.println("cmd start found-------------------------------");
-       onos_cmd_start_position=counter0-2;
+       onos_cmd_start_position=counter-2;
     }
 
 
-    if( (data_from_serial[counter0-2]=='_')&&(data_from_serial[counter0-1]=='#')&&(data_from_serial[counter0]==']')  ){//   
+    if( (data_from_serial[counter-2]=='_')&&(data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')  ){//   
     //   Serial.println("cmd end found-------------------------------");
-      onos_cmd_end_position=counter0-2;
+      onos_cmd_end_position=counter-2;
     }
 
 
 
-    counter0=counter0+1;
+    counter=counter+1;
 
   }// end of while rx receive
 
@@ -643,11 +642,7 @@ void loop()
 
     if(((received_message_answer[0]=='o')&&(received_message_answer[1]=='k'))||(strcmp(received_message_answer,"remote_#]")==0)){
 
-/*
-         Serial.println("sn");
-         Serial.println(received_message_sn);
-         Serial.println("__sn");
-*/
+
 
       if (strcmp(received_message_answer,"remote_#]")!=0) {//onos command for this arduino node
             //Serial.print("ok_local");
@@ -806,23 +801,23 @@ void loop()
 
       strcpy(filtered_onos_message,"");
 
-      for (uint8_t counter0 = 0; counter0 <= rx_msg_lenght; counter0++) {
-        filtered_onos_message[counter0]=radio.DATA[counter0];
-      //  Serial.println(filtered_onos_message[counter0]);
+      for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
+        filtered_onos_message[counter]=radio.DATA[counter];
+      //  Serial.println(filtered_onos_message[counter]);
 
     //[S_001dw06001_#]
-        if (counter0<2){
+        if (counter<2){
           continue;
         }
-        if ( (filtered_onos_message[counter0-2]=='[')&&(filtered_onos_message[counter0-1]=='S')&&(filtered_onos_message[counter0]=='_')  ){//   
+        if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
          // Serial.println("cmd start found-------------------------------");
-          onos_cmd_start_position=counter0-2;
+          onos_cmd_start_position=counter-2;
         }
 
 
-        if( (filtered_onos_message[counter0-2]=='_')&&(filtered_onos_message[counter0-1]=='#')&&(filtered_onos_message[counter0]==']')  ){//   
+        if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
         //  Serial.println("cmd end found-------------------------------");
-          onos_cmd_end_position=counter0-2;
+          onos_cmd_end_position=counter-2;
           break;// now the message has ended
         }
 
@@ -904,7 +899,7 @@ void loop()
   if ( (millis()-sync_time)>12000){   //each 4 sec time contact the onosCenter and update the current ip address
     sync_time=millis();
   // onos_s3.05v1sProminiS0001f001_#]
-
+  composeSyncMessage();
   makeSyncMessage();
 
   }

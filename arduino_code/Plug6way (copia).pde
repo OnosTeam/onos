@@ -73,7 +73,7 @@ EthernetServer server = EthernetServer(9000); //port number 9000
 
 
 
-#define serial_msg_lenght 23
+#define serial_msg_lenght 61
 
 
 char serial_message_type_of_onos_cmd;
