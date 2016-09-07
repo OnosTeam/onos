@@ -63,7 +63,7 @@ class RouterHandler:
       self.exit=0
       self.router_pin_numbers=[]
       #self.read_thread_running=0   
-      self.arduino_used=0  
+      self.serial_arduino_used=0  
       self.local_pin_enabled=0
     
       self.__maxPin=hardwareModelDict["max_pin"]    #17 -2 used for uart
@@ -77,6 +77,16 @@ class RouterHandler:
       self.router_input_pin=getListPinsConfigByHardwareModel(self.hwModelName,"digital_input")
       self.total_in_pin=len(self.router_input_pin) #get the number of digital inputs
 
+
+      try:
+        self.bash_pin_enable=hardwareModelDict["parameters"]["bash_pin_enable"]
+        self.serial_arduino_used=hardwareModelDict["parameters"]["serial_port_enable"]
+
+      except:
+        self.bash_pin_enable=0
+        self.serial_arduino_used=0
+
+
       if self.__hardware_type=="rasberry_b_rev2_only":  #banana to import this from hardwareModelDict
         self.bash_pin_enable=1
 
@@ -85,13 +95,15 @@ class RouterHandler:
 
 
       if self.__hardware_type=="gl.inet_with_arduino2009":
-        self.arduino_used=1
+        self.serial_arduino_used=1
         self.bash_pin_enable=1
-
 
       if self.__hardware_type=="pc_with_arduino2009":
-        self.arduino_used=1
+        self.serial_arduino_used=1
         self.bash_pin_enable=1
+
+      if enable_usb_serial_port==0:
+        self.serial_arduino_used=0
 
 
       if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
@@ -102,7 +114,7 @@ class RouterHandler:
         print "no embedded IO pins founded , are you running onos on a pc?"
 
 
-      if self.arduino_used==1:
+      if self.serial_arduino_used==1:
 
         for retry in range(0,10):
      

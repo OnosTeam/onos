@@ -308,7 +308,7 @@ class SerialPort:
                 print "serial cmd="+cmd
 
                 try:
-                  serial_number=numeric_serial_number=cmd[12:24]   
+                  serial_number=cmd[12:24]   
                   node_fw=cmd[8:12]
                   node_address=cmd[3:6]
                   if node_address=="254":  #the node is looking for a free address

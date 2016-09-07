@@ -95,6 +95,7 @@ baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
+enable_usb_serial_port=0  #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 router_sn="RouterGA0000"
 router_hardware_type="RouterGA" #select the type of hardware
 router_hardware_fw_version="5.14"
@@ -1637,16 +1638,20 @@ onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta","smtp_port
 
 
 #localhost/setup/node_manager/RouterGL0001
-hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"timeout":180}
+hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":180}
 hardwareModelDict["RouterGL"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
+hardwareModelDict["RouterGL"]["parameters"]["bash_pin_enable"]=1
+hardwareModelDict["RouterGL"]["parameters"]["serial_port_enable"]=0
 
 
-hardwareModelDict["RouterGA"]={"hwName":"RouterGA","max_pin":5,"hardware_type":"gl.inet_with_arduino2009","pin_mode":{},"timeout":180}
+hardwareModelDict["RouterGA"]={"hwName":"RouterGA","max_pin":5,"hardware_type":"gl.inet_with_arduino2009","pin_mode":{},"parameters":{},"timeout":180}
 hardwareModelDict["RouterGA"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["RouterGA"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGA"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
+hardwareModelDict["RouterGL"]["parameters"]["bash_pin_enable"]=1
+hardwareModelDict["RouterGL"]["parameters"]["serial_port_enable"]=1
 
 hardwareModelDict["ProminiS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":360}
 hardwareModelDict["ProminiS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
@@ -1654,17 +1659,17 @@ hardwareModelDict["ProminiS"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["ProminiS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
-hardwareModelDict["ProminiA"]={"hwName":"ProminiA","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":"never"}
+hardwareModelDict["ProminiA"]={"hwName":"ProminiA","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"timeout":"never"}
 hardwareModelDict["ProminiA"]["pin_mode"]["digital_input"]={"d_sensor":[(2),(3),(4)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["digital_output"]={"button":[(6),(7),(8)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["analog_input"]={"a_sensor":[(14),(15),(16),(17),(18),(19)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["servo_output"]={"servo":[(5)]}
 #hardwareModelDict["ProminiA"]["pin_mode"]["analog_output"]={"a_out":[(9)]}
 
-hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":90}
+hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"timeout":90}
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15)],"wifi":[(16,17)]}
 
-hardwareModelDict["WLightSS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":360}
+hardwareModelDict["WLightSS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
 hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
@@ -1675,7 +1680,7 @@ hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 #the web object type will be "analog_output"
 
 
-hardwareModelDict["RouterRB"]={"hwName":"RouterRB","max_pin":15,"hardware_type":"rasberry_b_rev2_only","pin_mode":{},"timeout":180}
+hardwareModelDict["RouterRB"]={"hwName":"RouterRB","max_pin":15,"hardware_type":"rasberry_b_rev2_only","pin_mode":{},"parameters":{},"timeout":180}
 hardwareModelDict["RouterRB"]["pin_mode"]["digital_output"]={"button":[(2),(3),(4),(7),(8),(9),(10),(23),(24),(25),(27)]}
 hardwareModelDict["RouterRB"]["pin_mode"]["digital_input"]={"d_sensor":[(0),(1),(2),(3),(4),(5),(6)]}
 hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)]}

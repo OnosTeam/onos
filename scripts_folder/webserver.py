@@ -5599,19 +5599,22 @@ def nodeTcpServer():
 
                 
                 msg=received_message
-                if data.find("_#]")!=-1:   # if the message is completed close the connection
+                if ( (data.find("[S_")!=-1)&(data.find("_#]")!=-1))  :   # if the message is completed close the connection
                   print "end line received!!!! ----------------------------------------------------jjuyjytrty"
                   print "received_message:"+received_message  
 #example:  "pinsetup?node_sn=ProminiA0001&fw=4.85_#]"
 
-                  if received_message.startswith("pinsetup?") :                  
-                    node_sn=re.search('sn=(.+?)&',received_message).group(1) 
-                    node_fw=re.search('&fw=(.+?)_#',received_message).group(1)
+                  if received_message.startswith("[S_001sy?") :  
+                    cmd_start=msg.find("[S_")
+                    cmd_end=msg.find("[S_")
+                    cmd=buf[cmd_start:cmd_end+3]     
+                    node_sn=cmd[12:24]   
+                    node_fw=cmd[8:12]
                     print "node_sn"+node_sn
                     print "node_fw"+node_fw
                     print "nodeipfffffffffffffffffffffffffffffffffddddddd",node_ip  
                     msg=createNewNode(node_sn,node_ip,node_fw)+"_#]"
-                    connection.sendall(msg)  
+                    connection.sendall("[S_ok...[S_")  
                     connection.close()   
                     wait_because_node_is_talking=0        
                     break

@@ -22,17 +22,17 @@ class Serial_connection_Handler():
     self.status=self.connectToPort()
     self.working=1
     i=0
-    while (self.status ==0) :  #while port is not connected retry to connect
+    while (self.status ==0) :  #while port is not connected retry to connect   banana to make it clever..
       self.status=self.connectToPort()
       if self.status==1:
         break
       time.sleep(1)
-      if i>60:        #after 60 tries i increase the time between the tries
+      if i>2:        #after 60 tries i increase the time between the tries
         time.sleep(30)
-      if i>120:        #after 120 tries i increase the time between the tries
+      if i>4:        #after 120 tries i increase the time between the tries
         time.sleep(60) 
 
-      if i >200:
+      if i >10:
         if (searchForSerialCable!="null"):
           print "error serial connection, no serial ports found"
           self.working=0

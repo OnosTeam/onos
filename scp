@@ -1,11 +1,11 @@
-scp -rC *  root@192.168.1.2:/bin/onos
+scp -rC *  root@192.168.1.4:/bin/onos
 
-scp -rC *  root@192.168.1.2:/tmp/onos
-
-
+scp -rC *  root@192.168.1.4:/tmp/onos
 
 
 
 
-scp -rC root@192.168.1.2:/bin/onos/* /tmp/ram/
+
+
+scp -rC root@192.168.1.4:/bin/onos/* /tmp/ram/
 

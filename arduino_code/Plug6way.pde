@@ -29,13 +29,13 @@ Wire up as following (ENC = module side):
 
 //uncomment this for dev mode
 
-//#define DEVMODE 1
+#define DEVMODE 1
  
 
 //pin setup print
-//#define DEVMODE2 1    
+#define DEVMODE2 1    
 
-//#define DEVMODE3 1          
+#define DEVMODE3 1          
 
 #define onos_center_port 81
 
@@ -563,23 +563,17 @@ void pinsSetup(){
 //old      192.168.0.101/onos_cmd?cmd=pinsetup&node_sn=ProminiA0001&node_fw=4.85&node_ip=192.168.0.7__
 
 
-//    "pinsetup?sn=ProminiA0001&fw=4.85_#]"
+//    "[S_001sy3.05Plug6way0001_#]"
 
-      char ask_setup[37]; 
-      strcpy(ask_setup,"pinsetup?sn=");
-      strcat(ask_setup,serial_number);
-      strcat(ask_setup,"&fw=");
-      strcat(ask_setup,node_fw);
-      strcat(ask_setup,"_#]");
+      composeSyncMessage();
 
 
     #if defined(DEVMODE)
       Serial.print(F(" setup:"));
-
-      Serial.println(ask_setup);
+      Serial.println(syncMessage);
     #endif
 
-      client.println(ask_setup);
+      client.println(syncMessage);
       client.flush();
       boolean en=1;
       next = millis() + 1000;
@@ -788,9 +782,6 @@ void loop() {
     if ( (millis()-sync_time)>60000){   //each 60 sec time contact the onosCenter and update the current ip address
       sync_time=millis();
       if (client.connect(IPAddress(192,168,101,1),onos_center_port)){
-
-
-        char ask_sync[33]="n_sync?sn=";
 
         composeSyncMessage();
 
