@@ -1,0 +1,1795 @@
+{
+  "nodeDictionary": {
+    "Plug6way0001": {
+      "hwModelName": "Plug6way", 
+      "nodeAddress": "192.168.101.108", 
+      "node_serial_number": "Plug6way0001"
+    }, 
+    "Plug6way0002": {
+      "hwModelName": "Plug6way", 
+      "nodeAddress": "192.168.101.104", 
+      "node_serial_number": "Plug6way0002"
+    }, 
+    "ProminiS0001": {
+      "hwModelName": "ProminiS", 
+      "nodeAddress": "001", 
+      "node_serial_number": "ProminiS0001"
+    }, 
+    "RouterGA0000": {
+      "hwModelName": "RouterGA", 
+      "nodeAddress": "0", 
+      "node_serial_number": "RouterGA0000"
+    }, 
+    "RouterGL0000": {
+      "hwModelName": "RouterGL", 
+      "nodeAddress": "0", 
+      "node_serial_number": "RouterGL0000"
+    }, 
+    "WLightSS0004": {
+      "hwModelName": "ProminiS", 
+      "nodeAddress": "003", 
+      "node_serial_number": "WLightSS0004"
+    }
+  }, 
+  "objectDictionary": {
+    "Caldaia": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "Caldaia=0", 
+        "1": "Caldaia=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "Caldaia", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        4, 
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "Casa_body": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "Casa_body=0", 
+        "1": "Casa_body=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "Casa_body", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "Wifi_netgear": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "Wifi_netgear=0", 
+        "1": "Wifi_netgear=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "Wifi_netgear", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        2, 
+        3
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "aaaaaaaaaaaaaaaaaaaaaaaaa": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "aaaaaaaaaaaaaaaaaaaaaaaaa=0", 
+        "1": "aaaaaaaaaaaaaaaaaaaaaaaaa=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "aaaaaaaaaaaaaaaaaaaaaaaaa", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "1", 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "button0_ProminiS0001": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_ProminiS0001=0", 
+        "1": "button0_ProminiS0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "ProminiS0001", 
+      "notes": " ", 
+      "objname": "button0_ProminiS0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button0_RouterGA0000": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_RouterGA0000=0", 
+        "1": "button0_RouterGA0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGA0000", 
+      "notes": " ", 
+      "objname": "button0_RouterGA0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        18
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button0_RouterGL0000": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_RouterGL0000=0", 
+        "1": "button0_RouterGL0000=1"
+      }, 
+      "mail_l": [
+        "electronicflame@gmail.com"
+      ], 
+      "node_sn": "RouterGL0000", 
+      "notes": " ", 
+      "objname": "button0_RouterGL0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        18
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button0_WLightSS0004": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_WLightSS0004=0", 
+        "1": "button0_WLightSS0004=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WLightSS0004", 
+      "notes": " ", 
+      "objname": "button0_WLightSS0004", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_ProminiS0001": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_ProminiS0001=0", 
+        "1": "button1_ProminiS0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "ProminiS0001", 
+      "notes": " ", 
+      "objname": "button1_ProminiS0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_RouterGA0000": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_RouterGA0000=0", 
+        "1": "button1_RouterGA0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGA0000", 
+      "notes": " ", 
+      "objname": "button1_RouterGA0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        22
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_RouterGL0000": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_RouterGL0000=0", 
+        "1": "button1_RouterGL0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGL0000", 
+      "notes": " ", 
+      "objname": "button1_RouterGL0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        22
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "onoswait", 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_WLightSS0004": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_WLightSS0004=0", 
+        "1": "button1_WLightSS0004=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WLightSS0004", 
+      "notes": " ", 
+      "objname": "button1_WLightSS0004", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "counter1": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "counter1=0", 
+        "1": "counter1=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "counter1", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 741, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "d_sensor0_ProminiS0001": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "d_sensor0_ProminiS0001=0", 
+        "1": "d_sensor0_ProminiS0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "ProminiS0001", 
+      "notes": " ", 
+      "objname": "d_sensor0_ProminiS0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        21
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_input"
+    }, 
+    "d_sensor0_RouterGA0000": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "d_sensor0_RouterGA0000=0", 
+        "1": "d_sensor0_RouterGA0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGA0000", 
+      "notes": " ", 
+      "objname": "d_sensor0_RouterGA0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        21
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_input"
+    }, 
+    "d_sensor0_RouterGL0000": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "d_sensor0_RouterGL0000=0", 
+        "1": "d_sensor0_RouterGL0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGL0000", 
+      "notes": " ", 
+      "objname": "d_sensor0_RouterGL0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        21
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_input"
+    }, 
+    "day": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "day=0", 
+        "1": "day=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "day", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 2, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "dayTime": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "dayTime=0", 
+        "1": "dayTime=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "dayTime", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 235, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "hours": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "hours=0", 
+        "1": "hours=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "hours", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [
+        "scenario10", 
+        "scenario3", 
+        "scenario2", 
+        "scenario7", 
+        "scenario6", 
+        "scenario5", 
+        "scenario4"
+      ], 
+      "status": 21, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "minutes": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "minutes=0", 
+        "1": "minutes=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "minutes", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [
+        "scenario10", 
+        "scenario3", 
+        "scenario2", 
+        "scenario21", 
+        "scenario7", 
+        "scenario6", 
+        "scenario5", 
+        "scenario4", 
+        "scenario8"
+      ], 
+      "status": 55, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "month": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "month=0", 
+        "1": "month=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "month", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 1, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "onosCenterWifi": {
+      "cmdDict": {
+        "0": "uci set wireless.radio0.disabled=1&uci commit wireless && wifi", 
+        "1": "uci set wireless.radio0.disabled=0&uci commit wireless && wifi", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "onosCenterWifi=0", 
+        "1": "onosCenterWifi=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "onosCenterWifi", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "rergswgeg": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "rergswgeg=0", 
+        "1": "rergswgeg=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "rergswgeg", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "socket0_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket0_Plug6way0001=0", 
+        "1": "socket0_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "socket0_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        2, 
+        3
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket0_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket0_Plug6way0002=0", 
+        "1": "socket0_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "socket0_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        2, 
+        3
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket0_ProminiS0001": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket0_ProminiS0001=0", 
+        "1": "socket0_ProminiS0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "ProminiS0001", 
+      "notes": " ", 
+      "objname": "socket0_ProminiS0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        20, 
+        19
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket0_RouterGA0000": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket0_RouterGA0000=0", 
+        "1": "socket0_RouterGA0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGA0000", 
+      "notes": " ", 
+      "objname": "socket0_RouterGA0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        20, 
+        19
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket0_RouterGL0000": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket0_RouterGL0000=0", 
+        "1": "socket0_RouterGL0000=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "RouterGL0000", 
+      "notes": " ", 
+      "objname": "socket0_RouterGL0000", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        20, 
+        19
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 1, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket0_WLightSS0004": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket0_WLightSS0004=0", 
+        "1": "socket0_WLightSS0004=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WLightSS0004", 
+      "notes": " ", 
+      "objname": "socket0_WLightSS0004", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        8, 
+        7
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket1_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket1_Plug6way0001=0", 
+        "1": "socket1_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "socket1_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        4, 
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket1_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket1_Plug6way0002=0", 
+        "1": "socket1_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "socket1_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        4, 
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket2_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket2_Plug6way0001=0", 
+        "1": "socket2_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "socket2_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6, 
+        7
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket2_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket2_Plug6way0002=0", 
+        "1": "socket2_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "socket2_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6, 
+        7
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket3_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket3_Plug6way0001=0", 
+        "1": "socket3_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "socket3_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        8, 
+        9
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket3_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket3_Plug6way0002=0", 
+        "1": "socket3_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "socket3_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        8, 
+        9
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket4_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket4_Plug6way0001=0", 
+        "1": "socket4_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "socket4_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        14, 
+        15
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket4_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket4_Plug6way0002=0", 
+        "1": "socket4_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "socket4_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        14, 
+        15
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket5_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket5_Plug6way0001=0", 
+        "1": "socket5_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "socket5_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        16, 
+        17
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "socket5_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "socket5_Plug6way0002=0", 
+        "1": "socket5_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "socket5_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        16, 
+        17
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "wifi0_Plug6way0001": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "wifi0_Plug6way0001=0", 
+        "1": "wifi0_Plug6way0001=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0001", 
+      "notes": " ", 
+      "objname": "wifi0_Plug6way0001", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        16, 
+        17
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "onoswait", 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "wifi0_Plug6way0002": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "wifi0_Plug6way0002=0", 
+        "1": "wifi0_Plug6way0002=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": "Plug6way0002", 
+      "notes": " ", 
+      "objname": "wifi0_Plug6way0002", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        16, 
+        17
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;color:black;", 
+        "1": "background-color:red;color: black;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "sr_relay"
+    }, 
+    "wwwwwwwwwww": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "wwwwwwwwwww=0", 
+        "1": "wwwwwwwwwww=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "wwwwwwwwwww", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }, 
+    "year": {
+      "cmdDict": {
+        "0": " ", 
+        "1": " ", 
+        "s_cmd": " "
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "year=0", 
+        "1": "year=1"
+      }, 
+      "mail_l": [], 
+      "node_sn": 9999, 
+      "notes": " ", 
+      "objname": "year", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        9999
+      ], 
+      "priority": 0, 
+      "scenarios": [
+        "scenarioA"
+      ], 
+      "status": 2016, 
+      "styleDict": {
+        "0": "background-color:green;", 
+        "1": "background-color:red;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black", 
+        "wait": "background-color:grey ;color black"
+      }, 
+      "type": "b"
+    }
+  }, 
+  "scenarioDictionary": {
+    "scenario10": {
+      "conditions": "(#_hours_#==23)&(#_minutes_#==30)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "Caldaia=0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario2": {
+      "conditions": "(#_hours_#==8)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "Wifi_netgear==1", 
+        "Caldaia=0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario21": {
+      "conditions": "(#_minutes_#>-1)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#", 
+        "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario3": {
+      "conditions": "(#_hours_#==8)&(#_minutes_#==25)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=0", 
+        "Wifi_netgear==0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario4": {
+      "conditions": "(#_hours_#==12)&(#_minutes_#==30)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "Wifi_netgear==1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario5": {
+      "conditions": "(#_hours_#==14)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=0", 
+        "Wifi_netgear==0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario6": {
+      "conditions": "(#_hours_#==18)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "Wifi_netgear==1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario7": {
+      "conditions": "(#_hours_#==0)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=0", 
+        "Wifi_netgear==0", 
+        "counter1=0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario8": {
+      "conditions": "(#_minutes_#>-1)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#", 
+        "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario9": {
+      "conditions": "1", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "counter1=#_counter1_#+1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenarioA": {
+      "conditions": "(#_year_#==2016)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "aaaaaaaaaaaaaaaaaaaaaaaaa=2016", 
+        "counter1=1", 
+        "socket3_Plug6way0001=1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }
+  }, 
+  "zoneDictionary": {
+    "Casa": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "Caldaia", 
+        "Wifi_netgear", 
+        "aaaaaaaaaaaaaaaaaaaaaaaaa"
+      ], 
+      "order": 0, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "Plug6way0001": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "wifi0_Plug6way0001", 
+        "socket0_Plug6way0001", 
+        "socket1_Plug6way0001", 
+        "socket2_Plug6way0001", 
+        "socket3_Plug6way0001", 
+        "socket4_Plug6way0001", 
+        "socket5_Plug6way0001"
+      ], 
+      "order": 2, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "Plug6way0002": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "wifi0_Plug6way0002", 
+        "socket0_Plug6way0002", 
+        "socket1_Plug6way0002", 
+        "socket2_Plug6way0002", 
+        "socket3_Plug6way0002", 
+        "socket4_Plug6way0002", 
+        "socket5_Plug6way0002"
+      ], 
+      "order": 3, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "ProminiS0001": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "socket0_ProminiS0001", 
+        "button0_ProminiS0001", 
+        "button1_ProminiS0001", 
+        "d_sensor0_ProminiS0001"
+      ], 
+      "order": 6, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "RouterGA0000": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "socket0_RouterGA0000", 
+        "button0_RouterGA0000", 
+        "button1_RouterGA0000", 
+        "d_sensor0_RouterGA0000"
+      ], 
+      "order": 4, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "RouterGL0000": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "button0_RouterGL0000", 
+        "button1_RouterGL0000", 
+        "d_sensor0_RouterGL0000", 
+        "onosCenterWifi", 
+        "socket0_RouterGL0000"
+      ], 
+      "order": 1, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "WLightSS0004": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "socket0_WLightSS0004", 
+        "button0_WLightSS0004", 
+        "button1_WLightSS0004"
+      ], 
+      "order": 5, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }
+  }
+}

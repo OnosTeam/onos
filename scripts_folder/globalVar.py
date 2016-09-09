@@ -95,7 +95,7 @@ baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
-enable_usb_serial_port=0  #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 router_sn="RouterGA0000"
 router_hardware_type="RouterGA" #select the type of hardware
 router_hardware_fw_version="5.14"
@@ -1670,7 +1670,7 @@ hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15)],"wifi":[(16,17)]}
 
 hardwareModelDict["WLightSS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
-hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
+hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(8,7)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
@@ -1770,21 +1770,21 @@ def transform_object_to_dict_to_backup(object_dictionary):
 
 
 
-def updateJson():  # save the current config to a json file named data.json
+def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary):  # save the current config to a json file named data.json
 
   print "updateJson executed"
 
 #json doesn't support saving objects  ..so i save all the variables of each objects
 #to get back the pin of the object you have to write:
 #  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
-  obj_tmp_dict=transform_object_to_dict_to_backup(object_dict)
+  obj_tmp_dict=transform_object_to_dict_to_backup(object_dictionary)
 
 
   node_tmp_Dict={}
-  for a in nodeDict.keys():
+  for a in nodeDictionary.keys():
     try: 
-      sn=nodeDict[a].getNodeSerialNumber() 
-      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDict[a].getNodeHwModel(),u"nodeAddress":nodeDict[a].getNodeAddress()}
+      sn=nodeDictionary[a].getNodeSerialNumber() 
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress()}
     except:
       print "error in updateJson, with node:"+str(a)
     # note that the i/o modes for the node pins will be saved in the relative webobjects .
@@ -1795,7 +1795,7 @@ def updateJson():  # save the current config to a json file named data.json
 
   #print object_dictionary
   #print roomDictionary
-  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDict,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDict}  #combined dictionary
+  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
   #to add a new dictionary just add it in dictionary_group
 
   #print dictionary_group
@@ -1805,10 +1805,10 @@ def updateJson():  # save the current config to a json file named data.json
   file_to_save.write(dictionary_group_json)
   file_to_save.close()
 
-  conf_option={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
-  conf_option_json=json.dumps(conf_option, indent=2,sort_keys=True) #make the json structure
+  conf_options={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
+  conf_options_json=json.dumps(conf_options, indent=2,sort_keys=True) #make the json structure
   file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
-  file_to_save2.write(conf_option_json)
+  file_to_save2.write(conf_options_json)
   file_to_save2.close()
   #banana to load
 
@@ -1816,7 +1816,7 @@ def updateJson():  # save the current config to a json file named data.json
 
 
 
-def updateNodeAddress(node_sn0,address):
+def updateNodeAddress(node_sn0,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary):
   """
   Given a node serialnumber and a address update the node in the nodeDict with the current address. 
 
@@ -1846,7 +1846,7 @@ def updateNodeAddress(node_sn0,address):
     if (nodeDict[node_sn0].getNodeAddress())!=address:
       print "node "+node_sn0+" address changed to "+address
       nodeDict[node_sn0].setNodeAddress(address)
-      updateJson() #save all the new data
+      updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary) #save all the new data
 
       
     else:
@@ -1860,7 +1860,7 @@ def updateNodeAddress(node_sn0,address):
   return()
 
 
-def getNextFreeAddress(node_sn0):# get the next free address 
+def getNextFreeAddress(node_sn0,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary):# get the next free address 
   """
   | Given a node serialnumber this function will return the first free address to assign to the node. 
   | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
@@ -1873,7 +1873,7 @@ def getNextFreeAddress(node_sn0):# get the next free address
   for number in range(2,254):
     if number not in next_node_free_address_list:# if the address is not used then assign it
      # next_node_free_address_list.append(number)
-     # updateNodeAddress(node_sn0,number)
+     # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary)
       print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
       #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
       str_address=str(number)
@@ -1885,7 +1885,7 @@ def getNextFreeAddress(node_sn0):# get the next free address
     address=nodeDict[node].getNodeAddress()
     if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
         #updateNodeAddress(node_sn0,address) 
-      updateNodeAddress(node,"reassigned")
+      updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary)
       print( "I had finished all the free addresses so I recycled a not used one") 
       errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
       return(address)

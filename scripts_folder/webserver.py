@@ -1477,7 +1477,7 @@ def createNewNode(node_sn,node_address,node_fw):
   if node_sn in nodeDict.keys():
     print "found node in the dict"
     #nodeDict[node_sn].setNodeAddress(node_address)
-    updateNodeAddress(node_sn,node_address)
+    updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #created a new node
     print "requested setup for a node not existing yet "                  
@@ -1492,7 +1492,7 @@ def createNewNode(node_sn,node_address,node_fw):
         hardware_node_model=hardwareModelDict[hwType]  
         nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
         #nodeDict[node_sn].updateLastNodeSync(time.time())
-        updateNodeAddress(node_sn,node_address)  
+        updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict)  
         #nodeDict[node_sn].setNodeAddress(node_address)
         msg=nodeDict[node_sn].getSetupMsg() 
 
@@ -3289,7 +3289,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if self.path.endswith("setup/save_configuration/"): #     
               print "json saved"
-              updateJson()
+              updateJson(object_dict,nodeDict,zoneDict,scenarioDict)
                   
               try:              
                 b1 = open('setup/select_config_menu.html','r')    
@@ -3611,7 +3611,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if node_sn0 in nodeDict.keys():
               print "the node exist so i update the pin input status"
-              updateNodeAddress(node_sn0,node_ip)# update the node ip 
+              updateNodeAddress(node_sn0,node_ip,object_dict,nodeDict,zoneDict,scenarioDict)# update the node ip 
               
             else:
               msg=createNewNode(node_sn0,node_ip,node_fw)

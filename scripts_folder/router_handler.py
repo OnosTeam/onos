@@ -334,8 +334,8 @@ class RouterHandler:
         if (len (pin1) <2):
           pin1='0'+pin1
 
-  
-        query=base_query+'''onos_r'''+pin0+pin1+'''v'''+str(status_to_set)+'''s'''+node_serial_number+"f"+node_address+'''_#]'''
+        #  [S_001sr04051_#] 
+        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+'''_#]'''
 
       if (out_type=="digital_output"):#[S_001dw06001_#]
 
@@ -420,7 +420,7 @@ class RouterHandler:
 
 
     def setAddressToNode(self,node_serial_number,node_address):
-      new_address=getNextFreeAddress(node_serial_number)
+      new_address=getNextFreeAddress(node_serial_number,object_dict,nodeDict,zoneDict,scenarioDict)
       print "new address for the node:"+str(new_address)
       msg="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"
       result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
@@ -569,7 +569,7 @@ class RouterHandler:
           if result==1:  #if the query was accepted from the radio/serial node
             
             priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
-            updateNodeAddress(node_serial_number,node_address)#since onos was able to talk to the node I update the LastNodeSync
+            updateNodeAddress(node_serial_number,node_address,object_dict,nodeDict,zoneDict,scenarioDict)#since onos was able to talk to the node I update the LastNodeSync
 
 
 
