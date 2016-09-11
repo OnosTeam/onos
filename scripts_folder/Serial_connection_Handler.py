@@ -5,7 +5,7 @@
 import arduinoserial
 import os
 import time,string
-from globalVar import *           # import parameter globalVar.py
+from conf import *           # import parameter globalVar.py
 
 exit=0
 

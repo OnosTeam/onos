@@ -18,7 +18,7 @@
 
 #import os
 
-from globalVar import *           # import parameter globalVar.py
+from conf import *           # import parameter globalVar.py
 global exit  #if exit ==1 all the program stop and exit
 
 global router_hardware_type

@@ -10,7 +10,7 @@
 """
 
 
-from globalVar import *
+from conf import *
 
 
 

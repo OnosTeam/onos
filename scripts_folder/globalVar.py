@@ -1638,7 +1638,7 @@ onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta","smtp_port
 conf_options={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
 
 #localhost/setup/node_manager/RouterGL0001
-hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":180}
+hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":"never"}
 hardwareModelDict["RouterGL"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
@@ -1646,7 +1646,7 @@ hardwareModelDict["RouterGL"]["parameters"]["bash_pin_enable"]=1
 hardwareModelDict["RouterGL"]["parameters"]["serial_port_enable"]=0
 
 
-hardwareModelDict["RouterGA"]={"hwName":"RouterGA","max_pin":5,"hardware_type":"gl.inet_with_arduino2009","pin_mode":{},"parameters":{},"timeout":180}
+hardwareModelDict["RouterGA"]={"hwName":"RouterGA","max_pin":5,"hardware_type":"gl.inet_with_arduino2009","pin_mode":{},"parameters":{},"timeout":"never"}
 hardwareModelDict["RouterGA"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
 hardwareModelDict["RouterGA"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGA"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}

@@ -24,7 +24,7 @@
 
 
 
-from globalVar import *
+from conf import *
 from node_query_handler import *
 import arduinoserial,Serial_connection_Handler
 

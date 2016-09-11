@@ -21,7 +21,7 @@ This module is used to import all the configurations from the saved files at the
 
 
 
-import globalVar
+from globalVar import*
 from web_object import *
 import router_handler
 import hw_node
@@ -241,7 +241,10 @@ def importConfig():
     node_address=tmp_node_dict[a][u"nodeAddress"]   
     hardware_node_type=hardwareModelDict[node_type]
     nodeDict[node_serial_number]=hw_node.HwNode(node_serial_number,hardware_node_type,node_address,router_hardware_fw_version) 
- 
+    if nodeDict[node_serial_number].getNodeTimeout()!="never":
+      nodeDict[node_serial_number].setNodeActivity(0)  #set the node as inactive at startup if there is a getNodeTimeout for the node
+
+
   #ricreate the nodeDict from the json backup
   #note that the io config will be done in webserver.py where i add the objectList elements to object_dict
 

@@ -1310,6 +1310,17 @@ for a in objectList :                # append to dictionary all the web object
   a.InitFunction()
   s=a.getStartStatus()
   a.setStatus(s)
+  obj_node_address=a.getHwNodeSerialNumber()
+  if obj_node_address in nodeDict.keys():
+    if nodeDict[obj_node_address].getNodeTimeout()!="never": 
+      a.setStatus("inactive")
+      nodeDict[obj_node_address].updateLastNodeSync(99999)
+
+
+
+
+
+
 
 
 for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios

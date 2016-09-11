@@ -53,7 +53,7 @@ import os
 import sys
 import time
 import getopt
-from globalVar import *           # import parameter globalVar.py
+from conf import *           # import parameter globalVar.py
 import thread,threading,time,string
 
 
