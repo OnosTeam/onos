@@ -246,7 +246,7 @@ void decodeOnosCmd(const char *received_message){
 
 */
 
-  strcpy(received_message_answer,"err01_#]");
+  strcpy(received_message_answer,"[S_err01_#]");
 
 
 
@@ -254,7 +254,7 @@ void decodeOnosCmd(const char *received_message){
  // the onos cmd was found           [S_001dw06001_#]
 
 
-    strcpy(received_message_answer,"cmdRx_#]");               
+    strcpy(received_message_answer,"[S_cmdRx_#]");               
 
 
     received_message_type_of_onos_cmd[0]=received_message[6];
@@ -266,7 +266,7 @@ void decodeOnosCmd(const char *received_message){
          
 
     if (received_message_address!=this_node_address) {//onos command for a remote arduino node
-      strcpy(received_message_answer,"remote_#]");
+      strcpy(received_message_answer,"[S_remote_#]");
 
 /*
 
@@ -284,7 +284,7 @@ void decodeOnosCmd(const char *received_message){
 
       received_message_value=received_message[12]-48;
       if (received_message_value>1){ 
-        strcpy(received_message_answer,"er0_status_#]"); 
+        strcpy(received_message_answer,"[S_er0_status_#]"); 
         return;
       }
 
@@ -304,7 +304,7 @@ void decodeOnosCmd(const char *received_message){
       if ((received_message_value<0)||(received_message_value>255)){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
-        strcpy(received_message_answer,"er0_status_#]"); 
+        strcpy(received_message_answer,"[S_er0_status_#]"); 
         return;
       }
 
@@ -321,7 +321,7 @@ void decodeOnosCmd(const char *received_message){
       received_message_value=received_message[12]-48;      
 
       if (received_message_value>1){ 
-        strcpy(received_message_answer,"er0_status_#]"); 
+        strcpy(received_message_answer,"[S_er0_status_#]"); 
         return;
       }
 
@@ -640,13 +640,13 @@ void loop()
     
 
 
-    if(((received_message_answer[0]=='o')&&(received_message_answer[1]=='k'))||(strcmp(received_message_answer,"remote_#]")==0)){
+    if(((received_message_answer[0]=='o')&&(received_message_answer[1]=='k'))||(strcmp(received_message_answer,"[S_remote_#]")==0)){
 
 
 
-      if (strcmp(received_message_answer,"remote_#]")!=0) {//onos command for this arduino node
+      if (strcmp(received_message_answer,"[S_remote_#]")!=0) {//onos command for this arduino node
             //Serial.print("ok_local");
-        strcpy(received_message_answer,"ok_local_#]");
+        strcpy(received_message_answer,"[S_ok_local_#]");
         counter=0;
       } 
       else{ //onos command to send to a remote node
@@ -692,7 +692,7 @@ void loop()
 
           else{
                // Serial.println("sendtoWait failed");
-            strcpy(received_message_answer,"ertx1_#]");  
+            strcpy(received_message_answer,"[S_ertx1_#]");  
             radio.receiveDone(); //put radio in RX mode
           }
 
@@ -701,7 +701,7 @@ void loop()
 
         }
         else {//radio is disabled 
-          strcpy(received_message_answer,"ertx3_#]");
+          strcpy(received_message_answer,"[S_ertx3_#]");
 
         }
 
@@ -724,7 +724,7 @@ void loop()
   }
   else{
 
-    strcpy(received_message_answer,"nocmd0_#]");
+    strcpy(received_message_answer,"[S_nocmd0_#]");
 
 
   }
@@ -764,7 +764,7 @@ void loop()
     }
     
 
-    strcpy(received_message_answer,"VOID");  
+    strcpy(received_message_answer,"[S_nocmd2_#]");  
     strcpy(filtered_onos_message,""); 
 
     Serial.flush(); //make sure all serial data is clocked out before sleeping the
@@ -830,7 +830,7 @@ void loop()
     //    Serial.println("onos cmd  found-------------------------------");
         decodeOnosCmd(filtered_onos_message);
 
-        if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')||(strcmp(received_message_answer,"remote_#]")==0)){//if the message was ok...
+        if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')||(strcmp(received_message_answer,"[S_remote_#]")==0)){//if the message was ok...
       //check if sender wanted an ACK
           if (radio.ACKRequested()){
             radio.sendACK();
@@ -846,7 +846,7 @@ void loop()
 
       }
       else{
-        strcpy(received_message_answer,"nocmd0_#]");
+        strcpy(received_message_answer,"[S_nocmd0_#]");
         Serial.println("error in message nocmd0_#]");
       }
 
@@ -859,7 +859,7 @@ void loop()
     }
 
 
-    if(strcmp(received_message_answer,"remote_#]")==0){ //transmit the received data from the node to the serial port
+    if(strcmp(received_message_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
 
 
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {

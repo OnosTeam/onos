@@ -26,7 +26,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
 
   """
 
-  max_retry=20
+  max_retry=10
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
@@ -34,10 +34,11 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
 
     data=serialCom.status.write(query)
     time.sleep(0.01) 
-    if data.find("ok"+query[3:])!=-1:      
+    end_of_query=data.find("_#]")
+    if data.find("ok"+query[3:end_of_query+3])!=-1:      
       return(1) 
-    print "answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was:"+query[3:]+"end,the number of try is "+str(m) 
-    errorQueue.put("answer received from serial port is wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
+    print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial,node the query was:"+query+",the number of try is "+str(m) 
+    errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
     time.sleep(0.1*m) 
 
 

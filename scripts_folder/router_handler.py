@@ -130,8 +130,7 @@ class RouterHandler:
     
         if self.serial_communication.working==1:
           print "serial communication working"
-          data=self.serial_communication.status.write('onos_d06v000sProminiS0001f001_#]')
-          data=self.serial_communication.status.write('onos_d06v001sProminiS0001f001_#]')          
+         
 
           #todo: read nodeFw from the serial arduino node..
           #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":"ProminiS0001","nodeAdress":"001","nodeFw":"5.23"})  
@@ -420,7 +419,7 @@ class RouterHandler:
 
 
     def setAddressToNode(self,node_serial_number,node_address):
-      new_address=getNextFreeAddress(node_serial_number,object_dict,nodeDict,zoneDict,scenarioDict)
+      new_address=getNextFreeAddress(node_serial_number,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
       print "new address for the node:"+str(new_address)
       msg="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"
       result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
@@ -569,7 +568,9 @@ class RouterHandler:
           if result==1:  #if the query was accepted from the radio/serial node
             
             priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
-            updateNodeAddress(node_serial_number,node_address,object_dict,nodeDict,zoneDict,scenarioDict)#since onos was able to talk to the node I update the LastNodeSync
+            #since onos was able to talk to the node I update the LastNodeSync
+            layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address}) 
+
 
 
 

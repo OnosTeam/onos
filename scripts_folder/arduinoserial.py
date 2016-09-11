@@ -384,7 +384,7 @@ class SerialPort:
     self.disable_uart_queue=1  # I disable the auto queue add because I want to read the data directly
     start_time=time.time()
     while self.dataAvaible==0:
-      if (time.time>(start_time+timeout) ): #timeout to exit the loop
+      if (time.time()>(start_time+timeout) ): #timeout to exit the loop
         return(-1)
       time.sleep(0.001) 
     return(1) 
@@ -408,6 +408,8 @@ class SerialPort:
     while waitTowriteUntilIReceive==1 : #wait because there are half packet in serial receiving
       time.sleep(0.001)
       if (time.time>(timeout+10) ): #timeout to exit the loop
+        print "timeout in write() to serial port, the query was:"+data
+        errorQueue.put("timeout in write() to serial port, the query was:"+data)
         break
 
 
@@ -421,7 +423,7 @@ class SerialPort:
 
     tmp="void"
     self.usbW.write(data+'\n')
-    if self.waitForData(10)==1:
+    if self.waitForData(2)==1: # wait for incoming message for 10 ms
       #tmp=serial_incomingBuffer
       #self.removeFromInBuffer=tmp
 
@@ -434,6 +436,7 @@ class SerialPort:
         
     else:
       print "rx timeout0"
+      waitToReceiveUntilIRead=0
 
     return(tmp)    
 

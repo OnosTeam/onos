@@ -167,7 +167,7 @@ def importConfig():
   """
 
   global zoneDict
-  global nodeDicts
+  global nodeDict
   global scenarioDict
   global scenarios_enable
   global accept_only_from_white_list  
@@ -180,6 +180,7 @@ def importConfig():
   global online_usersDict
   global timezone
   global enable_onos_auto_update
+  global conf_options
 
   accept_only_from_white_list=readConfigurationsFromSavedFile(u"accept_only_from_white_list")  
   enable_mail_service=readConfigurationsFromSavedFile(u"enable_mail_service")  
@@ -196,6 +197,8 @@ def importConfig():
   zoneDict.update(readDictionaryFromSavedFile(u"zoneDictionary"))
   scenarioDict.update(readDictionaryFromSavedFile(u"scenarioDictionary"))
   tmp_obj_dict=readDictionaryFromSavedFile(u"objectDictionary")
+
+  conf_options={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
 
   for a in tmp_obj_dict.keys():  #for each object in the file
     object_html_name=a

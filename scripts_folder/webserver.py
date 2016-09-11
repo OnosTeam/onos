@@ -30,6 +30,20 @@ global object_dict
 global zoneDict
 global exit  #exit is on conf.py  f exit ==1 all the program stop and exit
 global hardware
+global nodeDict
+global scenarios_enable
+global accept_only_from_white_list  
+global enable_mail_service
+global enable_mail_output_service
+global logTimeout 
+global login_required 
+global mail_whiteList
+global online_server_enable
+global online_usersDict
+global timezone
+global enable_onos_auto_update
+global conf_options
+
 
 exit=0
 check_log_len_time=1
@@ -104,9 +118,9 @@ get_zone_manager_inner_html='''<!DOCTYPE html>
 
 
 oldpag=" "
-old_zoneDict={}
-old_object_dict={}
-old_web_page=" "
+#old_zoneDict={}
+#old_object_dict={}
+#old_web_page=" "
 
 baseDir=""
 
@@ -192,6 +206,183 @@ def sortZonesByOrderNumber():
   print "list returned:",zone_list
   return(zone_list)
    
+
+
+
+
+
+
+
+def transform_object_to_dict(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
+  return (obj_tmp_dict)  
+
+
+def transform_object_to_dict_to_backup(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]=a.getObjectDictionary()
+  return (obj_tmp_dict)  
+
+
+
+def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
+
+  print "updateJson executed"
+
+#json doesn't support saving objects  ..so i save all the variables of each objects
+#to get back the pin of the object you have to write:
+#  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
+  obj_tmp_dict=transform_object_to_dict_to_backup(object_dictionary)
+
+
+  node_tmp_Dict={}
+  for a in nodeDictionary.keys():
+    try: 
+      sn=nodeDictionary[a].getNodeSerialNumber() 
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress()}
+    except:
+      print "error in updateJson, with node:"+str(a)
+    # note that the i/o modes for the node pins will be saved in the relative webobjects .
+    # the pins not used by a webobject will be configured as output and cleared to 0 
+        
+
+
+
+  #print object_dictionary
+  #print roomDictionary
+  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
+  #to add a new dictionary just add it in dictionary_group
+
+  #print dictionary_group
+  #note base_cfg_path is in the globalVar.py 
+
+
+  try:
+    dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
+    file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+    file_to_save.write(dictionary_group_json)
+    file_to_save.close()
+    os.chmod(base_cfg_path+"config_files/data.json", 0o777)
+
+
+    conf_options_json=json.dumps(conf_options_dictionary, indent=2,sort_keys=True) #make the json structure
+    file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+    file_to_save2.write(conf_options_json)
+    file_to_save2.close()
+    os.chmod(base_cfg_path+"config_files/cfg.json", 0o777)
+
+  except Exception, e :
+    print "error in updateJson()"+" e:"+str(e.args)
+    errorQueue.put("error in updateJson()"+" e:"+str(e.args)) 
+
+
+
+
+def updateNodeAddress(node_sn0,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
+  """,
+  Given a node serialnumber and a address update the node in the nodeDict with the current address. 
+
+  """
+
+  try:
+    numeric_sn=node_sn0[-4:]
+    nodeNumericSerialTofullSerial[numeric_sn]=node_sn0  #get the 0001 from ProminiA0001  and assign to that key the full serial number ProminiA0007
+
+
+
+  except Exception, e :
+
+    print "error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
+
+
+  try: #if (node_sn0 in nodeDict.keys()):
+
+    if len(address)==3:  #if is a radio node
+      if address not in next_node_free_address_list: 
+        next_node_free_address_list.append(address)   
+
+ 
+    nodeDict[node_sn0].updateLastNodeSync(time.time())
+
+    if (nodeDict[node_sn0].getNodeAddress())!=address:
+      print "node "+node_sn0+" address changed to "+address
+      nodeDict[node_sn0].setNodeAddress(address)
+      updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
+
+      
+    else:
+      print "the node has still the same ip"
+
+  except Exception, e :
+
+    print "error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
+
+  return()
+
+
+def getNextFreeAddress(node_sn0,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
+  """
+  | Given a node serialnumber this function will return the first free address to assign to the node. 
+  | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
+  | Used only for the radio nodes since the ethernet nodes 
+  """
+
+  print "getNextFreeAddress executed"
+  print next_node_free_address_list
+
+  for number in range(2,254):
+    if number not in next_node_free_address_list:# if the address is not used then assign it
+     # next_node_free_address_list.append(number)
+     # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
+      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
+      str_address=str(number)
+      while (len(str_address)<3):
+        str_address="0"+str_address
+      return(str_address)
+
+  for node in nodeDict.keys():
+    address=nodeDict[node].getNodeAddress()
+    if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
+        #updateNodeAddress(node_sn0,address) 
+      updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      print( "I had finished all the free addresses so I recycled a not used one") 
+      errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
+      return(address)
+
+    print "I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one"
+    errorQueue.put( "I had finished all the free addresses i'm sorry but you have to disconnect one node to connect another one")  
+    return("254")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def changeWebObjectType(objName,typeToSet):#change the type of webobject and the relative pin mode in hardware_node class
@@ -351,7 +542,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
 
 def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scenario passed
   print "checkwebObjectScenarios() executed"
-  if scenarios_enable==0 :
+  if conf_options["scenarios_enable"]==0 :
     print "scenario disabled"
     return()
 
@@ -1477,7 +1668,7 @@ def createNewNode(node_sn,node_address,node_fw):
   if node_sn in nodeDict.keys():
     print "found node in the dict"
     #nodeDict[node_sn].setNodeAddress(node_address)
-    updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict)
+    updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #created a new node
     print "requested setup for a node not existing yet "                  
@@ -1492,7 +1683,7 @@ def createNewNode(node_sn,node_address,node_fw):
         hardware_node_model=hardwareModelDict[hwType]  
         nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
         #nodeDict[node_sn].updateLastNodeSync(time.time())
-        updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict)  
+        updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
         #nodeDict[node_sn].setNodeAddress(node_address)
         msg=nodeDict[node_sn].getSetupMsg() 
 
@@ -1623,7 +1814,7 @@ def getUserFromIp(ipUserAddress):
       username=user_active_time_dict[ipUserAddress][0]
       old_active_time=user_active_time_dict[ipUserAddress][1]
       current_time=(datetime.datetime.today().minute+(datetime.datetime.today().hour)*60 )
-      if (current_time >(old_active_time+logTimeout) ):   #timeout
+      if (current_time >(old_active_time+conf_options["logTimeout"]) ):   #timeout
       #if user was not active in the last 10 minutes logout
         print "user:"+username+"logged out for timeout"
         del user_active_time_dict[ipUserAddress] #remove the ip from the dict   
@@ -2662,7 +2853,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             #from here to the end the login is required , the above part is for the onos node use.
             current_username="nobody"
-            if (login_required==1):
+            if (conf_options["login_required"]==1):
               current_username=getUserFromIp(self.client_address[0])
 
               if (current_username==-1) : #user not logged
@@ -3289,7 +3480,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if self.path.endswith("setup/save_configuration/"): #     
               print "json saved"
-              updateJson(object_dict,nodeDict,zoneDict,scenarioDict)
+              updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
                   
               try:              
                 b1 = open('setup/select_config_menu.html','r')    
@@ -3611,7 +3802,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if node_sn0 in nodeDict.keys():
               print "the node exist so i update the pin input status"
-              updateNodeAddress(node_sn0,node_ip,object_dict,nodeDict,zoneDict,scenarioDict)# update the node ip 
+              updateNodeAddress(node_sn0,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
               
             else:
               msg=createNewNode(node_sn0,node_ip,node_fw)
@@ -3783,10 +3974,10 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                     #subprocess.check_output("chmod 777 "+new_name, shell=True,close_fds=True)  
 
-                  with open(baseRoomPath+new_name, 'w') as f:
+                  with open(baseRoomPath+new_name+"/index.html", 'w') as f:
                     f.write(getRoomHtml(new_name,object_dict,"",zoneDict))
 
-                  os.chmod(new_name, 0o777)
+                  os.chmod(baseRoomPath+new_name+"/index.html", 0o777)
                   updateOneRoom(new_name)       
                   print "create a new room"+new_name 
                   data_to_update=1
@@ -4979,7 +5170,7 @@ def mailCheckThread():
       print "error mailagent ,  wrong username/password or no internet connection"
       errorQueue.put( "error mailagent ,  wrong username/password or no internet connection,i disable the incoming mail service")
       print "i disable the mail service"
-      enable_mail_service=0  
+      conf_options["enable_mail_service"]=0  
       return() 
 
     if len(mailList)>0:  #there are mails
@@ -5042,16 +5233,16 @@ def mailCheckThread():
 
 
             if compareText(onos_usr,onos_usr)==1: #if the username is the default mail one.. 
-              if m_sender not in mail_whiteList :
+              if m_sender not in conf_options["mail_whiteList"] :
                 print "error mail not in mail list"    
                 errorQueue.put("error mail not in mail list" )
                 mailText=mailText+compose_error_mail("white_list")
                 continue   
 
 
-            if accept_only_from_white_list==1:
+            if conf_options["accept_only_from_white_list"]==1:
 
-              if m_sender not in mail_whiteList :
+              if m_sender not in conf_options["mail_whiteList"] :
                 print "error mail not in mail list"  
                 errorQueue.put( "error mail not in mail list" )  
                 mailText=mailText+compose_error_mail("white_list")
@@ -5234,7 +5425,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 
-    if (online_server_enable==1)&(internet_connection==1):
+    if (conf_options["online_server_enable"]==1)&(internet_connection==1):
       if (onlineServerSyncThreadIsrunning==0)&((time.time()-last_server_sync_time)>online_server_delay):
         last_server_sync_time=time.time()
         print "i started the online server sync service"
@@ -5248,7 +5439,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
    # time.sleep(0.3) #don't remove this or else the router became instable
 
    #the mail check will run only if the onlineServerSync is not running    
-    if (enable_mail_service==1)&(internet_connection==1)&(onlineServerSyncThreadIsrunning==0):   
+    if (conf_options["enable_mail_service"]==1)&(internet_connection==1)&(onlineServerSyncThreadIsrunning==0):   
       if (mailCheckThreadIsrunning==0)&((time.time()-last_mail_sync_time)>mail_check_frequency):
         last_mail_sync_time=time.time()
         try:
@@ -5303,7 +5494,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 
-    if ( mailQueue.empty()==0 )&( mailOutputHandler_is_running==0)&(internet_connection==1)&(enable_mail_output_service==1):  #start the mail output thread if needed
+    if ( mailQueue.empty()==0 )&( mailOutputHandler_is_running==0)&(internet_connection==1)&(conf_options["enable_mail_output_service"]==1):  #start the mail output thread if needed
       #print "mailOutputHandler_is_running=",mailOutputHandler_is_running
       #print "i execute mailOutputHandler thread ddddddddddddddddddddDDDDDDDDDDDDDDDDDDDdddddddddddDDDDDDDDDDDDDDDDdd "
       try:
@@ -5368,6 +5559,21 @@ def executeQueueFunction(dataExchanged):
     except Exception, e:
       print "error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args)
       errorQueue.put("error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args))
+
+
+
+  if (dataExchanged["cmd"]=="updateNodeAddress"):
+
+    try:
+      node_serial_number=dataExchanged["nodeSn"]
+      node_address=dataExchanged["nodeAddress"]
+      updateNodeAddress(node_serial_number,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+
+    except Exception, e:
+      print "error in the updateNodeAddress of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
+      errorQueue.put("error in the createNewNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args))
+
+
 
 
   if (dataExchanged["cmd"]=="createNewNode"):

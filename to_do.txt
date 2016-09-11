@@ -1,5 +1,7 @@
 avvio di onos anche senza internet?  update_check...
 
+Controllare variabili globali in globalVar.py che non possono essere modificate successivamente .. e fare tutti passagi di variabile
+
 
 salvare indirizzi nodi su file json a parte...per non dover salvare tutte le config ogni volta..
 

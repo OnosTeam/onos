@@ -17,9 +17,9 @@ try:
   profile=prof.read()
   prof.close()
    #print profile
-  if (string.find(profile,timezone)== -1) :
-    os.system('echo "export TZ='+timezone+'">> /etc/profile') ##export TZ="CET-1CEST,M3.5.0,M10.5.0/3"
-    print " onos set the timezone to:"+timezone
+  if (string.find(profile,conf_options["timezone"])== -1) :
+    os.system('echo "export TZ='+conf_options["timezone"]+'">> /etc/profile') ##export TZ="CET-1CEST,M3.5.0,M10.5.0/3"
+    print " onos set the timezone to:"+conf_options["timezone"]
     os.system("source /etc/profile") #reload the profile to update time
   else:
     print "timezone ok"
