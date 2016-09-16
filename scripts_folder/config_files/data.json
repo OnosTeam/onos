@@ -27,7 +27,7 @@
     }, 
     "WLightSS0004": {
       "hwModelName": "ProminiS", 
-      "nodeAddress": "254", 
+      "nodeAddress": "003", 
       "node_serial_number": "WLightSS0004"
     }
   }, 
@@ -58,7 +58,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -129,7 +129,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -304,7 +304,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1, 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -441,7 +441,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1, 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -613,7 +613,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 2, 
+      "status": 13, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -648,7 +648,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 799, 
+      "status": 203, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -691,7 +691,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 21, 
+      "status": 3, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -736,7 +736,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 19, 
+      "status": 23, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -771,7 +771,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1, 
+      "status": 9, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -813,40 +813,6 @@
         "default_s": "background-color:red ;color black", 
         "onoswait": "background-color:grey ;color black", 
         "wait": "background-color:grey ;color black"
-      }, 
-      "type": "b"
-    }, 
-    "prova1_body": {
-      "cmdDict": {
-        "0": "", 
-        "1": "", 
-        "s_cmd": ""
-      }, 
-      "grp": [
-        "web_interface", 
-        "onos_mail_guest"
-      ], 
-      "htmlDict": {
-        "0": "prova1_body=0", 
-        "1": "prova1_body=1"
-      }, 
-      "mail_l": [], 
-      "node_sn": 9999, 
-      "notes": " ", 
-      "objname": "prova1_body", 
-      "own": "onos_admin", 
-      "perm": "111111111", 
-      "pins": [
-        9999
-      ], 
-      "priority": 0, 
-      "scenarios": [], 
-      "status": 0, 
-      "styleDict": {
-        "0": "background-color:#A9E2F3;", 
-        "1": "background-color:#8181F7;", 
-        "default_s": "background-color:red ;color black", 
-        "onoswait": "background-color:grey ;color black"
       }, 
       "type": "b"
     }, 
@@ -911,7 +877,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -947,7 +913,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1084,12 +1050,12 @@
       "own": "onos_admin", 
       "perm": "111111111", 
       "pins": [
-        8, 
-        7
+        7, 
+        8
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1, 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -1124,7 +1090,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1160,7 +1126,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1196,7 +1162,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1232,7 +1198,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1268,7 +1234,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1304,7 +1270,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1340,7 +1306,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1376,7 +1342,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1412,7 +1378,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1448,7 +1414,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1484,7 +1450,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "onoswait", 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1520,7 +1486,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:green;color:black;", 
         "1": "background-color:red;color: black;", 
@@ -1630,7 +1596,7 @@
       "conditions": "(#_minutes_#>-1)", 
       "enabled": 1, 
       "functionsToRun": [
-        "wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#", 
+        "socket0_WLightSS0004=!#_socket0_WLightSS0004_#", 
         "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
       ], 
       "one_time_shot": 0, 
@@ -1822,16 +1788,6 @@
         "button1_WLightSS0004"
       ], 
       "order": 5, 
-      "owner": "onos_sys", 
-      "permissions": "777"
-    }, 
-    "prova1": {
-      "group": [], 
-      "hidden": 0, 
-      "objects": [
-        "prova1_body"
-      ], 
-      "order": 7, 
       "owner": "onos_sys", 
       "permissions": "777"
     }

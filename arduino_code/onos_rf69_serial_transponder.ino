@@ -75,7 +75,7 @@
 #define IS_RFM69HCW   false // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
-#define SERIAL_BAUD   115200
+#define SERIAL_BAUD   57600
  
 #define RFM69_CS      10
 #define RFM69_IRQ     2
@@ -511,7 +511,7 @@ void setup() {
   Serial.println(" MHz");
 
 */  
-  Serial.println(F("arduino_ready_#]"));
+  Serial.println(F("[S_arduino_ready_#]"));
   radio_enabled=1;
 
 
@@ -557,12 +557,12 @@ void loop()
    //Serial.println(counter);
    // read the incoming byte:
     //if (counter==0){
-    delayMicroseconds(110);  //the serial doesnt work without this delay...
+    delayMicroseconds(210);//the serial doesnt work without this delay... to change if you change baud rate (increase with lower baud rate)
     //}  
     data_from_serial[counter] = Serial.read();
 
     if ( millis()>timeout){
-      Serial.println(F("serial_timeout---------------------------------"));
+      Serial.println(F("[S_serial_timeout---------------------------------_#]"));
       break;
     }
 
@@ -570,7 +570,7 @@ void loop()
    
 
     if (counter>rx_msg_lenght){  //prevent overflow
-      Serial.println(F("array_overflow prevented---"));
+      Serial.println(F("[S_array_overflow prevented---_#]"));
       Serial.println(counter);
       Serial.println(F("end"));
       counter=0;
@@ -646,7 +646,7 @@ void loop()
 
       if (strcmp(received_message_answer,"[S_remote_#]")!=0) {//onos command for this arduino node
             //Serial.print("ok_local");
-        strcpy(received_message_answer,"[S_ok_local_#]");
+        strcpy(received_message_answer,"ok_#]");
         counter=0;
       } 
       else{ //onos command to send to a remote node

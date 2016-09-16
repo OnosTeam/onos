@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+"""
+Obsolete not used.
+
+
+"""
+
 import serial, time
 #initialization and open the port
 
@@ -24,6 +30,10 @@ ser.rtscts = False     #disable hardware (RTS/CTS) flow control
 ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
 ser.writeTimeout = 2     #timeout for write
 
+rx_timeout=10
+
+
+
 try: 
     ser.open()
 except Exception, e:
@@ -31,35 +41,43 @@ except Exception, e:
     exit()
 
 
-time.sleep(2)  #give the serial port sometime to receive the data
+def writeToSerial(data_to_write):
+  print "writeToSerial() executed"
 
-if ser.isOpen():
+  if not ser.isOpen():
+    return("error serial_port001")
 
-    try:
-        ser.flushInput() #flush input buffer, discarding all its contents
-        ser.flushOutput()#flush output buffer, aborting current output 
+  try:
+    ser.flushInput() #flush input buffer, discarding all its contents
+    ser.flushOutput()#flush output buffer, aborting current output 
                  #and discard all that is in buffer
 
         #write data
-        ser.write("[S_001dw06001_#]")
-        print("write data: AT+CSQ")
+    ser.write(data_to_write)
+    print("write data:"+data_to_write)
 
-        time.sleep(1)  #give the serial port sometime to receive the data
+    time.sleep(1)  #give the serial port sometime to receive the data
 
-        numOfLines = 0
+    numOfLines = 0
 
-        while True:
-           response = ser.readline()
-           print("read data: " + response)
+    time_start=time.time()
+    while True:
+      response = ser.read(len(data_to_write)+2)
+      print("read data: " + response)
 
-           numOfLines = numOfLines + 1
+      numOfLines = numOfLines + 1
 
-           if (numOfLines >= 1):
-             break
+      if (numOfLines >= 1):
+        return(response)
 
-        ser.close()
-    except Exception, e1:
-        print "error communicating...: " + str(e1)
+      if (time_start>(time.time()+rx_timeout) ):  
+        print "rx timeout0"
+        return("error rx001")
 
-else:
-    print "cannot open serial port "
+    ser.close()
+  except Exception, e1:
+    print "error communicating...: " + str(e1)
+
+
+
+

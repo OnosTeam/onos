@@ -60,7 +60,7 @@
 #include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <SPI.h>
 #include <RFM69_ATC.h> 
-#include "onos_message_decode.h"
+#include "onos_message_decode.cpp"
 
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************

@@ -5,11 +5,7 @@
   "enable_onos_auto_update": "yes", 
   "logTimeout": 15, 
   "login_required": 0, 
-  "mail_whiteList": [
-    "elettronicaopensource@gmail.com", 
-    "electronicflame@gmail.com", 
-    "marco_righe@yahoo.it"
-  ], 
+  "mail_whiteList": [], 
   "online_server_enable": 0, 
   "online_usersDict": {
     "RouterGA0000": {
@@ -25,6 +21,6 @@
       "user_mail": "elettronicaopensource@gmail.com"
     }
   }, 
-  "scenarios_enable": 0, 
+  "scenarios_enable": 1, 
   "timezone": "CET-1CEST,M3.5.0,M10.5.0/3"
 }

@@ -139,8 +139,8 @@ mail_retry_timeout=120  #seconds between retry after error in sending mail
 
 
 enable_onos_auto_update="yes" # possible value: "yes","no","ask_me"  # banana ask_me not implemented yet
-scenarios_enable=0  # tell onos if it have to check the scenarios or not
-online_server_enable=1  #enable the remote online server to controll onos from internet without opening the router ports
+scenarios_enable=1  # tell onos if it have to check the scenarios or not
+online_server_enable=0  #enable the remote online server to controll onos from internet without opening the router ports
 #will be overwritten by /scripts_folder/config_files/cf.json
 
 last_server_sync_time=0
@@ -192,6 +192,13 @@ query_to_node_dict={} # this dictionary will  have the node_serial_number as key
 #to access it:  query_to_node_dict['Plug6way0001'][0]["address"]  to get the  first address  
 
 
+last_received_packet="" # used in arduinoSerial.py  
+data_to_write="" # used in arduinoSerial.py 
+write_to_serial_packet_ready=0 # used in arduinoSerial.py 
+
+
+
+
 
 
 if (enable_mail_service==1)or(enable_mail_output_service==1): 
@@ -212,7 +219,7 @@ recoverycfg_json='''
   "logTimeout": 15, 
   "login_required": 0, 
   "mail_whiteList": [], 
-  "online_server_enable": 1999, 
+  "online_server_enable": 0, 
   "online_usersDict": {
     "'''+router_sn+'''": {
       "mail_control_password": "'''+onos_online_password+'''", 
@@ -1463,7 +1470,7 @@ recoverydata_json=''' {
       "conditions": "(#_minutes_#>-1)", 
       "enabled": 1, 
       "functionsToRun": [
-        "wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#", 
+        "socket0_WLightSS0004=!#_socket0_WLightSS0004_#", 
         "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
       ], 
       "one_time_shot": 0, 
@@ -1670,7 +1677,7 @@ hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15)],"wifi":[(16,17)]}
 
 hardwareModelDict["WLightSS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
-hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(8,7)]}
+hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(7,8)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
@@ -1736,6 +1743,177 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 #  print hardwareModelDict["onosPlug6way"]["hardware_type"]
 #
 #
+
+
+
+
+
+
+
+
+def transform_object_to_dict(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
+  return (obj_tmp_dict)  
+
+
+def transform_object_to_dict_to_backup(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]=a.getObjectDictionary()
+  return (obj_tmp_dict)  
+
+
+
+def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
+
+  print "updateJson executed"
+
+#json doesn't support saving objects  ..so i save all the variables of each objects
+#to get back the pin of the object you have to write:
+#  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
+  obj_tmp_dict=transform_object_to_dict_to_backup(object_dictionary)
+
+
+  node_tmp_Dict={}
+  for a in nodeDictionary.keys():
+    try: 
+      sn=nodeDictionary[a].getNodeSerialNumber() 
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress()}
+    except:
+      print "error in updateJson, with node:"+str(a)
+    # note that the i/o modes for the node pins will be saved in the relative webobjects .
+    # the pins not used by a webobject will be configured as output and cleared to 0 
+        
+
+
+
+  #print object_dictionary
+  #print roomDictionary
+  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
+  #to add a new dictionary just add it in dictionary_group
+
+  #print dictionary_group
+  #note base_cfg_path is in the globalVar.py 
+
+
+  try:
+    dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
+    file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+    file_to_save.write(dictionary_group_json)
+    file_to_save.close()
+    os.chmod(base_cfg_path+"config_files/data.json", 0o777)
+
+
+    conf_options_json=json.dumps(conf_options_dictionary, indent=2,sort_keys=True) #make the json structure
+    file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+    file_to_save2.write(conf_options_json)
+    file_to_save2.close()
+    os.chmod(base_cfg_path+"config_files/cfg.json", 0o777)
+
+  except Exception, e :
+    print "error in updateJson()"+" e:"+str(e.args)
+    errorQueue.put("error in updateJson()"+" e:"+str(e.args)) 
+
+
+
+
+def updateNodeAddress(node_sn0,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
+  """,
+  Given a node serialnumber and a address update the node in the nodeDict with the current address. 
+
+  """
+
+  try:
+    numeric_sn=node_sn0[-4:]
+    nodeNumericSerialTofullSerial[numeric_sn]=node_sn0  #get the 0001 from ProminiA0001  and assign to that key the full serial number ProminiA0007
+
+
+
+  except Exception, e :
+
+    print "error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
+
+
+  try: #if (node_sn0 in nodeDict.keys()):
+
+    if len(address)==3:  #if is a radio node
+      if address not in next_node_free_address_list: 
+        next_node_free_address_list.append(address)   
+
+    if address !="254": #if the node is not still getting an address
+      nodeDict[node_sn0].updateLastNodeSync(time.time())
+
+    if (nodeDict[node_sn0].getNodeAddress())!=address:
+      print "node "+node_sn0+" address changed to "+address
+      nodeDict[node_sn0].setNodeAddress(address)
+      updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
+
+      
+    else:
+      print "the node has still the same ip"
+
+  except Exception, e :
+
+    print "error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
+
+  return()
+
+
+def getNextFreeAddress(node_sn0,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
+  """
+  | Given a node serialnumber this function will return the first free address to assign to the node. 
+  | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
+  | Used only for the radio nodes since the ethernet nodes 
+  """
+
+  print "getNextFreeAddress executed"
+  print next_node_free_address_list
+
+  for number in range(2,254):
+    if number not in next_node_free_address_list:# if the address is not used then assign it
+     # next_node_free_address_list.append(number)
+     # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
+      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
+      str_address=str(number)
+      while (len(str_address)<3):
+        str_address="0"+str_address
+      return(str_address)
+
+  for node in nodeDict.keys():
+    address=nodeDict[node].getNodeAddress()
+    if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
+        #updateNodeAddress(node_sn0,address) 
+      updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      print( "I had finished all the free addresses so I recycled a not used one") 
+      errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
+      return(address)
+
+    print "I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one"
+    errorQueue.put( "I had finished all the free addresses i'm sorry but you have to disconnect one node to connect another one")  
+    return("254")
+
+
+
+
+
+
+
+
 
 
 

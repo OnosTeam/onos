@@ -12,7 +12,7 @@
 
 from conf import *
 
-
+#import pyserial_port
 
 def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
   """
@@ -30,13 +30,55 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
-    query=query[0:3]+nodeDict[node_serial_number].getNodeAddress()+query[6:] #change the address query if the node get a new one
 
-    data=serialCom.status.write(query)
-    time.sleep(0.01) 
-    end_of_query=data.find("_#]")
-    if data.find("ok"+query[3:end_of_query+3])!=-1:      
+ 
+    address=nodeDict[node_serial_number].getNodeAddress()
+
+    query=query[0:3]+address+query[6:] #change the address query if the node get a new one
+
+    data=""
+    try:  
+      data=serialCom.uart.write(str(query))
+
+      #data=pyserial_port.writeToSerial(query)
+    except Exception, e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)   
+      print str(e.args)
+      time.sleep(2)  
+
+    if len(data)=="error_reception":
+      continue
+  
+    
+
+    end_of_query=query.find("_#]")
+
+    # [S_ok003sr070811_#]
+    expected_confirm="[S_ok"+query[3:end_of_query+3]
+     #if data.find("ok"+query[3:end_of_query+3])!=-1:      
+     # return(1) 
+    print "expected confirm:"+expected_confirm
+    print "uart rx list:"
+    print serialCom.uart.readed_packets_list
+
+
+
+    found_ok_answer=0
+   # with lock_serial_input:
+
+    for a in serialCom.uart.readed_packets_list:
+      if a.find(expected_confirm)!=-1 :  #found the answer
+        found_ok_answer=1        
+        return (a)
+
+    print "uart rx list after:"
+    print serialCom.uart.readed_packets_list
+ 
+    if found_ok_answer==1:
       return(1) 
+
     print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial,node the query was:"+query+",the number of try is "+str(m) 
     errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
     time.sleep(0.1*m) 

@@ -14,17 +14,17 @@ exit=0
 HIGH=1
 LOW=0
 ser=0
-baud_rate=115200
+baud_rate=57600
 class Serial_connection_Handler():
 
   def __init__(self):
     self.exit=0 
-    self.status=self.connectToPort()
+    self.uart=self.connectToPort()
     self.working=1
     i=0
-    while (self.status ==0) :  #while port is not connected retry to connect   banana to make it clever..
-      self.status=self.connectToPort()
-      if self.status==1:
+    while (self.uart ==0) :  #while port is not connected retry to connect   banana to make it clever..
+      self.uart=self.connectToPort()
+      if self.uart==1:
         break
       time.sleep(1)
       if i>2:        #after 60 tries i increase the time between the tries

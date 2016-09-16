@@ -60,6 +60,8 @@ class RouterHandler:
       self.__hardware_type=hardwareModelDict["hardware_type"]
       self.__node_name=self.router_sn   # RouterGL0001
 
+      self.query_number=0  # to send an unique message identyfier i append a progressive number to the end of the message
+
       self.exit=0
       self.router_pin_numbers=[]
       #self.read_thread_running=0   
@@ -320,7 +322,15 @@ class RouterHandler:
 
       print "composeChangeNodeOutputPinStatusQuery() executed"
      
+     
+      if self.query_number>999:
+        self.query_number=0
+      else:
+        self.query_number=self.query_number+1
 
+      str_query_number=str(self.query_number) 
+      while (len(str_query_number) < 3):
+        str_query_number="0"+str_query_number 
 
 
       address=node_obj.getNodeAddress()
@@ -334,9 +344,9 @@ class RouterHandler:
           pin1='0'+pin1
 
         #  [S_001sr04051_#] 
-        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+str(self.query_number)+'''_#]'''
 
-      if (out_type=="digital_output"):#[S_001dw06001_#]
+      if (out_type=="digital_output"):# [S_001dw06001_#]
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -344,9 +354,12 @@ class RouterHandler:
         if (len (pin) <2):
           pin='0'+pin
 
-        #onos_d07v001s0001_#]
-        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+'''_#]'''
+        
+        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+str(self.query_number)+'''_#]'''
 
+
+
+      # [S_001sm11135_#]
       if (out_type=="servo_output"):
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
@@ -358,10 +371,10 @@ class RouterHandler:
         while (len(status_to_set)) <3:
           status_to_set='0'+status_to_set 
 
-        #onos_s07v180s0001_#]
-        query=base_query+'''onos_s'''+pin+'''v'''+status_to_set+'''s'''+node_serial_number+"f"+node_address+'''_#]''' 
+        
+        query=base_query+'''[S_'''+node_address+'''sm'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''
 
-
+      #  [S_001aw06155_#] 
       if (out_type=="analog_output"):
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
@@ -373,15 +386,12 @@ class RouterHandler:
         while (len(status_to_set)) <3:
           status_to_set='0'+status_to_set 
 
-        #onos_a07v100s0001_#]
-        query=base_query+'''onos_a'''+pin+'''v'''+status_to_set+'''s'''+node_serial_number+"f"+node_address+'''_#]''' 
+        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''
 
 
 
-
-
-
-      if  (len(node_address)==len("001")):#  arduino serial node or a node that communicate by radio serial gateway
+      #if  (len(node_address)==len("001")):#  arduino serial node or a node that communicate by radio serial gateway
+      if  (len(node_address)==3):#  arduino serial node or a node that communicate by radio serial gateway
         print "the node is serial"
         return(query)
 
@@ -540,8 +550,8 @@ class RouterHandler:
           return (-1)
         
 
-
-      if (len(node_address)==len("001")): #a local arduino selected or a node with radio ,that uses the serial gateway
+      #(len(node_address)==len("001"))
+      if (len(node_address)==3): #a local arduino selected or a node with radio ,that uses the serial gateway
         print "i write to serial arduino node"
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
 
@@ -564,13 +574,35 @@ class RouterHandler:
 
           query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
           print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end"  
-          result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
-          if result==1:  #if the query was accepted from the radio/serial node
+          try:
+            result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
+
+          except Exception, e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)   
+            print str(e.args)
+            time.sleep(2)  
+  
+          if result!=-1:  #if the query was accepted from the radio/serial node
             
+
             priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
             #since onos was able to talk to the node I update the LastNodeSync
             layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address}) 
+            print "serial_result="
+            print result
+            with lock_serial_input:
+              tmp_uart_list=[]
+              for a in self.serial_communication.uart.readed_packets_list:
+                if ( (a in tmp_uart_list)or(a==result) ):
+                  continue
+                else:
+                  tmp_uart_list.append(a)   
 
+              self.serial_communication.uart.readed_packets_list=tmp_uart_list   #list(set(tmp_uart_list)) 
+              #if result in self.serial_communication.uart.readed_packets_list:
+              #  self.serial_communication.uart.remove(result) 
 
 
 

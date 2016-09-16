@@ -213,164 +213,6 @@ def sortZonesByOrderNumber():
 
 
 
-def transform_object_to_dict(object_dictionary):
-
-
-  obj_tmp_dict={}
-
-  for b in object_dictionary.keys():
-    a=object_dictionary[b]   #bug  return ascii and not unicode?
-    name=a.getName()
-    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
-  return (obj_tmp_dict)  
-
-
-def transform_object_to_dict_to_backup(object_dictionary):
-
-
-  obj_tmp_dict={}
-
-  for b in object_dictionary.keys():
-    a=object_dictionary[b]   #bug  return ascii and not unicode?
-    name=a.getName()
-    obj_tmp_dict[name]=a.getObjectDictionary()
-  return (obj_tmp_dict)  
-
-
-
-def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
-
-  print "updateJson executed"
-
-#json doesn't support saving objects  ..so i save all the variables of each objects
-#to get back the pin of the object you have to write:
-#  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
-  obj_tmp_dict=transform_object_to_dict_to_backup(object_dictionary)
-
-
-  node_tmp_Dict={}
-  for a in nodeDictionary.keys():
-    try: 
-      sn=nodeDictionary[a].getNodeSerialNumber() 
-      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress()}
-    except:
-      print "error in updateJson, with node:"+str(a)
-    # note that the i/o modes for the node pins will be saved in the relative webobjects .
-    # the pins not used by a webobject will be configured as output and cleared to 0 
-        
-
-
-
-  #print object_dictionary
-  #print roomDictionary
-  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
-  #to add a new dictionary just add it in dictionary_group
-
-  #print dictionary_group
-  #note base_cfg_path is in the globalVar.py 
-
-
-  try:
-    dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
-    file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
-    file_to_save.write(dictionary_group_json)
-    file_to_save.close()
-    os.chmod(base_cfg_path+"config_files/data.json", 0o777)
-
-
-    conf_options_json=json.dumps(conf_options_dictionary, indent=2,sort_keys=True) #make the json structure
-    file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
-    file_to_save2.write(conf_options_json)
-    file_to_save2.close()
-    os.chmod(base_cfg_path+"config_files/cfg.json", 0o777)
-
-  except Exception, e :
-    print "error in updateJson()"+" e:"+str(e.args)
-    errorQueue.put("error in updateJson()"+" e:"+str(e.args)) 
-
-
-
-
-def updateNodeAddress(node_sn0,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
-  """,
-  Given a node serialnumber and a address update the node in the nodeDict with the current address. 
-
-  """
-
-  try:
-    numeric_sn=node_sn0[-4:]
-    nodeNumericSerialTofullSerial[numeric_sn]=node_sn0  #get the 0001 from ProminiA0001  and assign to that key the full serial number ProminiA0007
-
-
-
-  except Exception, e :
-
-    print "error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
-    errorQueue.put("error nodeNumericSerialTofullSerial in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
-
-
-  try: #if (node_sn0 in nodeDict.keys()):
-
-    if len(address)==3:  #if is a radio node
-      if address not in next_node_free_address_list: 
-        next_node_free_address_list.append(address)   
-
- 
-    nodeDict[node_sn0].updateLastNodeSync(time.time())
-
-    if (nodeDict[node_sn0].getNodeAddress())!=address:
-      print "node "+node_sn0+" address changed to "+address
-      nodeDict[node_sn0].setNodeAddress(address)
-      updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
-
-      
-    else:
-      print "the node has still the same ip"
-
-  except Exception, e :
-
-    print "error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
-    errorQueue.put("error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) )  
-
-  return()
-
-
-def getNextFreeAddress(node_sn0,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
-  """
-  | Given a node serialnumber this function will return the first free address to assign to the node. 
-  | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
-  | Used only for the radio nodes since the ethernet nodes 
-  """
-
-  print "getNextFreeAddress executed"
-  print next_node_free_address_list
-
-  for number in range(2,254):
-    if number not in next_node_free_address_list:# if the address is not used then assign it
-     # next_node_free_address_list.append(number)
-     # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
-      print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
-      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
-      str_address=str(number)
-      while (len(str_address)<3):
-        str_address="0"+str_address
-      return(str_address)
-
-  for node in nodeDict.keys():
-    address=nodeDict[node].getNodeAddress()
-    if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
-        #updateNodeAddress(node_sn0,address) 
-      updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
-      print( "I had finished all the free addresses so I recycled a not used one") 
-      errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
-      return(address)
-
-    print "I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one"
-    errorQueue.put( "I had finished all the free addresses i'm sorry but you have to disconnect one node to connect another one")  
-    return("254")
-
-
-
 
 
 
@@ -1066,7 +908,16 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         #note  the set coil command is the first pin in the list , the second is the reset coil command
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],1)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[1],0)
-        hardware.outputWrite(nodeSerialNumber,pins_to_set,[1,0],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+
+        try:
+          hardware.outputWrite(nodeSerialNumber,pins_to_set,[1,0],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+
+        except Exception, e:
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+          print(exc_type, fname, exc_tb.tb_lineno)   
+          print str(e.args)
+          time.sleep(2)
 # note that  hardware=router_handler.RouterHandler(router_hardware,router_sn)   in conf.py
           # put to rest the relay coil (the relay will continue to been mechanical activated)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],0)
@@ -1074,8 +925,16 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       if statusToSet==0:    # set to 5 volt the reset coil of the relay and put to 0v the set coil of the relay
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],0)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[1],1)
-        hardware.outputWrite(nodeSerialNumber,pins_to_set,[0,1],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+        try:
+          hardware.outputWrite(nodeSerialNumber,pins_to_set,[0,1],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
+        except Exception, e:
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+          print(exc_type, fname, exc_tb.tb_lineno)   
+          print str(e.args)
+          time.sleep(2)  
+             
           # put to rest the relay coil (the relay will continue to been mechanical activated)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],0)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[1],0)
@@ -5477,6 +5336,20 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 
+
+    #analyze incoming serial message from serial port
+    if len (hardware.serial_communication.uart.readed_packets_list)>0:
+      print "there is an incoming data on serial port buffer"
+      print hardware.serial_communication.uart.readed_packets_list
+     
+      with lock_serial_input:
+        if len (hardware.serial_communication.uart.readed_packets_list)>10: #if the list became long cut the first 4 elements
+          hardware.serial_communication.uart.readed_packets_list.pop(0)  
+          hardware.serial_communication.uart.readed_packets_list.pop(0) 
+          hardware.serial_communication.uart.readed_packets_list.pop(0)  
+          hardware.serial_communication.uart.readed_packets_list.pop(0)   
+
+
     if (mail_error_log_enable==1):
 
       if (  (  (time.time()-last_error_check_time)>error_log_mail_frequency)  ):
@@ -5692,8 +5565,13 @@ def onosBusThread():
 
           if (old_hours!=datetime.datetime.today().hour):
             #os.system('''ntpd -q -p 0.openwrt.pool.ntp.org''') #update from online time
-            with lock_bash_cmd:
-              subprocess.check_output('''ntpd -q -p 0.openwrt.pool.ntp.org''', shell=True,close_fds=True)
+            try:
+              with lock_bash_cmd:
+                subprocess.check_output('''ntpd -q -p 0.openwrt.pool.ntp.org''', shell=True,close_fds=True)
+            except:
+              print "error executing ntpd, maybe ntpd is not installed.." 
+              errorQueue.put("error executing ntpd, maybe ntpd is not installed.." ) 
+
             changeWebObjectStatus("hours",datetime.datetime.today().hour,0)
 
           if (old_day!=datetime.datetime.today().day):
@@ -5706,8 +5584,13 @@ def onosBusThread():
             changeWebObjectStatus("year",datetime.datetime.today().year,0)
 
         except Exception, e: 
+
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+          print(exc_type, fname, exc_tb.tb_lineno)   
+          print str(e.args)
           print "error in the time_objects_handler of onosBusThread "+" e:"+str(e.args)
-          errorQueue.put("error in the time_objects_handler of onosBusThread"+" e:"+str(e.args))    
+          errorQueue.put("error in the time_objects_handler of onosBusThread"+" e:"+str(e.args)+str(exc_type)+str(fname) +str(exc_tb.tb_lineno))    
 
 
 
@@ -5752,6 +5635,8 @@ def nodeTcpServer():
   while (exit==0):   #if exit ==1  then close the webserver
     wait_because_node_is_talking=0  
     time.sleep(0.3)# was 0.2
+
+    time.sleep(0.5) #for openwrt node
     try:
       # Create a TCP/IP socket
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -5863,7 +5748,7 @@ def nodeTcpServer():
           
           except Exception, e  :
             print "error tcp connection",e
-    
+             
 
 
           finally:
@@ -5930,9 +5815,9 @@ def main():
         bus.daemon = True  #make the thread a daemon thread
         bus.start()
 
-        w2 = threading.Thread(target=nodeTcpServer)
-        w2.daemon = True  #make the thread a daemon thread
-        w2.start()
+       # w2 = threading.Thread(target=nodeTcpServer)
+       # w2.daemon = True  #make the thread a daemon thread
+       # w2.start()
 
 
 

@@ -55,10 +55,33 @@ import time
 import getopt
 from conf import *           # import parameter globalVar.py
 import thread,threading,time,string
-import serial
 
 
 
+
+
+# Map from the numbers to the termios constants (which are pretty much
+# the same numbers).
+
+BPS_SYMS = {
+  4800:   termios.B4800,
+  9600:   termios.B9600,
+  19200:  termios.B19200,
+  38400:  termios.B38400,
+  57600:  termios.B57600,
+  115200: termios.B115200
+  }
+
+
+# Indices into the termios tuple.
+
+IFLAG = 0
+OFLAG = 1
+CFLAG = 2
+LFLAG = 3
+ISPEED = 4
+OSPEED = 5
+CC = 6
 
 
 serial_incomingBuffer=""
@@ -70,6 +93,8 @@ global serial_incomingBuffer
 global waitTowriteUntilIReceive
 
 
+def bps_to_termios_sym(bps):
+  return BPS_SYMS[bps]
 
   
 #hwNodeDict[0]=hw_node.HwNode("base","arduino_2009",0)  #make the first node , the base station  one
@@ -82,30 +107,7 @@ class SerialPort:
     (e.g. "/dev/tty.usbserial","COM1") and a baud rate (bps) and
     connects to that port at that speed and 8N1. Opens the port in
     fully raw mode so you can send binary data.
-
     """
-
-
-    self.ser = serial.Serial()
-    self.ser.port = "/dev/ttyUSB0"
-#ser.port = "/dev/port0"
-#ser.port = "/dev/ttyS2"
-    self.ser.baudrate = 57600
-    self.ser.bytesize = serial.EIGHTBITS #number of bits per bytes
-    self.ser.parity = serial.PARITY_NONE #set parity check: no parity
-    self.ser.stopbits = serial.STOPBITS_ONE #number of stop bits
-#ser.timeout = None          #block read
-    self.ser.timeout = 1            #non-block read
-#ser.timeout = 2              #timeout block read
-    self.ser.xonxoff = False     #disable software flow control
-    self.ser.rtscts = False     #disable hardware (RTS/CTS) flow control
-    self.ser.dsrdtr = False       #disable hardware (DSR/DTR) flo
-
-
-
-
-
-
     self.port=serialport
     self.busy=0
 #the error controll is done by the arduin_handler.py     
@@ -116,11 +118,76 @@ class SerialPort:
     self.last_received_packet=""
     self.readed_packets_list=[]
 
+    try:
+      self.usbR = open(self.port, 'r' ,os.O_RDONLY | os.O_NOCTTY | os.O_NDELAY)
+      self.usbW = open(self.port, 'w' ,os.O_WRONLY)
 
-    self.status=0
+      self.status=1
+    except:
+      print "no device"+self.port+"found"
+      self.status=0
 
 
 
+    #except:
+   #   print "serial arduino error"
+   #   self.fd =""
+   #   self.status=0
+
+    #attrs = termios.tcgetattr(self.fd)
+    attrsR = termios.tcgetattr(self.usbR)
+    attrsW = termios.tcgetattr(self.usbW)
+    bps_sym = bps_to_termios_sym(bps)
+    # Set I/O speed.
+    attrsR[ISPEED] = bps_sym
+    attrsW[ISPEED] = bps_sym
+
+    attrsR[OSPEED] = bps_sym
+    attrsW[OSPEED] = bps_sym
+
+    # 8N1
+    attrsR[CFLAG] &= ~termios.PARENB
+    attrsW[CFLAG] &= ~termios.PARENB
+
+    attrsR[CFLAG] &= ~termios.CSTOPB
+    attrsW[CFLAG] &= ~termios.CSTOPB
+
+    attrsR[CFLAG] &= ~termios.CSIZE
+    attrsW[CFLAG] &= ~termios.CSIZE
+
+    attrsR[CFLAG] |= termios.CS8
+    attrsW[CFLAG] |= termios.CS8
+    # No flow control
+    attrsR[CFLAG] &= ~termios.CRTSCTS
+    attrsW[CFLAG] &= ~termios.CRTSCTS
+
+    # Turn on READ & ignore contrll lines.
+    attrsR[CFLAG] |= termios.CREAD | termios.CLOCAL
+    attrsW[CFLAG] |= termios.CREAD | termios.CLOCAL
+
+    # Turn off software flow control.
+    attrsR[IFLAG] &= ~(termios.IXON | termios.IXOFF | termios.IXANY)
+    attrsW[IFLAG] &= ~(termios.IXON | termios.IXOFF | termios.IXANY)
+
+    # Make raw.
+    attrsR[LFLAG] &= ~(termios.ICANON | termios.ECHO | termios.ECHOE | termios.ISIG)
+    attrsW[LFLAG] &= ~(termios.ICANON | termios.ECHO | termios.ECHOE | termios.ISIG)
+
+
+    attrsR[OFLAG] &= ~termios.OPOST
+    attrsW[OFLAG] &= ~termios.OPOST
+
+    # It's complicated--See
+    # http://unixwiz.net/techtips/termios-vmin-vtime.html
+    attrsR[CC][termios.VMIN] = 0;
+    attrsW[CC][termios.VMIN] = 0;
+
+    attrsR[CC][termios.VTIME] = 20;
+    attrsW[CC][termios.VTIME] = 20;
+
+    #termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
+    termios.tcsetattr(self.usbR, termios.TCSANOW, attrsR)
+    termios.tcsetattr(self.usbW, termios.TCSANOW, attrsW)
 
     #os.system("cat "+self.port)
     self.usb=""
@@ -139,7 +206,7 @@ class SerialPort:
     self.exit=0
     
 
-    self.ser.open()
+
 
 
 
@@ -173,8 +240,7 @@ class SerialPort:
 
 
 
-          #self.ser.flushInput() #flush input buffer, discarding all its contents
-          #self.ser.flushOutput()#flush output buffer, aborting current output 
+    
           while done==0:
             time.sleep(0.01) 
             if self.exit==1:
@@ -183,7 +249,7 @@ class SerialPort:
             #  serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
             #  self.removeFromInBuffer=''
             try:
-              byte = self.ser.read(1)   #  self.usbR.read(1)
+              byte = self.usbR.read(1)
               print byte
             except:
               byte=-1
@@ -332,7 +398,7 @@ class SerialPort:
             
             self.dataAvaible=0
 
-      os.close(self.ser)                  
+      os.close(self.usbR)                  
       print "serial port closed"               
 
 
@@ -388,8 +454,7 @@ class SerialPort:
     last_received_packet=""
                 #self.portWrite(data_to_write)
     #self.usbW.write(data_to_write+'\n')
-    #os.system("echo "+data_to_write+" >> "+self.port) 
-    self.ser.write(data_to_write)
+    os.system("echo "+data_to_write+" >> "+self.port) 
     print "data_to_write:"+data_to_write  
 
  
@@ -440,8 +505,8 @@ class SerialPort:
     print "class arduinoserial destroyed"
     try:
      
-
-      os.close(self.ser)     
+      os.close(self.usbW)     
+      os.close(self.usbR)     
     except:
       print "tried to close serial port"
 
