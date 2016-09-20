@@ -41,6 +41,26 @@ class Serial_connection_Handler():
 
 
 
+  def reconnectSerialPort():
+
+    self.uart=self.connectToPort()
+    self.working=1
+    i=0
+    while (self.uart ==0) :  #while port is not connected retry to connect   banana to make it clever..
+      self.uart=self.connectToPort()
+      if self.uart==1:
+        return(1)
+      time.sleep(1)
+      if i>2:        #after 60 tries i increase the time between the tries
+        time.sleep(30)
+      if i>4:        #after 120 tries i increase the time between the tries
+        time.sleep(60) 
+
+      if i >10:
+        if (searchForSerialCable!="null"):
+          print "error serial reconnection, no serial ports found"
+          self.working=0
+          return(-1)
 
 
 

@@ -537,11 +537,14 @@ void setup() {
 void loop()
 {
 
+
+restart:
+
   strcpy(data_from_serial,"");
 
   strcpy(filtered_onos_message,"");
 
-  timeout=millis()+200;
+
 
 
 
@@ -549,7 +552,22 @@ void loop()
   counter=0;
   message_to_decode_avaible=0;
 
-  
+
+/*
+  timeout=millis()+50;
+  bitClear(EIMSK,RFM69_IRQ); //disable only rfm69 interrupt
+
+  while (millis()<timeout){ //wait to get serial data from serial interrupt without rfm69 interrupt interference
+
+    delayMicroseconds(10);
+  }
+  bitSet(EIMSK,RFM69_IRQ);  //resable  rfm69 interrupt
+
+*/
+
+
+  timeout=millis()+200;
+
   while (Serial.available() > 0) {
     message_to_decode_avaible=1;
     enable_answer_back=1;
@@ -654,7 +672,7 @@ void loop()
               //put here the radio  transmit part
 //bool RFM69_ATC::sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime) {
 
-          if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),5,500)) {
+          if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),5,600)) {
               //target node Id, message as string or byte array, message length,retries, milliseconds before retry
               //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 
@@ -734,6 +752,9 @@ void loop()
 
 
   if (enable_answer_back==1){ //write if there is a not recognise message  shorter...
+  //  noInterrupts(); //disable all interrupt
+
+
     if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
       //strcat(received_message_answer,filtered_onos_message);
@@ -769,13 +790,39 @@ void loop()
 
     Serial.flush(); //make sure all serial data is clocked out before sleeping the
     enable_answer_back=0;
+   
+   // interrupts(); //reenable interrupts
   }
 
 
 
 
 
+  if (Serial.available() > 0) {
+
+    goto restart;
+  }
+
+
+
 //uart reception part concluded
+
+
+
+  if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update the current ip address
+    sync_time=millis();
+  // onos_s3.05v1sProminiS0001f001_#]
+  composeSyncMessage();
+  makeSyncMessage();
+
+  }
+
+
+
+
+
+
+
 
 
 
@@ -864,12 +911,14 @@ void loop()
 
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
         Serial.print(filtered_onos_message[pointer]);
+          
 
         if (pointer<2){
           continue;
         }
 
-        if ((filtered_onos_message[pointer-2]=='_')&&(filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
+        if ((filtered_onos_message[pointer-2]=='_')&&(filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {// 
+          sync_time=millis();  
           break;
         }
 
@@ -880,7 +929,7 @@ void loop()
 
  
     radio.receiveDone(); //put radio in RX mode
-    Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
+    Serial.flush(); //make sure all serial data is clocked out 
 
   
   }// END OF   if (radio_enabled==1){
@@ -896,13 +945,7 @@ void loop()
  
 
 
-  if ( (millis()-sync_time)>12000){   //each 4 sec time contact the onosCenter and update the current ip address
-    sync_time=millis();
-  // onos_s3.05v1sProminiS0001f001_#]
-  composeSyncMessage();
-  makeSyncMessage();
 
-  }
 
 
 

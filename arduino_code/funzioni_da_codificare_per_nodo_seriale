@@ -1,0 +1,6 @@
+disabilitare radio (solo nodo seriale)
+mandare e controllare i2c se si vede che il pin 3 è a gnd (modulo aggiuntivo collegato)
+ricevere combinazione dei pulsanti wifi/comando presa e se restano premuti per più di 30 sec fare qualcosa..
+
+
+

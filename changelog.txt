@@ -574,7 +574,15 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 finished implementing the common top menu for every onos webpage!
 
 5.23            Removed the bash command to control hardware pins and used python to write to them as files,
-                so the error Cannot allocate memory will not happen again
+                so the error Cannot allocate memory will not happen again.               	
+                Started developing the arduino serial interface for the onosCenter
+                Added digital pin read to serialnode ,removed all the strings objects.
+                Switched to lopowerlab radio library because has sel power management.
+                Modified node message protocol.
+                Now the lamp node set itself with address 254 at startup and ask the onoscenter for a free address.
+                Modified updateJson() ,solved import config options bug, now the config are saved correctly.
+                Now at startup all nodes are setted as inactive (the ones with a fixed timeout)              	
+                Started using pyserial because works better on openwrt.
 
 
 

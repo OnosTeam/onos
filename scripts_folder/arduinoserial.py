@@ -61,7 +61,7 @@ import serial
 
 
 
-serial_incomingBuffer=""
+
 
 global last_received_packet
 global data_to_write
@@ -71,7 +71,7 @@ global waitTowriteUntilIReceive
 
 
 
-  
+serial_incomingBuffer=""  
 #hwNodeDict[0]=hw_node.HwNode("base","arduino_2009",0)  #make the first node , the base station  one
 
 
@@ -139,6 +139,7 @@ class SerialPort:
     self.exit=0
     
 
+
     self.ser.open()
 
 
@@ -153,7 +154,6 @@ class SerialPort:
       global last_received_packet
       global data_to_write
       global write_to_serial_packet_ready
-      global serial_incomingBuffer
       global waitTowriteUntilIReceive
       print "read_data thread executed"
  
@@ -161,9 +161,25 @@ class SerialPort:
       ignore = ''   #'\r'
       filedev=self.port
       self.dataAvaible=0
+      self.exit=exit
 
       while (self.exit==0):
           time.sleep(0.1) 
+
+          if self.ser.isOpen() == False :
+            print "error serial port disconnected in arduinoserial.py"
+            errorQueue.put("error serial port disconnected in arduinoserial.py")
+            try:
+              self.ser.open()
+              print "I tried to reconnect serial port from arduinoserial and I have been succesfull" 
+              errorQueue.put("I tried to reconnect serial port from arduinoserial and I have been succesfull")
+            except:
+              print "I tried to reconnect serial port from arduinoserial module but I failed" 
+              errorQueue.put("I tried to reconnect serial port from arduinoserial module but I failed")
+              priorityCmdQueue.put( {"cmd":"reconnectSerialPort"})
+              self.exit=1
+
+
           if self.exit==1:
             break
           buf=''
@@ -173,7 +189,7 @@ class SerialPort:
 
 
 
-          #self.ser.flushInput() #flush input buffer, discarding all its contents
+          self.ser.flushInput() #flush input buffer, discarding all its contents
           #self.ser.flushOutput()#flush output buffer, aborting current output 
           while done==0:
             time.sleep(0.01) 
@@ -332,9 +348,9 @@ class SerialPort:
             
             self.dataAvaible=0
 
-      os.close(self.ser)                  
-      print "serial port closed"               
 
+      print "serial port closed"               
+      return()
 
 
 
@@ -397,7 +413,7 @@ class SerialPort:
     while write_to_serial_packet_ready==1:
       time.sleep(0.01) 
 
-      if (time.time()>(start_time+5) ): #timeout to exit the loop
+      if (time.time()>(start_time+1) ): #timeout to exit the loop
         print "rx timeout0"
         write_to_serial_packet_ready=0
         return("error_reception")
@@ -423,8 +439,8 @@ class SerialPort:
   #  return(1)
 
 
- # def __del__(self):
- #   print "class arduinoserial destroyed"
+  def __del__(self):
+    print "class arduinoserial destroyed"
  #   try:
  #     os.close(self.fd)
  #   except:
@@ -437,12 +453,10 @@ class SerialPort:
   def close(self):
     self.exit=1
 
-    print "class arduinoserial destroyed"
-    try:
-     
-
-      os.close(self.ser)     
-    except:
-      print "tried to close serial port"
+    print "class arduinoserial destroyed by close()"
+#    try:
+ #     os.close(self.ser)     
+  #  except:
+   #   print "tried to close serial port"
 
 

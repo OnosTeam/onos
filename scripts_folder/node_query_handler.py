@@ -37,6 +37,14 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
     query=query[0:3]+address+query[6:] #change the address query if the node get a new one
 
     data=""
+
+    if serialCom.uart.ser.isOpen() == False :
+      print "serial port is not open in make_query_to_radio_node()"
+      priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
+      time.sleep(1)  
+      return(-1)
+
+
     try:  
       data=serialCom.uart.write(str(query))
 

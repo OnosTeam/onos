@@ -334,6 +334,7 @@ class RouterHandler:
 
 
       address=node_obj.getNodeAddress()
+      query="error_compose_query"
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
       if (out_type=="sr_relay"):
         pin1=str(pinNumbers[1])
@@ -559,12 +560,13 @@ class RouterHandler:
         if self.serial_communication.working!=1: 
           print "error no serial cable"
           errorQueue.put("error no serial cable")  
+          priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
           return(-1)
 
 
         else:
 
-
+          
           if (output_type=="sr_relay"):
             if (len(pinList)!=2):
               print "error number of pins !=2"
@@ -574,6 +576,7 @@ class RouterHandler:
 
           query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
           print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end"  
+         
           try:
             result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
 
@@ -582,6 +585,7 @@ class RouterHandler:
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)   
             print str(e.args)
+            result=-1
             time.sleep(2)  
   
           if result!=-1:  #if the query was accepted from the radio/serial node

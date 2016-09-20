@@ -5492,6 +5492,23 @@ def executeQueueFunction(dataExchanged):
      
 
 
+  if (dataExchanged["cmd"]=="reconnectSerialPort"):
+    hardware.serial_communication.working=0
+    print "I try to reconnectg serial port from webserver.py"
+
+    if hardware.serial_communication.uart.ser.isOpen() == False :
+      result=hardware.serial_communication.reconnectSerialPort() 
+      if result==1:
+        hardware.serial_communication.working=1
+        print "serial port successfully reconnected from webserver.py"
+        errorQueue.put("serial port successfully reconected from webserver.py")
+      else:
+        hardware.serial_communication.working=0
+        print "serial port can't be reconnected from webserver.py"
+        errorQueue.put("serial port can't be reconnected  from webserver.py")
+    else:
+      print "serial port is already connected"
+
   print "dataExchanged = : ", dataExchanged
 
   return()
