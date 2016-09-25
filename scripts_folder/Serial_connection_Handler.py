@@ -14,7 +14,7 @@ exit=0
 HIGH=1
 LOW=0
 ser=0
-baud_rate=57600
+baud_rate=115200
 class Serial_connection_Handler():
 
   def __init__(self):
@@ -115,6 +115,10 @@ class Serial_connection_Handler():
   def searchForSerialCable(self,exluded_port):
 
     list_of_dev=os.listdir("/dev")
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyATH0")!=-1)and(dev!=exluded_port):
+        return(dev)
 
     for dev in  list_of_dev:
       if (dev.find("ttyUSB")!=-1)and(dev!=exluded_port):

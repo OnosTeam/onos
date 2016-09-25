@@ -60,7 +60,7 @@ import serial
 
 
 
-
+write_enable=0
 
 
 global last_received_packet
@@ -87,10 +87,10 @@ class SerialPort:
 
 
     self.ser = serial.Serial()
-    self.ser.port = "/dev/ttyUSB0"
+    self.ser.port = serialport
 #ser.port = "/dev/port0"
 #ser.port = "/dev/ttyS2"
-    self.ser.baudrate = 57600
+    self.ser.baudrate = bps
     self.ser.bytesize = serial.EIGHTBITS #number of bits per bytes
     self.ser.parity = serial.PARITY_NONE #set parity check: no parity
     self.ser.stopbits = serial.STOPBITS_ONE #number of stop bits
@@ -112,8 +112,8 @@ class SerialPort:
     #self.fd = os.open(serialport, os.O_RDWR | os.O_NOCTTY | os.O_NDELAY)
     self.status=1
 
-    self.write_to_serial_packet_ready=0 
-    self.last_received_packet=""
+
+
     self.readed_packets_list=[]
 
 
@@ -155,6 +155,7 @@ class SerialPort:
       global data_to_write
       global write_to_serial_packet_ready
       global waitTowriteUntilIReceive
+      global write_enable
       print "read_data thread executed"
  
 
@@ -162,6 +163,14 @@ class SerialPort:
       filedev=self.port
       self.dataAvaible=0
       self.exit=exit
+
+
+      try:
+        self.ser.flushInput() #flush input buffer, discarding all its contents
+      except Exception, e :
+        print "can't flush input"+str(e.args) 
+        errorQueue.put( "can't flush input"+str(e.args) )
+
 
       while (self.exit==0):
           time.sleep(0.1) 
@@ -188,12 +197,33 @@ class SerialPort:
           count=0
 
 
+          if write_to_serial_packet_ready==1:
 
-          self.ser.flushInput() #flush input buffer, discarding all its contents
-          #self.ser.flushOutput()#flush output buffer, aborting current output 
+            try:
+              self.ser.flushInput() #flush input buffer, discarding all its contents
+            except Exception, e :
+              print "can't flush input"+str(e.args) 
+              errorQueue.put( "can't flush input"+str(e.args) )
+
+            if write_enable==1:
+              try:
+                self.ser.write(data_to_write)
+                print "i write data_to_write::::::::::::::::::::::::::::::::::::::::::"+data_to_write
+                write_enable=0
+              except Exception, e :
+                print "can't write to uart"+str(e.args) 
+                errorQueue.put( "can't write to uart"+str(e.args) )
+
+              try:
+                self.ser.flushOutput()
+              except Exception, e :
+                print "can't flush output"+str(e.args) 
+                errorQueue.put( "can't flush output"+str(e.args) )
+
+
           while done==0:
             time.sleep(0.01) 
-            if self.exit==1:
+            if self.exit==1 or write_enable==1:
               break
             #if len(self.removeFromInBuffer)>0:
             #  serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
@@ -211,7 +241,7 @@ class SerialPort:
               done=1
               print "end of serial packet1"
               #print "incoming buffer="+serial_incomingBuffer
-              time.sleep(0.4)
+              time.sleep(0.3)
               continue
 
 
@@ -234,7 +264,7 @@ class SerialPort:
 
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
               done=1
-              print "end of serial packet len=0"
+              print "end of serial packet for /n"
               continue
             else:   
               #print "in byte="+byte+" end of in byte"
@@ -262,15 +292,19 @@ class SerialPort:
             buf=buf.replace("\n", "")  #to remove \n
             buf=buf.replace("\r", "")  #to remove \r
 
-            if write_to_serial_packet_ready==1:
-              last_received_packet=buf
-              write_to_serial_packet_ready=0  
-              print "packet received after the write is :"+last_received_packet
+
 
 
 
            
             if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+
+
+              if write_to_serial_packet_ready==1:
+                last_received_packet=buf
+                write_to_serial_packet_ready=0  
+                print "packet received after the write is :"+last_received_packet
+
  
               cmd_start=buf.find("[S_")
               cmd_end=buf.find("_#]")
@@ -278,7 +312,7 @@ class SerialPort:
               
 
               if( (cmd[6]=="s")&(cmd[7]=="y") ): # [S_001sy3.05ProminiS0001_#] 
-                print "serial cmd="+cmd
+                print "serial rx cmd="+cmd
                 buf=""
                 try:
                   serial_number=cmd[12:24]   
@@ -297,7 +331,7 @@ class SerialPort:
 
 
               if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001_#]
-                print "serial cmd="+cmd
+                print "serial rx cmd="+cmd
                 buf=""
                 try:
                   numeric_serial_number=cmd[13:25]
@@ -307,7 +341,7 @@ class SerialPort:
                   node_fw=cmd[8:12]
                   node_address=cmd[3:6]
 
-                  if node_address=="254":  #the node is looking for a free address
+                  if node_address=="254" or node_address=="001" :  #the node is looking for a free address or to a confirm for first contact
                     priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
                
@@ -327,12 +361,12 @@ class SerialPort:
 
            # print "serial input="+buf
 
-            with lock_serial_input:              
-              serial_incomingBuffer=buf
-              self.readed_packets_list.append(buf)
+              with lock_serial_input:              
+                serial_incomingBuffer=buf
+                self.readed_packets_list.append(buf)
 
-            self.dataAvaible=1 
-            waitTowriteUntilIReceive=0
+              self.dataAvaible=1 
+              waitTowriteUntilIReceive=0
             #time.sleep(0.18)  #important to not remove..
 
            # timeout=time.time()
@@ -342,11 +376,11 @@ class SerialPort:
           #    if (time.time>(timeout+10) ): #timeout to exit the loop
            #     break
 
-            print "incoming buffer="+serial_incomingBuffer
-            buf=""
-          else: #len buf ==0
+              print "incoming buffer="+serial_incomingBuffer
+              buf=""
+            else: #len buf ==0
             
-            self.dataAvaible=0
+              self.dataAvaible=0
 
 
       print "serial port closed"               
@@ -393,28 +427,29 @@ class SerialPort:
 
 
   def write(self, data):
+    global write_enable
     global last_received_packet
     global data_to_write
     global write_to_serial_packet_ready
-    last_received_packet
     data_to_write=data
 
-    write_to_serial_packet_ready=1
-    one_time_write=0
+
+    write_enable=1
     last_received_packet=""
                 #self.portWrite(data_to_write)
     #self.usbW.write(data_to_write+'\n')
     #os.system("echo "+data_to_write+" >> "+self.port) 
-    self.ser.write(data_to_write)
-    print "data_to_write:"+data_to_write  
+    #self.ser.write(data_to_write)
 
+    write_to_serial_packet_ready=1
+    print "data_to_write:"+data_to_write  
  
     start_time=time.time()
     while write_to_serial_packet_ready==1:
       time.sleep(0.01) 
 
-      if (time.time()>(start_time+1) ): #timeout to exit the loop
-        print "rx timeout0"
+      if (time.time()>(start_time+2) ): #timeout to exit the loop
+        print "rx after write timeout0"
         write_to_serial_packet_ready=0
         return("error_reception")
     

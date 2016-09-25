@@ -56,7 +56,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
       print str(e.args)
       time.sleep(2)  
 
-    if len(data)=="error_reception":
+    if data=="error_reception":
       continue
   
     
@@ -73,22 +73,20 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
 
 
 
-    found_ok_answer=0
+
    # with lock_serial_input:
 
     for a in serialCom.uart.readed_packets_list:
       if a.find(expected_confirm)!=-1 :  #found the answer
-        found_ok_answer=1        
         return (a)
 
-    print "uart rx list after:"
-    print serialCom.uart.readed_packets_list
+    #print "uart rx list after:"
+    #print serialCom.uart.readed_packets_list
  
-    if found_ok_answer==1:
-      return(1) 
 
-    print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial,node the query was:"+query+",the number of try is "+str(m) 
-    errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial,node the query was"+query+"the number of try is "+str(m)+" at:" +getErrorTimeString() )    
+
+    print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial node the expected answer was:"+expected_confirm+",the number of try is "+str(m) 
+    errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial node the expected answer was:'"+expected_confirm+"'the number of try is "+str(m)+" at:" +getErrorTimeString() )    
     time.sleep(0.1*m) 
 
 

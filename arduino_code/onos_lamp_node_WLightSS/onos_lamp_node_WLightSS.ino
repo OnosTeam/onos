@@ -84,6 +84,7 @@
 #define LED           5  // onboard blinky
 
 #define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
+#define targetRSSI    -40
  
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  
@@ -106,6 +107,22 @@ int old_address=254;
 unsigned long get_address_timeout=0;
 
 
+/*
+WLightSS node parameter:
+
+  lux_threshold --> a threshold the user can set to turn on the light if this node receive a selective command like: setLightif..
+  lux_value     --> the value readed from the photoresistence , this value will be sent with each sync
+  lamp_state    --> the state of the lamp (turned on "1" ,turned off "0")  will be sent to onos with sync and each time it changes
+  lamp_mode     --> the lamp mode..0 is standard,2 is blinking_slow,3 is blinking_fast,4 is auto_turn_on_when_dark.
+                    will be readed from eeprom at startup. 
+  time_on       --> total time of the lamp was on from when the arduino was turned on,will be sent with each sync
+  persons_count --> total number of persons in the room, for future use..if persons >0 and lux>lux_threshold turn on lamp. 
+  old_persons_count-->previous value of persons_count
+  time_continuos_on --> seconds since the lamps is on (if is on now otherwise is 0) 
+  timeout_to_turn_off-->   if time_continuos_on> timeout_to_turn_off  the lamp will be turned off (default is 10 hours)
+  temperature        --> temperature from the sensor 
+
+*/
 
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
@@ -126,6 +143,10 @@ char str_this_node_address[4];
 
 char received_serial_number[13];
 # define gateway_address 1
+
+
+
+
 
 
 
@@ -483,10 +504,12 @@ void setup() {
     radio.setHighPower();    // Only for RFM69HCW & HW!
   }
   radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-  
+
   radio.encrypt(ENCRYPTKEY);
   
   pinMode(LED, OUTPUT);
+
+  radio.enableAutoPower(targetRSSI);
  
   Serial.print("\nListening at ");
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);

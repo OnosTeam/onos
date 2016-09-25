@@ -212,8 +212,165 @@ def sortZonesByOrderNumber():
 
 
 
+def transform_object_to_dict(object_dictionary):
 
 
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
+  return (obj_tmp_dict)  
+
+
+def transform_object_to_dict_to_backup(object_dictionary):
+
+
+  obj_tmp_dict={}
+
+  for b in object_dictionary.keys():
+    a=object_dictionary[b]   #bug  return ascii and not unicode?
+    name=a.getName()
+    obj_tmp_dict[name]=a.getObjectDictionary()
+  return (obj_tmp_dict)  
+
+
+
+def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
+
+  print "updateJson executed"
+
+#json doesn't support saving objects  ..so i save all the variables of each objects
+#to get back the pin of the object you have to write:
+#  dictionary_group[u"objectDictionary"][u"name_of_the_object"][u"obj_pin"] 
+  obj_tmp_dict=transform_object_to_dict_to_backup(object_dictionary)
+
+
+  node_tmp_Dict={}
+  for a in nodeDictionary.keys():
+    try: 
+      sn=nodeDictionary[a].getNodeSerialNumber() 
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress()}
+    except:
+      print "error in updateJson, with node:"+str(a)
+    # note that the i/o modes for the node pins will be saved in the relative webobjects .
+    # the pins not used by a webobject will be configured as output and cleared to 0 
+        
+
+
+
+  #print object_dictionary
+  #print roomDictionary
+  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
+  #to add a new dictionary just add it in dictionary_group
+
+  #print dictionary_group
+  #note base_cfg_path is in the globalVar.py 
+
+
+  try:
+    dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
+    file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+    file_to_save.write(dictionary_group_json)
+    file_to_save.close()
+    os.chmod(base_cfg_path+"config_files/data.json", 0o777)
+
+
+    conf_options_json=json.dumps(conf_options_dictionary, indent=2,sort_keys=True) #make the json structure
+    file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
+    file_to_save2.write(conf_options_json)
+    file_to_save2.close()
+    os.chmod(base_cfg_path+"config_files/cfg.json", 0o777)
+
+  except Exception, e :
+    print "error in updateJson()"+" e:"+str(e.args)
+    errorQueue.put("error in updateJson()"+" e:"+str(e.args)) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def updateNodeAddress(node_sn0,uart_router_sn,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
+  """,
+  Given a node serialnumber and a address update the node in the nodeDict with the current address. 
+
+  """
+
+  try: #if (node_sn0 in nodeDict.keys()):
+
+    if len(address)==3:  #if is a radio node
+      if address not in next_node_free_address_list: 
+        next_node_free_address_list.append(address)   
+
+    if address !="254": #if the node have already an address
+      nodeDict[node_sn0].updateLastNodeSync(time.time())
+
+      if uart_router_sn in nodeDict.keys():
+        nodeDict[uart_router_sn].updateLastNodeSync(time.time())  #I update also the uart_router last time sync since it is him that sent the remote node message
+
+    if (nodeDict[node_sn0].getNodeAddress())!=address:
+      print "node "+node_sn0+" address changed to "+address
+      nodeDict[node_sn0].setNodeAddress(address)
+      updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
+
+      
+    else:
+      print "the node has still the same ip"
+
+  except Exception, e :
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print(exc_type, fname, exc_tb.tb_lineno)
+    print "error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args) 
+    errorQueue.put("error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address+" e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno) )  
+
+  return()
+
+
+def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
+  """
+  | Given a node serialnumber this function will return the first free address to assign to the node. 
+  | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
+  | Used only for the radio nodes since the ethernet nodes 
+  """
+
+  print "getNextFreeAddress executed"
+  print next_node_free_address_list
+
+  for number in range(2,254):
+    if number not in next_node_free_address_list:# if the address is not used then assign it
+     # next_node_free_address_list.append(number)
+     # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
+      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
+      str_address=str(number)
+      while (len(str_address)<3):
+        str_address="0"+str_address
+      return(str_address)
+
+  for node in nodeDict.keys():
+    address=nodeDict[node].getNodeAddress()
+    if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
+        #updateNodeAddress(node_sn0,address) 
+      updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      print( "I had finished all the free addresses so I recycled a not used one") 
+      errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
+      return(address)
+
+    print "I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one"
+    errorQueue.put( "I had finished all the free addresses i'm sorry but you have to disconnect one node to connect another one")  
+    return("254")
 
 
 
@@ -1534,11 +1691,15 @@ def updateDir():
 
 
 def createNewNode(node_sn,node_address,node_fw):
+  global uart_router_sn
   msg=""
+  if node_address=="001":  #uart_node
+    uart_router_sn=node_sn
   if node_sn in nodeDict.keys():
     print "found node in the dict"
+
     #nodeDict[node_sn].setNodeAddress(node_address)
-    updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+    updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #created a new node
     print "requested setup for a node not existing yet "                  
@@ -1553,9 +1714,11 @@ def createNewNode(node_sn,node_address,node_fw):
         hardware_node_model=hardwareModelDict[hwType]  
         nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
         #nodeDict[node_sn].updateLastNodeSync(time.time())
-        updateNodeAddress(node_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
+
+        updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
         #nodeDict[node_sn].setNodeAddress(node_address)
         msg=nodeDict[node_sn].getSetupMsg() 
+      
 
         #if the room doesn't exist yet ...then:
         if (node_sn in zoneDict.keys()):
@@ -3672,7 +3835,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if node_sn0 in nodeDict.keys():
               print "the node exist so i update the pin input status"
-              updateNodeAddress(node_sn0,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
+              updateNodeAddress(node_sn0,uart_router_sn,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
               
             else:
               msg=createNewNode(node_sn0,node_ip,node_fw)
@@ -5451,7 +5614,7 @@ def executeQueueFunction(dataExchanged):
     try:
       node_serial_number=dataExchanged["nodeSn"]
       node_address=dataExchanged["nodeAddress"]
-      updateNodeAddress(node_serial_number,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+      updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
     except Exception, e:
       print "error in the updateNodeAddress of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
@@ -5481,8 +5644,12 @@ def executeQueueFunction(dataExchanged):
       node_fw=dataExchanged["nodeFw"]
 
       #   [S_254sa123WLightSS0003_#]
+      if node_address=="001":   #the router node will not need another address ..only a confirm for first message sync
+        new_address=node_address
+      else:
+        new_address=getNextFreeAddress(node_serial_number,uart_router_sn,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
-      result=hardware.setAddressToNode(node_serial_number,node_address) 
+      result=hardware.setAddressToNode(node_serial_number,new_address) 
       if result==1:
         print "i save the new address in the config memory"
 

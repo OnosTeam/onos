@@ -429,11 +429,12 @@ class RouterHandler:
       return(query) 
 
 
-    def setAddressToNode(self,node_serial_number,node_address):
-      new_address=getNextFreeAddress(node_serial_number,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+    def setAddressToNode(self,node_serial_number,new_address):
+
+      
       print "new address for the node:"+str(new_address)
-      msg="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"
-      result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
+      msg="[S_"+new_address+"sa"+new_address+node_serial_number+"_#]"
+      result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
       if result ==1:
         int_address=int(new_address)
         if int_address not in next_node_free_address_list:

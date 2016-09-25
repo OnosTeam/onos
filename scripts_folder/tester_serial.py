@@ -9,10 +9,10 @@ import serial, time
 #    3. x, x is bigger than 0, float allowed, timeout block call
 
 ser = serial.Serial()
-ser.port = "/dev/ttyUSB0"
+ser.port = "/dev/ttyATH0"
 #ser.port = "/dev/port0"
 #ser.port = "/dev/ttyS2"
-ser.baudrate = 57600
+ser.baudrate = 115200
 ser.bytesize = serial.EIGHTBITS #number of bits per bytes
 ser.parity = serial.PARITY_NONE #set parity check: no parity
 ser.stopbits = serial.STOPBITS_ONE #number of stop bits

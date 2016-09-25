@@ -75,7 +75,7 @@
 #define IS_RFM69HCW   false // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
-#define SERIAL_BAUD   57600
+#define SERIAL_BAUD   115200
  
 #define RFM69_CS      10
 #define RFM69_IRQ     2
@@ -106,7 +106,7 @@ int this_node_address=1; //must be int..
 
 unsigned long timeout;
 
-
+boolean first_sync=1; //tell the node if the first sync was made.
 
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
@@ -173,7 +173,12 @@ void composeSyncMessage(){
   strcpy(syncMessage, "");
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
-  strcat(syncMessage, "sy");
+  if (first_sync==1 ){
+    strcat(syncMessage, "ga");
+  }
+  else{
+    strcat(syncMessage, "sy");
+  }
   strcat(syncMessage, node_fw);
   strcat(syncMessage, serial_number);
   strcat(syncMessage, "_#]");
@@ -211,7 +216,7 @@ void makeSyncMessage(){
       }
     }   
     Serial.print('\n'); 
-
+    Serial.flush(); //make sure all serial data is clocked out 
 
 
 }
@@ -233,6 +238,7 @@ void Blink(byte PIN, byte DELAY_MS, byte loops)
 
 
 void decodeOnosCmd(const char *received_message){
+ 
 /*
   Serial.println(F("decodeOnosCmd executed"));
 
@@ -345,6 +351,9 @@ void decodeOnosCmd(const char *received_message){
       return;
     }
 
+    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
+      first_sync=0; //this node has made the first sync with the onoscenter
+    }
 
 /*
 
@@ -479,6 +488,8 @@ void decodeOnosCmd(const char *received_message){
 
 
 void setup() {
+
+  delay(35000); //wait for glinet to power on
   while (!Serial); // wait until serial console is open
   Serial.begin(SERIAL_BAUD);
 
@@ -495,12 +506,12 @@ void setup() {
   if (IS_RFM69HCW) {
     radio.setHighPower();    // Only for RFM69HCW & HW!
   }
-  radio.setPowerLevel(6); // power output ranges from 0 (5dBm) to 31 (20dBm)
+  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
   
   radio.encrypt(ENCRYPTKEY);
   
 
-  radio.enableAutoPower(ATC_RSSI);
+
 
 
   pinMode(LED, OUTPUT);
@@ -511,6 +522,9 @@ void setup() {
   Serial.println(" MHz");
 
 */  
+
+
+
   Serial.println(F("[S_arduino_ready_#]"));
   radio_enabled=1;
 
@@ -528,7 +542,7 @@ void setup() {
 
 
   composeSyncMessage();
-
+  makeSyncMessage();
 
 }
 
@@ -536,6 +550,17 @@ void setup() {
 
 void loop()
 {
+
+sync:
+
+if (first_sync==1){
+  delay(500);
+  composeSyncMessage();
+  makeSyncMessage();
+
+}
+
+
 
 
 restart:
@@ -568,6 +593,8 @@ restart:
 
   timeout=millis()+200;
 
+  onos_cmd_start_position=-99;  
+  onos_cmd_end_position=-99;  
   while (Serial.available() > 0) {
     message_to_decode_avaible=1;
     enable_answer_back=1;
@@ -625,7 +652,7 @@ restart:
 
   if ((message_to_decode_avaible==1)&&(onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
 
-//    Serial.println("OKKKKKK");
+   // Serial.println("[S_KKKKKK_#]");
 
 
 //#if defined(DEVMODE)
@@ -758,7 +785,7 @@ restart:
     if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
       //strcat(received_message_answer,filtered_onos_message);
-      Serial.print("[S_ok");
+      Serial.print(F("[S_ok"));
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
         if (pointer<3){//to skip the "[S_"  because I have just sent it..
@@ -805,6 +832,13 @@ restart:
 
 
 
+  if (first_sync==1){  //if the node is not synced yet..sync it
+    goto sync;
+  }
+
+
+
+
 //uart reception part concluded
 
 
@@ -812,8 +846,8 @@ restart:
   if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update the current ip address
     sync_time=millis();
   // onos_s3.05v1sProminiS0001f001_#]
-  composeSyncMessage();
-  makeSyncMessage();
+    composeSyncMessage();
+    makeSyncMessage();
 
   }
 
@@ -844,7 +878,8 @@ restart:
  
     //check if received message contains Hello World
 
-
+      onos_cmd_start_position=-99;  
+      onos_cmd_end_position=-99;  
 
       strcpy(filtered_onos_message,"");
 
@@ -886,15 +921,14 @@ restart:
 
         }
         else{
-          Serial.println("error in message decode i will not send the ACK");
+          Serial.println(F("error in message decode from radio node i will not send the ACK"));
         }
-
 
 
       }
       else{
         strcpy(received_message_answer,"[S_nocmd0_#]");
-        Serial.println("error in message nocmd0_#]");
+        Serial.println(F("error in message nocmd0_#]"));
       }
 
   
@@ -923,6 +957,9 @@ restart:
         }
 
       }   
+
+      Serial.print('\n');  
+
 
     }
 
