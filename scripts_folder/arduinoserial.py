@@ -209,6 +209,7 @@ class SerialPort:
               try:
                 self.ser.write(data_to_write)
                 print "i write data_to_write::::::::::::::::::::::::::::::::::::::::::"+data_to_write
+                time.sleep(0.02) 
                 write_enable=0
               except Exception, e :
                 print "can't write to uart"+str(e.args) 
@@ -265,7 +266,7 @@ class SerialPort:
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
               done=1
               print "end of serial packet for /n"
-              continue
+              break
             else:   
               #print "in byte="+byte+" end of in byte"
               buf=buf+byte
@@ -282,7 +283,7 @@ class SerialPort:
                 if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   done=1
                   print "end of serial packet:_#] "
-                  continue 
+                  break 
 
 
 

@@ -353,6 +353,8 @@ void decodeOnosCmd(const char *received_message){
 
     else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
       first_sync=0; //this node has made the first sync with the onoscenter
+      strcpy(received_message_answer,"ok");
+      return;
     }
 
 /*
@@ -554,7 +556,7 @@ void loop()
 sync:
 
 if (first_sync==1){
-  delay(500);
+  delay(1000);
   composeSyncMessage();
   makeSyncMessage();
 
