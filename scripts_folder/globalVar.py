@@ -1682,6 +1682,12 @@ hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(7,8)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
+hardwareModelDict["WLightSA"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
+hardwareModelDict["WLightSA"]["pin_mode"]["sr_relay"]={"socket":[(7,8)]}
+hardwareModelDict["WLightSA"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
+
+
+
 # note that in the format ["analog_output"]={"a_out":[(11),(10)]}  
 # "a_out" is only the the html name that onos will add to the webobject name
 #so the final webobject name will be for example a_out0_ProminiA0001  
