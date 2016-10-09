@@ -84,7 +84,7 @@
 #define RFM69_CS      10
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     3
+#define RFM69_RST     9
 
 #define LED           5  // onboard blinky
 
@@ -113,7 +113,7 @@ unsigned long get_address_timeout=0;
 
 
 /*
-WLightSS node parameter:
+WLightSA node parameter:
   relay_pin     --> the pin where the relay coil is connected
   relay_check_pin-->the pin connected to the relay that tell the node if the relay is on or off
   photoresistor_pin  
@@ -144,7 +144,7 @@ int received_message_value;
 char received_message_answer[rx_msg_lenght+6]="er00_#]";
 int received_message_address=0; //must be int..
 char filtered_onos_message[rx_msg_lenght+3];
-char syncMessage[28];
+char syncMessage[48];
 char str_this_node_address[4];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
@@ -193,12 +193,13 @@ int freeRam ()
 void composeSyncMessage(){
 
 
-  //[S_001um3.05ProminiS0001000_#] 
+  //[S_001ul3.05ProminiS0001000_#] 
 //   example:   [S_001um3.05ProminiS00010167123_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
   if (lamp_state==1){
       
     if (time_continuos_on!=0){
       time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
+      time_continuos_on=millis();
     }
 
   }
@@ -252,7 +253,8 @@ void composeSyncMessage(){
   strcpy(syncMessage, "");
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
-  strcat(syncMessage, "um");
+  strcat(syncMessage, "ul");
+ // strcat(syncMessage, "sy");
   strcat(syncMessage, node_fw);
   strcat(syncMessage, serial_number);
   strcat(syncMessage, char_lamp_state);
@@ -462,7 +464,7 @@ void decodeOnosCmd(const char *received_message){
       time_continuos_on=millis();
       while (digitalRead(received_message_second_pin_used)!=received_message_value){
         delay(1);
-        if (millis()-time_from_turn_on>100){ // if the relay hasn't swiched after 100 ms from command..is broken..
+        if (millis()-time_continuos_on>100){ // if the relay hasn't swiched after 100 ms from command..is broken..
           strcpy(received_message_answer,"err2_relay_#]");
           return;                                
         }
@@ -476,6 +478,7 @@ void decodeOnosCmd(const char *received_message){
 
       if (time_continuos_on!=0){
         time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
+        time_continuos_on=millis();
       }
 
       if (received_message_value==1){
@@ -578,7 +581,14 @@ void decodeOnosCmd(const char *received_message){
 
  
 void setup() {
+  noInterrupts(); // Disable interrupts    //important for lamp node
+
   pinMode(relay_pin, OUTPUT); 
+  pinMode(RFM69_RST, OUTPUT);  //important for lamp node
+
+  digitalWrite(RFM69_RST, HIGH);   //important for lamp node
+
+//  digitalWrite(RFM69_RST,0); //radio reset pin
   lamp_state=EEPROM.read(lamp_state_address);
   digitalWrite(relay_pin,!lamp_state); //set relay
 
@@ -620,12 +630,15 @@ void setup() {
   Serial.println(lamp_state);
   
   // Hard Reset the RFM module
-  pinMode(RFM69_RST, OUTPUT);
+
   digitalWrite(RFM69_RST, HIGH);
   delay(100);
   digitalWrite(RFM69_RST, LOW);
   delay(100);
   
+
+  interrupts(); // Enable interrupts
+
   // Initialize radio
   radio.initialize(FREQUENCY,this_node_address,NETWORKID);
   if (IS_RFM69HCW) {
@@ -774,7 +787,7 @@ void loop() {
 
   }
 
-  else if ((millis()-sync_time)>500){ //every 5000 ms
+  else if ((millis()-sync_time)>5000){ //every 5000 ms
    
    
     sync_time=millis();

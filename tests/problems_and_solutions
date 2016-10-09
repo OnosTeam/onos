@@ -266,14 +266,14 @@ I will use post instead that get message
   If the node that have to send a sync message is a lamp node or a plug node it will write:
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node ("001" for the arduino gateway)
-  2 bytes containing "um" for the type of msg  (um stand for update message)
+  2 bytes containing "ul" for the type of msg  (um stand for update lamp)
   4 byte with the fw version for example "5.23"
   12 byte to tell the node serial number
   1 byte to tell the status of the node ( relay on or off )
   3 byte to tell the sensor value on A0  (lux for "lamp type" and maybe ampere for "plug type")
   3 bytes to tell how many minutes the relay have been stayed on since the node was powered on (will restart after 10 hours).
   3 bytes with "_#]" to close the message 
-  example:   [S_001um3.05ProminiS00010167123_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
+  example:   [S_001ul3.05ProminiS00010167123_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
 
 ////////////////////////////////////OLD... TO UPDATE/////////////////////////////////////////////////////////
 

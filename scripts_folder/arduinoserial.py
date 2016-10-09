@@ -312,7 +312,7 @@ class SerialPort:
               cmd=buf[cmd_start:cmd_end+3]
               
 
-              if( (cmd[6]=="s")&(cmd[7]=="y") ): # [S_001sy3.05ProminiS0001_#] 
+              if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) : # [S_001sy3.05ProminiS0001_#] 
                 print "serial rx cmd="+cmd
                 buf=""
                 try:
