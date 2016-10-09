@@ -127,7 +127,7 @@ WLightSS node parameter:
   old_persons_count-->previous value of persons_count
   time_from_turn_on --> variable used to store the millis() when the lamp was turned on.
   time_continuos_on --> seconds since the lamps is on (if is on now otherwise is 0) 
-  timeout_to_turn_off-->   if time_continuos_on> timeout_to_turn_off  the lamp will be turned off (default is 10 hours)
+  timeout_to_turn_off-->   if time_continuos_on> timeout_to_turn_off  the lamp will be turned off (default is 10 hours , express in minutes,disabled if 0)
   temperature        --> temperature from the sensor 
 
 */
@@ -156,12 +156,13 @@ char received_serial_number[13];
 
 unsigned long time_continuos_on=0;
 unsigned long time_from_turn_on=0;
+int timeout_to_turn_off=600; //10 hours
 
 int lux_threshold=0;
 int lux_value=0;
 uint8_t lamp_state=0;
 uint8_t old_lamp_state=5;
-#define lamp_state_address 20 
+#define lamp_state_address 20
 int relay_pin=8;
 int relay_check_pin=7;
 int photoresistor_pin=A0;
@@ -203,6 +204,10 @@ void composeSyncMessage(){
 
   }
 
+  int minutes_time_from_turn_on;
+
+  minutes_time_from_turn_on=time_from_turn_on/60000; //get minutes from milliseconds
+
   char char_lamp_state[2];
   char_lamp_state[0]=lamp_state+48;
 
@@ -214,8 +219,7 @@ void composeSyncMessage(){
   ltoa(lux_value,lux_value_array,4);  //convert from int to char array
 
 
-  int minutes_time_from_turn_on;
-  minutes_time_from_turn_on=time_from_turn_on/60000; //get minutes from milliseconds
+
 
   char minutes_time_from_turn_on_array[4];
  
@@ -593,7 +597,7 @@ void setup() {
   if (lamp_state==255){ //first time power on
     lamp_state=1;
     EEPROM.write(lamp_state_address, !lamp_state);
-    digitalWrite(relay_pin,!lamp_state); //set pull up resistors
+    digitalWrite(relay_pin,!lamp_state); 
   }
  
 
@@ -664,6 +668,34 @@ void loop() {
   //check if something was received (could be an interrupt from the radio)
 
   
+
+ //timeout check
+  if (lamp_state==1){   
+      
+    if (time_continuos_on!=0){
+      time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
+    }
+
+  
+/*
+
+    if (timeout_to_turn_off!=0) { //zero to disable...
+      int minutes_time_continuos_on=time_continuos_on/60000; //get minutes from milliseconds
+
+      if (minutes_time_continuos_on>timeout_to_turn_off){
+        lamp_state=0;
+        digitalWrite(relay_pin,lamp_state); 
+        EEPROM.write(lamp_state_address,lamp_state);
+      }
+    }
+*/
+
+  }
+
+
+
+
+
   if (radio.receiveDone()){
     //print message received to serial
     Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
