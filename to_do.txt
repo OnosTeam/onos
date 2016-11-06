@@ -1,3 +1,13 @@
+
+
+
+rifare protocollo radio come da documento
+
+
+
+
+
+
 avvio di onos anche senza internet?  update_check...
 
 Controllare variabili globali in globalVar.py che non possono essere modificate successivamente .. e fare tutti passagi di variabile
@@ -37,6 +47,10 @@ business plan  , studiare come scriverlo
 
 
 0) Passare tutto da tcp a udp ?  // passata la gestione nodi da richiesta http a query tcp 
+
+
+
+
 
 
 

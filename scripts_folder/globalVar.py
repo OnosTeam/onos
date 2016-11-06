@@ -1682,9 +1682,22 @@ hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(7,8)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
-hardwareModelDict["WLightSA"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
-hardwareModelDict["WLightSA"]["pin_mode"]["sr_relay"]={"socket":[(7,8)]}
-hardwareModelDict["WLightSA"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
+hardwareModelDict["WLightSA"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["WLightSA"]["pin_mode"]["digital_obj"]={"lamp":[(5,6)]}
+hardwareModelDict["WLightSA"]["pin_mode"]["analog_input"]={"luminosity":[(14)],"temperature":[(15)]}
+hardwareModelDict["WLightSA"]["pin_mode"]["cfg_obj"]={"lux_threshold":[(-1)],"timeout_to_turn_off":[(-1)]}#this have no pins..
+hardwareModelDict["WLightSA"]["query"]["digital_obj"]={"lamp":"wl#_objnumber_##_valuelen:1_#"}  #define the base query for this
+hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen:3_#" ,"timeout_to_turn_off":"to#_valuelen:4_#" }  #define the base query for this
+                   
+
+
+
+hardwareModelDict["WPlugAvx"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(5,6,7,8)]}# only one object with a double set reset relay
+hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)
+
+   
+
 
 
 
@@ -1719,6 +1732,9 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 # serial_output : serial output , allow to write to a serial port 
 # serial_input  : serial input  , allow to read  a serial port
 # special_pin   : handled on the node arduino firmware side
+# digital_obj    : handled on the node arduino firmware side
+# analog_obj     : handled on the node arduino firmware side     
+# cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone nut avaible in the config...
 
 
 

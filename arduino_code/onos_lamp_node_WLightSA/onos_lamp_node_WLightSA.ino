@@ -76,7 +76,7 @@
 //#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY      RF69_433MHZ
 #define ENCRYPTKEY     "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
-#define IS_RFM69HCW    false // set to 'true' if you are using an RFM69HCW module
+#define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
@@ -101,7 +101,7 @@ boolean radio_enabled=1;
 
 unsigned long sync_time=0;
 
-char serial_number[13]="WLightSA0005";
+char serial_number[13]="WLightSA0006";
 
 char node_fw[]="5.13";
 
@@ -115,7 +115,7 @@ unsigned long get_address_timeout=0;
 /*
 WLightSA node parameter:
   relay_pin     --> the pin where the relay coil is connected
-  relay_check_pin-->the pin connected to the relay that tell the node if the relay is on or off
+  relay_check_pin-->the pin connected to the relay that tell the node if the relay is on or off...deprecated
   photoresistor_pin  
   lux_threshold --> a threshold the user can set to turn on the light if this node receive a selective command like: setLightif..
   lux_value     --> the value readed from the photoresistence , this value will be sent with each sync
@@ -155,16 +155,20 @@ char received_serial_number[13];
 
 
 unsigned long time_continuos_on=0;
+unsigned long time_since_last_sync=0;
 unsigned long time_from_turn_on=0;
+int timeout_to_turn_off=0;//0=disabled    600; //10 hours    todo   add the possibility to set it from remote
 
 int lux_threshold=0;
 int lux_value=0;
 uint8_t lamp_state=0;
 uint8_t old_lamp_state=5;
 #define lamp_state_address 20 
-int relay_pin=8;
+int relay_pin0=8;
+int relay_pin1=7;
 int relay_check_pin=7;
 int photoresistor_pin=A0;
+
 
 
 /*
@@ -199,7 +203,7 @@ void composeSyncMessage(){
       
     if (time_continuos_on!=0){
       time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
-      time_continuos_on=millis();
+      time_since_last_sync=millis();  // to implement...
     }
 
   }
@@ -447,20 +451,23 @@ void decodeOnosCmd(const char *received_message){
 
 
 
-      if (received_message_first_pin_used!=relay_pin){ 
+      if ((received_message_first_pin_used!=relay_pin0)||(received_message_second_pin_used!=relay_pin1)){ 
         strcpy(received_message_answer,"er_relay_pin_#]"); 
         return;
       }
+
+/*
 
       if (received_message_first_pin_used!=relay_check_pin){ 
         strcpy(received_message_answer,"er_check_pin_#]"); 
         return;
       }
 
-
+*/
 
       digitalWrite(received_message_first_pin_used,received_message_value); 
       
+/*
       time_continuos_on=millis();
       while (digitalRead(received_message_second_pin_used)!=received_message_value){
         delay(1);
@@ -470,6 +477,8 @@ void decodeOnosCmd(const char *received_message){
         }
 
       }
+
+*/
         
       if (lamp_state!=old_lamp_state){
         EEPROM.write(lamp_state_address, lamp_state);
@@ -478,7 +487,6 @@ void decodeOnosCmd(const char *received_message){
 
       if (time_continuos_on!=0){
         time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
-        time_continuos_on=millis();
       }
 
       if (received_message_value==1){
@@ -583,17 +591,17 @@ void decodeOnosCmd(const char *received_message){
 void setup() {
   noInterrupts(); // Disable interrupts    //important for lamp node
 
-  pinMode(relay_pin, OUTPUT); 
+  pinMode(relay_pin0, OUTPUT); 
   pinMode(RFM69_RST, OUTPUT);  //important for lamp node
 
   digitalWrite(RFM69_RST, HIGH);   //important for lamp node
 
 //  digitalWrite(RFM69_RST,0); //radio reset pin
   lamp_state=EEPROM.read(lamp_state_address);
-  digitalWrite(relay_pin,!lamp_state); //set relay
+  digitalWrite(relay_pin0,!lamp_state); //set relay
 
-  pinMode(relay_check_pin, INPUT); 
-  digitalWrite(relay_check_pin,1); //set pull up resistors
+  pinMode(relay_pin1, INPUT); 
+  digitalWrite(relay_pin1,1); //set pull up resistors
 
   EEPROM.write(lamp_state_address, !lamp_state);
 
@@ -603,7 +611,7 @@ void setup() {
   if (lamp_state==255){ //first time power on
     lamp_state=1;
     EEPROM.write(lamp_state_address, !lamp_state);
-    digitalWrite(relay_pin,!lamp_state); //set pull up resistors
+    digitalWrite(relay_pin0,!lamp_state); //set pull up resistors
   }
  
 
@@ -663,15 +671,28 @@ void setup() {
  
 void loop() {
 
-/*
 
-  int batteryPcnt = (int)vcc.Read_Perc(VccExpected);
-  if (oldBatteryPcnt != batteryPcnt){
-        oldBatteryPcnt = batteryPcnt;
-  Serial.println("vcc has decreased!");
+/*
+  if (lamp_state==1){   
+      
+    if (time_continuos_on!=0){
+      time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
+    }
+
+    if (timeout_to_turn_off!=0) { //zero to disable...
+      int minutes_time_continuos_on=time_continuos_on/60000; //get minutes from milliseconds
+
+      if (minutes_time_continuos_on>timeout_to_turn_off){
+        lamp_state=0;
+        digitalWrite(relay_pin0,lamp_state); 
+        EEPROM.write(lamp_state_address,lamp_state);
+      }
+    }
+
+
   }
 
-  oldBatteryPcnt=(int)vcc.Read_Perc(VccExpected);
+
 */
 
   //check if something was received (could be an interrupt from the radio)

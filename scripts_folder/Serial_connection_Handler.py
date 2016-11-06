@@ -121,11 +121,15 @@ class Serial_connection_Handler():
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyUSB")!=-1)and(dev!=exluded_port):
+      if (dev.find("ttyUSB0")!=-1)and(dev!=exluded_port):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyACM")!=-1)and(dev!=exluded_port):
+      if (dev.find("ttyACM0")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyS0")!=-1)and(dev!=exluded_port):
         return(dev)
 
 

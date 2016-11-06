@@ -336,6 +336,38 @@ class RouterHandler:
       address=node_obj.getNodeAddress()
       query="error_compose_query"
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
+
+
+
+
+   
+
+      if (out_type=="digital_obj"):
+        obj_selected=pinNumbers[0]#in this case the obj selected is passed from the pinNumbers number...
+        remoteNodeHwModel=node_obj.getNodeHwModel()
+        obj_html_name=remoteNodeHwModel["pin_mode"]["digital_obj"].keys()[obj_selected]  
+        query_placeholder=base_query+remoteNodeHwModel["query"]["digital_obj"][obj_html_name]
+        query_placeholder=query_placeholder.replace("#_objnumber_#",pinNumbers[0])
+        acceptable_len=0
+        value=0
+        if status_to_set>1:
+          print "error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1"
+          errorQueue.put("error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1") 
+          return (-1)
+        valuelen_pos=query_placeholder.find("valuelen")
+        if valuelen_pos != -1:
+          value=str(status_to_set)
+          desidered_len=int (query_placeholder.split("valuelen:")[1])
+           
+          while len(value)<desidered_len:
+            value="0"+value            
+          valuelen_pos=query_placeholder.find("valuelen")
+          string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
+          query=query_placeholder.replace(string_to_replace_with_value,value)
+
+
+
+
       if (out_type=="sr_relay"):
         pin1=str(pinNumbers[1])
         pin0=str(pinNumbers[0])
@@ -427,6 +459,13 @@ class RouterHandler:
         print "there is already a query thread running for this node :"+node_serial_number 
 
       return(query) 
+
+
+
+
+
+
+
 
 
     def setAddressToNode(self,node_serial_number,new_address):

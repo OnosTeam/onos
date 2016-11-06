@@ -52,15 +52,16 @@ class WebObject:
       self.styleDict.update(styleDictionary)
       self.__style0=self.styleDict[u"1"]
       self.__style1=self.styleDict[u"0"]
-      self.style_wait=self.styleDict[u"onoswait"] #banana to remove
+      #self.style_wait=self.styleDict[u"onoswait"] #banana to remove
 
       self.htmlDict={u"0":name+"=0",u"1":name+"=1"} 
 
       self.htmlDict.update(htmlDictionary)
 
       self.html0=self.htmlDict["0"]     
-      self.html1=self.htmlDict["1"]  
-      self.html_wait=name+u"WAIT"  
+      self.html1=self.htmlDict["1"] 
+      self.htmlDict[u"onoswait"]=name+u"WAIT" 
+      #self.html_wait=name+u"WAIT"  
       self.html_error=name+u"has status_not_valid"
 
 
@@ -127,8 +128,8 @@ class WebObject:
       #self.analog_threshold=512
       #self.__hw_node_name="rasberry_b_rev2_only"  #banana to remove
       self.simply_digital_output_group=["digital_output","b","button"] #makes alias
-      self.general_digital_output_group=self.simply_digital_output_group+["sr_relay"]
-      self.general_analog_output_group=["analog_output","servo_output","numeric_var"]
+      self.general_digital_output_group=self.simply_digital_output_group+["sr_relay"]+["digital_obj"]
+      self.general_analog_output_group=["analog_output","servo_output","numeric_var","analog_obj"]
       self.general_out_group=self.general_digital_output_group+self.general_analog_output_group+["string_var"] #all output
       self.simply_digital_input_group=["d_sensor","digital_input"]     #make alias
       self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var"]#objtype with num values
@@ -189,11 +190,11 @@ class WebObject:
 
 
 
-        if (self.__object_type=="sr_relay"):  # latch relay  with 2 coil  one to set  one to reset 
+        if (self.__object_type in self.general_digital_output_group):  # latch relay  with 2 coil  one to set  one to reset 
           result=1   #banana     to remove in the future
-          if (len(self.attachedPins)!=2) :
-            print "can't set the relay because i don't have two pin attached"
-            return(-1)
+      #    if (len(self.attachedPins)!=2) :
+       #     print "can't set the relay because i don't have two pin attached"
+       #     return(-1)
 
           if status in self.cmdDict.keys():
             #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
@@ -314,7 +315,7 @@ class WebObject:
         if (self.status==0)|(self.status=="0"):
           return(self.styleDict[u"0"])
         if (self.status=="onoswait"):
-          return(self.style_wait) 
+          return(self.styleDict[u"onoswait"]) 
         if (self.status==1)|(self.status=="1"):
           return(self.styleDict[u"1"])
 
@@ -333,7 +334,7 @@ class WebObject:
         if (self.status==1)|(self.status=="1"):
           return(self.__style0)
         if (self.status=="onoswait"):
-          return(self.style_wait) 
+          return(self.styleDict[u"onoswait"]) 
         if (self.status==0)|(self.status=="0"):
           return(self.__style1)
 
@@ -369,7 +370,7 @@ class WebObject:
         if (self.status==0)|(self.status=="0"):
           return(self.htmlDict[u"0"])
         if (self.status=="onoswait"):
-          return(self.html_wait) 
+          return(self.htmlDict[u"onoswait"]) 
         if (self.status==1)|(self.status=="1"):
           return(self.htmlDict[u"1"])   
         return (self.html_name+u"="+str(self.status)) #for analog type
@@ -379,7 +380,7 @@ class WebObject:
         if (self.status==1)|(self.status=="1"):
           return(self.html0)
         if (self.status=="onoswait"):
-          return(self.html_wait) 
+          return(self.htmlDict[u"onoswait"]) 
         if (self.status==0)|(self.status=="0"):
           return(self.html1)
         return (str(self.status)) #for analog type
@@ -398,15 +399,20 @@ class WebObject:
           self.htmlDict["0"]=html0 
           return(self.html0)
 
-    def setHtmlWait(self,html_w):             #set the static html0  of the button
-          self.html_wait=html_w
-          return(self.html_wait)
-
 
     def setHtml1(self,html1):             #set the static html1  of the button
           self.html1=html1
           self.htmlDict["1"]=html1 
           return(self.html1)
+
+    def setHtmlWait(self,html_w):             #set the static html0  of the button
+          self.htmlDict[u"onoswait"]=html_w
+          return(self.htmlDict[u"onoswait"])
+
+
+    def setHtmlDictValue(self,key,value):             #set the static html1  of the button
+          self.htmlDict[key]=value 
+          return(self.htmlDict[key])
 
 
 

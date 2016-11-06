@@ -1,0 +1,27 @@
+Web object type
+O.N.O.S. type of webobject status:
+
+All O.N.O.S. web object status are stored in string variables
+
+
+Web Object Status type[edit]
+digital_input
+digital_output
+analog_input
+analog_output
+servo_output
+sr_relay
+string_var
+numeric_var
+switch
+digital_obj
+analog_obj
+cfg_obj
+
+Example configuration for new nodes[edit]
+hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"timeout":180} hardwareModelDict["RouterGL"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]} hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]} hardwareModelDict["RouterGL"]["pin_mode"]["digital_output"]={"button":[(18),(22)]}
+
+
+hardwareModelDict["ProminiA"]={"hwName":"ProminiA","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":180} hardwareModelDict["ProminiA"]["pin_mode"]["digital_input"]={"d_sensor":[(2),(3),(4)]} hardwareModelDict["ProminiA"]["pin_mode"]["digital_output"]={"button":[(5),(6),(7),(8),(9)]} hardwareModelDict["ProminiA"]["pin_mode"]["analog_input"]={"a_sensor":[(14),(15),(16),(17),(18),(19)]} hardwareModelDict["ProminiA"]["pin_mode"]["servo_output"]={"servo":[(5),(6)]} hardwareModelDict["ProminiA"]["pin_mode"]["analog_output"]={"a_out":[(11),(10)]}
+
+hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"timeout":70} hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15),(16,17)],"wifi":[(16,17)]}

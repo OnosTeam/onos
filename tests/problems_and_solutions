@@ -169,9 +169,11 @@ I will use post instead that get message
 
  
   Standard part to all mssages :
+
   "[S_"   3 byte for the start of the message
    3 bytes for the address of the node
    2 bytes for the type of msg
+   1 bytes for the message id (a progressive number from 0 to 255 to identify the message, first time will be 0 next 1 and so on...all in binary data)
   "#_]"   3 byte for the end of the message
 
 
@@ -182,14 +184,16 @@ I will use post instead that get message
   
 
   The message to change a digital output pin status will be:
+
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
   2 bytes containing "dw" for the type of msg
   2 bytes for the number of pin  (for pin 13 it will be '13'  ,for pin 3 it will be '03')
   3 bytes to tell arduino the status (000 or 001 ) to set the pin
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001dw06001_#]    to set pin 6 to 1
-             [S_001dw06000_#]    to set pin 6 to 0
+  example:   [S_001dw06001x_#]    to set pin 6 to 1
+             [S_001dw06000x_#]    to set pin 6 to 0
 
 
 
@@ -202,8 +206,9 @@ I will use post instead that get message
   2 bytes containing "aw" for the type of msg
   2 bytes for the number of pin  (for pin 10 it will be '10'  ,for pin 3 it will be '03')
   3 bytes to tell arduino the status (from 000 to 255 ) to set the pin
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001aw06155_#]    to set analog pin 6 to 155
+  example:   [S_001aw06155x_#]    to set analog pin 6 to 155
 
 
 
@@ -214,40 +219,68 @@ I will use post instead that get message
   2 bytes containing "sm" for the type of msg
   2 bytes for the number of pin  (for pin 10 it will be '10'  ,for pin 3 it will be '03')
   3 bytes to tell arduino the position (from 000 to 180 ) to set the servo motor
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001sm11135_#]    to set servo motor pin 1 to 135
+  example:   [S_001sm11135x_#]    to set servo motor pin 1 to 135
 
 
 
 
   The message to change a set/reset latch relay status will be: 
 
-
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
   2 bytes containing "sr" for the type of msg
   4 bytes for the number of pins  (for pin 4 as set and pin 5 as reset it will be '0405')
   1 byte to tell arduino the value (0 or 1 ) to set the relay
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001sr04051_#]    to set the relay (set on pin 4 , reset on pin 5)  to 1
-             [S_001sr04050_#]    to set the relay (set on pin 4 , reset on pin 5)  to 0 
+  example:   [S_001sr04051x_#]    to set the relay (set on pin 4 , reset on pin 5)  to 1
+             [S_001sr04050x_#]    to set the relay (set on pin 4 , reset on pin 5)  to 0 
 
 
 
- 
+
+
+  The message to change the status of the onos_plug_node_WPlugavx contact status will be: 
+
+  3 bytes with "[S_" for the start of the message
+  3 bytes for the address of the node
+  2 bytes containing "wp" for the type of msg , command wireless plug node
+  1 bytes for the number of the object to controll (for first object of the node it will be "0" and it will be the contact status)
+  1 byte to tell arduino the value (0 or 1 ) to set the object
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001wp01x_#]    to set the first object of the node to 1
+             [S_001wp00x_#]    to set the first object of the node to 0
+
+
+  The message to change the status of the onos_lamp_node_WLightSA lamp status will be: 
+
+  3 bytes with "[S_" for the start of the message
+  3 bytes for the address of the node
+  2 bytes containing "wl" for the type of msg , command wireless lamp node
+  1 bytes for the number of the object to controll  (for first object of the node it will be "0" and it will be lamp status)
+  1 byte to tell arduino the value (0 or 1 ) to set the object
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001wl01x_#]    to set the first object of the node to 1
+             [S_001wl00x_#]    to set the first object of the node to 0
 
 
 
   If a node needs to get a free address from the OnosCenter it will write:
+
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node ("001" for the arduino gateway)
   2 bytes containing "ga" for the type of msg
   4 byte with the fw version for example "5.23"
   12 byte to tell the node serial number
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001ga3.05ProminiS0001_#]    
+  example:   [S_001ga3.05ProminiS0001x_#]    
 
-  OnosCenter will then send a message with a : [S_254sa123ProminiS0001_#]  to tell the node to set its address to 123 for example
+  OnosCenter will then send a message with a : [S_254sa123ProminiS0001x_#]  to tell the node to set its address to 123 for example
 
              
 
@@ -258,8 +291,9 @@ I will use post instead that get message
   2 bytes containing "sy" for the type of msg
   4 byte with the fw version for example "5.23"
   12 byte to tell the node serial number
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001sy3.05ProminiS0001_#]      
+  example:   [S_001sy3.05ProminiS0001x_#]      
 
 
 
@@ -272,8 +306,9 @@ I will use post instead that get message
   1 byte to tell the status of the node ( relay on or off )
   3 byte to tell the sensor value on A0  (lux for "lamp type" and maybe ampere for "plug type")
   3 bytes to tell how many minutes the relay have been stayed on since the node was powered on (will restart after 10 hours).
+  1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001ul3.05ProminiS00010167123_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
+  example:   [S_001ul3.05ProminiS00010167123x_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
 
 ////////////////////////////////////OLD... TO UPDATE/////////////////////////////////////////////////////////
 
@@ -851,8 +886,8 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 34)  Onos must know if a node isn't working or powered off , and lets the user know it as well:
-     each node will ask the setup to onos every 3 minuts , so onos will wait and set as inactive every node 
-     that will not ask the setup for more that 3 minuts .
+     each node will ask the setup to onos every n minuts , so onos will wait and set as inactive every node 
+     that will not ask the setup for more that n minuts .
      For sensible node like antitheft sensors the timeout might be 30 seconds
      The variable is_active will be stored in each webobject of the node and will be usable in the scenarios (banana not implemented yet)
      Each node will have a variable called "last_node_sync" (setted using the funcions updateNodeAddress() and then updateLastNodeSync()) which will store the last time the node ask the setup to onos
@@ -905,7 +940,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 
-39) I need to contro lamps sockets and lamps, but the powerline hardware is too big to fit in a bulb or lamp socket, so I will develop a radio network based on RMF69 radio modules.
+39) I need to control lamps sockets and lamps, but the powerline hardware is too big to fit in a bulb or lamp socket, so I will develop a radio network based on RMF69 radio modules.
 
 
 40) I need to control the radio modules from the onosCenter :
@@ -975,10 +1010,10 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 44) Node parameters:   Todo
     Every node must have some special parameters about its function , every parameter will be stored as webojects 
-    For example a lamp node coul have :
+    For example a lamp node could have :
       A ligth threshold  (how much light will be needed to turn off the lamp)
       A counter value (enabled only if an iRbarrier or other sensors are associated) to tun on the lamp if >0
-      A timeou value after that the lamp will shut down assuming noone is still inside.
+      A timeout value after that the lamp will shut down assuming noone is still inside.
       A light sensor value (the analog reading from the photoresistor)
       A current sensor (to read the power consumption of the lamp)
       This webobjects will be stored ind hardwareModelDict{}
@@ -1012,9 +1047,31 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 
+47) Need a way to make custom node query:
+
+   3 new object types are added:
+
+   digital_obj    : handled on the node arduino firmware side
+   analog_obj     : handled on the node arduino firmware side     
+   cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone nut avaible in the config...
+   
+   To define the query that will be sent to the node there will be a placeholder like this:
+
+   hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_valuelen:1_#"}  #define the base query for this
+
+   where:
+   wp is the cmd_type  
+   #_objnumber_# will be replaced by the progressive number of the object in the node..for example in  a single plug it will be '0' 
+   #_valuelen:1_# will be replaced by a number (1 char long) to rappresent the value of the object  
+   
+
+48) What happen if two  neighbors persons buy 2 onoscenter ?The systems will interfer with each others?
+    We need to implement a way to pair the network of radio modules with each onoscenter. 
+    Partial solution, every time we sell a new node we will ask the customer for they onosUsername and from the online server we will extract the key password for that onoscenter.
+    To implement a variable password set from the onoscenter to the radio transciver ...and the web interface to get the password from local and from remote webpage.
 
 
-
+49) How can a lamp node tell onos how much time has been turned on in a day?to solve later... todo
 
 
 

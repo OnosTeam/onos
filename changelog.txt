@@ -603,6 +603,11 @@ error2 after main error in handle_new_query_to_remote_node_thread;;;
 
 
 
+
+
+
+
+
        warning: when createNewNode() is executed the onos interface will lag for some seconds..its normal beacause this function write to disk before answering to the browser.
 
        Warning: mails will not be sent if the system is offline and will not be stored to sent them where internet is up

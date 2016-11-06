@@ -10,7 +10,7 @@ scp -rC *  root@192.168.1.2:/tmp/onos
 scp -rC root@192.168.1.4:/bin/onos/* /tmp/ram/
 
 
-scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) root@192.168.1.2:/tmp/onos/
+scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) root@192.168.1.4:/tmp/onos/
 
 scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) root@192.168.1.2:/bin/onos/
 
@@ -20,6 +20,5 @@ git add *
 git commit -a -m "working on lamp node" 
 git push -u origin master
 
-git add * & git commit -m "Initial commit marco" & git push -u origin master
 
 

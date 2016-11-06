@@ -106,7 +106,7 @@ int this_node_address=1; //must be int..
 
 unsigned long timeout;
 
-boolean first_sync=1; //tell the node if the first sync was made.
+boolean first_sync=0; //tell the node if the first sync was made ,not used here
 
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
@@ -491,7 +491,7 @@ void decodeOnosCmd(const char *received_message){
 
 void setup() {
 
-  delay(35000); //wait for glinet to power on
+ // delay(95000); //wait for glinet to power on
   while (!Serial); // wait until serial console is open
   Serial.begin(SERIAL_BAUD);
 
@@ -701,7 +701,8 @@ restart:
               //put here the radio  transmit part
 //bool RFM69_ATC::sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime) {
 
-          if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),5,600)) {
+          if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),5,250)) {
+              // note that the max delay time is 255..because is uint8_t
               //target node Id, message as string or byte array, message length,retries, milliseconds before retry
               //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 
@@ -737,7 +738,7 @@ restart:
 
           }
 
-          else{
+          else{// failed to contact radio node or radion node 
                // Serial.println("sendtoWait failed");
             strcpy(received_message_answer,"[S_ertx1_#]");  
             radio.receiveDone(); //put radio in RX mode
@@ -847,7 +848,7 @@ restart:
 
   if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update the current ip address
     sync_time=millis();
-  // onos_s3.05v1sProminiS0001f001_#]
+
     composeSyncMessage();
     makeSyncMessage();
 

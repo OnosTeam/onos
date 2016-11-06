@@ -1111,7 +1111,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         
           
 
-    if ((obj_type=="b")|(obj_type=="sb")|(obj_type=="digital_output")): #banana to check and leave only digital_output
+    if ((obj_type=="b")|(obj_type=="sb")|(obj_type=="digital_output")|(obj_type=="digital_obj")): #banana to check and leave only digital_output
       if (len (pins_to_set))!=1:
         print "error , number of pins different from 1 for button type "
         errorQueue.put("error , number of pins different from 1 for button type , doutput section  ")
@@ -5501,16 +5501,17 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
     #analyze incoming serial message from serial port
-    if len (hardware.serial_communication.uart.readed_packets_list)>0:
-      print "there is an incoming data on serial port buffer"
-      print hardware.serial_communication.uart.readed_packets_list
+    if enable_usb_serial_port==1:
+      if len (hardware.serial_communication.uart.readed_packets_list)>0:
+        print "there is an incoming data on serial port buffer"
+        print hardware.serial_communication.uart.readed_packets_list
      
-      with lock_serial_input:
-        if len (hardware.serial_communication.uart.readed_packets_list)>10: #if the list became long cut the first 4 elements
-          hardware.serial_communication.uart.readed_packets_list.pop(0)  
-          hardware.serial_communication.uart.readed_packets_list.pop(0) 
-          hardware.serial_communication.uart.readed_packets_list.pop(0)  
-          hardware.serial_communication.uart.readed_packets_list.pop(0)   
+        with lock_serial_input:
+          if len (hardware.serial_communication.uart.readed_packets_list)>10: #if the list became long cut the first 4 elements
+            hardware.serial_communication.uart.readed_packets_list.pop(0)  
+            hardware.serial_communication.uart.readed_packets_list.pop(0) 
+            hardware.serial_communication.uart.readed_packets_list.pop(0)  
+            hardware.serial_communication.uart.readed_packets_list.pop(0)   
 
 
     if (mail_error_log_enable==1):
@@ -5999,9 +6000,9 @@ def main():
         bus.daemon = True  #make the thread a daemon thread
         bus.start()
 
-       # w2 = threading.Thread(target=nodeTcpServer)
-       # w2.daemon = True  #make the thread a daemon thread
-       # w2.start()
+        w2 = threading.Thread(target=nodeTcpServer)
+        w2.daemon = True  #make the thread a daemon thread
+        w2.start()
 
 
 
