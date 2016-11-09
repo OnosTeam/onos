@@ -79,7 +79,7 @@
 #define RFM69_CS      10
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     3
+#define RFM69_RST     9
 
 #define LED           5  // onboard blinky
 
@@ -402,7 +402,7 @@ void decodeOnosCmd(const char *received_message){
     }
 
 
-    //[S_254sa123WLightSS0003_#]
+    //[S_254sa123WLightSS0005_#]
 
     else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
 

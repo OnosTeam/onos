@@ -1,5 +1,5 @@
 /*
- * O.N.O.S.  arduino WlightSA node  firmware by Marco Rigoni 14-10-16  onos.info@gmail.com 
+ * O.N.O.S.  arduino WlightVx node  firmware by Marco Rigoni 9-11-16  onos.info@gmail.com 
  * more info on www.myonos.com 
  *
  */
@@ -84,7 +84,7 @@
 #define RFM69_CS      10
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     9
+#define RFM69_RST     2
 
 #define LED           5  // onboard blinky
 
@@ -211,7 +211,7 @@ void composeSyncMessage(){
 
 
   float minutes_time_from_turn_on;
-//  minutes_time_from_turn_on=2000;  //time_from_turn_on/60000; //get minutes from milliseconds
+  minutes_time_from_turn_on=2000;  //time_from_turn_on/60000; //get minutes from milliseconds
 
 
   if( minutes_time_from_turn_on>9999) {//banana todo change it in some way...
@@ -313,15 +313,16 @@ void composeSyncMessage(){
 
 void sendSyncMessage(){
 
-
-
+  composeSyncMessage();
+  syncMessage[6]='u'; //modify the message
+  syncMessage[7]='l'; //modify the message
 
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),3,250)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
-    Serial.println("sent_sync_message");
-    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
+    Serial.println("sent_sync_message1");
+//    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
   }
 
 
@@ -345,11 +346,11 @@ void getAddressFromGateway(){
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
     Serial.println("sent_get_address");
-    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
+   // Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
   }
 
-  syncMessage[6]='s'; //modify the message to get a address instead of just sync.
-  syncMessage[7]='y'; //modify the message to get a address instead of just sync.
+  syncMessage[6]='u'; //modify the message
+  syncMessage[7]='l'; //modify the message
 
   //decode message
 
@@ -467,9 +468,13 @@ void decodeOnosCmd(const char *received_message){
     //[S_123wp01x_#]
     else if( received_message_type_of_onos_cmd[0]=='w' && received_message_type_of_onos_cmd[1]=='p' ){
 
-      main_obj_state=received_message[9]-48;      
+      main_obj_state=received_message[8]-48;      
+
+      received_message_value=received_message[9]-48;   
+
 
       if (received_message_value>1){ 
+        Serial.println(F("er0_status_#]"));  
         strcpy(received_message_answer,"er0_status_#]"); 
         return;
       }
@@ -483,6 +488,7 @@ void decodeOnosCmd(const char *received_message){
 
       }
       else{//there is only one main wp object in this wp node
+        Serial.println(F("er_obj_number_#]"));  
         strcpy(received_message_answer,"er_obj_number_#]"); 
         return;
       }
@@ -522,13 +528,10 @@ void decodeOnosCmd(const char *received_message){
       }
 
       if (main_obj_state==1){
-
         time_continuos_on=millis();
       }
       else{
         time_continuos_on=0;
-
-
       }
 
       strcpy(received_message_answer,"ok"); 
@@ -619,6 +622,8 @@ void decodeOnosCmd(const char *received_message){
 
  
 void setup() {
+
+  while (!Serial); // wait until serial console is open, remove if not tethered to computer
   noInterrupts(); // Disable interrupts    //important for lamp node
 
   pinMode(RFM69_RST, OUTPUT);
@@ -634,15 +639,7 @@ void setup() {
 
 
 
-/*
-  int batteryPcnt = (int)vcc.Read_Perc(VccExpected);
-  if (oldBatteryPcnt != batteryPcnt){
-        oldBatteryPcnt = batteryPcnt;
-  Serial.println("vcc has decreased!");
-  }
 
-  oldBatteryPcnt=(int)vcc.Read_Perc(VccExpected);
-*/
 
   Serial.println("Feather RFM69W Receiver");
 
@@ -777,7 +774,6 @@ void loop() {
       get_address_timeout=millis();
       Serial.print("radio address changed to:");
       Serial.println(this_node_address);
-      composeSyncMessage();
       sendSyncMessage();
 
 
@@ -800,8 +796,6 @@ void loop() {
    
    
     sync_time=millis();
-
-    composeSyncMessage();
 
     sendSyncMessage();
 
