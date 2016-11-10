@@ -211,7 +211,7 @@ void composeSyncMessage(){
 
 
   float minutes_time_from_turn_on;
-  minutes_time_from_turn_on=2000;  //time_from_turn_on/60000; //get minutes from milliseconds
+ // minutes_time_from_turn_on=2;  //time_from_turn_on/60000; //get minutes from milliseconds
 
 
   if( minutes_time_from_turn_on>9999) {//banana todo change it in some way...
@@ -220,27 +220,29 @@ void composeSyncMessage(){
   }
 
 
-  char tmp_minutes_time_from_turn_on_array[6];
-  char minutes_time_from_turn_on_array[13];
-  strcpy(tmp_minutes_time_from_turn_on_array,"0000");
+  char tmp_minutes_time_from_turn_on_array[5];
+  char minutes_time_from_turn_on_array[5];
+  strcpy(tmp_minutes_time_from_turn_on_array,"");
+  strcpy(minutes_time_from_turn_on_array,"");
+
  
   //itoa (minutes_time_from_turn_on,minutes_time_from_turn_on_array,10);  //convert from int to char array
-
+  //dtostrf  //convert from float to char array
   if (minutes_time_from_turn_on<10){
     dtostrf(minutes_time_from_turn_on,1, 0, tmp_minutes_time_from_turn_on_array);
-    strcat(minutes_time_from_turn_on_array,"000");
+    strcpy(minutes_time_from_turn_on_array,"000");
     strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
   }
 
   else if (minutes_time_from_turn_on<100){
     dtostrf(minutes_time_from_turn_on,2, 0, tmp_minutes_time_from_turn_on_array);
-    strcat(minutes_time_from_turn_on_array,"00");
+    strcpy(minutes_time_from_turn_on_array,"00");
     strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
   }
 
   else if (minutes_time_from_turn_on<1000){
     dtostrf(minutes_time_from_turn_on,3, 0, tmp_minutes_time_from_turn_on_array);
-    strcat(minutes_time_from_turn_on_array,"0");
+    strcpy(minutes_time_from_turn_on_array,"0");
     strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
   }
 
@@ -251,7 +253,7 @@ void composeSyncMessage(){
 
 
 
-  //snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from int to char array
+  //snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from float to char array
 
   
 
