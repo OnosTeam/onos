@@ -298,6 +298,7 @@ class RouterHandler:
       | Compose the correct query to change an output pin status on a remote node.
       | The examples are:
       |
+      | WARNING old documentation...  
       | "onos_r"+pin0+pin1+"v"+status_to_set+"s"+node_serial_number+"_#]" to set a sr_relay to  status_to_set (0 or 1)
       |   onos_r0607v1sProminiS0001f000_#]  pin6 and 7 used to control a s/r relay and turn it to set 
       |
@@ -343,29 +344,54 @@ class RouterHandler:
    
 
       if (out_type=="digital_obj"):
-        obj_selected=pinNumbers[0]#in this case the obj selected is passed from the pinNumbers number...
-        remoteNodeHwModel=node_obj.getNodeHwModel()
-        obj_html_name=remoteNodeHwModel["pin_mode"]["digital_obj"].keys()[obj_selected]  
-        query_placeholder=base_query+remoteNodeHwModel["query"]["digital_obj"][obj_html_name]
-        query_placeholder=query_placeholder.replace("#_objnumber_#",pinNumbers[0])
-        acceptable_len=0
-        value=0
+        print "digital_obj compose query"
+        #query example:  [S_123wp01x_#]
+ 
         if status_to_set>1:
           print "error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1"
           errorQueue.put("error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1") 
           return (-1)
-        valuelen_pos=query_placeholder.find("valuelen")
+        remoteNodeHwModelName=node_obj.getNodeHwModel()
+
+        obj_selected=pinNumbers[0]#in this case the obj selected is passed from the pinNumbers number...
+    #    print "obj_selected:"+str(obj_selected)
+    #    print "remoteNodeHwModelName"+str(remoteNodeHwModelName)
+    #    print "remoteNodeHwModelName[pin_mode][digital_obj].keys():"+str(hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected])
+
+      
+
+        obj_html_name=hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected]  
+      #  print "obj_html_name"+obj_html_name
+        query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["query"]["digital_obj"][obj_html_name]
+     #   print "query_placeholder:"+query_placeholder
+        query_placeholder=query_placeholder.replace("#_objnumber_#",str(pinNumbers[0]))
+      #  print "query_placeholder2:"+query_placeholder
+        acceptable_len=0
+        value=0
+
+        valuelen_pos=query_placeholder.find("#_valuelen")
         if valuelen_pos != -1:
+        #  print "valuelen_pos != -1"    
           value=str(status_to_set)
-          desidered_len=int (query_placeholder.split("valuelen:")[1])
-           
+         # print "try:"+re.search('#_valuelen:(.+?)_#',query_placeholder).group(1)  # get the 1 from wp0#_valuelen:1_#
+          desidered_len=int (re.search('#_valuelen:(.+?)_#',query_placeholder).group(1))  # get the 1 from wp0#_valuelen:1_#
+         # print "desidered_len:"+str(desidered_len)  
           while len(value)<desidered_len:
             value="0"+value            
-          valuelen_pos=query_placeholder.find("valuelen")
-          string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
-          query=query_placeholder.replace(string_to_replace_with_value,value)
 
+          query_placeholder=re.sub(r'#_valuelen:.+?_#',value,query_placeholder) # replace  #_valuelen:1_#  with the value
+          #query example:  [S_123wp01x_#]
+          progressive_msg_id='x'  #todo  create a progressive number
+          query='''[S_'''+node_address+query_placeholder+progressive_msg_id+'''_#]'''
+         # print "query:::::"+query
+          #valuelen_pos=query_placeholder.find("valuelen")
+          #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
+          #query=query_placeholder.replace(string_to_replace_with_value,value)
+           
 
+          print "composed query was:"+query+"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+          
+          errorQueue.put("the query was:"+query) 
 
 
       if (out_type=="sr_relay"):
@@ -426,6 +452,7 @@ class RouterHandler:
       #if  (len(node_address)==len("001")):#  arduino serial node or a node that communicate by radio serial gateway
       if  (len(node_address)==3):#  arduino serial node or a node that communicate by radio serial gateway
         print "the node is serial"
+        print "query to remote node:"+query
         return(query)
 
       print "query to remote node:"+query
@@ -494,21 +521,21 @@ class RouterHandler:
       
       print "executed router_handler digitalwrite()"
       node_address=node_obj.getNodeAddress()
-      remoteNodeHwModel=node_obj.getNodeHwModel()
+      remoteNodeHwModelName=node_obj.getNodeHwModel()
       if len(pinList)<1:
         print "error len pinList<1 ,len="+str(len(pinList))
         errorQueue.put( "error len pinList<1 ,len="+str(len(pinList)))
 
       if len(pinList)!=len(statusList):
 
-        print "error in the router handler, len pinlist!=statusList"
-        errorQueue.put("error in the router handler, len pinlist!=statusList" )
+        print "warning error in the router handler, len pinlist!=statusList"
+        errorQueue.put("warning error in the router handler, len pinlist!=statusList" )
         try: 
           print "len pinlist="+str(len(pinList))+ " len statusList="+str(len(statusList))
         except Exception, e :
           print "can't print len of statusList or pinlist"
           print (e.args) 
-        return(-1) 
+        #return(-1) 
 
    #   if (previous_status==statusToSet): #if nothing needs to be changed...i will return
    #     print "statusToSet equal to previous status.."
@@ -680,8 +707,8 @@ class RouterHandler:
           pinNumber=pinList[i]
           tmp_status_to_set=statusList[i]
           if (pinNumber not in node_obj.getUsedPins()):
-            print 'error the  pin value is out of range of node :'+remoteNodeHwModel+"pin_number="+str(pinNumber)
-            errorQueue.put('error the  pin value is out of range of node :'+remoteNodeHwModel+"pin_number="+str(pinNumber) )
+            print 'error the  pin value is out of range of node :'+remoteNodeHwModelName+"pin_number="+str(pinNumber)
+            errorQueue.put('error the  pin value is out of range of node :'+remoteNodeHwModelName+"pin_number="+str(pinNumber) )
             print "status to set="+str(tmp_status_to_set)
             errorQueue.put("status to set="+str(tmp_status_to_set) )
             print str(pinNumber)

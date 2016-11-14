@@ -33,7 +33,7 @@ class Serial_connection_Handler():
         time.sleep(60) 
 
       if i >10:
-        if (searchForSerialCable!="null"):
+        if (searchForSerialCable=="null"):
           print "error serial connection, no serial ports found"
           self.working=0
           return(-1)
@@ -57,7 +57,7 @@ class Serial_connection_Handler():
         time.sleep(60) 
 
       if i >10:
-        if (searchForSerialCable!="null"):
+        if (searchForSerialCable=="null"):
           print "error serial reconnection, no serial ports found"
           self.working=0
           return(-1)
@@ -125,7 +125,31 @@ class Serial_connection_Handler():
         return(dev)
 
     for dev in  list_of_dev:
+      if (dev.find("ttyUSB1")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyUSB2")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyUSB3")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
       if (dev.find("ttyACM0")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyACM1")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyACM2")!=-1)and(dev!=exluded_port):
+        return(dev)
+
+    for dev in  list_of_dev:
+      if (dev.find("ttyACM3")!=-1)and(dev!=exluded_port):
         return(dev)
 
     for dev in  list_of_dev:

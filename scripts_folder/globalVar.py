@@ -1677,12 +1677,12 @@ hardwareModelDict["ProminiA"]["pin_mode"]["servo_output"]={"servo":[(5)]}
 hardwareModelDict["Plug6way"]={"hwName":"Plug6way","max_pin":18,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"timeout":90}
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2,3),(4,5),(6,7),(8,9),(14,15)],"wifi":[(16,17)]}
 
-hardwareModelDict["WLightSS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
+hardwareModelDict["WLightSS"]={"hwName":"WLightSS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"timeout":360}
 hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(7,8)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
-hardwareModelDict["WLightSA"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["WLightSA"]={"hwName":"WLightSA","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"query":{},"timeout":360}
 hardwareModelDict["WLightSA"]["pin_mode"]["digital_obj"]={"lamp":[(5,6)]}
 hardwareModelDict["WLightSA"]["pin_mode"]["analog_input"]={"luminosity":[(14)],"temperature":[(15)]}
 hardwareModelDict["WLightSA"]["pin_mode"]["cfg_obj"]={"lux_threshold":[(-1)],"timeout_to_turn_off":[(-1)]}#this have no pins..
@@ -1692,9 +1692,11 @@ hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen
 
 
 
-hardwareModelDict["WPlugAvx"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
-hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(5,6,7,8)]}# only one object with a double set reset relay
-hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)
+hardwareModelDict["WPlugAvx"]={"hwName":"WPlugAvx","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}#  one object with a double set reset relay, is the obj0
+hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
+hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:2_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py
+
 
    
 
@@ -1734,7 +1736,7 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 # special_pin   : handled on the node arduino firmware side
 # digital_obj    : handled on the node arduino firmware side
 # analog_obj     : handled on the node arduino firmware side     
-# cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone nut avaible in the config...
+# cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone not avaible in the config...
 
 
 

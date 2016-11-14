@@ -794,7 +794,7 @@ void loop() {
 
   }
 
-  else if ((millis()-sync_time)>500){ //every 5000 ms
+  else if ((millis()-sync_time)>2000){ //every 5000 ms
    
    
     sync_time=millis();

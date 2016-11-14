@@ -303,7 +303,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
 
 def updateNodeAddress(node_sn0,uart_router_sn,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
   """,
-  Given a node serialnumber and a address update the node in the nodeDict with the current address. 
+  Given a node serialnumber and a address, updates the node in the nodeDict with the current address. 
 
   """
 
@@ -1109,9 +1109,20 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       return(1)
 
         
-          
+    if (obj_type=="digital_obj"): #general digital object (for example a plug node)
+     # status_list=[statusToSet] 
+      #while len(pins_to_set)!=len(status_list): #to make the same len...to bypass check in routerhandler..
+      #  status_list.append(statusToSet)
+      #print "pins_to_set_digital_obj:"+str(pins_to_set)
+      #print "len pins_to_set="+str(len(pins_to_set))
+      #print "statusToSet_digital_obj:"+str(statusToSet)
+      #print "nodeSerialNumber_digital_obj:"+str(nodeSerialNumber) 
+      #print "nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber])
+      #print "obj_type_digital_obj:"+str(obj_type) 
+      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+      return(1)   
 
-    if ((obj_type=="b")|(obj_type=="sb")|(obj_type=="digital_output")|(obj_type=="digital_obj")): #banana to check and leave only digital_output
+    if ((obj_type=="b")|(obj_type=="sb")|(obj_type=="digital_output")): #banana to check and leave only digital_output
       if (len (pins_to_set))!=1:
         print "error , number of pins different from 1 for button type "
         errorQueue.put("error , number of pins different from 1 for button type , doutput section  ")
@@ -1264,6 +1275,14 @@ def updateNodeInputStatusFromReg(node_sn0,register):
 
 
 def createNewWebObjFromNode(hwType0,node_sn):
+  """
+  | Given an hardware type and a node serial number it will create a new zone and the webobjects in that zone .
+  |
+  |
+  """
+
+
+
   progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
   print "createNewWebObjFromNode executed with hwType0:"+hwType0
   global zoneDict
@@ -1468,7 +1487,7 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
     onos_automatic_object_id=''' id="'''+obj+'''" '''
 
     objType=WebObjectdictionary[obj].getType() 
-    if (objType=="b")|(objType=="sb")|(objType=="sr_relay")|(objType=="digital_output"):  #banana to use group
+    if (objType=="b")|(objType=="sb")|(objType=="digital_obj")|(objType=="sr_relay")|(objType=="digital_output"):  #banana to use group and to update the onlyne php server with digital_obj...
       onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
       onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
       onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
@@ -1869,6 +1888,18 @@ class MyHandler(BaseHTTPRequestHandler):
     #global object_dict  
     #global roomDict
 
+    def log_message(self, format, *args):  #remove the print of each request..comment this method to make it print..
+      return
+
+
+
+
+    def finish_request(self, request, client_address):# i don't know if usefull to close client timout connections
+      print "finish_request() executed" 
+      request.settimeout(30)
+      # "super" can not be used because BaseServer is not created from object
+      BaseHTTPServer.HTTPServer.finish_request(self, request, client_address)
+
 
     wbufsize = -1
     # Disable Nagle's Algorithm (Python 2.7/3.2 and later).
@@ -1878,8 +1909,10 @@ class MyHandler(BaseHTTPRequestHandler):
         def setup(self):
             BaseHTTPRequestHandler.setup(self)
             if self.disable_nagle_algorithm:
-                self.connection.setsockopt(socket.IPPROTO_TCP,
-                        socket.TCP_NODELAY, True)
+              self.connection.setsockopt(socket.IPPROTO_TCP,socket.TCP_NODELAY, True)
+
+            BaseHTTPServer.BaseHTTPRequestHandler.setup(self)# i don't know if usefull to close client timout connections
+            self.request.settimeout(30)# i don't know if usefull to close client timout connections
 
 
 
@@ -4921,18 +4954,20 @@ class MyHandler(BaseHTTPRequestHandler):
 
 #a timeout  
 class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):  # i don't know if usefull to close client timout connections
+
   print "class RequestHandler executed()"  
 
-  def setup(self):
+
+  def setup(self):# i don't know if usefull to close client timout connections
     
     BaseHTTPServer.BaseHTTPRequestHandler.setup(self)
     self.request.settimeout(30)
 
-    def finish_request(self, request, client_address):
-        print "finish_request() executed" 
-        request.settimeout(30)
-        # "super" can not be used because BaseServer is not created from object
-        BaseHTTPServer.HTTPServer.finish_request(self, request, client_address)
+  def finish_request(self, request, client_address):# i don't know if usefull to close client timout connections
+    print "finish_request() executed" 
+    request.settimeout(30)
+    # "super" can not be used because BaseServer is not created from object
+    BaseHTTPServer.HTTPServer.finish_request(self, request, client_address)
 
 
 
@@ -5978,7 +6013,7 @@ def run_while_true(server_class=BaseHTTPServer.HTTPServer,
     while exit==0:   #if exit ==1  then close the webserver
 
 #main loop of the webserver
-      print "main webserver "
+      #print "main webserver "
 
       try:
         httpd.handle_request() 

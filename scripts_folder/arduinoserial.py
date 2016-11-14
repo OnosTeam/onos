@@ -231,7 +231,7 @@ class SerialPort:
             #  self.removeFromInBuffer=''
             try:
               byte = self.ser.read(1)   #  self.usbR.read(1)
-              print byte
+             # print byte
             except:
               byte=-1
               self.status=0
@@ -240,7 +240,7 @@ class SerialPort:
 
             if not byte:  #nothing on incoming serial buffer
               done=1
-              print "end of serial packet1"
+             # print "end of serial packet1"
               #print "incoming buffer="+serial_incomingBuffer
               time.sleep(0.3)
               continue
@@ -261,7 +261,10 @@ class SerialPort:
             #  done=1
             #  print "end of serial packet2"
             #  continue
-            
+          #  print byte
+
+            if byte=="\x00":
+              continue
 
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
               done=1
@@ -278,7 +281,7 @@ class SerialPort:
                 continue
 
 
-              if len(buf)>2:
+              if len(buf)>3:
                 waitTowriteUntilIReceive=1 
                 if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   done=1

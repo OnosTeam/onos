@@ -1,4 +1,7 @@
 
+se un nodo ha un solo oggetto allora la zona non ne mostra nessuno...
+
+
 the zoneDict json is deleted sometimes..
 
 se si disconnette l'arduino dalla seriale e poi si riconnette, onos non recupera la connessione seriale
