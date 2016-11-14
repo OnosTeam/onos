@@ -303,7 +303,8 @@ class SerialPort:
            
             if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
 
-
+              print "packet 232 in :"+buf
+              time.sleep(1)
               if write_to_serial_packet_ready==1:
                 last_received_packet=buf
                 write_to_serial_packet_ready=0  
@@ -315,7 +316,15 @@ class SerialPort:
               cmd=buf[cmd_start:cmd_end+3]
               
 
-              if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) : # [S_001sy3.05ProminiS0001_#] 
+              if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
+              # [S_001sy3.05ProminiS0001_#]   or [S_123ul5.24WPlugAvx000810000_#]
+
+                if ((cmd[6]=="u")&(cmd[7]=="l")):
+                  obj_number_to_update=0
+                  obj_value=cmd[24]
+                  #todo update the first node obj reading the name from hardwaremodel
+
+
                 print "serial rx cmd="+cmd
                 buf=""
                 try:

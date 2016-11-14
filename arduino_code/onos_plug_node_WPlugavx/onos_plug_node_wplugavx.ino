@@ -156,14 +156,14 @@ int timeout_to_turn_off=0;//0=disabled    600; //10 hours    todo   add the poss
 
 
 char main_obj_state=0;
-char old_main_obj_state=5;
+//int old_main_obj_state=5;
 
 
 int relay1_set_pin=5;    
 int relay1_reset_pin=6;
 int relay2_set_pin=7;    
 int relay2_reset_pin=8;
-
+int obj_button_pin=4;
 
 
 
@@ -187,14 +187,34 @@ int freeRam ()
 
 
 
+void changeObjStatus(char obj_number,int status_to_set){
+   Serial.print("changeObjStatus executed with  status:");
+   Serial.println(status_to_set);
 
+  if (obj_number==0){
+
+    digitalWrite(relay1_set_pin,status_to_set); 
+    digitalWrite(relay1_reset_pin,!status_to_set); 
+    digitalWrite(relay2_set_pin,status_to_set); 
+    digitalWrite(relay2_reset_pin,!status_to_set); 
+    delay(100);
+    digitalWrite(relay1_set_pin,0); 
+    digitalWrite(relay1_reset_pin,0); 
+    digitalWrite(relay2_set_pin,0); 
+    digitalWrite(relay2_reset_pin,0); 
+    main_obj_state=status_to_set;
+  }
+
+
+
+}
 
 
 void composeSyncMessage(){
 
 
-  //[S_001ul3.05ProminiS0001000_#] 
-//   example:   [S_001ul3.05WPlugAvx00010167123_#]     #lux=167  contact0 is at 0 , 123 minutes on since boot  
+  //[S_123ul5.24WPlugAvx000810000_#]
+//   example deprecated:   [S_001ul3.05WPlugAvx00010167123_#]     #lux=167  contact0 is at 0 , 123 minutes on since boot  
   if (main_obj_state==1){
       
     if (time_continuos_on!=0){
@@ -292,7 +312,7 @@ void composeSyncMessage(){
   strcat(syncMessage, node_fw);
   strcat(syncMessage, serial_number);
 
-
+  
   if (main_obj_state==0){
     strcat(syncMessage,"0");
   }
@@ -473,7 +493,7 @@ void decodeOnosCmd(const char *received_message){
       main_obj_state=received_message[8]-48;      
 
       received_message_value=received_message[9]-48;   
-
+      
 
       if (received_message_value>1){ 
         Serial.println(F("er0_status_#]"));  
@@ -497,6 +517,10 @@ void decodeOnosCmd(const char *received_message){
 
 
 
+      changeObjStatus(main_obj_selected,received_message_value);
+
+/*
+
       digitalWrite(relay1_set_pin,main_obj_state); 
       digitalWrite(relay1_reset_pin,!main_obj_state); 
       digitalWrite(relay2_set_pin,main_obj_state); 
@@ -511,7 +535,7 @@ void decodeOnosCmd(const char *received_message){
       digitalWrite(relay2_set_pin,0); 
       digitalWrite(relay2_reset_pin,0); 
       
-/*
+
       time_continuos_on=millis();
       while (digitalRead(received_message_second_pin_used)!=received_message_value){
         delay(1);
@@ -635,12 +659,14 @@ void setup() {
   pinMode(relay1_reset_pin, OUTPUT);
   pinMode(relay2_set_pin, OUTPUT);
   pinMode(relay2_reset_pin, OUTPUT);
+  pinMode(obj_button_pin, INPUT);
+
 
   //while (!Serial); // wait until serial console is open, remove if not tethered to computer
   Serial.begin(SERIAL_BAUD);
 
 
-
+  digitalWrite(obj_button_pin, HIGH); //enable pull up resistors
 
 
   Serial.println("Feather RFM69W Receiver");
@@ -685,7 +711,17 @@ void loop() {
 
   //check if something was received (could be an interrupt from the radio)
 
-  
+  if (digitalRead(obj_button_pin)==0) {
+    Serial.print("obj_button pressed");
+    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+    sendSyncMessage(); 
+    while (digitalRead(obj_button_pin)==0){ //wait for button release
+      delay(1);
+    }
+
+  }
+
+
   if (radio.receiveDone()){
     //print message received to serial
     Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
