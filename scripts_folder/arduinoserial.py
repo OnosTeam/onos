@@ -319,18 +319,23 @@ class SerialPort:
               if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
               # [S_001sy3.05ProminiS0001_#]   or [S_123ul5.24WPlugAvx000810000_#]
 
-                if ((cmd[6]=="u")&(cmd[7]=="l")):
-                  obj_number_to_update=0
-                  obj_value=cmd[24]
-                  #todo update the first node obj reading the name from hardwaremodel
-
-
                 print "serial rx cmd="+cmd
                 buf=""
                 try:
                   serial_number=cmd[12:24]   
                   node_fw=cmd[8:12]
                   node_address=cmd[3:6]
+
+                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo variable data extraction [S_123ul5.24WPlugAvx000810000_#]
+                    obj_value=cmd[24]
+                    obj_number_to_update="0"
+                    priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_number_to_update:obj_value} }) 
+
+                    #todo update the first node obj reading the name from hardwaremodel
+
+
+
+
                   if node_address=="254":  #the node is looking for a free address
                     priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 

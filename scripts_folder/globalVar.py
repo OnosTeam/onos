@@ -1695,10 +1695,10 @@ hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen
 hardwareModelDict["WPlugAvx"]={"hwName":"WPlugAvx","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
 hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}#  one object with a double set reset relay, is the obj0
 hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
-hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:2_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py
+hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py
 
 
-   
+
 
 
 
@@ -1707,6 +1707,9 @@ hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wp#_objnumber_##_
 # "a_out" is only the the html name that onos will add to the webobject name
 #so the final webobject name will be for example a_out0_ProminiA0001  
 #the web object type will be "analog_output"
+
+# if the type of "pin_mode" is digital_obj then the structure must be :{"plug":[(0)],"plug2":[(1)]}   with a custom name for each object,  if you have to do more than one object of the same type write progressive names..like: {"plug01":[(0)],"plug02":[(1)]}
+#in the digital_obj case the number zero here [(0)] indicates the number of the object in the arduino node software make sure to don't repeat numbers there.
 
 
 hardwareModelDict["RouterRB"]={"hwName":"RouterRB","max_pin":15,"hardware_type":"rasberry_b_rev2_only","pin_mode":{},"parameters":{},"timeout":180}

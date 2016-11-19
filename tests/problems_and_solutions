@@ -1029,7 +1029,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 45) Node addresses assignment:
    When powered on a wireless node set its address as 254 and then ask to the arduino gataway a new address (with retry =10),
    The arduino received the request and pass it to OnosCenter which will create the node in the dictionary and then anwswer with the
-   new node address.
+   new node address and the serialnumber of the destined node 
    Then if some special setup message is needed , OnosCenter will wait a bit and then send it.
    The message the node will send to ask a address will be:
 
@@ -1072,6 +1072,12 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 49) How can a lamp node tell onos how much time has been turned on in a day?to solve later... todo
+
+
+50) How can a node send the status of an object that has changed?todo
+    the node will send a syncmessage where it will tell onos the number of the objects it will send,the type of the object(to know how many bytes it will use) , the number of each object followed by the value of that object (variable byte lenght based on the type of obj that onos will get from the hardwareModelDict in globalVar.py) 
+
+
 
 
 

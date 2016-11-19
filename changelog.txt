@@ -585,6 +585,15 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Started using pyserial because works better on openwrt.
 
 
+5.24            many serial interface problem solved..added delay after serial write to improve stability
+ 
+
+5.25            working on lamp node (not finished),
+                started working on wplug..
+                wireless plug protocol almost done,I can control the devboard from webinterface..
+                the node now can update the webinterface with the current main obj status!   
+ 
+
 
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;

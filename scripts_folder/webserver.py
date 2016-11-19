@@ -1283,7 +1283,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 
 
-  progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
+  #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
   print "createNewWebObjFromNode executed with hwType0:"+hwType0
   global zoneDict
   global object_dict
@@ -1303,6 +1303,11 @@ def createNewWebObjFromNode(hwType0,node_sn):
       # so the first a will be "sr_relay"
       objType=a 
       i=0
+
+
+
+
+
       for b in hardwareModelDict[hwType0]["pin_mode"][a]:
         #now i'm inside #for example  hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"]
         #print hardwareModelDict[hwType0]["pin_mode"][a][b]
@@ -1320,7 +1325,14 @@ def createNewWebObjFromNode(hwType0,node_sn):
           #in this example there aren't other webobject names...
           if type(c) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
             c=[c]
-          new_obj_name=b+str(i)+"_"+progressive_number
+
+
+          if a=="digital_obj" or a=="analog_obj" or a=="cfg_obj" :  #special type obj ..
+
+            new_obj_name=b+str(c[0])+"_"+node_sn  #progressive_number
+
+          else:
+            new_obj_name=b+str(i)+"_"+node_sn  #progressive_number
           i=i+1            
           if new_obj_name not in (zoneDict[node_sn]["objects"]):
             zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
@@ -1332,6 +1344,9 @@ def createNewWebObjFromNode(hwType0,node_sn):
             object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn,c)
           else:
             print "warning001  the object "+new_obj_name+" already exist in the object_dict" 
+
+  else:
+    print "no hardware of this thipe in hardwareModelDict"
 
   return()
 
@@ -5644,6 +5659,57 @@ def executeQueueFunction(dataExchanged):
       errorQueue.put("error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args))
 
 
+  if (dataExchanged["cmd"]=="updateObjFromNode"):
+
+    print "updateObjFromNode" 
+
+#hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}# 
+
+    node_sn=dataExchanged["nodeSn"]
+    node_model_name=node_sn[0:-4]#get WPlugAvx from  WPlugAvx0008
+    print str(dataExchanged["objects_to_update"].keys())
+    print "end data_exanged"
+    try:
+      #{obj_number_to_update:obj_value}  
+      for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update..
+        print "a="+str(a)
+        print "list="+str(hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys())
+        obj_name_part=""
+        for b in hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys():#find "plug" from{"plug":[(0)],"plug2":[(1)]}
+          print "b="
+          print hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][b][0] 
+          print "end b"
+          if hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][b][0]==int(a):
+            obj_name_part=b
+            break    
+
+
+
+
+        print "obj_name_part:"+obj_name_part
+
+
+
+        objName_number=a #=hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][obj_name_part][0]  # get the number of the object
+        objName=obj_name_part+str(objName_number)+"_"+node_sn
+        status_to_set=dataExchanged["objects_to_update"][objName_number]
+        write_hw_enable=0
+        usr="onos_node"
+        priority=0
+        mail_list_to_report_to=[]
+      #example of objName: socket0_Plug6way0002
+        print "I call changeWebObjectStatus() to update the obj from node update"
+        if status_to_set!=object_dict[objName].getStatus():
+          changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
+
+    except Exception, e: 
+      print "error in the for loop of updateObjFromNode condition:node="+node_sn
+      errorQueue.put("error in the for loop of updateObjFromNode condition :node="+node_sn)
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)   
+      print str(e.args)
+
 
   if (dataExchanged["cmd"]=="updateNodeAddress"):
 
@@ -5695,7 +5761,7 @@ def executeQueueFunction(dataExchanged):
      
 
 
-  if (dataExchanged["cmd"]=="reconnectSerialPort"):
+  if (dataExchanged["cmd"]=="reconnectSerialPort"): #todo check if it works
     hardware.serial_communication.working=0
     print "I try to reconnectg serial port from webserver.py"
 
