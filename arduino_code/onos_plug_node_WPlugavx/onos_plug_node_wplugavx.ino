@@ -76,7 +76,7 @@
 //#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY      RF69_433MHZ
 #define ENCRYPTKEY     "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
-#define IS_RFM69HCW    false // set to 'true' if you are using an RFM69HCW module
+#define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
@@ -159,11 +159,12 @@ char main_obj_state=0;
 //int old_main_obj_state=5;
 
 
-int relay1_set_pin=5;    
-int relay1_reset_pin=6;
-int relay2_set_pin=7;    
-int relay2_reset_pin=8;
-int obj_button_pin=4;
+int relay1_set_pin=6;    
+int relay1_reset_pin=5;
+int relay2_set_pin=8;    
+int relay2_reset_pin=7;
+int obj_button_pin=3;
+int obj_led_pin=4; 
 
 
 
@@ -203,6 +204,7 @@ void changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay2_set_pin,0); 
     digitalWrite(relay2_reset_pin,0); 
     main_obj_state=status_to_set;
+    digitalWrite(obj_led_pin,status_to_set);
   }
 
 
@@ -660,7 +662,7 @@ void setup() {
   pinMode(relay2_set_pin, OUTPUT);
   pinMode(relay2_reset_pin, OUTPUT);
   pinMode(obj_button_pin, INPUT);
-
+  pinMode(obj_led_pin, OUTPUT);
 
   //while (!Serial); // wait until serial console is open, remove if not tethered to computer
   Serial.begin(SERIAL_BAUD);
@@ -716,7 +718,7 @@ void loop() {
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
     sendSyncMessage(); 
     while (digitalRead(obj_button_pin)==0){ //wait for button release
-      delay(1);
+      delay(100);
     }
 
   }

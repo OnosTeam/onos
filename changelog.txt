@@ -592,7 +592,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 started working on wplug..
                 wireless plug protocol almost done,I can control the devboard from webinterface..
                 the node now can update the webinterface with the current main obj status!   
- 
+                now the wplug prototype works!is not very stable yet..but works
 
 
 (110, 'Connection timed out');;;
