@@ -127,6 +127,106 @@ body {
 
 
 
+@media screen and (min-width: 960px) /*laptop-desktop*/{
+body {
+
+	width:412px;
+	background-color: #0072ca;
+	margin-left:auto;
+	margin-right:auto;
+ }
+
+
+#logo {
+
+	position:relative;
+	top:0px;
+	width:100%;
+	margin-top:10px;
+	margin-bottom:30px;
+}
+
+.title{
+
+
+	text-align:center;
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom:30px;
+	font-size:30px;
+}
+
+.box-form{
+
+	text-align:center;
+	padding:30px;
+	margin:30px;
+	background-color:#043a91;
+	color:white;
+	border-radius: 15px 50px;
+	border: 2px solid black;
+
+}
+
+.textinput{
+
+	font-family: rapier;
+	padding:5px;
+	margin-top:10px;
+	margin-bottom:10px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color: #0072ca;
+	border: 1px solid white;
+	border-radius: 3px;
+	color:#d0d6e0;
+
+
+}
+
+
+.login-button{
+
+	font-family: rapier;
+	width:150px;
+	margin-top:20px;
+	background-color: #0072ca;
+	color:#d0d6e0;
+	border-radius: 3px;
+
+}
+
+.login-button:hover {
+
+	font-weight:bold;
+	border-radius: 5px;
+
+}
+
+#register-button{
+
+	width:150px;
+	margin-top:20px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color: #0072ca;
+	color:#d0d6e0;
+	border-radius: 3px;
+	border: 2px outset white;
+
+}
+
+#register-button:hover {
+
+	font-weight:bold;
+	border-radius: 5px;
+
+}
+
+
+}/*fine media iphone 6s 6plus */
+ 
 
 
 
