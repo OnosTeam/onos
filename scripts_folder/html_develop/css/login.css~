@@ -1,23 +1,29 @@
+@font-face {
+   font-family: 'rapier';
+   src: url('../fonts/rapier-zero.ttf') format('truetype');
+}
+
+
+
+
+
 .flex {max-width: 100%}
 
 body{
-
+	
+	font-family: rapier;
 	margin: 0px;
 	padding: 0px;
 
 }
 
-#box-logo{
-	
-
-
-}
+a, a:visited  {text-decoration:none; 	color:white;}
 
 
  
 
  
-@media screen and (min-width: 375px) /*iphone 6s, 6 plus portrait*/{
+@media screen and (min-width: 320px) /*iphone 6s, 6 plus portrait*/{
 body {
 
 	background-color: #0072ca;
@@ -36,6 +42,7 @@ body {
 
 .title{
 
+
 	text-align:center;
 	width:100%;
 	margin-left:auto;
@@ -45,6 +52,8 @@ body {
 }
 
 .box-form{
+
+	text-align:center;
 	padding:30px;
 	margin:30px;
 	background-color:#043a91;
@@ -56,6 +65,7 @@ body {
 
 .textinput{
 
+	font-family: rapier;
 	padding:5px;
 	margin-top:10px;
 	margin-bottom:10px;
@@ -64,7 +74,7 @@ body {
 	background-color: #0072ca;
 	border: 1px solid white;
 	border-radius: 3px;
-	color:white;
+	color:#d0d6e0;
 
 
 }
@@ -72,13 +82,41 @@ body {
 
 .login-button{
 
-	width:100px;
-	margin-left:auto;
-	margin-right:auto;
+	font-family: rapier;
+	width:150px;
+	margin-top:20px;
+	background-color: #0072ca;
+	color:#d0d6e0;
+	border-radius: 3px;
 
 }
 
+.login-button:hover {
 
+	font-weight:bold;
+	border-radius: 5px;
+
+}
+
+#register-button{
+
+	width:150px;
+	margin-top:20px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color: #0072ca;
+	color:#d0d6e0;
+	border-radius: 3px;
+	border: 2px outset white;
+
+}
+
+#register-button:hover {
+
+	font-weight:bold;
+	border-radius: 5px;
+
+}
 
 
 }/*fine media iphone 6s 6plus */
