@@ -715,11 +715,13 @@ void loop() {
 
   if (digitalRead(obj_button_pin)==0) {
     Serial.print("obj_button pressed");
-    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
-    sendSyncMessage(); 
+
     while (digitalRead(obj_button_pin)==0){ //wait for button release
       delay(100);
     }
+
+    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+    sendSyncMessage(); 
 
   }
 

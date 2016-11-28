@@ -18,11 +18,15 @@
 
 	<div class="title">LOGIN</div>
 
-	<form action="#">
+    <form action="login_post_parse.php" method="POST"><input type="hidden" name="login_form" value="/login">
+
+    <div class="simpletext"> Type your username:</div>
+    <input type="text" class="textinput" id="username_form" name="username_form" onclick="SelectAll('username_form')"; value="" />
 
 
-	<input type="text" name="username" value="Your username" class="textinput" id="username" />
-	<input type="text" name="password" value="Your password" class="textinput" id="password" />
+    <div class="simpletext"> Type your passsword:</div>
+    <input class="textinput" type="password" id="password_form"  name="password_form"  onclick="SelectAll('password_form')"; value="" />
+    <br>
  
 	<input type="submit" id="submit" class="login-button" name="submit" value="LOGIN" />
 
@@ -34,8 +38,8 @@
 
 <div class="box-form">
 
-	<div class="minor-title">You don't have an account ?</div>
-	<div id="register-button"><a href="#">REGISTER</a></div>
+	<div class="simpletext2">Have you forgotten your password?</div>
+	<div id="register-button"><a href="#">Request password</a></div>
 
 </div>
 
