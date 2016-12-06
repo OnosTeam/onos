@@ -977,7 +977,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
       after 10 times it will giveup.
     During this phase (while the gateway is writing to a node or waiting answer from a node or receiving a message from the OnosCenter , any messages from others nodes will be ignored so they will retry to contact the node for 5 times and after that they will giveup (some nodes will have precendence and will also retry a number of time greater than others for example the allarm nodes)
 
-
+    Forse si può modificare per permettere il multithread...al momento devo aspettare che il modulo 232_To_radio faccia tutti i tentativi di trasmissione radio prima di iniziare a fare i tentativi per contattare il prossimo nodo radio..magari si può far gestire ad onoscenter il reinvio dei tentativi e fare un solo tentativo per query...in questo modo onoscenter può fare una richiesta , se fallisce può contattare un altro nodo e poi riprovare con il precedente! senza bloccarsi!  (nota mettere comunque timeout se passano più di 2 minuti dal comando all'attuazione è sconveniente...)
     
 
 
@@ -1078,6 +1078,6 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
     the node will send a syncmessage where it will tell onos the number of the objects it will send,the type of the object(to know how many bytes it will use) , the number of each object followed by the value of that object (variable byte lenght based on the type of obj that onos will get from the hardwareModelDict in globalVar.py) 
 
 
-
+51) The 
 
 

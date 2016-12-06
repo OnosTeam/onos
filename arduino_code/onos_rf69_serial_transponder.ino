@@ -597,7 +597,7 @@ restart:
   onos_cmd_start_position=-99;  
   onos_cmd_end_position=-99;  
   while (Serial.available() > 0) {
-    message_to_decode_avaible=1;
+    
     enable_answer_back=1;
   // Serial.println(F("im"));
    //Serial.println(counter);
@@ -629,6 +629,9 @@ restart:
       counter=counter+1;
       continue;
     }
+    message_to_decode_avaible=1;
+
+
 
     if ( (data_from_serial[counter-2]=='[')&&(data_from_serial[counter-1]=='S')&&(data_from_serial[counter]=='_')  ){//   
       // Serial.println("cmd start found-------------------------------");
@@ -664,7 +667,7 @@ restart:
 
     uint8_t message_copy[rx_msg_lenght+1];
 
-    strcpy(filtered_onos_message,"");
+    strcpy(filtered_onos_message,"");  //clear the filtered_onos_message array
 
   
  //   Serial.println(onos_cmd_start_position);
