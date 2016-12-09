@@ -499,18 +499,38 @@ class RouterHandler:
 
       
       print "new address for the node:"+str(new_address)
-      msg="[S_"+new_address+"sa"+new_address+node_serial_number+"_#]"
-      result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
-      if result ==1:
-        int_address=int(new_address)
-        if int_address not in next_node_free_address_list:
-          next_node_free_address_list.append(int_address)
-      return(result)
+      node_address=nodeDict[node_serial_number].getNodeAddress()  
+      query="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"
+      #result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
+      #if result ==1:
+      #  int_address=int(new_address)
+      #  if int_address not in next_node_free_address_list:
+      #    next_node_free_address_list.append(int_address)
+
+      query_time=time.time()
+      query_order=0
+      number_of_retry_done=0
+      priority=99
+      cmd="set_address"
+      objName="set_address"
+      status_to_set=new_address
+      user="onos_node"
+      mail_report_list=[]
+
+      queryToRadioNodeQueue.put((query,node_serial_number,number_of_retry_done,query_time,query_order,objName,status_to_set,user,priority,mail_report_list,cmd))
+      if node_query_radio_threads_executing==0:
+        tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
+        tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
+        tr_handle_new_query_to_serial_node.start()         
+
+
+      return()
 
 
 
 
-    def writeRawMsgToNode(self,node_serial_number,node_address,msg):
+
+    def writeRawMsgToNode(self,node_serial_number,node_address,msg):#deprecated
       result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
       return(result)
 
@@ -643,41 +663,50 @@ class RouterHandler:
 
           query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
           print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end"  
-         
-          try:
-            result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
+          query_time=time.time()
+          query_order=0
+          number_of_retry_done=0
+          cmd=""
+          queryToRadioNodeQueue.put((query,node_serial_number,number_of_retry_done,query_time,query_order,objName,statusToSetWebObject,user,priority,mail_report_list,cmd))
 
-          except Exception, e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)   
-            print str(e.args)
-            result=-1
-            time.sleep(2)  
+          if node_query_radio_threads_executing==0:
+            tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
+            tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
+            tr_handle_new_query_to_serial_node.start()   
+         
+          #try:
+          #  result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
+
+          #except Exception, e:
+          #  exc_type, exc_obj, exc_tb = sys.exc_info()
+          #  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+          #  print(exc_type, fname, exc_tb.tb_lineno)   
+          #  print str(e.args)
+          #  result=-1
+          #  time.sleep(2)  
   
-          if result!=-1:  #if the query was accepted from the radio/serial node
+          #if result!=-1:  #if the query was accepted from the radio/serial node
             
 
-            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
-            #since onos was able to talk to the node I update the LastNodeSync
-            layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address}) 
-            print "serial_result="
-            print result
-            with lock_serial_input:
-              tmp_uart_list=[]
-              for a in self.serial_communication.uart.readed_packets_list:
-                if ( (a in tmp_uart_list)or(a==result) ):
-                  continue
-                else:
-                  tmp_uart_list.append(a)   
+          #  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
 
-              self.serial_communication.uart.readed_packets_list=tmp_uart_list   #list(set(tmp_uart_list)) 
+         #   print "serial_result="
+         #   print result
+         #   with lock_serial_input:
+         #     tmp_uart_list=[]
+         #     for a in self.serial_communication.uart.readed_packets_list:
+         #       if ( (a in tmp_uart_list)or(a==result) ):
+         #         continue
+         #       else:
+         #         tmp_uart_list.append(a)   
+
+         #     self.serial_communication.uart.readed_packets_list=tmp_uart_list   #list(set(tmp_uart_list)) 
               #if result in self.serial_communication.uart.readed_packets_list:
               #  self.serial_communication.uart.remove(result) 
 
 
 
-          return(result)
+          return()
 
 
 

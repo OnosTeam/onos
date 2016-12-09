@@ -466,7 +466,7 @@ class SerialPort:
     while write_to_serial_packet_ready==1:
       time.sleep(0.01) 
 
-      if (time.time()>(start_time+2) ): #timeout to exit the loop
+      if (time.time()>(start_time+2) ):#2 #timeout to exit the loop
         print "rx after write timeout0"
         write_to_serial_packet_ready=0
         return("error_reception")

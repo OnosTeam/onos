@@ -163,8 +163,15 @@ internet_connection=0  #tell onos if there is internet connection, do not change
 
 
 queryToNetworkNodeQueue=Queue.Queue()
+
+queryToRadioNodeQueue=Queue.PriorityQueue()
+
+
 node_query_threads_executing=0# 
-max_number_of_node_query_threads_executing=3 #tells onos the maximun number of thread it can executes to handle node queries
+
+node_query_radio_threads_executing=0
+
+max_number_of_node_query_threads_executing=2 #tells onos the maximun number of thread it can executes to handle network node queries
 
 layerExchangeDataQueue = Queue.Queue()  # this queue will contain all the dictionaries to pass data from the hardware layer to the webserver layer   router_handler.py will pass trought this queue all the change of hardware status to the webserver.py
 

@@ -62,7 +62,7 @@ try:
       in_file = f.read()
       onos_automatic_javascript=in_file
 
-except Exception, e :
+except Exception as e :
   print "error i can't find refreshPage.html,    e:"+str(e.args)
   errorQueue.put("error i can't find refreshPage.html,    e:"+str(e.args))
   onos_automatic_javascript="error_loading refreshPage.html"
@@ -283,7 +283,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
     file_to_save2.close()
     os.chmod(base_cfg_path+"config_files/cfg.json", 0o777)
 
-  except Exception, e :
+  except Exception as e :
     print "error in updateJson()"+" e:"+str(e.args)
     errorQueue.put("error in updateJson()"+" e:"+str(e.args)) 
 
@@ -328,7 +328,7 @@ def updateNodeAddress(node_sn0,uart_router_sn,address,object_dictionary,nodeDict
     else:
       print "the node has still the same ip"
 
-  except Exception, e :
+  except Exception as e :
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     print(exc_type, fname, exc_tb.tb_lineno)
@@ -446,7 +446,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
 
     try:
       objname=re.search(r"#_.+?_#",scenario_functions).group(0)[2:-2]
-    except Exception, e :
+    except Exception as e :
       print "no objects found in the scenario_functions or scenario_functions fully analyzed "+" e:"+str(e.args)
       #errorQueue.put("no objects found in the scenario_functions or scenario_functions fully analyzed "+" e:"+str(e.args)) 
       break
@@ -459,7 +459,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
  
     try:
       scenario_functions=scenario_functions.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))      
-    except Exception, e :
+    except Exception as e :
       print "error01 the webobject does not exist in the dict, i close the scenario check,objname: "+objname+" e:"+str(e.args)
 
       errorQueue.put("error01 the webobject does not exist in the dict, i close the scenario check ,objname: "+objname+" e:"+str(e.args))
@@ -469,7 +469,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
 
   try:# replace all the #p_webobjectname_# with the previous webobject status value
     scenario_functions=re.sub(r'#p_.+?_#',lambda x: str( object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_functions)
-  except Exception, e :
+  except Exception as e :
     print "error1 the webobject does not exist in the dict, i close the scenario check"+" e:"+str(e.args)
     errorQueue.put("error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_functions+",scenario_name"+scenario_name+" e:"+str(e.args))
 
@@ -493,7 +493,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
     try:
       objname=re.search(r"#_.+?_#",scenario_conditions).group(0)[2:-2]
       
-    except Exception, e : #ended the simple objects status
+    except Exception as e : #ended the simple objects status
 
       #errorQueue.put("no objects found in the scenario_conditions or scenario_conditions fully analyzed "+" e:"+str(e.args)) 
       try:
@@ -518,7 +518,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
        
 
 
-    except Exception, e :
+    except Exception as e :
       print "error01 the webobject does not exist in the dict, i close the scenario check,objname: "+objname+" e:"+str(e.args)
 
       errorQueue.put("error01 the webobject does not exist in the dict, i close the scenario check ,objname: "+objname+" e:"+str(e.args))
@@ -528,7 +528,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
 
   try:# replace all the #p_webobjectname_# with the previous webobject status value
     scenario_conditions=re.sub(r'#p_.+?_#',lambda x: str( object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_conditions)
-  except Exception, e :
+  except Exception as e :
     print "error1 the webobject does not exist in the dict, i close the scenario check"+" e:"+str(e.args)
     errorQueue.put("error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_conditions+",scenario_name"+scenario_name+" e:"+str(e.args))
 
@@ -617,7 +617,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
   cond=0  #if the conditions are a void string ..
   try:
     cond=eval(scenario_conditions)
-  except Exception, e :
+  except Exception as e :
     print "error in eval("+scenario_name+"), scenario_conditions="+str(scenario_conditions)+" e:"+str(e.args)
     errorQueue.put("error in eval("+scenario_name+"), scenario_conditions="+str(scenario_conditions)+" e:"+str(e.args))
 
@@ -656,7 +656,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     #if "functions_to_run" in scenario_to_check.keys():  #if the reference exist
     try:
       scenario_functions_to_run=scenario_to_check["functionsToRun"]
-    except Exception, e :
+    except Exception as e :
       print "scenario_functions_to_run of "+scenario_name+ " scenario is empty"+" e:"+str(e.args)
 
       errorQueue.put("scenario_functions_to_run of "+scenario_name+ " scenario is empty"+" e:"+str(e.args))
@@ -706,7 +706,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
  
         try:
           f=f.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))      
-        except Exception, e :
+        except Exception as e :
           print "error003 the webobject does not exist in the dict, i close the scenario check of:"+scenario_name+",objname: "+objname+" e:"+str(e.args)
           errorQueue.put("error003 the webobject does not exist in the dict, i close the scenario check of:"+scenario_name+",objname: "+objname+" e:"+str(e.args))
           return()
@@ -723,7 +723,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
 
       try:# replcace all the #p_webobjectname_# with the previous webobject status value
         f=re.sub(r'#p_.+?_#',lambda x: str(object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),f)
-      except Exception, e :
+      except Exception as e :
         print "error2 the webobject does not exist in the dict, i close the scenario function to run check"+" e:"+str(e.args)
         errorQueue.put(" error2 the webobject does not exist in the dict, i close the scenario function to run check"+" e:"+str(e.args))
 
@@ -745,7 +745,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         try:
           obj_to_change=op.split("=" )[0]
           str_status=op.split("=" )[1]
-        except Exception, e :
+        except Exception as e :
           print ("error in the split of op in executionList ,op="+op+"obj_to_change:"+obj_to_change+",str_status:"+str_status+" e:"+str(e.args))
 
           errorQueue.put("error in the split of op in executionList ,op="+op+"obj_to_change:"+obj_to_change+",str_status:"+str_status+" e:"+str(e.args))
@@ -754,7 +754,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         try:
           statusToSet= str(eval(str_status))
 
-        except Exception, e :  #happens if statusToSet=  inactive or  onoswait
+        except Exception as e :  #happens if statusToSet=  inactive or  onoswait
           statusToSet=str_status
           print "error in the eval of for op in executionList :str_status="+str(str_status)+",op="+op+" e:"+str(e.args)
 
@@ -777,7 +777,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
           errorQueue.put("error in scenario op,statusToSet is :"+statusToSet )
 
 
-    except Exception, e :
+    except Exception as e :
       print "error in the scenario for loop (for op in executionList) "+" e:"+str(e.args)
 
       errorQueue.put("error in the scenario for loop (for op in executionList) "+" e:"+str(e.args))
@@ -1069,7 +1069,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         try:
           hardware.outputWrite(nodeSerialNumber,pins_to_set,[1,0],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
-        except Exception, e:
+        except Exception as e:
           exc_type, exc_obj, exc_tb = sys.exc_info()
           fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
           print(exc_type, fname, exc_tb.tb_lineno)   
@@ -1085,7 +1085,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         try:
           hardware.outputWrite(nodeSerialNumber,pins_to_set,[0,1],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
-        except Exception, e:
+        except Exception as e:
           exc_type, exc_obj, exc_tb = sys.exc_info()
           fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
           print(exc_type, fname, exc_tb.tb_lineno)   
@@ -1145,7 +1145,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       return(1)    
 
 
-  except Exception, e  : # the webobject does not exist
+  except Exception as e  : # the webobject does not exist
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     print(exc_type, fname, exc_tb.tb_lineno)
@@ -1627,7 +1627,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     try:
       execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py
       roomHtml=namespace["web_page"]  
-    except Exception, e: 
+    except Exception as e: 
       print "error executing /gui/pag_creator.py e:"+str(e.args)
       errorQueue.put("error executing /gui/pag_creator.py e:"+str(e.args)) 
     return(roomHtml)
@@ -1709,7 +1709,7 @@ def updateDir():
         #with lock_bash_cmd: 
         #  subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
         os.chmod(baseRoomPath+zone, 0o777)
-      except Exception, e: 
+      except Exception as e: 
         print "error creating "+baseRoomPath+zone+"/index.html  e:" +str(e.args)
         errorQueue.put("error creating "+baseRoomPath+zone+"/index.html  e:" +str(e.args)) 
 
@@ -1782,7 +1782,7 @@ def createNewNode(node_sn,node_address,node_fw):
             text_file = open(baseRoomPath+node_sn+"/index.html", "w")
             text_file.write(getRoomHtml(node_sn,object_dict,"",zoneDict))
             text_file.close()
-          except Exception, e: 
+          except Exception as e: 
             print "error creating new node index file  "+node_sn+" e:"+str(e.args)
             errorQueue.put("error creating new node index file  "+node_sn+" e:"+str(e.args))  
 
@@ -2572,7 +2572,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   hw_flag=re.search('&hw=(.+?)__',self.path).group(1)
 
 
-                except Exception, e: 
+                except Exception as e: 
 
                   print "error in re.search 1   on onos_cmd url  "+url+" e:"+str(e.args)
                   errorQueue.put("error in re.search 1   on onos_cmd url  "+url+" e:"+str(e.args))  
@@ -2583,7 +2583,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 try:
                   write_hw_enable=int(hw_flag)
-                except Exception, e: 
+                except Exception as e: 
                   print "error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args)
                   errorQueue.put( "error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args))  
                   write_hw_enable=1
@@ -2606,7 +2606,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
                   self.wfile.write(msg) 
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error3 in send_header "+" e:"+str(e.args)
                   errorQueue.put( "error3 in send_header "+" e:"+str(e.args))  
@@ -2653,7 +2653,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 print "hw_flag="+hw_flag
                 try:
                   write_hw_enable=int(hw_flag)
-                except Exception, e  :
+                except Exception as e  :
                   print "error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args)
                   errorQueue.put("error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args) )  
                   write_hw_enable=1                
@@ -2668,7 +2668,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
                   self.wfile.write(answer) 
-                except Exception, e  :
+                except Exception as e  :
                   print "error4 in send_header "+" e:"+str(e.args)
                   errorQueue.put( "error4 in send_header "+" e:"+str(e.args))  
                 return
@@ -2708,7 +2708,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
                   self.wfile.write("ok") 
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error5 in send_header "+" e:"+str(e.args)
                   errorQueue.put( "error5 in send_header "+" e:"+str(e.args))  
@@ -2755,7 +2755,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-Type: application/octet-stream','text/plain')
                   self.end_headers()
                   self.wfile.write(msg) 
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error6 in send_header onos cmd 001"+" e:"+str(e.args)
                   errorQueue.put( "error6 in send_header onos cmd 001"+" e:"+str(e.args))  
@@ -2793,7 +2793,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-Type: application/octet-stream','text/plain')
                   self.end_headers()
                   self.wfile.write(msg) 
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error7 in send_header onos cmd 001"+" e:"+str(e.args)
                   errorQueue.put("error7 in send_header onos cmd 001"+" e:"+str(e.args) )  
@@ -2828,7 +2828,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error8 in send_header "+" e:"+str(e.args)
                 errorQueue.put("error8 in send_header "+" e:"+str(e.args) )  
@@ -2854,7 +2854,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Cache-Control',        'max-age=31536000')  #set the cache of the image to a long time to prevent background image flipping
                   self.end_headers()
                   self.wfile.write(photoFile)
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error in send_header img"+" e:"+str(e.args)
                   errorQueue.put( "error in send_header img"+" e:"+str(e.args))  
@@ -2876,7 +2876,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(cssFile)
                   #print "served a css file"
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error9a in send_header "+" e:"+str(e.args)   
                   errorQueue.put("error9a in send_header "+" e:"+str(e.args)  )               
@@ -2897,7 +2897,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(cssFile)
                   #print "served a css file"
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error9b in send_header "+" e:"+str(e.args)   
                   errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
@@ -2917,7 +2917,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Cache-Control',        'max-age=1')  #set the cache of the image to a long time to prevent background image flipping
                   self.end_headers()
                   self.wfile.write(javaFile)
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error10 in send_header "+" e:"+str(e.args)  
                   errorQueue.put( "error10 in send_header "+" e:"+str(e.args) )    
@@ -2979,7 +2979,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 print self.path     
                 print "fine percorso"
 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error11 in send_header "+" e:"+str(e.args)
                 errorQueue.put( "error11 in send_header "+" e:"+str(e.args))       
@@ -3024,7 +3024,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   print "percorso="
                   print self.path     
                   print "fine percorso"
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error12 in send_header "+" e:"+str(e.args)   
                   errorQueue.put("error12 in send_header "+" e:"+str(e.args)  )    
@@ -3082,7 +3082,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers() 
                 self.wfile.write("ok"+strftime("%S", gmtime())+pag) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error in send_header r_onos_s  0 "+" e:"+str(e.args)     
                 errorQueue.put("error in send_header r_onos_s  0 "+" e:"+str(e.args)  )  
@@ -3097,13 +3097,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 #    self.end_headers() 
                 #    try:
                 #      self.wfile.write("ok"+strftime("%S", gmtime())+pag)
-                #    except Exception, e  :
+                #    except Exception as e  :
                 #      pass
                 #      print "error in send_header  r_onos_s 2"+" e:"+str(e.args)  
                 #      errorQueue.put("error in send_header  r_onos_s 2"+" e:"+str(e.args) )  
                        
 
-                 #except Exception, e  :
+                 #except Exception as e  :
                  #   pass
                  #   print "error in send_header r_onos_s 3"+" e:"+str(e.args)     
                  #   errorQueue.put("error in send_header r_onos_s 3"+" e:"+str(e.args)   )  
@@ -3119,7 +3119,7 @@ class MyHandler(BaseHTTPRequestHandler):
               #    self.wfile.write("ok"+strftime("%S", gmtime())+"nonews")   #remove comment to send page
                   #self.wfile.write("oknothing_changed")   #remove comment to send page only when it change
 
-              #  except Exception, e  :
+              #  except Exception as e  :
               #    pass
               #    print "error in send_header r_onos_s 4 "+" e:"+str(e.args)   
               #    errorQueue.put( "error in send_header r_onos_s 4 "+" e:"+str(e.args))  
@@ -3149,7 +3149,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   b1 = open(baseRoomPath+html_filename ,'r')    
                   web_page=b1.read()    
                   b1.close()
-                except Exception, e  :
+                except Exception as e  :
                   print "error opening the htlm file"+" e:"+str(e.args)
                   errorQueue.put( "error opening the htlm file"+" e:"+str(e.args))  
                   web_page="error no html found"
@@ -3169,7 +3169,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                   web_page=b1.read()    
                   b1.close()
-                except Exception, e  :
+                except Exception as e  :
                   
                   print "error opening the file"+" e:"+str(e.args)
                   errorQueue.put("error opening the file local address bar ="+self.path[0:last_bar+1] +"index.html"+" e:"+str(e.args))  
@@ -3237,7 +3237,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     status_to_set=(address_bar[(equal_position+1):])
                     print "value="+(status_to_set)
 
-                except Exception, e  :
+                except Exception as e  :
                 
                   print "error in the status_to_set_value in the address bar"+address_bar[(equal_position+2):]+" e:"+str(e.args)
                   errorQueue.put("error in the status_to_set_value in the address bar"+address_bar[(equal_position+2):]+" e:"+str(e.args) ) 
@@ -3274,7 +3274,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers() 
                 self.wfile.write(pag) 
         #      print "percorso="+self.path+"fine percorso"   
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error11 in send_header "+" e:"+str(e.args)      
                 errorQueue.put("error11 in send_header "+" e:"+str(e.args) ) 
@@ -3294,7 +3294,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   self.end_headers()
                   self.wfile.write(tmpF)
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error12 in send_header "+" e:"+str(e.args)     
                   errorQueue.put("error12 in send_header "+" e:"+str(e.args) )  
@@ -3314,7 +3314,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 print "error12a in send_header "+" e:"+str(e.args)
                 errorQueue.put( "error13a in send_header "+" e:"+str(e.args))  
               return
@@ -3332,7 +3332,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 print "error13a in send_header "+" e:"+str(e.args)
                 errorQueue.put( "error13a in send_header "+" e:"+str(e.args))  
               return
@@ -3353,7 +3353,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   
 
-              except Exception, e  :
+              except Exception as e  :
                 print "error, scenario name does not exist "+" e:"+str(e.args)
                 errorQueue.put("error, scenario name does not exist "+" e:"+str(e.args))   
 
@@ -3365,7 +3365,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 print "error13a in send_header "+" e:"+str(e.args)
                 errorQueue.put( "error13a in send_header "+" e:"+str(e.args))  
               return
@@ -3384,7 +3384,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   
 
-              except Exception, e  :
+              except Exception as e  :
                 print "error, scenario name does not exist "+" e:"+str(e.args)
                 errorQueue.put("error, scenario name does not exist "+" e:"+str(e.args))   
 
@@ -3396,7 +3396,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 print "error13ab in send_header "+" e:"+str(e.args)
                 errorQueue.put( "error13ab in send_header "+" e:"+str(e.args))  
               return
@@ -3416,7 +3416,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   
 
-              except Exception, e  :
+              except Exception as e  :
                 print "error, scenario name does not exist "+" e:"+str(e.args)
                 errorQueue.put("error, scenario name does not exist "+" e:"+str(e.args))   
 
@@ -3428,7 +3428,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 print "error13ab in send_header "+" e:"+str(e.args)
                 errorQueue.put( "error13ab in send_header "+" e:"+str(e.args))  
               return
@@ -3445,7 +3445,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 b1 = open('setup/select_config_menu.html','r')    
                 web_page=b1.read()    
                 b1.close()
-              except Exception, e  :
+              except Exception as e  :
                 print "error opening the file"+" e:"+str(e.args)
                 errorQueue.put("error opening the file"+" e:"+str(e.args) ) 
                 web_page="ERROR LOADING SELECT CONFIG MENU"
@@ -3455,7 +3455,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error13 in send_header "+" e:"+str(e.args) 
                 errorQueue.put("error13 in send_header "+" e:"+str(e.args)  )                  
@@ -3472,7 +3472,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(html_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error14 in send_header "+" e:"+str(e.args)   
                 errorQueue.put( "error14 in send_header "+" e:"+str(e.args))                 
@@ -3500,7 +3500,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 
                   execfile(cgi_name,globals(),namespace)
                   web_page=namespace["web_page"]
-                except Exception, e  :
+                except Exception as e  :
                   print "error importing a module in cgi directory, cgi name:"+cgi_name+" e:"+str(e.args)
                   errorQueue.put( "error importing a module in cgi directory, cgi name:"+cgi_name+" e:"+str(e.args)) 
 
@@ -3509,7 +3509,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error15 in send_header "+" e:"+str(e.args)                   
                 errorQueue.put( "error15 in send_header "+" e:"+str(e.args)   ) 
@@ -3544,7 +3544,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(html_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error16 in send_header "+" e:"+str(e.args)   
                 errorQueue.put("error16 in send_header "+" e:"+str(e.args) )                   
@@ -3567,7 +3567,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 b1 = open('setup/select_config_menu.html','r')    
                 web_page=b1.read()    
                 b1.close()
-              except Exception, e  :
+              except Exception as e  :
                 print "error2 opening the file"+" e:"+str(e.args)
                 errorQueue.put("error2 opening the file"+" e:"+str(e.args) )  
                 web_page="ERROR LOADING SELECT CONFIG MENU"
@@ -3577,7 +3577,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error in send_header "+" e:"+str(e.args) 
                 errorQueue.put("error17 in send_header "+" e:"+str(e.args) )    
@@ -3597,7 +3597,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 b1 = open('setup/restored_configuration.html','r')    
                 web_page=b1.read()    
                 b1.close()
-              except Exception, e  :
+              except Exception as e  :
                 print "error3 opening the file"+" e:"+str(e.args)
                 errorQueue.put( "error3 opening the file"+" e:"+str(e.args))  
                 web_page="ERROR LOADING SELECT CONFIG MENU"
@@ -3607,7 +3607,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error18 in send_header "+" e:"+str(e.args)     
                 errorQueue.put("error18 in send_header "+" e:"+str(e.args)  ) 
@@ -3627,7 +3627,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(html_page) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error19 in send_header "+" e:"+str(e.args) 
                 errorQueue.put( "error19 in send_header "+" e:"+str(e.args) )                   
@@ -3669,7 +3669,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(pag) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error20 in send_header "+" e:"+str(e.args) 
                 errorQueue.put("error20 in send_header "+" e:"+str(e.args)  )                   
@@ -3700,7 +3700,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-type',	'text/html')
                     self.end_headers()
                     self.wfile.write(pag) 
-                  except Exception, e  :
+                  except Exception as e  :
                     pass
                     print "error21 in send_header "+" e:"+str(e.args)  
                     errorQueue.put( "error21 in send_header "+" e:"+str(e.args) )    
@@ -3713,7 +3713,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
 
                 self.wfile.write(pag) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error22 in send_header "+" e:"+str(e.args)  
                 errorQueue.put( "error22 in send_header "+" e:"+str(e.args) )                  
@@ -3734,7 +3734,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-type',	'text/html')
                     self.end_headers()
                     self.wfile.write(pag) 
-                  except Exception, e  :
+                  except Exception as e  :
                     pass
                     print "error23 in send_header "+" e:"+str(e.args)     
                     errorQueue.put("error23 in send_header "+" e:"+str(e.args)   ) 
@@ -3754,7 +3754,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 b1 = open(baseRoomPath+self.path[1:end_file_name] ,'r')    
                 web_page=b1.read()    
                 b1.close()
-              except Exception, e  :
+              except Exception as e  :
                 print "error4 opening the file"+" e:"+str(e.args)
                 errorQueue.put( "error4 opening the file"+" e:"+str(e.args))  
               
@@ -3764,7 +3764,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()          
                 self.wfile.write(pag) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error24 in send_header "+" e:"+str(e.args)    
                 errorQueue.put("error24 in send_header "+" e:"+str(e.args)  )  
@@ -3785,7 +3785,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
                   self.wfile.write(tmpF)
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error25 in send_header "+" e:"+str(e.args)     
                   errorQueue.put("error25 in send_header "+" e:"+str(e.args) ) 
@@ -3802,7 +3802,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                     web_page=b1.read()    
                     b1.close()
-                except Exception, e  :
+                except Exception as e  :
                   
                     print "error5 opening the file"+" e:"+str(e.args)
                     errorQueue.put("error5 opening the file,local address bar ="+self.path+"index.html"+" e:"+str(e.args)  ) 
@@ -3818,7 +3818,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
                   self.wfile.write(pag) 
-                except Exception, e  :
+                except Exception as e  :
                   pass
                   print "error26 in send_header "+" e:"+str(e.args)                     
                   errorQueue.put( "error26 in send_header "+" e:"+str(e.args) ) 
@@ -3835,7 +3835,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 
             return
                 
-        except Exception, e  :
+        except Exception as e  :
             self.send_error(404,'File Not Found: %s' % self.path)
             print "error 404 File Not Found"+" e:"+str(e.args)
             errorQueue.put("err 404 File Not Found"+" e:"+str(e.args) ) 
@@ -3847,7 +3847,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
         try:
           ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
-        except Exception, e  :
+        except Exception as e  :
           print "some error occurred in post connection "+" e:"+str(e.args)
           errorQueue.put( "some error occurred in post connection "+" e:"+str(e.args))
           return
@@ -3864,7 +3864,7 @@ class MyHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type',	'text/html')
             self.end_headers()
             self.wfile.write("ok")  
-          except Exception, e  :
+          except Exception as e  :
             pass
             print "error in send_header "+" e:"+str(e.args)     
             errorQueue.put("error in send_header "+" e:"+str(e.args)  )
@@ -3904,7 +3904,7 @@ class MyHandler(BaseHTTPRequestHandler):
             try:
               self.send_response(301)
               self.end_headers()
-            except Exception, e  :
+            except Exception as e  :
               pass
               print "error27 in send_header "+" e:"+str(e.args)  
               errorQueue.put("error27 in send_header "+" e:"+str(e.args)  )   
@@ -3915,7 +3915,7 @@ class MyHandler(BaseHTTPRequestHandler):
               try:
                 self.wfile.write("<HTML>POST OK WAIT 2 SECONDS THEN GO BACK TO HOME<BR><BR>");
                 self.wfile.write(upfilecontent[0]);
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error28 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error28 in send_header "+" e:"+str(e.args)  )
@@ -3925,7 +3925,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 file0.close()
                 global exit
                 exit=1   #reboot the webserver 
-              except Exception, e  :
+              except Exception as e  :
                 print "error importing json from user"+" e:"+str(e.args)
                 errorQueue.put( "error importing json from user"+" e:"+str(e.args))
                 self.wfile.write("<HTML>error importing file<BR><BR>");
@@ -4024,7 +4024,7 @@ class MyHandler(BaseHTTPRequestHandler):
                        updateOneRoom(new_name)
                        
                        print ("mv "+room+" "+new_name) 
-                     except Exception, e  :
+                     except Exception as e  :
                        print "can't rename directory to"+new_name+" e:"+str(e.args)
 
                 # i=i+1
@@ -4105,7 +4105,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(pag)  
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error29 in send_header "+" e:"+str(e.args) 
                 errorQueue.put("error29 in send_header "+" e:"+str(e.args)  )      
@@ -4172,7 +4172,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(webpag)     
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error30 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error30 in send_header "+" e:"+str(e.args)   )
@@ -4200,7 +4200,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(pag)  
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error31 in send_header "+" e:"+str(e.args)  
                 errorQueue.put( "error31 in send_header "+" e:"+str(e.args))
@@ -4269,7 +4269,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(pag)  
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error32 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error32 in send_header "+" e:"+str(e.args) )
@@ -4298,7 +4298,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(pag)   
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error33 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error33 in send_header "+" e:"+str(e.args)  )
@@ -4368,7 +4368,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(pag) 
-              except Exception, e  :
+              except Exception as e  :
                 pass
                 print "error34 in send_header "+" e:"+str(e.args)  
                 errorQueue.put( "error34 in send_header "+" e:"+str(e.args))
@@ -4474,7 +4474,7 @@ class MyHandler(BaseHTTPRequestHandler):
                       try:
                         delay=int(delay)
                         scenarioDict[scenario_name]["delayTime"]=delay
-                      except Exception, e  :
+                      except Exception as e  :
                         print "error in mod_scenario delay_time form post parse  "+" e:"+str(e.args) 
 
                   if "priority" in postvars:
@@ -4482,7 +4482,7 @@ class MyHandler(BaseHTTPRequestHandler):
                       try:
                         priority=int(priority)
                         scenarioDict[scenario_name]["priority"]=priority
-                      except Exception, e  :
+                      except Exception as e  :
                         print "error in mod_scenario priority form post parse  "+" e:"+str(e.args) 
 
 
@@ -4513,7 +4513,7 @@ class MyHandler(BaseHTTPRequestHandler):
                             #if the scenario is not included in the web_object attachedScenarios
 
 
-                      except Exception, e  :
+                      except Exception as e  :
                         print "error in mod_scenario conditions form post parse  "+" e:"+str(e.args) 
 
 
@@ -4530,14 +4530,14 @@ class MyHandler(BaseHTTPRequestHandler):
                         #a=eval(replace_functions(functions,scenario_name))
                         print "functionsToRun=",functions.split(';;;') 
                         scenarioDict[scenario_name]["functionsToRun"]=functions.split(';;;')  #banana no check if the functions are right
-                      except Exception, e  :
+                      except Exception as e  :
                         print "error in mod_scenario functions form post parse  "+" e:"+str(e.args) 
 
 
 
 
 
-                 # except Exception, e  :
+                 # except Exception as e  :
                 
                   #  print "error in mod_scenario form post parse  "+" e:"+str(e.args)  
                    # errorQueue.put( "error in mod_scenario form post parse "+" e:"+str(e.args))
@@ -4860,7 +4860,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     result=f.data
                     print result
 
-                  except Exception, e  :
+                  except Exception as e  :
 
                     message="server online query to create new user failed,please check connection and retry"+" e:"+str(e.args)
                     print message
@@ -5020,7 +5020,7 @@ def onlineServerSync():
 
     try:
       object_tmp_dict=transform_object_to_dict(object_dict) 
-    except Exception, e  :
+    except Exception as e  :
       print "error executing transform_object_to_dict()"+" e:"+str(e.args)
       errorQueue.put("error executing transform_object_to_dict()"+" e:"+str(e.args) )  
 
@@ -5049,7 +5049,7 @@ def onlineServerSync():
         online_object_dict=object_json_dictionary
         online_zone_dict=zone_json_dictionary
 
-      except Exception, e  :
+      except Exception as e  :
         print "first online contact failed" +" e:"+str(e.args)
         errorQueue.put("first online contact failed"+" e:"+str(e.args) )   
         continue
@@ -5080,7 +5080,7 @@ def onlineServerSync():
           result=f.data
           print result
           force_online_sync_users=0
-        except Exception, e  :
+        except Exception as e  :
           print "error creating online user "+" e:"+str(e.args)
           errorQueue.put( "error creating online user "+" e:"+str(e.args)) 
 
@@ -5109,7 +5109,7 @@ def onlineServerSync():
         print result
 
         online_object_dict=object_json_dictionary
-      except Exception, e  :
+      except Exception as e  :
         print "error in the remote object update"+" e:"+str(e.args)
         errorQueue.put("error in the remote object update"+" e:"+str(e.args) )
         online_object_dict=""
@@ -5137,7 +5137,7 @@ def onlineServerSync():
         result=f.data
         print result
         online_zone_dict=zone_json_dictionary  #banana, to get this value from the server
-      except Exception, e  :
+      except Exception as e  :
         print "error in the remote object update"+" e:"+str(e.args)
         errorQueue.put("error in the remote object update"+" e:"+str(e.args) )
         online_zone_dict=""
@@ -5156,7 +5156,7 @@ def onlineServerSync():
       sync_message=result
       print sync_message
 
-    except Exception, e  :
+    except Exception as e  :
       print "error contacting the online server to get sync message"+" e:"+str(e.args)
       errorQueue.put( "error contacting the online server to get sync message"+" e:"+str(e.args))
       onlineServerSyncThreadIsrunning=0
@@ -5189,7 +5189,7 @@ def onlineServerSync():
           priority=usersDict[username]["priority"]
           priorityCmdQueue.put( {"cmd":"setSts","webObjectName":obj_name,"status_to_set":status_to_set,"write_to_hw":1,"priority":priority,"user":username,"mail_report_list":[] })  
 
-    except Exception, e  :
+    except Exception as e  :
       print "sync_message decoding error,sync_message:"+sync_message+" e:"+str(e.args) 
       errorQueue.put( "sync_message decoding error,sync_message"+sync_message+" e:"+str(e.args) )
     onlineServerSyncThreadIsrunning=0
@@ -5244,7 +5244,7 @@ def mailCheckThread():
     #time.sleep(1)  #wait
     try:
       mailList=receiveMail(onos_mail_conf,imaplib,email)  #a list of list where the data are (msg_sender,msg_subject,msg_text)
-    except Exception, e:
+    except Exception as e:
       print "error in  mailagent"+str(e.args)
       errorQueue.put("error in  mailagent"+str(e.args))
       mailList=-1
@@ -5445,7 +5445,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
       try:
         urllib2.urlopen("http://www.google.com")  
         internet_connection=1
-      except Exception, e: 
+      except Exception as e: 
         print "no internet connection 0"+" e:"+str(e.args)
         #errorQueue.put("no internet connection 0"+" e:"+str(e.args) )
         internet_connection=0
@@ -5516,7 +5516,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           w4 = threading.Thread(target=onlineServerSync)
           w4.daemon = True  #make the thread a daemon thread
           w4.start()
-        except Exception, e :
+        except Exception as e :
           print "error executing onlineServerSync()"+" e:"+str(e.args)
           errorQueue.put( "error executing onlineServerSync()"+" e:"+str(e.args))  
    # time.sleep(0.3) #don't remove this or else the router became instable
@@ -5529,7 +5529,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           w3 = threading.Thread(target=mailCheckThread)
           w3.daemon = True  #make the thread a daemon thread
           w3.start()
-        except Exception, e :
+        except Exception as e :
           print "error executing mailCheckThread()"+" e:"+str(e.args)
           errorQueue.put("error executing mailCheckThread()"+" e:"+str(e.args) ) 
           #continue
@@ -5543,7 +5543,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
       #read local onosCenter pins (the router pin)
       try:
         read_pin=read_pin+hardware.read_router_pins()  # if hardware.read_router_pins() is -1 for two times it will go to <0
-      except Exception, e :
+      except Exception as e :
         print "error executing hardware.read_router_pins()"+" e:"+str(e.args)
         errorQueue.put( "error executing hardware.read_router_pins()"+" e:"+str(e.args))  
 
@@ -5577,7 +5577,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           if (len (error_text) > 0):
             mailQueue.put({"mail_address":mail_where_to_send_errors,"mailText":error_text,"mailSubject":"onos_errors_report"})
 
-        except Exception, e:
+        except Exception as e:
           print "error in the error mail log of hardwareHandlerThread !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+" e:"+str(e.args)
           print error_text
           errorQueue.put("error in the error mail log of hardwareHandlerThread "+" e:"+str(e.args))
@@ -5600,7 +5600,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         send_mail.daemon = True  #make the thread a daemon thread
         send_mail.start()
 
-      except Exception, e:     
+      except Exception as e:     
         print "error in the mail send of onosBusThread "+" e:"+str(e.args)
         errorQueue.put("error in the  mail send  of onosBusThread "+" e:"+str(e.args)+str(threading.active_count()))
    
@@ -5618,7 +5618,7 @@ def executeQueueFunction(dataExchanged):
       write_hw_enable=dataExchanged["write_to_hw"]
       mail_list_to_report_to=dataExchanged["mail_report_list"]
       setNodePin(node_serial_number,pin_number,pin_status,write_hw_enable)
-    except Exception, e :
+    except Exception as e :
       print "error in the setNodePin of onosBusThread "+" e:"+str(e.args)
       errorQueue.put("error in the setNodePin of onosBusThread "+" e:"+str(e.args))
 
@@ -5644,7 +5644,7 @@ def executeQueueFunction(dataExchanged):
 
       changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)
 
-    except Exception, e:
+    except Exception as e:
       print "error in the setSts of onosBusThread "+" e:"+str(e.args)
       errorQueue.put("error in the setSts of onosBusThread: name:"+str(objName)+",st:"+str(status_to_set)+",wr_en:"+str(write_hw_enable)+",usr:"+usr+",priority:"+str(priority)+" e:"+str(e.args)) 
 
@@ -5654,7 +5654,7 @@ def executeQueueFunction(dataExchanged):
     try:
       scenarioName=dataExchanged["scenarioName"]
       checkwebObjectScenarios(scenarioName) 
-    except Exception, e:
+    except Exception as e:
       print "error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args)
       errorQueue.put("error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args))
 
@@ -5702,7 +5702,7 @@ def executeQueueFunction(dataExchanged):
         if status_to_set!=object_dict[objName].getStatus():
           changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
 
-    except Exception, e: 
+    except Exception as e: 
       print "error in the for loop of updateObjFromNode condition:node="+node_sn
       errorQueue.put("error in the for loop of updateObjFromNode condition :node="+node_sn)
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -5718,7 +5718,7 @@ def executeQueueFunction(dataExchanged):
       node_address=dataExchanged["nodeAddress"]
       updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
-    except Exception, e:
+    except Exception as e:
       print "error in the updateNodeAddress of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
       errorQueue.put("error in the createNewNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args))
 
@@ -5733,7 +5733,7 @@ def executeQueueFunction(dataExchanged):
       node_fw=dataExchanged["nodeFw"]
       msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
 
-    except Exception, e:
+    except Exception as e:
       print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)+" e:"+str(e.args)
       errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)+" e:"+str(e.args))
 
@@ -5751,11 +5751,11 @@ def executeQueueFunction(dataExchanged):
       else:
         new_address=getNextFreeAddress(node_serial_number,uart_router_sn,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
-      result=hardware.setAddressToNode(node_serial_number,new_address) 
-      if result==1:
-        print "i save the new address in the config memory"
+      hardware.setAddressToNode(node_serial_number,new_address) 
+      #if result==1:
+      #  print "i save the new address in the config memory"
 
-    except Exception, e:
+    except Exception as e:
       print "error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
       errorQueue.put("error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args))
      
@@ -5827,7 +5827,7 @@ def onosBusThread():
          
       try:
         old_minutes=object_dict["minutes"].getStatus()
-      except Exception, e:  
+      except Exception as e:  
         print "error in the minutes update of onosBusThread "+" e:"+str(e.args)
         errorQueue.put("error in the  minutes update of onosBusThread "+" e:"+str(e.args))  
         old_minutes=0
@@ -5869,7 +5869,7 @@ def onosBusThread():
           if (old_year!=datetime.datetime.today().year):
             changeWebObjectStatus("year",datetime.datetime.today().year,0)
 
-        except Exception, e: 
+        except Exception as e: 
 
           exc_type, exc_obj, exc_tb = sys.exc_info()
           fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -5903,7 +5903,7 @@ def onosBusThread():
               with lock_bash_cmd:
                 subprocess.check_output('''echo " " >'''+log_name, shell=True,close_fds=True) 
 
-    except Exception, e: 
+    except Exception as e: 
       print "main error in onosBusThread() "+" e:"+str(e.args)
       errorQueue.put("main error in onosBusThread()"+" e:"+str(e.args))   
 
@@ -5949,7 +5949,7 @@ def nodeTcpServer():
           connection, client_address = sock.accept()  
           node_ip=client_address[0]
           print "nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",node_ip
-        except Exception, e  :
+        except Exception as e  :
           print "timeout in receiving!!!",e
           try:
             connection.close()
@@ -6032,7 +6032,7 @@ def nodeTcpServer():
                 break
     
           
-          except Exception, e  :
+          except Exception as e  :
             print "error tcp connection",e
              
 
@@ -6054,7 +6054,7 @@ def nodeTcpServer():
           print "connection not created3" 
 
 
-    except Exception, e  :
+    except Exception as e  :
       print "error tcp server thread",e
       errorQueue.put("error tcp server thread"+" e:"+str(e.args)  ) 
 
@@ -6083,7 +6083,7 @@ def run_while_true(server_class=BaseHTTPServer.HTTPServer,
 
       try:
         httpd.handle_request() 
-      except Exception, e:
+      except Exception as e:
         print "something went wrong on main Webserver handler "+" e:"+str(e.args)       
         errorQueue.put("something went wrong on main Webserver handler "+" e:"+str(e.args)  )      
 

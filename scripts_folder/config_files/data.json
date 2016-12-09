@@ -27,7 +27,7 @@
     }, 
     "WPlugAvx0008": {
       "hwModelName": "WPlugAvx", 
-      "nodeAddress": "254", 
+      "nodeAddress": "003", 
       "node_serial_number": "WPlugAvx0008"
     }
   }, 
@@ -312,7 +312,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -453,7 +453,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -630,7 +630,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 20, 
+      "status": 9, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -666,7 +666,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1400, 
+      "status": 1354, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -710,7 +710,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 23, 
+      "status": 22, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -756,7 +756,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 20, 
+      "status": 34, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -792,7 +792,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 11, 
+      "status": 12, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -899,7 +899,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "onoswait", 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 

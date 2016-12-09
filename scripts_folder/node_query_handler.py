@@ -14,7 +14,7 @@ from conf import *
 
 #import pyserial_port
 
-def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
+def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_already_done=0):
   """
   | This function make a query to a radio/serial node and wait the answer from the serial gateway.
   | If the answer is positive 
@@ -26,22 +26,37 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
 
   """
 
-  max_retry=10
+  max_retry=2
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
 
  
-    address=nodeDict[node_serial_number].getNodeAddress()
+    node_address=nodeDict[node_serial_number].getNodeAddress()
 
-    query=query[0:3]+address+query[6:] #change the address query if the node get a new one
+    query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
 
     data=""
+
+    end_of_query=query.find("_#]")
+
+    # [S_ok003sr070811_#]
+    expected_confirm="[S_ok"+query[3:end_of_query+3]
+     #if data.find("ok"+query[3:end_of_query+3])!=-1:    
+
+    if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
+
+      for a in serialCom.uart.readed_packets_list:
+        if a.find(expected_confirm)!=-1 :  #found the answer
+          return (a)
+
+
+
 
     if serialCom.uart.ser.isOpen() == False :
       print "serial port is not open in make_query_to_radio_node()"
       priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
-      time.sleep(1)  
+    #  time.sleep(1)  
       return(-1)
 
 
@@ -49,23 +64,19 @@ def make_query_to_radio_node(serialCom,node_serial_number,node_address,query):
       data=serialCom.uart.write(str(query))
 
       #data=pyserial_port.writeToSerial(query)
-    except Exception, e:
+    except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)   
       print str(e.args)
-      time.sleep(2)  
+     # time.sleep(2)  
 
     if data=="error_reception":
       continue
   
     
 
-    end_of_query=query.find("_#]")
-
-    # [S_ok003sr070811_#]
-    expected_confirm="[S_ok"+query[3:end_of_query+3]
-     #if data.find("ok"+query[3:end_of_query+3])!=-1:      
+  
      # return(1) 
     print "expected confirm:"+expected_confirm
     print "uart rx list:"
@@ -147,7 +158,7 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
         resp=""
         try:
           resp = s.recv(1024) 
-        except Exception, e  :
+        except Exception as e  :
           print "error_qqqq retry",e
           errorQueue.put("error0 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)+"error:"+str(e.args)+"at:" +getErrorTimeString() )
           break
@@ -174,7 +185,7 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
       s.close()
       print "\ndone"
 
-    except Exception, e  :
+    except Exception as e  :
       print "error_i retry",e
       errorQueue.put("error2 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m) +str(e.args)+"at:" +getErrorTimeString() )    
       print"the query was"+query+"number of try  "+str(m)  
@@ -210,6 +221,89 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
   return()
 
 
+
+
+
+
+def handle_new_query_to_radio_node_thread(serialCom): 
+  """
+  | This is a thread function that will run until every request in the queryToRadioNodeQueue is done.
+  | It will get each query from queryToRadioNodeQueue and call make_query_to_radio_node() 
+  | While the query is running the current_node_handler_list will contain the node serialnumber being queried
+  | In this way onos will avoid to make multiple simultaneos query to the same node.
+  
+ 
+
+  """
+
+
+  print "executed handle_new_query_to_radio_node_thread() "
+
+  global node_query_radio_threads_executing
+  global next_node_free_address_list
+  global nodeDict
+  node_query_radio_threads_executing=1
+
+  while not queryToRadioNodeQueue.empty():
+    currentRadioQueryPacket=queryToRadioNodeQueue.get() #get the tuple: 
+#                                                  (Priority,query_msg,node_serial_number,number_of_retry_done,time_when_the_query_was_created,query_order)
+    query=currentRadioQueryPacket[0]
+    
+    node_serial_number=currentRadioQueryPacket[1]
+    number_of_retry_done=currentRadioQueryPacket[2]
+    query_time=currentRadioQueryPacket[3]
+    objName=currentRadioQueryPacket[5]
+    status_to_set=currentRadioQueryPacket[6]
+    user=currentRadioQueryPacket[7]
+    priority=currentRadioQueryPacket[8]
+    mail_report_list=currentRadioQueryPacket[9]
+    cmd=currentRadioQueryPacket[10]
+
+    if number_of_retry_done>0:
+      query_order=currentRadioQueryPacket[4]
+    else:
+      query_order=query_time-currentRadioQueryPacket[4]  # i used time_when_the_query_was_created - priority..
+
+
+    node_address=nodeDict[node_serial_number].getNodeAddress()
+
+
+    query_answer=make_query_to_radio_node(serialCom,node_serial_number,query)
+    if query_answer==-1 : #invalid answer received
+      query_order=query_order+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run
+      if priority!=99: #if the priority is 99 then the query will be always retrayed infinites times.
+
+        if number_of_retry_done>15:  #if greater that n don't repeat the query.
+          continue
+
+        if (time.time()-query_order )>100: #if more than n seconds has passed since the query was made..don't try again.
+          continue
+        
+
+     
+      queryToRadioNodeQueue.put((query,node_serial_number,number_of_retry_done,query_time,query_order,objName,status_to_set,user,priority,mail_report_list,cmd))
+
+    else:##if the query was accepted from the radio/serial node
+      #since onos was able to talk to the node I update the LastNodeSync
+      layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address}) 
+
+      if cmd=="set_address":
+        new_address=status_to_set
+        int_address=int(new_address)
+        if int_address not in next_node_free_address_list:
+          next_node_free_address_list.append(int_address) 
+        continue  #this cmd don't need to change webobject..      
+
+      priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
+      
+
+
+
+
+  
+  node_query_radio_threads_executing=0
+  print "handle_new_query_to_radio_node_thread closed"
+  return()
 
 
 
@@ -283,7 +377,7 @@ def handle_new_query_to_network_node_thread():
 
 
 
-  except Exception, e :
+  except Exception as e :
     print ("main error in handle_new_query_to_network_node_thread"+str(e.args)+"current query:"+str(current_query)) 
     errorQueue.put("main error in handle_new_query_to_network_node_thread:"+str(e.args)+"current query:"+str(current_query)) 
 

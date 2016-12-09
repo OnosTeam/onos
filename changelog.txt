@@ -595,6 +595,16 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 now the wplug prototype works!is not very stable yet..but works
 
 
+5.26            started implementing handle_new_query_to_radio_node_thread()
+                starting replacing "except Exception , e"  with "except Exception as e" everywhere because is python3 friendly
+                now onoscenter will retry to send msg , not the arduino serial code.
+
+
+
+
+
+
+
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;
 ('a float is required',);;;
