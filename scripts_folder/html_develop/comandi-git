@@ -1,0 +1,13 @@
+prima di lavorare sul pc :
+
+aprire nel terminale la cartella onos e dare
+
+git pull
+
+poi fare le modifiche e per caricare 
+
+git add *
+
+git commit -a -m "commento da inserire"
+
+git push -u origin html_gui

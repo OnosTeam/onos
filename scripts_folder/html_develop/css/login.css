@@ -3,7 +3,10 @@
    src: url('../fonts/rapier-zero.ttf') format('truetype');
 }
 
-
+@font-face {
+   font-family: 'adventure';
+   src: url('../fonts/adventure-subtitles.ttf') format('truetype');
+}
 
 
 
@@ -11,7 +14,7 @@
 
 body{
 	
-	font-family: rapier;
+
 	margin: 0px;
 	padding: 0px;
 
@@ -20,10 +23,14 @@ body{
 a, a:visited  {text-decoration:none; 	color:white;}
 
 
- 
+.adventuretext{
+
+	font-family: adventure;
+
+} 
 
  
-@media screen and (min-width: 320px) /*iphone 6s, 6 plus portrait*/{
+@media screen and (min-width: 300px) /*iphone 6s, 6 plus portrait*/{
 body {
 
 	background-color: #0072ca;
@@ -37,25 +44,36 @@ body {
 	top:0px;
 	width:100%;
 	margin-top:10px;
-	margin-bottom:30px;
+
 }
 
 .title{
 
-
+	font-family: rapier;
 	text-align:center;
 	width:100%;
 	margin-left:auto;
 	margin-right:auto;
-	margin-bottom:30px;
+	margin-bottom:20px;
 	font-size:30px;
+}
+
+.subtitle{
+
+	font-family: adventure;
+	text-align:center;
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	font-size:20px;
+
 }
 
 .box-form{
 
 	text-align:center;
-	padding:30px;
-	margin:30px;
+	padding:10px;
+	margin:10px;
 	background-color:#043a91;
 	color:white;
 	border-radius: 15px 50px;
@@ -63,9 +81,14 @@ body {
 
 }
 
+
+
+
+
 .textinput{
 
-	font-family: rapier;
+	position:relative;
+	font-family: adventure;
 	padding:5px;
 	margin-top:10px;
 	margin-bottom:10px;
@@ -75,9 +98,10 @@ body {
 	border: 1px solid white;
 	border-radius: 3px;
 	color:#d0d6e0;
-
+	
 
 }
+
 
 
 .login-button{
@@ -85,6 +109,8 @@ body {
 	font-family: rapier;
 	width:150px;
 	margin-top:20px;
+	margin-left:auto;
+	margin-right:auto;
 	background-color: #0072ca;
 	color:#d0d6e0;
 	border-radius: 3px;
@@ -100,6 +126,7 @@ body {
 
 #register-button{
 
+	font-family: rapier;
 	width:150px;
 	margin-top:20px;
 	margin-left:auto;
@@ -148,14 +175,27 @@ body {
 
 .title{
 
-
+	font-family: rapier;
 	text-align:center;
 	width:100%;
 	margin-left:auto;
 	margin-right:auto;
 	margin-bottom:30px;
-	font-size:30px;
+	font-size:40px;
 }
+
+
+.subtitle{
+
+	font-family: adventure;
+	text-align:center;
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	font-size:20px;
+
+}
+
 
 .box-form{
 
@@ -171,7 +211,7 @@ body {
 
 .textinput{
 
-	font-family: rapier;
+	font-family: adventure;
 	padding:5px;
 	margin-top:10px;
 	margin-bottom:10px;
@@ -206,6 +246,7 @@ body {
 
 #register-button{
 
+	font-family: rapier;
 	width:150px;
 	margin-top:20px;
 	margin-left:auto;

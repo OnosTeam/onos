@@ -3,6 +3,7 @@
 <html>
 
     <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 	<link rel="stylesheet" href="css/login.css">
 	<meta charset="utf-8">
 
@@ -18,16 +19,13 @@
 
 	<div class="title">LOGIN</div>
 
-    <form action="login_post_parse.php" method="POST"><input type="hidden" name="login_form" value="/login">
+	<form action="#">
 
-    <div class="simpletext"> Type your username:</div>
-    <input type="text" class="textinput" id="username_form" name="username_form" onclick="SelectAll('username_form')"; value="" />
-
-
-    <div class="simpletext"> Type your passsword:</div>
-    <input class="textinput" type="password" id="password_form"  name="password_form"  onclick="SelectAll('password_form')"; value="" />
-    <br>
- 
+	<div class="subtitle">Username</div>
+	<input type="text" name="username" class="textinput" id="username" />
+	<div class="subtitle">Password</div>
+	<input type="password" name="password" class="textinput" id="password" />
+ 	<div></div><!--necessario per evitare che il bottone login si sposti-->
 	<input type="submit" id="submit" class="login-button" name="submit" value="LOGIN" />
 
 
@@ -38,8 +36,8 @@
 
 <div class="box-form">
 
-	<div class="simpletext2">Have you forgotten your password?</div>
-	<div id="register-button"><a href="#">Request password</a></div>
+	<div class="adventuretext">Forgotten password ?</div>
+	<div id="register-button"><a href="#">Find password</a></div>
 
 </div>
 
