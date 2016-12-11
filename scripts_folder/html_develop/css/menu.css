@@ -1,0 +1,99 @@
+@font-face {
+   font-family: 'rapier';
+   src: url('../fonts/rapier-zero.ttf') format('truetype');
+}
+
+@font-face {
+   font-family: 'adventure';
+   src: url('../fonts/adventure-subtitles.ttf') format('truetype');
+}
+
+
+@font-face {
+   font-family: 'icons';
+   src: url('../fonts/fontawesome-webfont.ttf') format('truetype');
+}
+
+
+.flex {max-width: 100%}
+
+a, a:visited  {text-decoration:none; 	color:white;}
+
+body{
+	
+	background-color:#0072ca;
+	margin: 0px;
+	padding-top:0px;
+
+}
+
+
+
+@media screen and (min-width: 300px) /*iphone 6s, 6 plus portrait*/{
+
+
+.top_banner{
+
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:50px;
+	background-color:#043a91;opacity:0.9;
+	border-bottom:5px solid black;
+    	border-radius: 5px;
+	overflow:hidden;
+
+
+}
+
+.menu-button{
+
+	cursor:pointer;
+	top:0px;
+	left:0px;
+	width:50px;
+	height:50px;
+	text-align:center;
+	color:white;
+	display: block;
+	vertical-align: middle;
+}
+
+
+.date{
+	
+
+	width:100px;
+	height:50px;
+	top:0px;
+	margin:0px;
+	text-align:center;
+	color:white;
+	display: block;
+	vertical-align: middle;
+}
+
+
+
+.time{
+
+
+	width:50px;
+	height:50px;
+	margin:0px;
+	text-align:center;
+	color:white;
+	display: block;
+	vertical-align: middle;
+
+}
+
+
+
+
+
+
+}
+
+
