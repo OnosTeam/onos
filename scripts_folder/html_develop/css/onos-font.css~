@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'Onos';
-  src:  url('../fonts/Onos.eot?d21qig');
-  src:  url('../fonts/Onos.eot?d21qig#iefix') format('embedded-opentype'),
-    url('../fonts/Onos.ttf?d21qig') format('truetype'),
-    url('../fonts/Onos.woff?d21qig') format('woff'),
-    url('../fonts/Onos.svg?d21qig#Onos') format('svg');
+  src:  url('fonts/Onos.eot?d21qig');
+  src:  url('fonts/Onos.eot?d21qig#iefix') format('embedded-opentype'),
+    url('fonts/Onos.ttf?d21qig') format('truetype'),
+    url('fonts/Onos.woff?d21qig') format('woff'),
+    url('fonts/Onos.svg?d21qig#Onos') format('svg');
   font-weight: normal;
   font-style: normal;
 }

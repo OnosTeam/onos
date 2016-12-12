@@ -9,9 +9,8 @@
 }
 
 
-@font-face {
-   font-family: 'icons';
-   src: url('../fonts/fontawesome-webfont.ttf') format('truetype');
+* {
+    box-sizing: border-box;
 }
 
 
@@ -38,40 +37,30 @@ body{
 	top:0px;
 	left:0px;
 	width:100%;
-	height:50px;
+	padding:0px;
+	margin:0px;
+	height:35px;
 	background-color:#043a91;opacity:0.9;
-	border-bottom:5px solid black;
-    	border-radius: 5px;
+	border-bottom:1px solid black;
 	overflow:hidden;
-
-
 }
 
-.menu-button{
+.top_banner::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.menu{
 
 	cursor:pointer;
-	top:0px;
-	left:0px;
-	width:50px;
-	height:50px;
+	width:12%;
+	height:35px;
 	text-align:center;
+	line-height:35px;
 	color:white;
-	display: block;
-	vertical-align: middle;
-}
+	float: left;
 
-
-.date{
-	
-
-	width:100px;
-	height:50px;
-	top:0px;
-	margin:0px;
-	text-align:center;
-	color:white;
-	display: block;
-	vertical-align: middle;
 }
 
 
@@ -79,15 +68,33 @@ body{
 .time{
 
 
-	width:50px;
-	height:50px;
-	margin:0px;
+	width:20%;
+	height:35px;
 	text-align:center;
+	line-height:35px;
 	color:white;
-	display: block;
-	vertical-align: middle;
+	float: left;
+
 
 }
+
+
+
+.date{
+	
+
+	width:68%;
+	height:35px;
+	text-align:center;
+	line-height:35px;
+	color:white;
+	float: left;
+
+}
+
+
+
+
 
 
 
