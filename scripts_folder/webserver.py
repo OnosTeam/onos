@@ -2836,7 +2836,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            
 
 
             if ((self.path.endswith(".jpg"))|(self.path.endswith(".gif"))|(self.path.endswith(".png"))|(self.path.endswith(".JPG"))|(self.path.endswith(".PNG"))):
@@ -2883,19 +2882,18 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
 
 
-
-            if (self.path.endswith(".ttf"))|(self.path.endswith(".TTF")):
-                f = open(curdir + sep + self.path,'rb') #self.path has /test.html
-                cssFile=f.read()
-                f.close()
+            if (self.path.find(".svg")!=-1):  #example:  Onos.woff?d21qig'
+                fileName=curdir + sep + self.path.split(".svg")[0]+".svg"       #get only the filename without parameters 
+                with open(fileName, 'rb') as f:   #read the pin status
+                  askedFile=f.read()
 #note that this potentially makes every file on your computer readable by the internet
                 
                 try:
                   self.send_response(200)
-                  self.send_header('Content-type',        'text/ttf')
+                  self.send_header('Content-type',        'application/font-woff')
                   self.send_header('Cache-Control',        'max-age=1')  #set the cache of the image to a long time to prevent background image flipping
                   self.end_headers()
-                  self.wfile.write(cssFile)
+                  self.wfile.write(askedFile)
                   #print "served a css file"
                 except Exception as e  :
                   pass
@@ -2904,6 +2902,66 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
 
 
+
+            if (self.path.find(".woff")!=-1):  #example:  Onos.woff?d21qig'
+                fileName=curdir + sep + self.path.split(".woff")[0]+".woff"       #get only the filename without parameters 
+                with open(fileName, 'rb') as f:   #read the pin status
+                  askedFile=f.read()
+#note that this potentially makes every file on your computer readable by the internet
+                
+                try:
+                  self.send_response(200)
+                  self.send_header('Content-type',        'application/font-woff')
+                  self.send_header('Cache-Control',        'max-age=1')  #set the cache of the image to a long time to prevent background image flipping
+                  self.end_headers()
+                  self.wfile.write(askedFile)
+                  #print "served a css file"
+                except Exception as e  :
+                  pass
+                  print "error9b in send_header "+" e:"+str(e.args)   
+                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
+                return
+
+
+
+            if (self.path.find(".eot")!=-1):  #example:  Onos.woff?d21qig'
+                fileName=curdir + sep + self.path.split(".eot")[0]+".eot"       #get only the filename without parameters 
+                with open(fileName, 'rb') as f:   #read the pin status
+                  askedFile=f.read()
+#note that this potentially makes every file on your computer readable by the internet
+                
+                try:
+                  self.send_response(200)
+                  self.send_header('Content-type',        'application/font-woff')
+                  self.send_header('Cache-Control',        'max-age=1')  #set the cache of the image to a long time to prevent background image flipping
+                  self.end_headers()
+                  self.wfile.write(askedFile)
+                  #print "served a css file"
+                except Exception as e  :
+                  pass
+                  print "error9b in send_header "+" e:"+str(e.args)   
+                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
+                return
+
+
+            if (self.path.endswith(".ttf"))|(self.path.endswith(".TTF")):
+                f = open(curdir + sep + self.path,'rb') #self.path has /test.html
+                askedFile=f.read()
+                f.close()
+#note that this potentially makes every file on your computer readable by the internet
+                
+                try:
+                  self.send_response(200)
+                  self.send_header('Content-type',        'application/x-font-ttf')
+                  self.send_header('Cache-Control',        'max-age=1')  #set the cache of the image to a long time to prevent background image flipping
+                  self.end_headers()
+                  self.wfile.write(askedFile)
+                  #print "served a css file"
+                except Exception as e  :
+                  pass
+                  print "error9b in send_header "+" e:"+str(e.args)   
+                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
+                return
 
 
             if (self.path.endswith(".js"))| (self.path.endswith(".JS")):

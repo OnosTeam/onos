@@ -292,7 +292,7 @@ def handle_new_query_to_radio_node_thread(serialCom):
         int_address=int(new_address)
         if int_address not in next_node_free_address_list:
           next_node_free_address_list.append(int_address) 
-        continue  #this cmd don't need to change webobject..      
+        continue  #this cmd don't need to change webobject..so i continue      
 
       priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
       
