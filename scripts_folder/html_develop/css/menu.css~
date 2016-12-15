@@ -33,7 +33,7 @@ body{
 }
 
 
-.top_banner{
+#top_banner{
 
 	position:fixed;
 	top:0px;
@@ -47,13 +47,13 @@ body{
 	overflow:hidden;
 }
 
-.top_banner::after {
+#top_banner::after {
     content: "";
     clear: both;
     display: table;
 }
 
-.menu{
+#menu{
 
 	cursor:pointer;
 	width:12%;
@@ -67,7 +67,7 @@ body{
 
 
 
-.time{
+#time{
 
 
 	width:20%;
@@ -82,7 +82,7 @@ body{
 
 
 
-.date{
+#date{
 	
 
 	width:68%;
@@ -92,6 +92,28 @@ body{
 	color:white;
 	float: left;
 
+}
+
+
+.sideclass{
+
+
+	position:fixed;
+	top:20%;
+	left:0%;
+	width:40%;
+	height: 30%;
+	margin-left:-30%;
+	background: red;
+	-webkit-transition: margin-left 0.5s; /* Safari */
+	transition: margin-left 0.5s;
+
+
+}
+
+
+.sideclass.translate {
+	margin-left:0px;
 }
 
 
@@ -109,7 +131,7 @@ body {
 	margin-left:auto;
 	margin-right:auto;
 	padding-top:0px;
-	overflow:scroll-y;
+
  }
 
 .top_banner{

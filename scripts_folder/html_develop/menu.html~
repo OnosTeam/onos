@@ -8,18 +8,48 @@
 	<link rel="stylesheet" href="css/menu.css">
 	<meta charset="utf-8">
 
+	<script type=”text/javascript”>
+		
+
+
+
+
+var side = document.getElementsByClassName('sideclass')[0],
+
+document.getElementsByid('menu')[0].onclick = function() {
+  if(x === 0) 
+  { 
+    x=x++
+    side.classList.add('open');
+  } else {
+    x=x--
+    boxOne.classList.remove('open');    
+  }  
+}
+
+
+
+
+	</script>
+
+
+
     </head>
    <body>
 
 
-	<div class="top_banner">
+	<div id="top_banner">
 
 
-		<div class="menu"><i class="icon-menu"></i></div>
-		<div class="date">12-10-2016</div>
-		<div class="time">23:36</div>
+		<div id="menu"><i class="icon-menu"></i></div>
+		<div id="date">12-10-2016</div>
+		<div id="time">23:36</div>
 
 
+	
+
+
+	<div id="side">
 	</div>
 
 niger
