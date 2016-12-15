@@ -14,19 +14,32 @@
 
 
 
-var side = document.getElementsByClassName('sideclass')[0],
 
-document.getElementsByid('menu')[0].onclick = function() {
+var menubutton = document.getElementById("menu");
+
+
+
+
+
+var handler = function() {
+
+var x = 0;
+
   if(x === 0) 
   { 
-    x=x++
-    side.classList.add('open');
-  } else {
-    x=x--
-    boxOne.classList.remove('open');    
-  }  
-}
+    x=x+1;
 
+    document.getElementsByClassName('sideclass').classList.add('open');
+  } else {
+    x=x-1;
+
+
+    document.getElementsByClassName('sideclass').classList.remove('open');    
+  }  
+};
+
+
+menubutton.addEventListener("click", handler, true);
 
 
 
@@ -41,7 +54,7 @@ document.getElementsByid('menu')[0].onclick = function() {
 	<div id="top_banner">
 
 
-		<div id="menu"><i class="icon-menu"></i></div>
+		<div id="menu" class="iconamenu"><i class="icon-menu"></i></div>
 		<div id="date">12-10-2016</div>
 		<div id="time">23:36</div>
 
@@ -49,7 +62,7 @@ document.getElementsByid('menu')[0].onclick = function() {
 	
 
 
-	<div id="side">
+	<div id="side" class="sideclass">
 	</div>
 
 niger

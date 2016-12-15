@@ -112,8 +112,8 @@ body{
 }
 
 
-.sideclass.translate {
-	margin-left:0px;
+.sideclass.open {
+	margin-left:0%;
 }
 
 
