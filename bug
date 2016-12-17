@@ -22,6 +22,9 @@ se si si accende onoscenter senza internet l'ora resta sbagliata anche quando po
 main error in handle_new_query_to_remote_node_thread:('string indices must be integers',)
 
 
+problema scenari, non si possono rinominare? non funzionano dopo la rinomina oppure non vengono esportati in json correttamente?
+
+
 
 (12, 'Cannot allocate memory');;;
 

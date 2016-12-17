@@ -110,7 +110,7 @@ int old_address=254;
 
 unsigned long get_address_timeout=0;
 
-
+unsigned long get_decode_time=0;
 /*
 WPlugAvx node parameter:
   relay1_set_pin     --> the pin where the first relay set coil is connected
@@ -134,7 +134,7 @@ char received_message_type_of_onos_cmd[3];
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
-char received_message_answer[rx_msg_lenght+6]="er00_#]";
+char received_message_answer[24]="er00_#]";
 int received_message_address=0; //must be int..
 char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[48];
@@ -444,13 +444,20 @@ void decodeOnosCmd(const char *received_message){
     received_message_address=(received_message[3]-48)*100+(received_message[4]-48)*10+(received_message[5]-48)*1;
 
 
-         
+      int decodetime= millis()-get_decode_time;    
+      Serial.print("decode time01=") ;
+      Serial.println(decodetime) ;
+      get_decode_time=millis();
 
     if (received_message_address!=this_node_address) {//onos command for a remote arduino node
       strcpy(received_message_answer,"remote_#]");
 
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
     }
+
+      Serial.print("decode time02=") ;
+      Serial.println(millis()-get_decode_time) ;
+      get_decode_time=millis();
 
 
     //[S_123dw06001_#]
@@ -469,6 +476,9 @@ void decodeOnosCmd(const char *received_message){
       strcpy(received_message_answer,"ok");
       return;
     }
+
+
+
     
     //[S_001aw06125_#]
     else if( received_message_type_of_onos_cmd[0]=='a' && received_message_type_of_onos_cmd[1]=='w' ){
@@ -491,6 +501,11 @@ void decodeOnosCmd(const char *received_message){
  
     //[S_123wp01x_#]
     else if( received_message_type_of_onos_cmd[0]=='w' && received_message_type_of_onos_cmd[1]=='p' ){
+
+      Serial.print("decode time03=") ;
+      Serial.println(millis()-get_decode_time) ;
+      get_decode_time=millis();
+
 
       main_obj_state=received_message[8]-48;      
 
@@ -518,8 +533,17 @@ void decodeOnosCmd(const char *received_message){
       }
 
 
+      Serial.print("decode time04=") ;
+      Serial.println(millis()-get_decode_time) ;
+      get_decode_time=millis();
+
 
       changeObjStatus(main_obj_selected,received_message_value);
+
+
+      Serial.print("decode time05=") ;
+      Serial.println(millis()-get_decode_time) ;
+      get_decode_time=millis();
 
 /*
 
@@ -573,6 +597,8 @@ void decodeOnosCmd(const char *received_message){
 
       received_message_value=(received_message[8]-48)*100+(received_message[9]-48)*10+(received_message[10]-48);
 
+
+      //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
       received_serial_number[0]= received_message[11];
       received_serial_number[1]= received_message[12];
       received_serial_number[2]= received_message[13];
@@ -717,7 +743,7 @@ void loop() {
     Serial.print("obj_button pressed");
 
     while (digitalRead(obj_button_pin)==0){ //wait for button release
-      delay(100);
+      delay(100);//todo change it smaller
     }
 
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
@@ -727,6 +753,7 @@ void loop() {
 
 
   if (radio.receiveDone()){
+    get_decode_time=millis();
     //print message received to serial
     Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
     Serial.print((char*)radio.DATA);
@@ -738,36 +765,40 @@ void loop() {
     uint8_t message_copy[rx_msg_lenght+1];
 
     strcpy(filtered_onos_message,"");
-
+    Serial.print("msg_start:");
     for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
       filtered_onos_message[counter]=radio.DATA[counter];
       message_copy[counter]=radio.DATA[counter]; 
-      Serial.println(filtered_onos_message[counter]);
+      Serial.print(filtered_onos_message[counter]);
 
     //[S_001dw06001_#]
       if (counter<2){
         continue;
       }
       if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
-        Serial.println("cmd start found-------------------------------");
+       // Serial.println("cmd start found-------------------------------");
         onos_cmd_start_position=counter-2;
       }
 
 
       if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
-        Serial.println("cmd end found-------------------------------");
+      //  Serial.println("cmd end found-------------------------------");
         onos_cmd_end_position=counter-2;
         break;// now the message has ended
       }
 
 
     }
-
+    Serial.println("msg_stop");
 
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
       Serial.println("onos cmd  found-------------------------------");
       decodeOnosCmd(filtered_onos_message);
+
+      Serial.print("decode time1=") ;
+      Serial.println(millis()-get_decode_time) ;
+      get_decode_time=millis();
 
       if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){//if the message was ok...
       //check if sender wanted an ACK

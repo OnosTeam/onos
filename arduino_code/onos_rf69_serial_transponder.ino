@@ -1,3 +1,7 @@
+
+
+
+
 /*
  * O.N.O.S.  arduino serial gateway  firmware by Marco Rigoni 27-8-16  onos.info@gmail.com 
  * more info on www.myonos.com 
@@ -93,7 +97,7 @@ RFM69_ATC radio;
 
 
 
-boolean radio_enabled=1;
+
 
 unsigned long sync_time=0;
 
@@ -117,7 +121,7 @@ char received_message_type_of_onos_cmd[3];
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
-char received_message_answer[rx_msg_lenght+6]="er00_#]";
+char received_message_answer[24]="er00_#]";
 int received_message_address=0; //must be int..
 char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[28];
@@ -129,6 +133,8 @@ uint8_t counter=0;
 char data_from_serial[rx_msg_lenght+5];
 boolean enable_answer_back=0;
 boolean message_to_decode_avaible=0;
+boolean serial_msg_to_decode_is_avaible=0;
+boolean radio_msg_to_decode_is_avaible=0;
 
 int freeRam () 
 {
@@ -483,94 +489,7 @@ void decodeOnosCmd(const char *received_message){
 
 
 
-
-
-
-
-
-
-void setup() {
-
- // delay(95000); //wait for glinet to power on
-  while (!Serial); // wait until serial console is open
-  Serial.begin(SERIAL_BAUD);
-
-  // Hard Reset the RFM module
-  pinMode(RFM69_RST, OUTPUT);
-  digitalWrite(RFM69_RST, HIGH);
-  delay(100);
-  digitalWrite(RFM69_RST, LOW);
-  delay(100);
- 
-
-  // Initialize radio
-  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
-  if (IS_RFM69HCW) {
-    radio.setHighPower();    // Only for RFM69HCW & HW!
-  }
-  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-  
-  radio.encrypt(ENCRYPTKEY);
-  
-
-
-
-
-  pinMode(LED, OUTPUT);
-
-/*
-  Serial.print("\nTransmitting at ");
-  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(" MHz");
-
-*/  
-
-
-
-  Serial.println(F("[S_arduino_ready_#]"));
-  radio_enabled=1;
-
-
-/*
-  Serial.print("memory:");
-  Serial.println(freeRam ());
-
-*/
-  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
-
-  // If you are using a high power RF69, you *must* set a Tx power in the
-  // range 14 to 20 like this:
-  // driver.setTxPower(14);
-
-
-  composeSyncMessage();
-  makeSyncMessage();
-
-}
-
-
-
-void loop(){
-
-sync:
-
-if (first_sync==1){
-  delay(1000);
-  composeSyncMessage();
-  makeSyncMessage();
-
-}
-
-
-
-
-restart:
-
-  strcpy(data_from_serial,"");
-
-  strcpy(filtered_onos_message,"");
-
-
+boolean checkAndReceiveSerialMsg(){
 
 
 
@@ -645,33 +564,15 @@ restart:
     }
 
 
-
     counter=counter+1;
 
   }// end of while rx receive
 
-
-
-
-
   if ((message_to_decode_avaible==1)&&(onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
-
-   // Serial.println("[S_KKKKKK_#]");
-
-
-//#if defined(DEVMODE)
-//    Serial.println(F("onos cmd received0:"));
-//#endif
-
-   // uint8_t cmd_lenght=onos_cmd_end_position-onos_cmd_start_position+1;
 
     uint8_t message_copy[rx_msg_lenght+1];
 
     strcpy(filtered_onos_message,"");  //clear the filtered_onos_message array
-
-  
- //   Serial.println(onos_cmd_start_position);
- //   Serial.println(onos_cmd_end_position);
 
     for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
       filtered_onos_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
@@ -681,29 +582,31 @@ restart:
         break;
       }
 
-         //Serial.println("mmm");
-         //Serial.println(filtered_onos_message[pointer]);
     }
 
-    decodeOnosCmd(filtered_onos_message);
-    
 
 
-    if(((received_message_answer[0]=='o')&&(received_message_answer[1]=='k'))||(strcmp(received_message_answer,"[S_remote_#]")==0)){
+    return(1);// onos cmd found
+  }
+
+  strcpy(received_message_answer,"[S_nocmd0_#]");
+  return(0);//no cmd found
 
 
 
-      if (strcmp(received_message_answer,"[S_remote_#]")!=0) {//onos command for this arduino node
-            //Serial.print("ok_local");
-        strcpy(received_message_answer,"ok_#]");
-        counter=0;
-      } 
-      else{ //onos command to send to a remote node
-        if (radio_enabled==1){ // if radio is active and the flag is setted as forward..
-              //put here the radio  transmit part
-//bool RFM69_ATC::sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime) {
 
-          if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),5,250)) {
+}
+
+
+
+
+
+
+
+
+boolean ForwardSerialMessageToRadio(){
+
+  if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),1,200)) {
               // note that the max delay time is 255..because is uint8_t
               //target node Id, message as string or byte array, message length,retries, milliseconds before retry
               //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
@@ -737,141 +640,68 @@ restart:
                // Serial.println("OK");
             strcpy(received_message_answer,"ok_#]");
             radio.receiveDone(); //put radio in RX mode
-
+            return(1);
           }
 
           else{// failed to contact radio node or radion node 
                // Serial.println("sendtoWait failed");
             strcpy(received_message_answer,"[S_ertx1_#]");  
             radio.receiveDone(); //put radio in RX mode
+            return(0);
           }
 
 
+}
 
+void sendSerialAnswerFromSerialMsg(){
 
-        }
-        else {//radio is disabled 
-          strcpy(received_message_answer,"[S_ertx3_#]");
-
-        }
-
-              
-
-
-      }
-
-
-
-  
-      }
-   //   else{// error decoding the serial message
-
-   //     strcpy(received_message_answer,"ercmd1_#]");
-   //   }
-
-
-
-  }
-  else{
-
-    strcpy(received_message_answer,"[S_nocmd0_#]");
-
-
+  if (enable_answer_back!=1){ //write if there is a not recognised message
+    return;
   }
 
-
-
-
-
-  if (enable_answer_back==1){ //write if there is a not recognise message  shorter...
-  //  noInterrupts(); //disable all interrupt
-
-
-    if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
+  if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
       //strcat(received_message_answer,filtered_onos_message);
-      Serial.print(F("[S_ok"));
-      for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+    Serial.print(F("[S_ok"));
+    for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
-        if (pointer<3){//to skip the "[S_"  because I have just sent it..
-          continue;
-        }
-        Serial.print(filtered_onos_message[pointer]);
+      if (pointer<3){//to skip the "[S_"  because I have just sent it..
+        continue;
+      }
+      Serial.print(filtered_onos_message[pointer]);
 
-        if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
-          break;
-        }
-      }   
-      Serial.print('\n'); 
-      sync_time=millis();
-      enable_answer_back=0;
-      // the answer will be : [S_ok+ message received
+      if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
+        break;
+      }
+    }   
+    Serial.print('\n'); 
+    sync_time=millis();
+    enable_answer_back=0;
+    // the answer will be : [S_ok+ message received
 
-    }
+  }
 
-    else{
+  else{
 
-      Serial.print(received_message_answer); 
-      Serial.print('\n'); 
+    Serial.print(received_message_answer); 
+    Serial.print('\n'); 
 
-    }
+  }
     
 
-    strcpy(received_message_answer,"[S_nocmd2_#]");  
-    strcpy(filtered_onos_message,""); 
+  strcpy(received_message_answer,"[S_nocmd2_#]");  
+  strcpy(filtered_onos_message,""); 
 
-    Serial.flush(); //make sure all serial data is clocked out before sleeping the
-    enable_answer_back=0;
-   
-   // interrupts(); //reenable interrupts
-  }
+  Serial.flush(); //make sure all serial data is clocked out before sleeping the
+  enable_answer_back=0;
 
 
+}
 
 
 
-  if (Serial.available() > 0) {
+boolean checkAndHandleIncomingRadioMsg(){
 
-    goto restart;
-  }
-
-
-
-  if (first_sync==1){  //if the node is not synced yet..sync it
-    goto sync;
-  }
-
-
-
-
-//uart reception part concluded
-
-
-
-  if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update the current ip address
-    sync_time=millis();
-
-    composeSyncMessage();
-    makeSyncMessage();
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-//radio part started
-
-
-  if (radio_enabled==1){
-
-      // Wait for a message addressed to us from the client
     if (radio.receiveDone()){
     //print message received to serial
 
@@ -922,11 +752,13 @@ restart:
           if (radio.ACKRequested()){
             radio.sendACK();
   //          Serial.println(" - ACK sent");
+            return(1); 
           }
 
         }
         else{
           Serial.println(F("error in message decode from radio node i will not send the ACK"));
+          return(0);
         }
 
 
@@ -934,16 +766,16 @@ restart:
       else{
         strcpy(received_message_answer,"[S_nocmd0_#]");
         Serial.println(F("error in message nocmd0_#]"));
+        return(0); 
       }
 
-  
+  }
+
+}
 
 
-     // Blink(LED, 40, 3); //blink LED 3 times, 40ms between blinks
-    
 
-    }
-
+void forwardRadioMsgToSerialPort(){
 
     if(strcmp(received_message_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
 
@@ -973,10 +805,142 @@ restart:
     radio.receiveDone(); //put radio in RX mode
     Serial.flush(); //make sure all serial data is clocked out 
 
+}
+
+
+
+
+
+
+void setup() {
+
+ // delay(95000); //wait for glinet to power on
+  while (!Serial); // wait until serial console is open
+  Serial.begin(SERIAL_BAUD);
+
+  // Hard Reset the RFM module
+  pinMode(RFM69_RST, OUTPUT);
+  digitalWrite(RFM69_RST, HIGH);
+  delay(100);
+  digitalWrite(RFM69_RST, LOW);
+  delay(100);
+ 
+
+  // Initialize radio
+  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
+  if (IS_RFM69HCW) {
+    radio.setHighPower();    // Only for RFM69HCW & HW!
+  }
+  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
   
-  }// END OF   if (radio_enabled==1){
+  radio.encrypt(ENCRYPTKEY);
+  
 
 
+
+
+  pinMode(LED, OUTPUT);
+
+/*
+  Serial.print("\nTransmitting at ");
+  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+  Serial.println(" MHz");
+
+*/  
+
+
+
+  Serial.println(F("[S_arduino_ready_#]"));
+
+
+
+/*
+  Serial.print("memory:");
+  Serial.println(freeRam ());
+
+*/
+  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
+
+  // If you are using a high power RF69, you *must* set a Tx power in the
+  // range 14 to 20 like this:
+  // driver.setTxPower(14);
+
+
+  composeSyncMessage();
+  makeSyncMessage();
+
+}
+
+
+
+void loop(){
+
+sync:
+
+if (first_sync==1){
+  delay(1000);
+  composeSyncMessage();
+  makeSyncMessage();
+
+}
+
+
+
+
+restart:
+
+  strcpy(data_from_serial,"");
+
+  strcpy(filtered_onos_message,"");
+
+  serial_msg_to_decode_is_avaible=checkAndReceiveSerialMsg();
+
+  if (serial_msg_to_decode_is_avaible){
+    decodeOnosCmd(filtered_onos_message);
+    if ( strcmp(received_message_answer,"[S_remote_#]")==0){
+        ForwardSerialMessageToRadio();
+      }
+    sendSerialAnswerFromSerialMsg();
+    }
+    
+
+
+
+
+
+
+/*
+  if (Serial.available() > 0) {
+
+    goto restart;
+  }
+
+*/
+
+  if (first_sync==1){  //if the node is not synced yet..sync it
+    goto sync;
+  }
+
+
+
+
+//uart reception part concluded
+
+
+
+  if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update the current ip address
+    sync_time=millis();
+
+    composeSyncMessage();
+    makeSyncMessage();
+
+  }
+
+
+  radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+  if (radio_msg_to_decode_is_avaible==1){
+    forwardRadioMsgToSerialPort();
+  }
 
 
 
