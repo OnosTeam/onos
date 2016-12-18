@@ -14,6 +14,8 @@ from conf import *
 
 #import pyserial_port
 
+
+
 def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_already_done=0):
   """
   | This function make a query to a radio/serial node and wait the answer from the serial gateway.
@@ -26,7 +28,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
   """
 
-  max_retry=2
+  max_retry=1
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
@@ -87,18 +89,28 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
    # with lock_serial_input:
 
-    for a in serialCom.uart.readed_packets_list:
+    #for a in serialCom.uart.readed_packets_list.:
+
+    for i in xrange(len(serialCom.uart.readed_packets_list) - 1, -1, -1):  #iterate the list from the last element to the first
+      a=serialCom.uart.readed_packets_list[i]
+
       if a.find(expected_confirm)!=-1 :  #found the answer
+        serialCom.uart.readed_packets_list.pop(i)
         return (a)
+
+      if a=="[S_ertx1_#]":
+        serialCom.uart.readed_packets_list.pop(i)
+        continue 
+
 
     #print "uart rx list after:"
     #print serialCom.uart.readed_packets_list
  
 
 
-    print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial node the expected answer was:"+expected_confirm+",the number of try is "+str(m) 
+    #print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial node the expected answer was:"+expected_confirm+",the number of try is "+str(m) 
     errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial node the expected answer was:'"+expected_confirm+"'the number of try is "+str(m)+" at:" +getErrorTimeString() )    
-    time.sleep(0.1*m) 
+    #time.sleep(0.1*m) 
 
 
   print("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
@@ -244,14 +256,26 @@ def handle_new_query_to_radio_node_thread(serialCom):
   global nodeDict
   node_query_radio_threads_executing=1
 
+  query_sent_before_delay=0  #after n query sent wait a moment to let the remote nodes starts the tranmissions
+  threshold_of_query=1
+ 
   while not queryToRadioNodeQueue.empty():
-    currentRadioQueryPacket=queryToRadioNodeQueue.get() #get the tuple: 
-#                                                  (Priority,query_msg,node_serial_number,number_of_retry_done,time_when_the_query_was_created,query_order)
-    query=currentRadioQueryPacket[0]
-    
-    node_serial_number=currentRadioQueryPacket[1]
-    number_of_retry_done=currentRadioQueryPacket[2]
-    query_time=currentRadioQueryPacket[3]
+    query_sent_before_delay=query_sent_before_delay+1
+    if query_sent_before_delay>threshold_of_query:
+      time.sleep(0.35)   
+      print("wait to allow rx from radio nodes")
+
+
+
+
+    currentRadioQueryPacket=queryToRadioNodeQueue.get() #get the tuple:                                                 
+
+#((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
+    query_order=currentRadioQueryPacket[0]
+    query=currentRadioQueryPacket[1]   
+    node_serial_number=currentRadioQueryPacket[2]
+    number_of_retry_done=currentRadioQueryPacket[3]
+    query_time=currentRadioQueryPacket[4]
     objName=currentRadioQueryPacket[5]
     status_to_set=currentRadioQueryPacket[6]
     user=currentRadioQueryPacket[7]
@@ -259,10 +283,12 @@ def handle_new_query_to_radio_node_thread(serialCom):
     mail_report_list=currentRadioQueryPacket[9]
     cmd=currentRadioQueryPacket[10]
 
-    if number_of_retry_done>0:
-      query_order=currentRadioQueryPacket[4]
-    else:
-      query_order=query_time-currentRadioQueryPacket[4]  # i used time_when_the_query_was_created - priority..
+    #if number_of_retry_done>0:
+      
+    #else:
+    #  query_order=query_time-currentRadioQueryPacket[0]  # i used time_when_the_query_was_created - priority..
+
+    print ("current query_order:"+str(query_order)+"for query:"+query)
 
 
     node_address=nodeDict[node_serial_number].getNodeAddress()
@@ -270,18 +296,23 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
     query_answer=make_query_to_radio_node(serialCom,node_serial_number,query)
     if query_answer==-1 : #invalid answer received
-      query_order=query_order+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run
-      if priority!=99: #if the priority is 99 then the query will be always retrayed infinites times.
+
+      if priority==99: #if the priority is 99 then the query will be always retrayed infinites times.
+        query_order=time.time()+1 #make the query less important..to allow other queries to run
+      else:
 
         if number_of_retry_done>15:  #if greater that n don't repeat the query.
           continue
 
-        if (time.time()-query_order )>100: #if more than n seconds has passed since the query was made..don't try again.
+        if (time.time()-query_time )>100:
+          #if more than n seconds has passed since the query was made the first time..don't repeat the query.
           continue
-        
+        query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
+
+
 
      
-      queryToRadioNodeQueue.put((query,node_serial_number,number_of_retry_done,query_time,query_order,objName,status_to_set,user,priority,mail_report_list,cmd))
+      queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
 
     else:##if the query was accepted from the radio/serial node
       #since onos was able to talk to the node I update the LastNodeSync

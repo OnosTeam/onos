@@ -341,7 +341,7 @@ void sendSyncMessage(){
   syncMessage[6]='u'; //modify the message
   syncMessage[7]='l'; //modify the message
 
-  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),3,250)) {
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),10,10)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
@@ -365,7 +365,7 @@ void getAddressFromGateway(){
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
 
 
-  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),3,250)) {
+  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),10,10)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
@@ -499,8 +499,8 @@ void decodeOnosCmd(const char *received_message){
     } 
 
  
-    //[S_123wp01x_#]
-    else if( received_message_type_of_onos_cmd[0]=='w' && received_message_type_of_onos_cmd[1]=='p' ){
+    //[S_123wb01x_#]
+    else if( received_message_type_of_onos_cmd[0]=='w' && received_message_type_of_onos_cmd[1]=='b' ){
 
       Serial.print("decode time03=") ;
       Serial.println(millis()-get_decode_time) ;
@@ -671,7 +671,22 @@ void decodeOnosCmd(const char *received_message){
 
 }// end of decodeOnosCmd()
 
+void handleButton(){
 
+  if (digitalRead(obj_button_pin)==0) {
+    Serial.print("obj_button pressed");
+
+    while (digitalRead(obj_button_pin)==0){ //wait for button release
+      delay(100);//todo change it smaller
+    }
+
+    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+    sendSyncMessage(); 
+
+  }
+
+
+}
 
 
  
@@ -739,17 +754,7 @@ void loop() {
 
   //check if something was received (could be an interrupt from the radio)
 
-  if (digitalRead(obj_button_pin)==0) {
-    Serial.print("obj_button pressed");
-
-    while (digitalRead(obj_button_pin)==0){ //wait for button release
-      delay(100);//todo change it smaller
-    }
-
-    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
-    sendSyncMessage(); 
-
-  }
+  handleButton();
 
 
   if (radio.receiveDone()){
@@ -833,7 +838,7 @@ void loop() {
 
 
 
-
+  handleButton();
 
   if (old_address==254){// i have not the proper address yet..
 

@@ -598,8 +598,10 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
 5.26            started implementing handle_new_query_to_radio_node_thread()
                 starting replacing "except Exception , e"  with "except Exception as e" everywhere because is python3 friendly
                 now onoscenter will retry to send msg , not the arduino serial code.
-
-
+                Corrected some bugs in the queryToRadioNodeQueue priority were wrong..
+                Removed some delays in the serial communication ..
+                 
+   
 
 
 

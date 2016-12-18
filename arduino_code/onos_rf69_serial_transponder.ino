@@ -590,6 +590,7 @@ boolean checkAndReceiveSerialMsg(){
   }
 
   strcpy(received_message_answer,"[S_nocmd0_#]");
+  
   return(0);//no cmd found
 
 
@@ -895,6 +896,7 @@ restart:
 
   serial_msg_to_decode_is_avaible=checkAndReceiveSerialMsg();
 
+
   if (serial_msg_to_decode_is_avaible){
     decodeOnosCmd(filtered_onos_message);
     if ( strcmp(received_message_answer,"[S_remote_#]")==0){
@@ -902,13 +904,12 @@ restart:
       }
     sendSerialAnswerFromSerialMsg();
     }
-    
 
-
-
-
-
-
+   else if(enable_answer_back==1) {
+     Serial.print(received_message_answer);
+     enable_answer_back=0;
+   }
+   
 /*
   if (Serial.available() > 0) {
 
@@ -923,8 +924,11 @@ restart:
 
 
 
+  radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+  if (radio_msg_to_decode_is_avaible==1){
+    forwardRadioMsgToSerialPort();
+  }
 
-//uart reception part concluded
 
 
 
@@ -935,16 +939,6 @@ restart:
     makeSyncMessage();
 
   }
-
-
-  radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
-  if (radio_msg_to_decode_is_avaible==1){
-    forwardRadioMsgToSerialPort();
-  }
-
-
-
-
 
 
 

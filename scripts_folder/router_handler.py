@@ -59,8 +59,8 @@ class RouterHandler:
       self.hwModelName=hardwareModelDict["hwName"]
       self.__hardware_type=hardwareModelDict["hardware_type"]
       self.__node_name=self.router_sn   # RouterGL0001
-
-      self.query_number=0  # to send an unique message identyfier i append a progressive number to the end of the message
+      self.progressive_msg_id='0' # to send an unique message identyfier i append a progressive number to the end of the message
+      self.progressive_msg_number=0 #used to create self.progressive_msg_id 
 
       self.exit=0
       self.router_pin_numbers=[]
@@ -323,23 +323,19 @@ class RouterHandler:
 
       print "composeChangeNodeOutputPinStatusQuery() executed"
      
-     
-      if self.query_number>999:
-        self.query_number=0
-      else:
-        self.query_number=self.query_number+1
-
-      str_query_number=str(self.query_number) 
-      while (len(str_query_number) < 3):
-        str_query_number="0"+str_query_number 
+    
 
 
       address=node_obj.getNodeAddress()
       query="error_compose_query"
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
 
+      self.progressive_msg_number=self.progressive_msg_number+1
 
+      self.progressive_msg_id=str(self.progressive_msg_number)  #todo  create a progressive number
 
+      if  self.progressive_msg_number>8: #restart the number
+        self.progressive_msg_number=0 
 
    
 
@@ -381,8 +377,10 @@ class RouterHandler:
 
           query_placeholder=re.sub(r'#_valuelen:.+?_#',value,query_placeholder) # replace  #_valuelen:1_#  with the value
           #query example:  [S_123wp01x_#]
-          progressive_msg_id='x'  #todo  create a progressive number
-          query='''[S_'''+node_address+query_placeholder+progressive_msg_id+'''_#]'''
+
+
+
+          query='''[S_'''+node_address+query_placeholder+self.progressive_msg_id+'''_#]'''
          # print "query:::::"+query
           #valuelen_pos=query_placeholder.find("valuelen")
           #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
@@ -403,7 +401,7 @@ class RouterHandler:
           pin1='0'+pin1
 
         #  [S_001sr04051_#] 
-        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+str(self.query_number)+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+progressive_msg_id+'''_#]'''
 
       if (out_type=="digital_output"):# [S_001dw06001_#]
 
@@ -414,7 +412,7 @@ class RouterHandler:
           pin='0'+pin
 
         
-        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+str(self.query_number)+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+self.progressive_msg_id+'''_#]'''
 
 
 
@@ -445,7 +443,7 @@ class RouterHandler:
         while (len(status_to_set)) <3:
           status_to_set='0'+status_to_set 
 
-        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+self.progressive_msg_id+'''_#]'''
 
 
 
@@ -508,16 +506,16 @@ class RouterHandler:
       #    next_node_free_address_list.append(int_address)
 
       query_time=time.time()
-      query_order=0
       number_of_retry_done=0
       priority=99
+      query_order=priority
       cmd="set_address"
       objName="set_address"
       status_to_set=new_address
       user="onos_node"
       mail_report_list=[]
 
-      queryToRadioNodeQueue.put((query,node_serial_number,number_of_retry_done,query_time,query_order,objName,status_to_set,user,priority,mail_report_list,cmd))
+      queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
       if node_query_radio_threads_executing==0:
         tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
         tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
@@ -664,10 +662,10 @@ class RouterHandler:
           query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
           print "I WRITE THIS QUERY TO SERIAL NODE:"+query+"end"  
           query_time=time.time()
-          query_order=0
+          query_order=priority
           number_of_retry_done=0
           cmd=""
-          queryToRadioNodeQueue.put((query,node_serial_number,number_of_retry_done,query_time,query_order,objName,statusToSetWebObject,user,priority,mail_report_list,cmd))
+          queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,statusToSetWebObject,user,priority,mail_report_list,cmd))
 
           if node_query_radio_threads_executing==0:
             tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])

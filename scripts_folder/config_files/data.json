@@ -27,7 +27,7 @@
     }, 
     "WPlugAvx0008": {
       "hwModelName": "WPlugAvx", 
-      "nodeAddress": "003", 
+      "nodeAddress": "004", 
       "node_serial_number": "WPlugAvx0008"
     }
   }, 
@@ -204,7 +204,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -310,9 +310,9 @@
       "pins": [
         5
       ], 
-      "priority": 0, 
+      "priority": 10, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -347,7 +347,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -451,9 +451,9 @@
       "pins": [
         6
       ], 
-      "priority": 0, 
+      "priority": 10, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -524,7 +524,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -630,7 +630,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 17, 
+      "status": 18, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -666,7 +666,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 90, 
+      "status": 49, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -710,7 +710,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 1, 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -756,7 +756,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 30, 
+      "status": 49, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -864,7 +864,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "0", 
+      "status": "1", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -899,7 +899,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -1045,7 +1045,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 

@@ -173,7 +173,7 @@ class SerialPort:
 
 
       while (self.exit==0):
-          time.sleep(0.1) 
+          time.sleep(0.01)#0.03 
 
           if self.ser.isOpen() == False :
             print "error serial port disconnected in arduinoserial.py"
@@ -193,23 +193,22 @@ class SerialPort:
             break
           buf=''
 
-          done=0
           count=0
 
 
           if write_to_serial_packet_ready==1:
 
-            try:
-              self.ser.flushInput() #flush input buffer, discarding all its contents
-            except Exception, e :
-              print "can't flush input"+str(e.args) 
-              errorQueue.put( "can't flush input"+str(e.args) )
+           # try:
+           #   self.ser.flushInput() #flush input buffer, discarding all its contents
+           # except Exception, e :
+           #   print "can't flush input"+str(e.args) 
+           #   errorQueue.put( "can't flush input"+str(e.args) )
 
             if write_enable==1:
               try:
                 self.ser.write(data_to_write)
-                print "i write data_to_write::::::::::::::::::::::::::::::::::::::::::"+data_to_write
-                time.sleep(0.02) 
+                print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
+                #time.sleep(0.02) 
                 write_enable=0
               except Exception, e :
                 print "can't write to uart"+str(e.args) 
@@ -222,7 +221,7 @@ class SerialPort:
                 errorQueue.put( "can't flush output"+str(e.args) )
 
 
-          while done==0:
+          while (self.exit==0):
             time.sleep(0.01) 
             if self.exit==1 or write_enable==1:
               break
@@ -239,11 +238,11 @@ class SerialPort:
 
 
             if not byte:  #nothing on incoming serial buffer
-              done=1
+
              # print "end of serial packet1"
               #print "incoming buffer="+serial_incomingBuffer
-              time.sleep(0.3)
-              continue
+              time.sleep(0.1)#0.3
+              break
 
 
             #here the buffer have received at least one byte
@@ -267,7 +266,6 @@ class SerialPort:
               continue
 
             if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
-              done=1
               print "end of serial packet for /n"
               break
             else:   
@@ -277,14 +275,12 @@ class SerialPort:
               count=len(buf)
 
               if len(buf)==0:
-                done=0
                 continue
 
 
               if len(buf)>3:
                 waitTowriteUntilIReceive=1 
                 if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
-                  done=1
                   print "end of serial packet:_#] "
                   break 
 
@@ -299,20 +295,20 @@ class SerialPort:
 
 
 
-
+            cmd_start=buf.find("[S_")
+            cmd_end=buf.find("_#]")
            
-            if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+            if ( (cmd_start!=-1)&(cmd_end!=-1) ): #there is a full onos command packet
 
-              print "packet 232 in :"+buf
-              time.sleep(1)
+              print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 input :"+buf
+              #time.sleep(1) #todo remove,justfordebug
               if write_to_serial_packet_ready==1:
                 last_received_packet=buf
                 write_to_serial_packet_ready=0  
                 print "packet received after the write is :"+last_received_packet
 
  
-              cmd_start=buf.find("[S_")
-              cmd_end=buf.find("_#]")
+
               cmd=buf[cmd_start:cmd_end+3]
               
 
@@ -349,7 +345,7 @@ class SerialPort:
 
 
               if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001_#]
-                print "serial rx cmd="+cmd
+                print "LLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd
                 buf=""
                 try:
                   numeric_serial_number=cmd[13:25]
@@ -443,6 +439,9 @@ class SerialPort:
 #    print "portWrite executed"
 #    self.usbW.write(data)
 
+  def write2(self, data):#test..
+    self.ser.write(data)
+    return("prova")
 
   def write(self, data):
     global write_enable
@@ -453,7 +452,8 @@ class SerialPort:
 
 
     write_enable=1
-    last_received_packet=""
+    #last_received_packet=""
+
                 #self.portWrite(data_to_write)
     #self.usbW.write(data_to_write+'\n')
     #os.system("echo "+data_to_write+" >> "+self.port) 

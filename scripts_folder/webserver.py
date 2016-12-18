@@ -1363,6 +1363,8 @@ for a in objectList :                # append to dictionary all the web object
   obj_node_address=a.getHwNodeSerialNumber()
   if obj_node_address in nodeDict.keys():
     if nodeDict[obj_node_address].getNodeTimeout()!="never": 
+      #at startup set as inactive all the nodes that has a timeout value,later when the node contact onos,onos will reactive and 
+      # change all the node object to the saved values
       a.setStatus("inactive")
       nodeDict[obj_node_address].updateLastNodeSync(99999)
 
@@ -5512,9 +5514,9 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 
-    if ( (time.time()-last_node_check) >2 ):   #EVERY 2 SECONDS
-      print "threads:",len(threading.enumerate())
-      print "check nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    if ( (time.time()-last_node_check) >2 ):   #EVERY 2 SECONDS   todo: make this function..
+      #print "threads:",len(threading.enumerate())
+      #print "check nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
      
       last_node_check=time.time()
       #banana try...
@@ -5525,19 +5527,25 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         if nodeDict[a].getNodeTimeout()=="never": #never timeout
           continue
          
-        print "nodecheck:"+a
+        #print "nodecheck:"+a
+
         #print "last_node_sync:"+str(nodeDict[a].getLastNodeSync()) 
         #print "time_now:"+str(time.time()) 
-        print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
+
+        #print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
 
 
-        if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore          
+        if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore       
+
+
           if nodeDict[a].getNodeActivity()==0: #if the node was already inactive
             nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
             continue #skip
 
+
           nodeDict[a].setNodeActivity(0)  #set the node as inactive
           print "the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"
+          print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())    
           errorQueue.put( "The node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"+"at:" +getErrorTimeString())
           for b in object_dict.keys():
             if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
@@ -5850,23 +5858,32 @@ def onosBusThread():
 
 
 
-      while not priorityCmdQueue.empty():   #this has priority over the other layer
-        #if not priorityCmdQueue.empty():
+      if not priorityCmdQueue.empty():   #this has priority over the other layer
+        executeQueueFunction(priorityCmdQueue.get())
+    
+      if not layerExchangeDataQueue.empty():
+        executeQueueFunction(layerExchangeDataQueue.get())
+
+
+      if not priorityCmdQueue.empty():   #this has priority over the other layer
         executeQueueFunction(priorityCmdQueue.get())
 
 
-    
-      while not layerExchangeDataQueue.empty():
-        #if not layerExchangeDataQueue.empty():
-
-        while not priorityCmdQueue.empty():   #this has priority over the other layer
-          #if not priorityCmdQueue.empty():
-          executeQueueFunction(priorityCmdQueue.get())
-        
+      if not priorityCmdQueue.empty():   #this has priority over the other layer
+        executeQueueFunction(priorityCmdQueue.get())
 
 
+      if not layerExchangeDataQueue.empty():
         executeQueueFunction(layerExchangeDataQueue.get())
-        #layerExchangeDataQueue.task_done()
+
+
+
+      while not priorityCmdQueue.empty():   #this has priority over the other layer
+        executeQueueFunction(priorityCmdQueue.get())
+        
+      while not layerExchangeDataQueue.empty():
+        executeQueueFunction(layerExchangeDataQueue.get())
+
 
 
 
