@@ -136,6 +136,8 @@ boolean message_to_decode_avaible=0;
 boolean serial_msg_to_decode_is_avaible=0;
 boolean radio_msg_to_decode_is_avaible=0;
 
+uint8_t skipUartRxMsg=0;
+
 int freeRam () 
 {
   extern int __heap_start, *__brkval; 
@@ -878,12 +880,12 @@ void loop(){
 
 sync:
 
-if (first_sync==1){
-  delay(1000);
-  composeSyncMessage();
-  makeSyncMessage();
+  if (first_sync==1){
+    delay(1000);
+    composeSyncMessage();
+    makeSyncMessage();
 
-}
+  }
 
 
 
@@ -894,6 +896,15 @@ restart:
 
   strcpy(filtered_onos_message,"");
 
+
+  if (skipUartRxMsg>1){  // skip uart message to allow incoming radio msg to be received
+
+    skipUartRxMsg=0;
+    goto radioRxCheck;
+  }
+
+  skipUartRxMsg=skipUartRxMsg+1;
+  
   serial_msg_to_decode_is_avaible=checkAndReceiveSerialMsg();
 
 
@@ -918,12 +929,10 @@ restart:
 
 */
 
-  if (first_sync==1){  //if the node is not synced yet..sync it
-    goto sync;
-  }
 
 
 
+radioRxCheck:
   radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
   if (radio_msg_to_decode_is_avaible==1){
     forwardRadioMsgToSerialPort();
@@ -943,7 +952,9 @@ restart:
 
 
  
-
+  if (first_sync==1){  //if the node is not synced yet..sync it
+    goto sync;
+  }
 
 
 

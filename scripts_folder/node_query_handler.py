@@ -257,14 +257,14 @@ def handle_new_query_to_radio_node_thread(serialCom):
   node_query_radio_threads_executing=1
 
   query_sent_before_delay=0  #after n query sent wait a moment to let the remote nodes starts the tranmissions
-  threshold_of_query=1
+  threshold_of_query=2
  
   while not queryToRadioNodeQueue.empty():
     query_sent_before_delay=query_sent_before_delay+1
     if query_sent_before_delay>threshold_of_query:
-      time.sleep(0.35)   
+      time.sleep(1)   #need this to allow the serial node to pick up the messages from the radio nodes..
       print("wait to allow rx from radio nodes")
-
+      query_sent_before_delay=0
 
 
 
@@ -282,6 +282,10 @@ def handle_new_query_to_radio_node_thread(serialCom):
     priority=currentRadioQueryPacket[8]
     mail_report_list=currentRadioQueryPacket[9]
     cmd=currentRadioQueryPacket[10]
+
+    node_address=nodeDict[node_serial_number].getNodeAddress()
+
+    query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
 
     #if number_of_retry_done>0:
       

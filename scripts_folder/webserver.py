@@ -347,6 +347,11 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
 
   print "getNextFreeAddress executed"
   print next_node_free_address_list
+  if node_sn0 in nodeDict:  #if the node has already an address..reuse it
+    address=nodeDict[node_sn0].getNodeAddress()
+    if (address!="254" ): 
+      return (address)
+
 
   for number in range(2,254):
     if number not in next_node_free_address_list:# if the address is not used then assign it

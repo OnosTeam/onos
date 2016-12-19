@@ -600,9 +600,11 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 now onoscenter will retry to send msg , not the arduino serial code.
                 Corrected some bugs in the queryToRadioNodeQueue priority were wrong..
                 Removed some delays in the serial communication ..
-                 
-   
-
+                Found some bugs , the node can't talk to onos if onos is talking...
+                found that there is an harware problem in the plug prototype ,it resets itself when the relay are controlled. 
+                Introduced a conditional delay in the node_query_handler.py to allow the radio nodes to transmit to onoscenter.
+                Introduced a conditional skipUartRxMsg  that permits the serialnode to receive radio messages more often. 
+                The radio node is working now also if is not stable.
 
 
 

@@ -401,7 +401,7 @@ class RouterHandler:
           pin1='0'+pin1
 
         #  [S_001sr04051_#] 
-        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+progressive_msg_id+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.progressive_msg_id+'''_#]'''
 
       if (out_type=="digital_output"):# [S_001dw06001_#]
 

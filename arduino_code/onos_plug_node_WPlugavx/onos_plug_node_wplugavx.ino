@@ -140,6 +140,7 @@ char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[48];
 char str_this_node_address[4];
 uint8_t main_obj_selected=0;
+uint8_t rx_main_obj_selected=0;
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
 
@@ -153,7 +154,8 @@ unsigned long time_since_last_sync=0;
 unsigned long time_from_turn_on=0;
 int timeout_to_turn_off=0;//0=disabled    600; //10 hours    todo   add the possibility to set it from remote
 
-
+uint8_t skipRadioRxMsg=0;
+uint8_t skipRadioRxMsgThreshold=5;
 
 char main_obj_state=0;
 //int old_main_obj_state=5;
@@ -188,7 +190,7 @@ int freeRam ()
 
 
 
-void changeObjStatus(char obj_number,int status_to_set){
+boolean changeObjStatus(char obj_number,int status_to_set){
    Serial.print("changeObjStatus executed with  status:");
    Serial.println(status_to_set);
 
@@ -205,9 +207,10 @@ void changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay2_reset_pin,0); 
     main_obj_state=status_to_set;
     digitalWrite(obj_led_pin,status_to_set);
+    return(1);
   }
 
-
+return(0);
 
 }
 
@@ -341,12 +344,13 @@ void sendSyncMessage(){
   syncMessage[6]='u'; //modify the message
   syncMessage[7]='l'; //modify the message
 
-  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),10,10)) {
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),4,150)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
     Serial.println("sent_sync_message1");
 //    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
+    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
   }
 
 
@@ -365,12 +369,12 @@ void getAddressFromGateway(){
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
 
 
-  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),10,10)) {
+  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),4,150)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
     Serial.println("sent_get_address");
-   // Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
+    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
   }
 
   syncMessage[6]='u'; //modify the message
@@ -444,9 +448,9 @@ void decodeOnosCmd(const char *received_message){
     received_message_address=(received_message[3]-48)*100+(received_message[4]-48)*10+(received_message[5]-48)*1;
 
 
-      int decodetime= millis()-get_decode_time;    
-      Serial.print("decode time01=") ;
-      Serial.println(decodetime) ;
+     // int decodetime= millis()-get_decode_time;    
+     // Serial.print("decode time01=") ;
+     // Serial.println(decodetime) ;
       get_decode_time=millis();
 
     if (received_message_address!=this_node_address) {//onos command for a remote arduino node
@@ -455,10 +459,11 @@ void decodeOnosCmd(const char *received_message){
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
     }
 
+/*
       Serial.print("decode time02=") ;
       Serial.println(millis()-get_decode_time) ;
       get_decode_time=millis();
-
+*/
 
     //[S_123dw06001_#]
     if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
@@ -502,10 +507,11 @@ void decodeOnosCmd(const char *received_message){
     //[S_123wb01x_#]
     else if( received_message_type_of_onos_cmd[0]=='w' && received_message_type_of_onos_cmd[1]=='b' ){
 
+/*
       Serial.print("decode time03=") ;
       Serial.println(millis()-get_decode_time) ;
       get_decode_time=millis();
-
+*/
 
       main_obj_state=received_message[8]-48;      
 
@@ -518,11 +524,11 @@ void decodeOnosCmd(const char *received_message){
         return;
       }
 
-      main_obj_selected= (received_message[8])-48;
+      rx_main_obj_selected= (received_message[8])-48;
 
 
 
-      if (main_obj_selected==0){ //first object selected
+      if (rx_main_obj_selected==main_obj_selected){ //first object selected
         strcpy(received_message_answer,"cmdRx_#]"); // just to make something..              
 
       }
@@ -532,18 +538,33 @@ void decodeOnosCmd(const char *received_message){
         return;
       }
 
-
+/*
       Serial.print("decode time04=") ;
       Serial.println(millis()-get_decode_time) ;
       get_decode_time=millis();
+*/
+      boolean change_status_ok=0; 
+      change_status_ok=changeObjStatus(main_obj_selected,received_message_value);
 
 
-      changeObjStatus(main_obj_selected,received_message_value);
+      if (change_status_ok!=1){
+
+        Serial.println(F("er_chobjstatus_#]"));  
+        strcpy(received_message_answer,"er_chobjstatus_#]"); 
+        return;
+
+      }
 
 
+
+
+
+/*
       Serial.print("decode time05=") ;
       Serial.println(millis()-get_decode_time) ;
       get_decode_time=millis();
+*/
+
 
 /*
 
@@ -756,8 +777,20 @@ void loop() {
 
   handleButton();
 
+  if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
+    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+    Serial.println("I skip the rxradio part once");
+    goto radioTx;
+
+
+  }
+
+
 
   if (radio.receiveDone()){
+
+    skipRadioRxMsg=skipRadioRxMsg+1;
+
     get_decode_time=millis();
     //print message received to serial
     Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
@@ -799,6 +832,7 @@ void loop() {
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
       Serial.println("onos cmd  found-------------------------------");
+      //noInterrupts(); // Disable interrupts    //important for lamp node 
       decodeOnosCmd(filtered_onos_message);
 
       Serial.print("decode time1=") ;
@@ -811,34 +845,42 @@ void loop() {
           radio.sendACK();
           Serial.println(" - ACK sent");
         }
+        //interrupts(); // Enable interrupts
 
       }
       else{
         Serial.println("error in message decode i will not send the ACK");
+        //interrupts(); // Enable interrupts 
       }
 
-
+    //interrupts(); // Enable interrupts
 
     }
     else{
       strcpy(received_message_answer,"nocmd0_#]");
       Serial.println("error in message nocmd0_#]");
+
     }
 
   
-
-
-     // Blink(LED, 40, 3); //blink LED 3 times, 40ms between blinks
     
 
-  }
+  }// end if (radio.receiveDone())
+
+
+radioTx:
  
   radio.receiveDone(); //put radio in RX mode
   Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
 
 
 
+
   handleButton();
+
+
+
+
 
   if (old_address==254){// i have not the proper address yet..
 

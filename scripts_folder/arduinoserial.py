@@ -65,7 +65,7 @@ write_enable=0
 
 global last_received_packet
 global data_to_write
-global write_to_serial_packet_ready
+global incomingByteAfterWriteAvaible
 global serial_incomingBuffer
 global waitTowriteUntilIReceive
 
@@ -153,7 +153,7 @@ class SerialPort:
 
       global last_received_packet
       global data_to_write
-      global write_to_serial_packet_ready
+      global incomingByteAfterWriteAvaible
       global waitTowriteUntilIReceive
       global write_enable
       print "read_data thread executed"
@@ -174,7 +174,7 @@ class SerialPort:
 
       while (self.exit==0):
           time.sleep(0.01)#0.03 
-
+          
           if self.ser.isOpen() == False :
             print "error serial port disconnected in arduinoserial.py"
             errorQueue.put("error serial port disconnected in arduinoserial.py")
@@ -196,35 +196,37 @@ class SerialPort:
           count=0
 
 
-          if write_to_serial_packet_ready==1:
+
 
            # try:
            #   self.ser.flushInput() #flush input buffer, discarding all its contents
            # except Exception, e :
            #   print "can't flush input"+str(e.args) 
            #   errorQueue.put( "can't flush input"+str(e.args) )
+          msgWasWritten=0
 
-            if write_enable==1:
-              try:
-                self.ser.write(data_to_write)
-                print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
-                #time.sleep(0.02) 
-                write_enable=0
-              except Exception, e :
-                print "can't write to uart"+str(e.args) 
-                errorQueue.put( "can't write to uart"+str(e.args) )
+          if write_enable==1:
+            try:
+              self.ser.write(data_to_write)
+              print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
+                #time.sleep(0.1) #0.02 
+              write_enable=0
+              msgWasWritten=1
+            except Exception, e :
+              print "can't write to uart"+str(e.args) 
+              errorQueue.put( "can't write to uart"+str(e.args) )
 
-              try:
-                self.ser.flushOutput()
-              except Exception, e :
-                print "can't flush output"+str(e.args) 
-                errorQueue.put( "can't flush output"+str(e.args) )
+            try:
+              self.ser.flushOutput()
+            except Exception, e :
+              print "can't flush output"+str(e.args) 
+              errorQueue.put( "can't flush output"+str(e.args) )
 
 
           while (self.exit==0):
             time.sleep(0.01) 
-            if self.exit==1 or write_enable==1:
-              break
+            #if self.exit==1 or write_enable==1:
+            #  break
             #if len(self.removeFromInBuffer)>0:
             #  serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
             #  self.removeFromInBuffer=''
@@ -271,7 +273,7 @@ class SerialPort:
             else:   
               #print "in byte="+byte+" end of in byte"
               buf=buf+byte
-              
+              print ("buf=$$$$$$$$$$$$$$$$"+buf)
               count=len(buf)
 
               if len(buf)==0:
@@ -302,15 +304,28 @@ class SerialPort:
 
               print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 input :"+buf
               #time.sleep(1) #todo remove,justfordebug
-              if write_to_serial_packet_ready==1:
+              if msgWasWritten==1:
                 last_received_packet=buf
-                write_to_serial_packet_ready=0  
+                msgWasWritten=0 
+                incomingByteAfterWriteAvaible=1 
                 print "packet received after the write is :"+last_received_packet
 
  
 
               cmd=buf[cmd_start:cmd_end+3]
-              
+
+
+
+              if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i recived a confirm from the node
+                
+
+                #with lock_serial_input:              
+                serial_incomingBuffer=buf
+                self.readed_packets_list.append(buf)
+                buf=""
+                self.dataAvaible=1 
+                waitTowriteUntilIReceive=0
+                continue
 
               if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
               # [S_001sy3.05ProminiS0001_#]   or [S_123ul5.24WPlugAvx000810000_#]
@@ -375,9 +390,9 @@ class SerialPort:
 
            # print "serial input="+buf
 
-              with lock_serial_input:              
-                serial_incomingBuffer=buf
-                self.readed_packets_list.append(buf)
+              #with lock_serial_input:              
+              serial_incomingBuffer=buf
+              self.readed_packets_list.append(buf)
 
               self.dataAvaible=1 
               waitTowriteUntilIReceive=0
@@ -447,28 +462,28 @@ class SerialPort:
     global write_enable
     global last_received_packet
     global data_to_write
-    global write_to_serial_packet_ready
+    global incomingByteAfterWriteAvaible
     data_to_write=data
 
 
     write_enable=1
-    #last_received_packet=""
+    last_received_packet=""
 
                 #self.portWrite(data_to_write)
     #self.usbW.write(data_to_write+'\n')
     #os.system("echo "+data_to_write+" >> "+self.port) 
     #self.ser.write(data_to_write)
 
-    write_to_serial_packet_ready=1
+    incomingByteAfterWriteAvaible=0
     print "data_to_write:"+data_to_write  
  
     start_time=time.time()
-    while write_to_serial_packet_ready==1:
+    while incomingByteAfterWriteAvaible==1:
       time.sleep(0.01) 
 
-      if (time.time()>(start_time+2) ):#2 #timeout to exit the loop
+      if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
         print "rx after write timeout0"
-        write_to_serial_packet_ready=0
+        incomingByteAfterWriteAvaible=0
         return("error_reception")
     
    
