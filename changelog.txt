@@ -605,8 +605,9 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Introduced a conditional delay in the node_query_handler.py to allow the radio nodes to transmit to onoscenter.
                 Introduced a conditional skipUartRxMsg  that permits the serialnode to receive radio messages more often. 
                 The radio node is working now also if is not stable.
-
-
+                The button on the node is not changing the object status correctly.
+                The system is not 100% secure to change the status.
+                There is some proble for onos to receive data from radio..
 
 
 (110, 'Connection timed out');;;

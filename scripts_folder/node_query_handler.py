@@ -28,7 +28,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
   """
 
-  max_retry=1
+  max_retry=1  
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
@@ -256,16 +256,26 @@ def handle_new_query_to_radio_node_thread(serialCom):
   global nodeDict
   node_query_radio_threads_executing=1
 
-  query_sent_before_delay=0  #after n query sent wait a moment to let the remote nodes starts the tranmissions
-  threshold_of_query=2
+  time_of_write=time.time()  #after n query sent wait a moment to let the remote nodes starts the tranmissions
+  old_time_of_write=time.time() 
+  time_waiting_for_incoming_msg=time.time()
+  threshold_of_time_query=0.1
  
   while not queryToRadioNodeQueue.empty():
-    query_sent_before_delay=query_sent_before_delay+1
-    if query_sent_before_delay>threshold_of_query:
-      time.sleep(1)   #need this to allow the serial node to pick up the messages from the radio nodes..
+    #query_sent_before_delay=query_sent_before_delay+1
+    time_of_write=time.time() 
+    old_time_of_write=time_of_write 
+    time_waiting_for_incoming_msg=time.time() 
+
+
+    if (time.time()-time_waiting_for_incoming_msg-threshold_of_time_query)>(time_of_write-old_time_of_write):
+      time.sleep(0.01)   #need this to allow the serial node to pick up the messages from the radio nodes..
+      old_time_of_write=time.time() 
+      time_waiting_for_incoming_msg=time.time() 
+      time_of_write=time.time() 
       print("wait to allow rx from radio nodes")
       query_sent_before_delay=0
-
+      continue 
 
 
     currentRadioQueryPacket=queryToRadioNodeQueue.get() #get the tuple:                                                 
@@ -304,12 +314,16 @@ def handle_new_query_to_radio_node_thread(serialCom):
       if priority==99: #if the priority is 99 then the query will be always retrayed infinites times.
         query_order=time.time()+1 #make the query less important..to allow other queries to run
       else:
-
+        number_of_retry_done=number_of_retry_done+1
         if number_of_retry_done>15:  #if greater that n don't repeat the query.
+          print ("i retried the query:"+query+"more than 15 times , I giveup")
+          errorQueue.put("i retried the query:"+query+"more than 15 times , I giveup")
           continue
 
         if (time.time()-query_time )>100:
           #if more than n seconds has passed since the query was made the first time..don't repeat the query.
+          print ("i retried the query "+query+"more than 100 seconds , I giveup")
+          errorQueue.put("i retried the query:"+query+"more than 100 seconds  , I giveup")
           continue
         query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
 
