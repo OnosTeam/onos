@@ -5737,6 +5737,7 @@ def executeQueueFunction(dataExchanged):
 #hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}# 
 
     node_sn=dataExchanged["nodeSn"]
+    updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     node_model_name=node_sn[0:-4]#get WPlugAvx from  WPlugAvx0008
     print str(dataExchanged["objects_to_update"].keys())
     print "end data_exanged"

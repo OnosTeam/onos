@@ -28,7 +28,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
   """
 
-  max_retry=1  
+  max_retry=2 
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
@@ -50,15 +50,16 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
       for a in serialCom.uart.readed_packets_list:
         if a.find(expected_confirm)!=-1 :  #found the answer
+          serialCom.uart.readed_packets_list.remove(a) 
           return (a)
 
-
+    time.sleep(0.2)  
 
 
     if serialCom.uart.ser.isOpen() == False :
       print "serial port is not open in make_query_to_radio_node()"
       priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
-    #  time.sleep(1)  
+    # time.sleep(1)  
       return(-1)
 
 
@@ -73,11 +74,15 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
       print str(e.args)
      # time.sleep(2)  
 
+
+    if data.find(expected_confirm)!=-1:
+      return(data)
+
     if data=="error_reception":
       continue
   
     
-
+    
   
      # return(1) 
     print "expected confirm:"+expected_confirm
@@ -110,7 +115,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
     #print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial node the expected answer was:"+expected_confirm+",the number of try is "+str(m) 
     errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial node the expected answer was:'"+expected_confirm+"'the number of try is "+str(m)+" at:" +getErrorTimeString() )    
-    #time.sleep(0.1*m) 
+    time.sleep(0.2*m) 
 
 
   print("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  

@@ -173,7 +173,7 @@ class SerialPort:
 
 
       while (self.exit==0):
-          time.sleep(0.01)#0.03 
+          time.sleep(0.03)#0.03 
           
           if self.ser.isOpen() == False :
             print "error serial port disconnected in arduinoserial.py"
@@ -224,72 +224,30 @@ class SerialPort:
 
 
           while (self.exit==0):
-            time.sleep(0.01) 
-            #if self.exit==1 or write_enable==1:
-            #  break
-            #if len(self.removeFromInBuffer)>0:
-            #  serial_incomingBuffer.replace(self.removeFromInBuffer, "");  #remove from buffer the part just readed
-            #  self.removeFromInBuffer=''
-            try:
-              byte = self.ser.read(1)   #  self.usbR.read(1)
-             # print byte
-            except:
-              byte=-1
-              self.status=0
+            time.sleep(0.1) 
+
+            if self.ser.inWaiting()<5:   #skip if there is no incoming data
+              time.sleep(0.1) 
               continue
 
 
-            if not byte:  #nothing on incoming serial buffer
-
-             # print "end of serial packet1"
-              #print "incoming buffer="+serial_incomingBuffer
-              time.sleep(0.1)#0.3
-              break
 
 
-            #here the buffer have received at least one byte
+            if self.ser.inWaiting()>6:
+              buf=self.ser.read(self.ser.inWaiting())
+              waitTowriteUntilIReceive=1 
+              if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+                print "end of serial packet:_#] "
+                break 
+              if (buf.find("\n")!=-1):
+                print ("end of line received but no onoscmd found")
+                break
 
-
-
-
-          
-            #    end of packet is  "_#]" 
-
-
-
-
-            #if byte:  #nothing on incoming serial buffer
-            #  done=1
-            #  print "end of serial packet2"
-            #  continue
-          #  print byte
-
-            if byte=="\x00":
-              continue
-
-            if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
-              print "end of serial packet for /n"
-              break
-            else:   
-              #print "in byte="+byte+" end of in byte"
-              buf=buf+byte
-              print ("buf=$$$$$$$$$$$$$$$$"+buf)
-              count=len(buf)
-
-              if len(buf)==0:
-                continue
-
-
-              if len(buf)>3:
-                waitTowriteUntilIReceive=1 
-                if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
-                  print "end of serial packet:_#] "
-                  break 
 
 
 
           #at this point i should have a full packet message
-          if len(buf)>0:
+          if len(buf)>3:
 
             buf=buf.replace("\n", "")  #to remove \n
             buf=buf.replace("\r", "")  #to remove \r
@@ -454,11 +412,27 @@ class SerialPort:
 #    print "portWrite executed"
 #    self.usbW.write(data)
 
-  def write2(self, data):#test..
-    self.ser.write(data)
-    return("prova")
+  def write(self, data):#test..
+    #self.ser.flushOutput()
+    #while self.ser.inWaiting()>0:
+    #  time.sleep(0.01)
+    self.ser.write(data)   
+    self.ser.flushOutput()
+    #while self.ser.inWaiting()<5:
+    #  time.sleep(0.01)
+    time.sleep(0.2)
+    #answer=self.ser.read(self.ser.inWaiting())
+   # if len(self.readed_packets_list)>0:
+   #   answer=self.readed_packets_list[-1]
+   # else:
+    answer="answer"
+    return(answer)
 
-  def write(self, data):
+
+
+
+
+  def write2(self, data):
     global write_enable
     global last_received_packet
     global data_to_write
