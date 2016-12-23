@@ -607,7 +607,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 The radio node is working now also if is not stable.
                 The button on the node is not changing the object status correctly.
                 The system is not 100% secure to change the status.
-                There is some proble for onos to receive data from radio..
+                There is some problem for onos to receive data from radio..
+                started using   if self.ser.inWaiting()>6: in arduinoserial.py
 
 
 (110, 'Connection timed out');;;
