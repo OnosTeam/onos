@@ -207,7 +207,7 @@ class RouterHandler:
               errorQueue.put(e.args) 
         if error_number >5:
           self.bash_pin_enable=0  #disable the bash pin command if too many error happen
-          print "too many error commandi the router pins  , are you running onos on a pc?"
+          print "too many error command the router pins  , are you running onos on a pc?"
           errorQueue.put("too many error commandi the router pins  , are you running onos on a pc?" )
 #        if ( (len (self.pin_numbers) >0)&(self.bash_pin_enable==1)): 
 #        #if the router hardware has any hardware pins ..then run the thread in order to read them
@@ -380,7 +380,7 @@ class RouterHandler:
 
 
 
-          query='''[S_'''+node_address+query_placeholder+self.progressive_msg_id+'''_#]'''
+          query='''[S_'''+node_address+query_placeholder+self.progressive_msg_id+'''_#]'''+'''\n'''
          # print "query:::::"+query
           #valuelen_pos=query_placeholder.find("valuelen")
           #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
@@ -401,7 +401,7 @@ class RouterHandler:
           pin1='0'+pin1
 
         #  [S_001sr04051_#] 
-        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.progressive_msg_id+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.progressive_msg_id+'''_#]'''+'''\n'''
 
       if (out_type=="digital_output"):# [S_001dw06001_#]
 
@@ -412,7 +412,7 @@ class RouterHandler:
           pin='0'+pin
 
         
-        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+self.progressive_msg_id+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+self.progressive_msg_id+'''_#]'''+'''\n'''
 
 
 
@@ -429,7 +429,7 @@ class RouterHandler:
           status_to_set='0'+status_to_set 
 
         
-        query=base_query+'''[S_'''+node_address+'''sm'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''sm'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''+'''\n'''
 
       #  [S_001aw06155_#] 
       if (out_type=="analog_output"):
@@ -443,7 +443,7 @@ class RouterHandler:
         while (len(status_to_set)) <3:
           status_to_set='0'+status_to_set 
 
-        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+self.progressive_msg_id+'''_#]'''
+        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+self.progressive_msg_id+'''_#]'''+'''\n'''
 
 
 
@@ -498,7 +498,7 @@ class RouterHandler:
       
       print "new address for the node:"+str(new_address)
       node_address=nodeDict[node_serial_number].getNodeAddress()  
-      query="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"
+      query="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"+'''\n'''
       #result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
       #if result ==1:
       #  int_address=int(new_address)
@@ -526,11 +526,11 @@ class RouterHandler:
 
 
 
-
-
     def writeRawMsgToNode(self,node_serial_number,node_address,msg):#deprecated
       result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
       return(result)
+
+
 
     
 

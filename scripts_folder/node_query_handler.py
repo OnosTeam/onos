@@ -28,7 +28,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
   """
 
-  max_retry=2 
+  max_retry=1 
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
     # [S_001dw06001_#]
@@ -53,7 +53,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
           serialCom.uart.readed_packets_list.remove(a) 
           return (a)
 
-    time.sleep(0.2)  
+    #time.sleep(0.2)  
 
 
     if serialCom.uart.ser.isOpen() == False :
@@ -64,7 +64,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
 
     try:  
-      data=serialCom.uart.write(str(query))
+      data=serialCom.uart.write(query)
 
       #data=pyserial_port.writeToSerial(query)
     except Exception as e:
@@ -72,6 +72,8 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)   
       print str(e.args)
+      errorQueue.put("error writing to serial port, data to send:"+query+", at:"+getErrorTimeString()+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+    #time.sleep(0.1*m) 
      # time.sleep(2)  
 
 
@@ -114,8 +116,8 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
 
     #print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial node the expected answer was:"+expected_confirm+",the number of try is "+str(m) 
-    errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial node the expected answer was:'"+expected_confirm+"'the number of try is "+str(m)+" at:" +getErrorTimeString() )    
-    time.sleep(0.2*m) 
+    #errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial node the expected answer was:'"+expected_confirm+"'the number of try is "+str(m)+" at:" +getErrorTimeString() )    
+    #time.sleep(0.2*m) 
 
 
   print("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
@@ -267,18 +269,24 @@ def handle_new_query_to_radio_node_thread(serialCom):
   threshold_of_time_query=0.1
  
   while not queryToRadioNodeQueue.empty():
+
+
+
+
+
     #query_sent_before_delay=query_sent_before_delay+1
     time_of_write=time.time() 
     old_time_of_write=time_of_write 
-    time_waiting_for_incoming_msg=time.time() 
+    #time_waiting_for_incoming_msg=time.time() 
 
 
     if (time.time()-time_waiting_for_incoming_msg-threshold_of_time_query)>(time_of_write-old_time_of_write):
-      time.sleep(0.01)   #need this to allow the serial node to pick up the messages from the radio nodes..
+      print("wait to allow rx from radio nodes")
+      time.sleep(0.4)   #need this to allow the serial node to pick up the messages from the radio nodes..
       old_time_of_write=time.time() 
       time_waiting_for_incoming_msg=time.time() 
       time_of_write=time.time() 
-      print("wait to allow rx from radio nodes")
+
       query_sent_before_delay=0
       continue 
 
@@ -318,21 +326,22 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
       if priority==99: #if the priority is 99 then the query will be always retrayed infinites times.
         query_order=time.time()+1 #make the query less important..to allow other queries to run
+        if number_of_retry_done>35:  #if greater that n wait a bit
+          print("sleep a bit because number_of_retry_done>35")
+          time.sleep(0.2)   #need this to allow the serial node to pick up the messages from the radio nodes..
       else:
+        query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
         number_of_retry_done=number_of_retry_done+1
-        if number_of_retry_done>15:  #if greater that n don't repeat the query.
+        if number_of_retry_done>25:  #if greater that n don't repeat the query.
           print ("i retried the query:"+query+"more than 15 times , I giveup")
           errorQueue.put("i retried the query:"+query+"more than 15 times , I giveup")
           continue
 
-        if (time.time()-query_time )>100:
+        if (time.time()-query_time )>500:
           #if more than n seconds has passed since the query was made the first time..don't repeat the query.
           print ("i retried the query "+query+"more than 100 seconds , I giveup")
           errorQueue.put("i retried the query:"+query+"more than 100 seconds  , I giveup")
           continue
-        query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
-
-
 
      
       queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))

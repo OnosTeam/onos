@@ -1,11 +1,9 @@
 
 
 
-rifare protocollo radio come da documento
 
-
-
-
+uint8_t radioRetry=3;      //todo: make this changable from serialport arduinoserialtranponder
+uint8_t radioTxTimeout=150  //todo: make this changable from serialport
 
 
 avvio di onos anche senza internet?  update_check...

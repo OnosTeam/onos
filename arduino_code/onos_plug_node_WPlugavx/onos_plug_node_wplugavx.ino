@@ -141,9 +141,11 @@ char syncMessage[48];
 char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_main_obj_selected=0;
+char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
-
+uint8_t radioRetry=4;      //todo: make this changable from serialport
+uint8_t radioTxTimeout=50;  //todo: make this changable from serialport
 char received_serial_number[13];
 # define gateway_address 1
 
@@ -200,7 +202,7 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay1_reset_pin,!status_to_set); 
     digitalWrite(relay2_set_pin,status_to_set); 
     digitalWrite(relay2_reset_pin,!status_to_set); 
-    delay(100);
+    delay(50);
     digitalWrite(relay1_set_pin,0); 
     digitalWrite(relay1_reset_pin,0); 
     digitalWrite(relay2_set_pin,0); 
@@ -210,6 +212,9 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     return(1);
   }
 
+
+
+
 return(0);
 
 }
@@ -217,9 +222,16 @@ return(0);
 
 void composeSyncMessage(){
 
+  Serial.println("composeSyncMessage executed");
+  //[S_123ul5.24WPlugAvx000810000x_#]
 
-  //[S_123ul5.24WPlugAvx000810000_#]
-//   example deprecated:   [S_001ul3.05WPlugAvx00010167123_#]     #lux=167  contact0 is at 0 , 123 minutes on since boot  
+  if (progressive_msg_id<122){  //122 is z in ascii
+    progressive_msg_id=progressive_msg_id+1;
+  }
+  else{
+    progressive_msg_id=48;  //48 is 0 in ascii
+  }
+
   if (main_obj_state==1){
       
     if (time_continuos_on!=0){
@@ -247,9 +259,11 @@ void composeSyncMessage(){
 
   char tmp_minutes_time_from_turn_on_array[5];
   char minutes_time_from_turn_on_array[5];
-  strcpy(tmp_minutes_time_from_turn_on_array,"");
-  strcpy(minutes_time_from_turn_on_array,"");
+  //strcpy(tmp_minutes_time_from_turn_on_array,"");
+  //strcpy(minutes_time_from_turn_on_array,"");
 
+  memset(tmp_minutes_time_from_turn_on_array,0,sizeof(tmp_minutes_time_from_turn_on_array)); //to clear the array
+  memset(minutes_time_from_turn_on_array,0,sizeof(minutes_time_from_turn_on_array)); //to clear the array
  
   //itoa (minutes_time_from_turn_on,minutes_time_from_turn_on_array,10);  //convert from int to char array
   //dtostrf  //convert from float to char array
@@ -283,8 +297,8 @@ void composeSyncMessage(){
   
 
   int tmp_number=0;
-  strcpy(str_this_node_address,"");
-
+  //strcpy(str_this_node_address,"");
+  memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
   str_this_node_address[0]='0';
   str_this_node_address[1]='0';
   str_this_node_address[2]='0';
@@ -309,26 +323,34 @@ void composeSyncMessage(){
   }
   
 
-  strcpy(syncMessage, "");
+  //strcpy(syncMessage, "");
+  memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
   strcat(syncMessage, "ul");
  // strcat(syncMessage, "sy");
   strcat(syncMessage, node_fw);
   strcat(syncMessage, serial_number);
-
   
+
+    //[S_123ul5.24WPlugAvx000810000x_#]
+
+/*
   if (main_obj_state==0){
     strcat(syncMessage,"0");
   }
   else{
     strcat(syncMessage,"1");
   }
+*/
+  syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
   strcat(syncMessage, minutes_time_from_turn_on_array);
-
+  syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
+  //Serial.println(syncMessage[28]);
+  //Serial.println(strlen(syncMessage));
   strcat(syncMessage, "_#]");
-
+  
 
 
 
@@ -338,13 +360,13 @@ void composeSyncMessage(){
 
 
 
-void sendSyncMessage(){
+void sendSyncMessage(uint8_t retry,uint8_t timeout=150){
 
   composeSyncMessage();
   syncMessage[6]='u'; //modify the message
   syncMessage[7]='l'; //modify the message
-
-  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),4,150)) {
+  Serial.println(" sendWithRetry sendSyncMessage executed");
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,timeout)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
@@ -362,18 +384,31 @@ void sendSyncMessage(){
 void getAddressFromGateway(){
    Serial.println("getAddressFromGateway executed");
 
-  //[S_001ga3.05ProminiS0001_#]    
+  //[S_123ga5.24WPlugAvx000810000x_#]
 
   composeSyncMessage();
   syncMessage[6]='g'; //modify the message to get a address instead of just sync.
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
 
+  Serial.println(" sendWithRetry getAddressFromGateway executed");
 
-  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),4,150)) {
+  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),radioRetry,radioTxTimeout)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
+
+
+
     Serial.println("sent_get_address");
+    /*
+    for (char a=0;a<(35);a=a+1){
+      Serial.print(syncMessage[a]);
+    }
+    Serial.println("end_get_address"); 
+    */
+
+
+
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
   }
 
@@ -698,11 +733,11 @@ void handleButton(){
     Serial.print("obj_button pressed");
 
     while (digitalRead(obj_button_pin)==0){ //wait for button release
-      delay(100);//todo change it smaller
+      delay(200);//todo change it smaller
     }
 
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
-    sendSyncMessage(); 
+    sendSyncMessage(radioRetry+2,radioTxTimeout); 
 
   }
 
@@ -802,7 +837,8 @@ void loop() {
 
     uint8_t message_copy[rx_msg_lenght+1];
 
-    strcpy(filtered_onos_message,"");
+    //strcpy(filtered_onos_message,"");
+    memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
     Serial.print("msg_start:");
     for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
       filtered_onos_message[counter]=radio.DATA[counter];
@@ -827,7 +863,7 @@ void loop() {
 
 
     }
-    Serial.println("msg_stop");
+    Serial.println(":msg_stop");
 
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
@@ -876,7 +912,7 @@ radioTx:
 
 
 
-  handleButton();
+
 
 
 
@@ -894,7 +930,7 @@ radioTx:
       get_address_timeout=millis();
       Serial.print("radio address changed to:");
       Serial.println(this_node_address);
-      sendSyncMessage();
+      sendSyncMessage(radioRetry,radioTxTimeout);
 
 
     }
@@ -917,7 +953,7 @@ radioTx:
    
     sync_time=millis();
 
-    sendSyncMessage();
+    sendSyncMessage(radioRetry,radioTxTimeout);
 
 
   }

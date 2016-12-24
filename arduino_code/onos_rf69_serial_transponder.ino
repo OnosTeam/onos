@@ -128,6 +128,8 @@ char syncMessage[28];
 char str_this_node_address[4];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
+uint8_t radioRetry=3;      //todo: make this changable from serialport
+uint8_t radioTxTimeout=70;  //todo: make this changable from serialport
 
 uint8_t counter=0;
 char data_from_serial[rx_msg_lenght+5];
@@ -153,8 +155,8 @@ void composeSyncMessage(){
   //[S_001sy3.05ProminiS0001_#] 
 
   int tmp_number=0;
-  strcpy(str_this_node_address,"");
-
+  //strcpy(str_this_node_address,"");
+  memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
   str_this_node_address[0]='0';
   str_this_node_address[1]='0';
   str_this_node_address[2]='0';
@@ -178,7 +180,8 @@ void composeSyncMessage(){
   }
   
 
-  strcpy(syncMessage, "");
+  //strcpy(syncMessage, "");
+  memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
   if (first_sync==1 ){
@@ -496,8 +499,7 @@ boolean checkAndReceiveSerialMsg(){
 
 
 
-  counter=0;
-  message_to_decode_avaible=0;
+
 
 
 /*
@@ -512,11 +514,13 @@ boolean checkAndReceiveSerialMsg(){
 
 */
 
-
+  counter=0;
+  message_to_decode_avaible=0;
   timeout=millis()+200;
-
   onos_cmd_start_position=-99;  
   onos_cmd_end_position=-99;  
+  memset(data_from_serial,0,sizeof(data_from_serial)); //to clear the array
+
   while (Serial.available() > 0) {
     
     enable_answer_back=1;
@@ -524,7 +528,7 @@ boolean checkAndReceiveSerialMsg(){
    //Serial.println(counter);
    // read the incoming byte:
     //if (counter==0){
-    delayMicroseconds(210);//the serial doesnt work without this delay... to change if you change baud rate (increase with lower baud rate)
+    delayMicroseconds(210);//210 the serial doesnt work without this delay... to change if you change baud rate (increase with lower baud rate)
     //}  
     data_from_serial[counter] = Serial.read();
 
@@ -541,6 +545,11 @@ boolean checkAndReceiveSerialMsg(){
       Serial.println(counter);
       Serial.println(F("end"));
       counter=0;
+      Serial.println("start:");
+      for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+        Serial.print(data_from_serial[pointer]); 
+      }
+      Serial.println(":end");
       continue;     
     }
 
@@ -563,6 +572,7 @@ boolean checkAndReceiveSerialMsg(){
     if( (data_from_serial[counter-2]=='_')&&(data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')  ){//   
     //   Serial.println("cmd end found-------------------------------");
       onos_cmd_end_position=counter-2;
+      break; //i have found a cmd ..I stop to listen to other cmd and analyze it..
     }
 
 
@@ -574,7 +584,8 @@ boolean checkAndReceiveSerialMsg(){
 
     uint8_t message_copy[rx_msg_lenght+1];
 
-    strcpy(filtered_onos_message,"");  //clear the filtered_onos_message array
+   // strcpy(filtered_onos_message,"");  //clear the filtered_onos_message array
+    memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
 
     for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
       filtered_onos_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
@@ -609,7 +620,7 @@ boolean checkAndReceiveSerialMsg(){
 
 boolean ForwardSerialMessageToRadio(){
 
-  if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),1,200)) {
+  if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),radioRetry,radioTxTimeout)) {
               // note that the max delay time is 255..because is uint8_t
               //target node Id, message as string or byte array, message length,retries, milliseconds before retry
               //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
@@ -691,11 +702,11 @@ void sendSerialAnswerFromSerialMsg(){
 
   }
     
-
+  memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array  
   strcpy(received_message_answer,"[S_nocmd2_#]");  
-  strcpy(filtered_onos_message,""); 
-
-  Serial.flush(); //make sure all serial data is clocked out before sleeping the
+  //strcpy(filtered_onos_message,""); 
+  memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
+  Serial.flush(); //make sure all serial data is clocked out 
   enable_answer_back=0;
 
 
@@ -719,7 +730,8 @@ boolean checkAndHandleIncomingRadioMsg(){
       onos_cmd_start_position=-99;  
       onos_cmd_end_position=-99;  
 
-      strcpy(filtered_onos_message,"");
+      //strcpy(filtered_onos_message,"");
+      memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
 
       for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
         filtered_onos_message[counter]=radio.DATA[counter];
@@ -767,8 +779,10 @@ boolean checkAndHandleIncomingRadioMsg(){
 
       }
       else{
-        strcpy(received_message_answer,"[S_nocmd0_#]");
-        Serial.println(F("error in message nocmd0_#]"));
+        strcpy(received_message_answer,"[S_nocmd1_#]");
+        Serial.print(F("error in message nocmd1_#]"));
+        Serial.print('\n'); 
+        Serial.flush(); //make sure all serial data is clocked out 
         return(0); 
       }
 
@@ -892,12 +906,13 @@ sync:
 
 restart:
 
-  strcpy(data_from_serial,"");
+  //strcpy(data_from_serial,""); 
+  //strcpy(filtered_onos_message,"");
 
-  strcpy(filtered_onos_message,"");
+  memset(data_from_serial,0,sizeof(data_from_serial)); //to clear the array
+  memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
 
-
-  if (skipUartRxMsg>1){  // skip uart message to allow incoming radio msg to be received
+  if (skipUartRxMsg>0){  // skip uart message to allow incoming radio msg to be received
 
     skipUartRxMsg=0;
     goto radioRxCheck;
@@ -918,6 +933,8 @@ restart:
 
    else if(enable_answer_back==1) {
      Serial.print(received_message_answer);
+     Serial.print('\n'); 
+     Serial.flush(); //make sure all serial data is clocked out 
      enable_answer_back=0;
    }
    

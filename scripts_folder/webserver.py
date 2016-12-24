@@ -1078,6 +1078,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
           exc_type, exc_obj, exc_tb = sys.exc_info()
           fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
           print(exc_type, fname, exc_tb.tb_lineno)   
+          errorQueue.put("error in the outputWrite e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
           print str(e.args)
           time.sleep(2)
 # note that  hardware=router_handler.RouterHandler(router_hardware,router_sn)   in conf.py
@@ -1095,6 +1096,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
           fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
           print(exc_type, fname, exc_tb.tb_lineno)   
           print str(e.args)
+          errorQueue.put("error in the outputWrite2 e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
           time.sleep(2)  
              
           # put to rest the relay coil (the relay will continue to been mechanical activated)
@@ -5736,9 +5738,10 @@ def executeQueueFunction(dataExchanged):
 
 #hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}# 
 
-    node_sn=dataExchanged["nodeSn"]
+    node_serial_number=dataExchanged["nodeSn"]
+    node_address=dataExchanged["nodeAddress"]
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
-    node_model_name=node_sn[0:-4]#get WPlugAvx from  WPlugAvx0008
+    node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
     print str(dataExchanged["objects_to_update"].keys())
     print "end data_exanged"
     try:
@@ -5763,7 +5766,7 @@ def executeQueueFunction(dataExchanged):
 
 
         objName_number=a #=hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][obj_name_part][0]  # get the number of the object
-        objName=obj_name_part+str(objName_number)+"_"+node_sn
+        objName=obj_name_part+str(objName_number)+"_"+node_serial_number
         status_to_set=dataExchanged["objects_to_update"][objName_number]
         write_hw_enable=0
         usr="onos_node"
@@ -5775,10 +5778,10 @@ def executeQueueFunction(dataExchanged):
           changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
 
     except Exception as e: 
-      print "error in the for loop of updateObjFromNode condition:node="+node_sn
-      errorQueue.put("error in the for loop of updateObjFromNode condition :node="+node_sn)
+      print "error in the for loop of updateObjFromNode condition:node="+node_serial_number
       exc_type, exc_obj, exc_tb = sys.exc_info()
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      errorQueue.put("error in the for loop of updateObjFromNode condition :node="+node_serial_number+" e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
       print(exc_type, fname, exc_tb.tb_lineno)   
       print str(e.args)
 
@@ -5986,8 +5989,10 @@ def onosBusThread():
 
     except Exception as e: 
       print "main error in onosBusThread() "+" e:"+str(e.args)
-      errorQueue.put("main error in onosBusThread()"+" e:"+str(e.args))   
-
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)   
+      errorQueue.put("main error in onosBusThread()"+" e:"+str(e.args)+str(exc_type)+str(fname) +str(exc_tb.tb_lineno))    
 
 
 

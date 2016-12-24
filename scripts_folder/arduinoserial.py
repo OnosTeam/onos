@@ -317,8 +317,8 @@ class SerialPort:
 
 
 
-              if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001_#]
-                print "LLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd
+              if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
+                print "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd
                 buf=""
                 try:
                   numeric_serial_number=cmd[13:25]
@@ -377,7 +377,7 @@ class SerialPort:
 
 
 
-  def waitForData(self,timeout):
+  def waitForData(self,timeout):  #deprecated
     j=0
     self.disable_uart_queue=1  # I disable the auto queue add because I want to read the data directly
     start_time=time.time()
@@ -391,7 +391,7 @@ class SerialPort:
 
 
 
-  def write0(self, str):
+  def write0(self, str):#deprecated
     print "i write"+str
     os.system("echo "+str+" >> "+self.port)
 
@@ -416,12 +416,21 @@ class SerialPort:
     #self.ser.flushOutput()
     #while self.ser.inWaiting()>0:
     #  time.sleep(0.01)
+    #self.ser.flushOutput()
+    self.ser.flush()
+    #if self.ser.flush()()>0: #if there is something on the output buffer wait a bit
+    #  time.sleep(0.01) 
+    #  print("wait for self.ser.out_waiting self.ser.out_waitingself.ser.out_waitingself.ser.out_waiting")
+
     self.ser.write(data)   
-    self.ser.flushOutput()
+
+    self.ser.flush()
     #while self.ser.inWaiting()<5:
     #  time.sleep(0.01)
-    time.sleep(0.2)
-    #answer=self.ser.read(self.ser.inWaiting())
+
+    #time.sleep(0.3)
+   
+   #answer=self.ser.read(self.ser.inWaiting())
    # if len(self.readed_packets_list)>0:
    #   answer=self.readed_packets_list[-1]
    # else:
@@ -432,7 +441,7 @@ class SerialPort:
 
 
 
-  def write2(self, data):
+  def write2(self, data): #deprecated
     global write_enable
     global last_received_packet
     global data_to_write
