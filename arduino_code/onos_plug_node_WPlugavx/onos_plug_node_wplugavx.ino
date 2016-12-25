@@ -144,8 +144,8 @@ uint8_t rx_main_obj_selected=0;
 char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
-uint8_t radioRetry=4;      //todo: make this changable from serialport
-uint8_t radioTxTimeout=50;  //todo: make this changable from serialport
+uint8_t radioRetry=3;      //todo: make this changable from serialport
+uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
 char received_serial_number[13];
 # define gateway_address 1
 
@@ -202,13 +202,13 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay1_reset_pin,!status_to_set); 
     digitalWrite(relay2_set_pin,status_to_set); 
     digitalWrite(relay2_reset_pin,!status_to_set); 
-    delay(50);
+    delay(25);
     digitalWrite(relay1_set_pin,0); 
     digitalWrite(relay1_reset_pin,0); 
     digitalWrite(relay2_set_pin,0); 
     digitalWrite(relay2_reset_pin,0); 
-    main_obj_state=status_to_set;
     digitalWrite(obj_led_pin,status_to_set);
+    main_obj_state=status_to_set;
     return(1);
   }
 
@@ -345,6 +345,11 @@ void composeSyncMessage(){
 */
   syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
+
+   Serial.print("composeSyncMessage executed with  status:");
+   Serial.println(main_obj_state);
+
+
   strcat(syncMessage, minutes_time_from_turn_on_array);
   syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
   //Serial.println(syncMessage[28]);
@@ -465,7 +470,7 @@ void decodeOnosCmd(const char *received_message){
   Serial.println(received_message[6]);
 
 */
-
+  memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
   strcpy(received_message_answer,"err01_#]");
 
 
@@ -548,7 +553,6 @@ void decodeOnosCmd(const char *received_message){
       get_decode_time=millis();
 */
 
-      main_obj_state=received_message[8]-48;      
 
       received_message_value=received_message[9]-48;   
       
@@ -583,7 +587,7 @@ void decodeOnosCmd(const char *received_message){
 
 
       if (change_status_ok!=1){
-
+        memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
         Serial.println(F("er_chobjstatus_#]"));  
         strcpy(received_message_answer,"er_chobjstatus_#]"); 
         return;
@@ -733,11 +737,12 @@ void handleButton(){
     Serial.print("obj_button pressed");
 
     while (digitalRead(obj_button_pin)==0){ //wait for button release
-      delay(200);//todo change it smaller
+      delay(280);//todo change it smaller
     }
 
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
     sendSyncMessage(radioRetry+2,radioTxTimeout); 
+
 
   }
 
@@ -880,6 +885,7 @@ void loop() {
         if (radio.ACKRequested()){
           radio.sendACK();
           Serial.println(" - ACK sent");
+          sync_time=millis();
         }
         //interrupts(); // Enable interrupts
 

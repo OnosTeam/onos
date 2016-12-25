@@ -269,7 +269,7 @@ def handle_new_query_to_radio_node_thread(serialCom):
   threshold_of_time_query=0.1
  
   while not queryToRadioNodeQueue.empty():
-
+    time.sleep(0.3)   #need this to allow the serial node to pick up the messages from the radio nodes..
 
 
 
@@ -282,13 +282,12 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
     if (time.time()-time_waiting_for_incoming_msg-threshold_of_time_query)>(time_of_write-old_time_of_write):
       print("wait to allow rx from radio nodes")
-      time.sleep(0.4)   #need this to allow the serial node to pick up the messages from the radio nodes..
+      time.sleep(0.7)   #need this to allow the serial node to pick up the messages from the radio nodes..
       old_time_of_write=time.time() 
       time_waiting_for_incoming_msg=time.time() 
       time_of_write=time.time() 
-
       query_sent_before_delay=0
-      continue 
+
 
 
     currentRadioQueryPacket=queryToRadioNodeQueue.get() #get the tuple:                                                 

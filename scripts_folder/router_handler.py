@@ -222,10 +222,40 @@ class RouterHandler:
 
 
 
+    def getProgressive_msg_id(self):
+
+      """
+      | Get a progressive id number to append it to the message in order to make it unique
+      | 
 
 
-    def read_router_pins(self):   # thread  function to read changing of pin status
+      """
+
+      self.progressive_msg_number=self.progressive_msg_number+1
+
+      self.progressive_msg_id=str(self.progressive_msg_number)  #todo  create a progressive number
+
+      if  self.progressive_msg_number>8: #restart the number
+        self.progressive_msg_number=0 
+
+      return(self.progressive_msg_id)
+
+      
+
+    def read_router_pins(self):   
+      """
+      | Thread  function to read changing of pin status on the embedded linux board (glinet,raspberry ecc)
+      | 
+
+
+      """
+
+
+
       #print "read_router_pins() executed"
+
+
+
       if ( (len (self.router_pin_numbers) >0)&(self.bash_pin_enable==1)): 
         #if the router hardware has any hardware pins ..then run the thread in order to read them
         #print "starting to read pins"
@@ -329,14 +359,6 @@ class RouterHandler:
       address=node_obj.getNodeAddress()
       query="error_compose_query"
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
-
-      self.progressive_msg_number=self.progressive_msg_number+1
-
-      self.progressive_msg_id=str(self.progressive_msg_number)  #todo  create a progressive number
-
-      if  self.progressive_msg_number>8: #restart the number
-        self.progressive_msg_number=0 
-
    
 
       if (out_type=="digital_obj"):
@@ -380,7 +402,7 @@ class RouterHandler:
 
 
 
-          query='''[S_'''+node_address+query_placeholder+self.progressive_msg_id+'''_#]'''+'''\n'''
+          query='''[S_'''+node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
          # print "query:::::"+query
           #valuelen_pos=query_placeholder.find("valuelen")
           #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
@@ -401,7 +423,7 @@ class RouterHandler:
           pin1='0'+pin1
 
         #  [S_001sr04051_#] 
-        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.progressive_msg_id+'''_#]'''+'''\n'''
+        query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
 
       if (out_type=="digital_output"):# [S_001dw06001_#]
 
@@ -412,7 +434,7 @@ class RouterHandler:
           pin='0'+pin
 
         
-        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+self.progressive_msg_id+'''_#]'''+'''\n'''
+        query=base_query+'''[S_'''+node_address+'''dw'''+pin+'''00'''+str(status_to_set)+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
 
 
 
@@ -443,7 +465,7 @@ class RouterHandler:
         while (len(status_to_set)) <3:
           status_to_set='0'+status_to_set 
 
-        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+self.progressive_msg_id+'''_#]'''+'''\n'''
+        query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
 
 
 
@@ -497,8 +519,10 @@ class RouterHandler:
 
       
       print "new address for the node:"+str(new_address)
+
+
       node_address=nodeDict[node_serial_number].getNodeAddress()  
-      query="[S_"+node_address+"sa"+new_address+node_serial_number+"_#]"+'''\n'''
+      query="[S_"+node_address+"sa"+new_address+node_serial_number+self.getProgressive_msg_id()+"_#]"+'''\n'''
       #result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
       #if result ==1:
       #  int_address=int(new_address)

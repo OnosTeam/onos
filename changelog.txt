@@ -609,7 +609,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 The system is not 100% secure to change the status.
                 There is some problem for onos to receive data from radio..
                 started using   if self.ser.inWaiting()>6: in arduinoserial.py
-                started using   memset(filtered_onos_message,0,sizeof(filtered_onos_message));  
+                started using   memset(filtered_onos_message,0,sizeof(filtered_onos_message)); 
                   to clear the arrays in the arduino programs,before i used strcpy(filtered_onos_message,"") that doesn't work well
                 reduced the radio.sendWithRetry timeout from 200ms t0 75ms and increased the retry from 1 to 3
 

@@ -193,7 +193,7 @@ class SerialPort:
             break
           buf=''
 
-          count=0
+
 
 
 
@@ -222,26 +222,49 @@ class SerialPort:
               print "can't flush output"+str(e.args) 
               errorQueue.put( "can't flush output"+str(e.args) )
 
-
+          waitTowriteUntilIReceive=0
           while (self.exit==0):
-            time.sleep(0.1) 
+            #time.sleep(0.1) 
 
-            if self.ser.inWaiting()<5:   #skip if there is no incoming data
+            if self.ser.inWaiting()<1:   #skip if there is no incoming data
               time.sleep(0.1) 
               continue
+            else: 
+##################################################################
+              try:
+                byte = self.ser.read(1)   #  self.usbR.read(1)
+                #print byte
+              except:
+                byte=-1
+                self.status=0
+                continue
+
+              if byte=="\x00":
+                continue
+
+              if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
+                print "end of serial packet for /n"
+                break
+              else:   
+                #print "in byte="+byte+" end of in byte"
+                buf=buf+byte
+              
+
+              if len(buf)>5:
+                waitTowriteUntilIReceive=1 
+                if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
+                  print "end of serial packet:_#] "
+                  break 
 
 
-
-
-            if self.ser.inWaiting()>6:
-              buf=self.ser.read(self.ser.inWaiting())
-              waitTowriteUntilIReceive=1 
-              if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
-                print "end of serial packet:_#] "
-                break 
               if (buf.find("\n")!=-1):
                 print ("end of line received but no onoscmd found")
                 break
+
+              print(buf) 
+
+
+##################################################################
 
 
 
@@ -274,7 +297,7 @@ class SerialPort:
 
 
 
-              if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i recived a confirm from the node
+              if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i received a confirm from the node
                 
 
                 #with lock_serial_input:              
@@ -295,7 +318,7 @@ class SerialPort:
                   node_fw=cmd[8:12]
                   node_address=cmd[3:6]
 
-                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo variable data extraction [S_123ul5.24WPlugAvx000810000_#]
+                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_123ul5.24WPlugAvx000810000_#]
                     obj_value=cmd[24]
                     obj_number_to_update="0"
                     priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_number_to_update:obj_value} }) 
@@ -313,6 +336,7 @@ class SerialPort:
                   errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
 
                 priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
+                waitTowriteUntilIReceive=0
                 continue
 
 
@@ -332,14 +356,15 @@ class SerialPort:
                     priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
                
-                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
+                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })               
+                  waitTowriteUntilIReceive=0  
                   continue
 
 
                 except Exception, e  :               
                   print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
                   errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
-
+        
 
 
 
@@ -419,16 +444,23 @@ class SerialPort:
     #self.ser.flushOutput()
     self.ser.flush()
     #if self.ser.flush()()>0: #if there is something on the output buffer wait a bit
-    #  time.sleep(0.01) 
+    #time.sleep(0.01) 
     #  print("wait for self.ser.out_waiting self.ser.out_waitingself.ser.out_waitingself.ser.out_waiting")
 
+    
+    #start_time=time.time()
+    #while waitTowriteUntilIReceive==1:
+
+    #  if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
+    #    print "rx after write timeout0"
+    time.sleep(0.02) 
     self.ser.write(data)   
 
     self.ser.flush()
     #while self.ser.inWaiting()<5:
     #  time.sleep(0.01)
 
-    #time.sleep(0.3)
+    time.sleep(0.5)
    
    #answer=self.ser.read(self.ser.inWaiting())
    # if len(self.readed_packets_list)>0:

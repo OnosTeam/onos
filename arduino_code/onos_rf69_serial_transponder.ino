@@ -129,7 +129,7 @@ char str_this_node_address[4];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
 uint8_t radioRetry=3;      //todo: make this changable from serialport
-uint8_t radioTxTimeout=70;  //todo: make this changable from serialport
+uint8_t radioTxTimeout=60;  //todo: make this changable from serialport
 
 uint8_t counter=0;
 char data_from_serial[rx_msg_lenght+5];
@@ -912,14 +912,16 @@ restart:
   memset(data_from_serial,0,sizeof(data_from_serial)); //to clear the array
   memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
 
-  if (skipUartRxMsg>0){  // skip uart message to allow incoming radio msg to be received
 
+/*
+  if (skipUartRxMsg<0){  // skip uart message to allow incoming radio msg to be received
     skipUartRxMsg=0;
     goto radioRxCheck;
   }
 
   skipUartRxMsg=skipUartRxMsg+1;
-  
+
+*/  
   serial_msg_to_decode_is_avaible=checkAndReceiveSerialMsg();
 
 
