@@ -21,11 +21,11 @@ if (funzione_da_eseguire=="click"){
 
   if(x === 0) 
     { 
-      x=x+1;
+      x=1;
       document.getElementById('side').style.marginLeft = "0%";
  
     } else {
-      x=x-1;
+      x=0;
 
       
 
@@ -59,6 +59,8 @@ if (funzione_da_eseguire=="click"){
 
 	<div id="side">
 
+
+
 		<a href="#"><div id="homebutton" class="vocemenu" ><i class="icon-home3"></i>Home</div></a>
 		<hr>
 		<a href="#"><div id="zonebutton" class="vocemenu" ><i class="icon-book"></i>Zone</div></a>
@@ -68,6 +70,9 @@ if (funzione_da_eseguire=="click"){
 		<a href="#"><div id="impostazionibutton" class="vocemenu"><i class="icon-settings"></i>Impostazioni</div></a>
 		<hr>
 		<a href="#"><div id="accountbutton" class="vocemenu"><i class="icon-user2"></i>Account</div></a>
+
+
+		<div id="closebutton" onclick="myFunction(this.id,'click');"><i class="icon-cross"></i></div>
 
 	</div>
 
