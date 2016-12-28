@@ -8,42 +8,37 @@
 	<link rel="stylesheet" href="css/menu.css">
 	<meta charset="utf-8">
 
-	<script type=”text/javascript”>
-		
+<script>
+var x = 0; //la metto prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
 
 
 
-
-
-var menubutton = document.getElementById("menu");
-
+function myFunction(side,funzione_da_eseguire) {
 
 
 
-
-var handler = function() {
-
-var x = 0;
+if (funzione_da_eseguire=="click"){
 
   if(x === 0) 
-  { 
-    x=x+1;
+    { 
+      x=x+1;
+      document.getElementById('side').style.marginLeft = "0%";
+ 
+    } else {
+      x=x-1;
 
-    document.getElementsByClassName('sideclass').classList.add('open');
-  } else {
-    x=x-1;
+      
 
-
-    document.getElementsByClassName('sideclass').classList.remove('open');    
-  }  
-};
-
-
-menubutton.addEventListener("click", handler, true);
+      document.getElementById('side').style.marginLeft = "-30%"; 
 
 
+    }  
+  }
 
-	</script>
+
+
+}
+</script>
 
 
 
@@ -54,7 +49,7 @@ menubutton.addEventListener("click", handler, true);
 	<div id="top_banner">
 
 
-		<div id="menu" class="iconamenu"><i class="icon-menu"></i></div>
+		<div id="menu" class="iconamenu" onclick="myFunction(this.id,'click');"><i class="icon-menu"></i></div>
 		<div id="date">12-10-2016</div>
 		<div id="time">23:36</div>
 
@@ -62,7 +57,7 @@ menubutton.addEventListener("click", handler, true);
 	
 
 
-	<div id="side" class="sideclass">
+	<div id="side">
 	</div>
 
 niger
@@ -161,4 +156,4 @@ niger
 
 
    </body>
-</html>
+</html>NomeDiv
