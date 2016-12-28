@@ -103,10 +103,10 @@ body{
 	left:0%;
 	width:40%;
 	height: 30%;
-	margin-left:-30%;/*transizione a 40% */
+	margin-left:-40%;/*transizione a 40% */
 	background: red;
-	-webkit-transition: margin-left 0.5s; /* Safari */
-	transition: margin-left 0.5s;
+	-webkit-transition: margin-left 0.3s; /* Safari */
+	transition: margin-left 0.3s;
 
 
 }

@@ -22,14 +22,14 @@ if (funzione_da_eseguire=="click"){
   if(x === 0) 
     { 
       x=x+1;
-      document.getElementById('side').style.marginLeft = "40%";
+      document.getElementById('side').style.marginLeft = "0%";
  
     } else {
       x=x-1;
 
       
 
-      document.getElementById('side').style.marginLeft = "-30%"; 
+      document.getElementById('side').style.marginLeft = "-40%"; 
 
 
     }  
