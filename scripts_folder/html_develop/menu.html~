@@ -29,7 +29,7 @@ if (funzione_da_eseguire=="click"){
 
       
 
-      document.getElementById('side').style.marginLeft = "-40%"; 
+      document.getElementById('side').style.marginLeft = "-100%"; 
 
 
     }  
@@ -58,102 +58,19 @@ if (funzione_da_eseguire=="click"){
 
 
 	<div id="side">
+
+		<div id="zonebutton" class="vocemenu" ><a href="#"><i class="icon-book"></i>Zone</a></div>
+		<hr>
+		<div id="scenaributton" class="vocemenu"><a href="#"><i class="icon-calculator"></i>Scenari</a></div>
+		<hr>
+		<div id="impostazionibutton" class="vocemenu"><a href="#"><i class="icon-settings"></i>Impostazioni</a></div>
+		<hr>
+		<div id="accountbutton" class="vocemenu"><a href="#"><i class="icon-user2"></i>Account</a></div>
+
 	</div>
 
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
 
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-niger
-<br>
-
-niger
-<br>
-niger
-<br>
 
 
    </body>
-</html>NomeDiv
+</html>

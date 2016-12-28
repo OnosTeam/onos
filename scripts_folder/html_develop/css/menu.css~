@@ -101,20 +101,44 @@ body{
 	position:fixed;
 	top:20%;
 	left:0%;
-	width:40%;
-	height: 30%;
-	margin-left:-40%;/*transizione a 40% */
-	background: red;
+	border-top-right-radius:1em;
+	border-bottom-right-radius:1em;
+	padding:8px;
+	margin-left:-100%;/*transizione a 40% */
+	background-color: #043a91;
+	color:white;
+	border-top:1px solid white;
+	border-right:1px solid white;
+	border-bottom:1px solid white;
 	-webkit-transition: margin-left 0.5s; /* Safari */
 	transition: margin-left 0.5s;
 
 
 }
 
+.vocemenu{
+
+	cursor:pointer;
+	margin:0px;
+	padding:0px;
+
+}
+
+.vocemenu:hover{
+
+color:#0072ca;
+-webkit-transition: color 0.3s; /* Safari */
+	transition: color 0.3s;
 
 
 
+}
 
+.vocemenu i{
+
+margin-right:10px;
+
+}
 
 
 }/*fine media mobile*/
