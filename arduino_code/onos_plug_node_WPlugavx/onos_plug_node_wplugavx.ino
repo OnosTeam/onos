@@ -202,11 +202,12 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay1_reset_pin,!status_to_set); 
     digitalWrite(relay2_set_pin,status_to_set); 
     digitalWrite(relay2_reset_pin,!status_to_set); 
-    delay(25);
+    delay(210);
     digitalWrite(relay1_set_pin,0); 
     digitalWrite(relay1_reset_pin,0); 
     digitalWrite(relay2_set_pin,0); 
     digitalWrite(relay2_reset_pin,0); 
+
     digitalWrite(obj_led_pin,status_to_set);
     main_obj_state=status_to_set;
     return(1);
