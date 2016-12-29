@@ -202,7 +202,7 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay1_reset_pin,!status_to_set); 
     digitalWrite(relay2_set_pin,status_to_set); 
     digitalWrite(relay2_reset_pin,!status_to_set); 
-    delay(210);
+    delay(20);
     digitalWrite(relay1_set_pin,0); 
     digitalWrite(relay1_reset_pin,0); 
     digitalWrite(relay2_set_pin,0); 
@@ -732,6 +732,103 @@ void decodeOnosCmd(const char *received_message){
 
 }// end of decodeOnosCmd()
 
+
+
+void checkAndHandleIncomingRadioMsg(){
+
+  if (radio.receiveDone()){
+
+    skipRadioRxMsg=skipRadioRxMsg+1;
+
+    get_decode_time=millis();
+    //print message received to serial
+    Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
+    Serial.print((char*)radio.DATA);
+    Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+
+ 
+    //check if received message contains Hello World
+
+    uint8_t message_copy[rx_msg_lenght+1];
+
+    //strcpy(filtered_onos_message,"");
+    memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
+    Serial.print("msg_start:");
+    for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
+      filtered_onos_message[counter]=radio.DATA[counter];
+      message_copy[counter]=radio.DATA[counter]; 
+      Serial.print(filtered_onos_message[counter]);
+
+    //[S_001dw06001_#]
+      if (counter<2){
+        continue;
+      }
+      if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
+       // Serial.println("cmd start found-------------------------------");
+        onos_cmd_start_position=counter-2;
+      }
+
+
+      if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
+      //  Serial.println("cmd end found-------------------------------");
+        onos_cmd_end_position=counter-2;
+        break;// now the message has ended
+      }
+
+
+    }
+    Serial.println(":msg_stop");
+
+
+    if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+      Serial.println("onos cmd  found-------------------------------");
+      //noInterrupts(); // Disable interrupts    //important for lamp node 
+      decodeOnosCmd(filtered_onos_message);
+
+      Serial.print("decode time1=") ;
+      Serial.println(millis()-get_decode_time) ;
+      get_decode_time=millis();
+
+      if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){//if the message was ok...
+      //check if sender wanted an ACK
+        if (radio.ACKRequested()){
+          radio.sendACK();
+          Serial.println(" - ACK sent");
+          sync_time=millis();
+        }
+        //interrupts(); // Enable interrupts
+
+      }
+      else{
+        Serial.println("error in message decode i will not send the ACK");
+       // checkCurrentRadioAddress(); //if the mesage received is wrong i will check and send a address request if needed becausethe onos gateway will wait a moment after the tranmission failure.
+
+        //interrupts(); // Enable interrupts 
+      }
+
+    //interrupts(); // Enable interrupts
+
+    }
+    else{
+      strcpy(received_message_answer,"nocmd0_#]");
+      Serial.println("error in message nocmd0_#]");
+
+    }
+
+  
+    
+
+  }// end if (radio.receiveDone())
+
+
+}
+
+
+
+
+
+
+
 void handleButton(){
 
   if (digitalRead(obj_button_pin)==0) {
@@ -750,6 +847,56 @@ void handleButton(){
 
 }
 
+
+
+void checkCurrentRadioAddress(){
+
+
+  if (old_address==254){// i have not the proper address yet..
+
+
+
+    if (old_address!=this_node_address){//the address has changed and I restart radio to use it
+ 
+
+      radio.setAddress(this_node_address);
+      old_address=this_node_address;
+      get_address_timeout=millis();
+      Serial.print("radio address changed to:");
+      Serial.println(this_node_address);
+      sendSyncMessage(radioRetry,radioTxTimeout);
+
+
+    }
+
+
+    if ((millis()-get_address_timeout)>5000){ //every 5000 ms
+   
+      get_address_timeout=millis();
+
+      getAddressFromGateway();  //ask the gateway for a proper address
+
+
+    }
+
+
+  }
+  else{
+
+    if ((millis()-sync_time)>2000){ //every 5000 ms
+   
+      sync_time=millis();
+
+      sendSyncMessage(radioRetry,radioTxTimeout);
+
+
+    }
+
+  }
+
+
+
+}
 
  
 void setup() {
@@ -828,87 +975,7 @@ void loop() {
 
 
 
-  if (radio.receiveDone()){
-
-    skipRadioRxMsg=skipRadioRxMsg+1;
-
-    get_decode_time=millis();
-    //print message received to serial
-    Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
-    Serial.print((char*)radio.DATA);
-    Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
-
- 
-    //check if received message contains Hello World
-
-    uint8_t message_copy[rx_msg_lenght+1];
-
-    //strcpy(filtered_onos_message,"");
-    memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
-    Serial.print("msg_start:");
-    for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
-      filtered_onos_message[counter]=radio.DATA[counter];
-      message_copy[counter]=radio.DATA[counter]; 
-      Serial.print(filtered_onos_message[counter]);
-
-    //[S_001dw06001_#]
-      if (counter<2){
-        continue;
-      }
-      if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
-       // Serial.println("cmd start found-------------------------------");
-        onos_cmd_start_position=counter-2;
-      }
-
-
-      if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
-      //  Serial.println("cmd end found-------------------------------");
-        onos_cmd_end_position=counter-2;
-        break;// now the message has ended
-      }
-
-
-    }
-    Serial.println(":msg_stop");
-
-
-    if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
-      Serial.println("onos cmd  found-------------------------------");
-      //noInterrupts(); // Disable interrupts    //important for lamp node 
-      decodeOnosCmd(filtered_onos_message);
-
-      Serial.print("decode time1=") ;
-      Serial.println(millis()-get_decode_time) ;
-      get_decode_time=millis();
-
-      if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){//if the message was ok...
-      //check if sender wanted an ACK
-        if (radio.ACKRequested()){
-          radio.sendACK();
-          Serial.println(" - ACK sent");
-          sync_time=millis();
-        }
-        //interrupts(); // Enable interrupts
-
-      }
-      else{
-        Serial.println("error in message decode i will not send the ACK");
-        //interrupts(); // Enable interrupts 
-      }
-
-    //interrupts(); // Enable interrupts
-
-    }
-    else{
-      strcpy(received_message_answer,"nocmd0_#]");
-      Serial.println("error in message nocmd0_#]");
-
-    }
-
-  
-    
-
-  }// end if (radio.receiveDone())
+checkAndHandleIncomingRadioMsg();
 
 
 radioTx:
@@ -916,57 +983,7 @@ radioTx:
   radio.receiveDone(); //put radio in RX mode
   Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
 
-
-
-
-
-
-
-
-
-
-  if (old_address==254){// i have not the proper address yet..
-
-
-
-    if (old_address!=this_node_address){//the address has changed and I restart radio to use it
- 
-
-      radio.setAddress(this_node_address);
-      old_address=this_node_address;
-      get_address_timeout=millis();
-      Serial.print("radio address changed to:");
-      Serial.println(this_node_address);
-      sendSyncMessage(radioRetry,radioTxTimeout);
-
-
-    }
-
-
-    if ((millis()-get_address_timeout)>5000){ //every 5000 ms
-   
-      get_address_timeout=millis();
-
-      getAddressFromGateway();  //ask the gateway for a proper address
-
-
-    }
-
-
-  }
-
-  else if ((millis()-sync_time)>2000){ //every 5000 ms
-   
-   
-    sync_time=millis();
-
-    sendSyncMessage(radioRetry,radioTxTimeout);
-
-
-  }
-
-
-
+  checkCurrentRadioAddress();
 
 
 }//END OF LOOP()
