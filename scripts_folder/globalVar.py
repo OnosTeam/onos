@@ -1635,6 +1635,7 @@ usersDict["onos_mail_guest"]={"pw":"onos","mail_control_password":"onosm","prior
 usersDict["web_interface"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["scenario"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["onos_node"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
+usersDict["onos_node_reconnect"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 
 

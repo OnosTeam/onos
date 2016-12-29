@@ -969,11 +969,17 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     print "i change the webobject status"
 
+
+    if object_dict[objName].getStatus()=="onoswait":
+      if user=="onos_node":
+        print ("I will not set the status because the change is from a node")
+        return(-1)
+
+
     object_dict[objName].setStatus(statusToSet)#set the web object status 
     if (priority!=99):  #if priority == 99 will not write to webobject the new priority
       object_dict[objName].setRequiredPriority(priority) #set the webobject priority
     
-
 
     if len(mail_report_list)>0:
       print "mail_report,"+objName+" changed to "+str(statusToSet)
