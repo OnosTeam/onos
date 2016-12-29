@@ -614,7 +614,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 reduced the radio.sendWithRetry timeout from 200ms t0 75ms and increased the retry from 1 to 3
                 modified a lot of parts...now the radio communication is faster and more stable (tried only one node)
                 modified onos_plug_node_wplugavx.ino , now it has many functions called from the main loop.  
-
+                modified webserver.py now the nodes will not be able to change a object status 
+                  if the current status is onoswait    if object_dict[objName].getStatus()=="onoswait
 
 
 (110, 'Connection timed out');;;
