@@ -2,16 +2,18 @@
 
 
 .riga{
-
+position:relative;
 width:100%;
+height:70px;
 margin-top:50px;
-
+background-color:red;
 }
 
 
 .bottoneoggetto{
 	
-	position:relative;
+	position:absolute;
+	top:0px;
 	height:70px;
 	width:70px;
 	border: 1px solid black;
