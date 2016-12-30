@@ -12,7 +12,6 @@ margin-top:50px;
 .bottoneoggetto{
 	
 	position:relative;
-	top:0px;
 	height:70px;
 	width:70px;
 	border: 1px solid black;

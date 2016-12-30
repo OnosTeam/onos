@@ -54,7 +54,7 @@ if (funzione_da_eseguire=="click"){
 		<div id="time">23:36</div>
 
 
-	
+	</div>
 
 
 	<div id="side">
@@ -72,7 +72,7 @@ if (funzione_da_eseguire=="click"){
 		<a href="#"><div id="accountbutton" class="vocemenu"><i class="icon-user2"></i>Account</div></a>
 
 
-		<div id="closebutton" onclick="myFunction(this.id,'click');" class="vocemenu"><i class="icon-cross"></i></div>
+		<div id="closebutton" onclick="myFunction(this.id,'click');"><i class="icon-cross"></i></div>
 
 	</div>
 
