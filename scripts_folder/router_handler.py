@@ -61,7 +61,7 @@ class RouterHandler:
       self.__node_name=self.router_sn   # RouterGL0001
       self.progressive_msg_id='0' # to send an unique message identyfier i append a progressive number to the end of the message
       self.progressive_msg_number=0 #used to create self.progressive_msg_id 
-
+      self.serialCommunicationIsWorking=0
       self.exit=0
       self.router_pin_numbers=[]
       #self.read_thread_running=0   
@@ -117,20 +117,17 @@ class RouterHandler:
 
 
       if self.serial_arduino_used==1:
-
-        for retry in range(0,10):
-     
-          try:
-            self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
-            break
-          except Exception, e:
-            print "error in opening arduino serial port e:"+str(e.args)
-            errorQueue.put("error in opening arduino serial port e:"+str(e.args))
-          time.sleep(1)
+        try:
+          self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
+          self.serialCommunicationIsWorking=self.serial_communication.working 
+        except Exception, e:
+          print "error in opening arduino serial port e:"+str(e.args)
+          errorQueue.put("error in opening arduino serial port e:"+str(e.args))
+          self.serialCommunicationIsWorking=0
 
 
     
-        if self.serial_communication.working==1:
+        if self.serialCommunicationIsWorking==1:
           print "serial communication working"
          
 
@@ -541,17 +538,24 @@ class RouterHandler:
 
       queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
       if node_query_radio_threads_executing==0:
-        tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
-        tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
-        tr_handle_new_query_to_serial_node.start()         
-
+        if self.serialCommunicationIsWorking==1:
+          tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
+          tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
+          tr_handle_new_query_to_serial_node.start()         
+        else:
+          print("handle_new_query_to_radio_node_thread from setAddressToNode  not executed because there is not a serial transciver connected") 
 
       return()
 
 
 
     def writeRawMsgToNode(self,node_serial_number,node_address,msg):#deprecated
-      result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
+      if self.serialCommunicationIsWorking==1:
+        result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
+      else:
+        print("make_query_to_radio_node from writeRawMsgToNode not executed because there is not a serial transciver connected")
+        result=-2
+ 
       return(result)
 
 
@@ -666,7 +670,7 @@ class RouterHandler:
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
 
 
-        if self.serial_communication.working!=1: 
+        if self.serialCommunicationIsWorking!=1: 
           print "error no serial cable"
           errorQueue.put("error no serial cable")  
           priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
@@ -692,41 +696,12 @@ class RouterHandler:
           queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,statusToSetWebObject,user,priority,mail_report_list,cmd))
 
           if node_query_radio_threads_executing==0:
-            tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
-            tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
-            tr_handle_new_query_to_serial_node.start()   
-         
-          #try:
-          #  result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,query)
-
-          #except Exception, e:
-          #  exc_type, exc_obj, exc_tb = sys.exc_info()
-          #  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-          #  print(exc_type, fname, exc_tb.tb_lineno)   
-          #  print str(e.args)
-          #  result=-1
-          #  time.sleep(2)  
-  
-          #if result!=-1:  #if the query was accepted from the radio/serial node
-            
-
-          #  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":statusToSetWebObject,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })               
-
-         #   print "serial_result="
-         #   print result
-         #   with lock_serial_input:
-         #     tmp_uart_list=[]
-         #     for a in self.serial_communication.uart.readed_packets_list:
-         #       if ( (a in tmp_uart_list)or(a==result) ):
-         #         continue
-         #       else:
-         #         tmp_uart_list.append(a)   
-
-         #     self.serial_communication.uart.readed_packets_list=tmp_uart_list   #list(set(tmp_uart_list)) 
-              #if result in self.serial_communication.uart.readed_packets_list:
-              #  self.serial_communication.uart.remove(result) 
-
-
+            if self.serialCommunicationIsWorking==1:
+              tr_handle_new_query_to_serial_node = threading.Thread(target=handle_new_query_to_radio_node_thread,args=[self.serial_communication])
+              tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
+              tr_handle_new_query_to_serial_node.start()   
+            else:
+              print("handle_new_query_to_radio_node_thread from outputWrite not executed because there is not a serial transciver connected")
 
           return()
 

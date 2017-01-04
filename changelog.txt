@@ -616,6 +616,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 modified onos_plug_node_wplugavx.ino , now it has many functions called from the main loop.  
                 modified webserver.py now the nodes will not be able to change a object status 
                   if the current status is onoswait    if object_dict[objName].getStatus()=="onoswait
+                now onos will not crash if there is not a serial port connected, changed Serial_connection_Handler.py
+
 
 
 (110, 'Connection timed out');;;

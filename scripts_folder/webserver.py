@@ -5077,6 +5077,7 @@ def onlineServerSync():
   global force_online_sync_users
   global online_zone_dict
   global online_object_dict
+  global last_internet_check
   result=""
   while (exit==0): #if exit ==1  then close the service    
     onlineServerSyncThreadIsrunning=1
@@ -5121,7 +5122,7 @@ def onlineServerSync():
         online_first_contact=0
         online_object_dict=object_json_dictionary
         online_zone_dict=zone_json_dictionary
-
+        last_internet_check=time.time() #if it has connected to the server then also internet is working...
       except Exception as e  :
         print "first online contact failed" +" e:"+str(e.args)
         errorQueue.put("first online contact failed"+" e:"+str(e.args) )   
@@ -5153,6 +5154,7 @@ def onlineServerSync():
           result=f.data
           print result
           force_online_sync_users=0
+          last_internet_check=time.time() #if it has connected to the server then also internet is working...
         except Exception as e  :
           print "error creating online user "+" e:"+str(e.args)
           errorQueue.put( "error creating online user "+" e:"+str(e.args)) 
@@ -5180,7 +5182,7 @@ def onlineServerSync():
         f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
         result=f.data
         print result
-
+        last_internet_check=time.time() #if it has connected to the server then also internet is working...
         online_object_dict=object_json_dictionary
       except Exception as e  :
         print "error in the remote object update"+" e:"+str(e.args)
@@ -5210,6 +5212,7 @@ def onlineServerSync():
         result=f.data
         print result
         online_zone_dict=zone_json_dictionary  #banana, to get this value from the server
+        last_internet_check=time.time() #if it has connected to the server then also internet is working...
       except Exception as e  :
         print "error in the remote object update"+" e:"+str(e.args)
         errorQueue.put("error in the remote object update"+" e:"+str(e.args) )
@@ -5228,7 +5231,7 @@ def onlineServerSync():
       result=f.data
       sync_message=result
       print sync_message
-
+      last_internet_check=time.time() #if it has connected to the server then also internet is working...
     except Exception as e  :
       print "error contacting the online server to get sync message"+" e:"+str(e.args)
       errorQueue.put( "error contacting the online server to get sync message"+" e:"+str(e.args))
@@ -5485,6 +5488,16 @@ def mailCheckThread():
   return()
 
 
+def internetCheckConnection():
+  internet_state=0
+  try:
+    urllib2.urlopen("http://www.google.com")  
+    internet_state=1
+  except Exception as e: 
+    print "no internet connection 0"+" e:"+str(e.args)
+    errorQueue.put("no internet connection 0"+" e:"+str(e.args) )
+    internet_state=0
+  return(internet_state)
 
 
 def hardwareHandlerThread():  #check the nodes status and update the webobjects values 
@@ -5493,6 +5506,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   global last_mail_sync_time
   global last_server_sync_time
   global last_error_check_time
+  global last_internet_check
   
   read_pin=1   #banana
   #time.sleep(5)  #wait for webserver to startup 
@@ -5507,21 +5521,19 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   #print "diff last_pin_read_time",time.time()-last_pin_read_time
   last_node_check=0
   last_internet_check=0
+  internetCheckThreshold=10  # how often do onos check for connection (expressed in seconds)
+
+
+
+
   while (exit==0): 
 
-    time.sleep(1.5)#to save cpu load
+    time.sleep(0.5)# was 1.5 .. to save cpu load
 
 
-    if ( (time.time()-last_internet_check) >5 ):   #EVERY 5 SECONDS
+    if ( (time.time()-last_internet_check) >internetCheckThreshold ):   #was EVERY 5 SECONDS
       last_internet_check=time.time()
-      internet_connection=0
-      try:
-        urllib2.urlopen("http://www.google.com")  
-        internet_connection=1
-      except Exception as e: 
-        print "no internet connection 0"+" e:"+str(e.args)
-        #errorQueue.put("no internet connection 0"+" e:"+str(e.args) )
-        internet_connection=0
+      internet_connection=internetCheckConnection()
  
 
 
@@ -5630,7 +5642,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
     #analyze incoming serial message from serial port
-    if enable_usb_serial_port==1:
+    if hardware.serialCommunicationIsWorking==1:
+
       if len (hardware.serial_communication.uart.readed_packets_list)>0:
         print "there is an incoming data on serial port buffer"
         print hardware.serial_communication.uart.readed_packets_list

@@ -76,7 +76,7 @@
 //#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY     RF69_433MHZ
 #define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
-#define IS_RFM69HCW   false // set to 'true' if you are using an RFM69HCW module
+#define IS_RFM69HCW   true // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
@@ -834,7 +834,7 @@ void forwardRadioMsgToSerialPort(){
 
 void setup() {
 
- // delay(95000); //wait for glinet to power on
+  delay(95000); //wait for glinet to power on
   while (!Serial); // wait until serial console is open
   Serial.begin(SERIAL_BAUD);
 

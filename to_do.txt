@@ -117,7 +117,7 @@ sudo md5sum -c checksum2.md5
 
 
 
-
+aggiungere router_sn="RouterGA0000"  e router_hardware_type="RouterGA"  al file esterno di config
 
 
 

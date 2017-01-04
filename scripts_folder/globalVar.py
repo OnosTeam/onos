@@ -84,7 +84,7 @@ logTimeout=15 #minutes of user inactivity before logout , will be overwritten by
 
 log_name="file.log"
 error_log_name="erros.log"
-log_enable=0   #enable the log file size check
+log_enable=0   #enable the log file size check ,not implemented...
 check_log_len_time=datetime.datetime.today().minute
 mail_error_log_enable=1  #enable onos to send mail when an error happens
 error_log_mail_frequency=30  #seconds between a error check and another
@@ -138,10 +138,10 @@ mail_retry_timeout=120  #seconds between retry after error in sending mail
 
 
 
-
+last_internet_check=0  #the last time the internet connection was checked
 enable_onos_auto_update="yes" # possible value: "yes","no","ask_me"  # banana ask_me not implemented yet
-scenarios_enable=0  # tell onos if it have to check the scenarios or not. warning overwrite by scenarios_enable in cfg.json
-online_server_enable=0  #enable the remote online server to controll onos from internet without opening the router ports
+scenarios_enable=1  # tell onos if it have to check the scenarios or not. warning overwrite by scenarios_enable in cfg.json
+online_server_enable=1  #enable the remote online server to controll onos from internet without opening the router ports
 #will be overwritten by /scripts_folder/config_files/cf.json
 
 last_server_sync_time=0

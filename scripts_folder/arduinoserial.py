@@ -141,7 +141,7 @@ class SerialPort:
 
 
     self.ser.open()
-
+    
 
 
 
@@ -185,7 +185,7 @@ class SerialPort:
             except:
               print "I tried to reconnect serial port from arduinoserial module but I failed" 
               errorQueue.put("I tried to reconnect serial port from arduinoserial module but I failed")
-              priorityCmdQueue.put( {"cmd":"reconnectSerialPort"})
+              #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"})
               self.exit=1
 
 

@@ -16,33 +16,38 @@ LOW=0
 ser=0
 baud_rate=115200
 class Serial_connection_Handler():
+  exluded_port_list=[]
 
   def __init__(self):
     self.exit=0 
     self.uart=self.connectToPort()
     self.working=1
+    self.exluded_port_list 
     i=0
     while (self.uart ==0) :  #while port is not connected retry to connect   banana to make it clever..
+      print ("retry serial connection number:"+str(i))
       self.uart=self.connectToPort()
       if self.uart==1:
         break
       time.sleep(1)
-      if i>2:        #after 60 tries i increase the time between the tries
-        time.sleep(30)
-      if i>4:        #after 120 tries i increase the time between the tries
-        time.sleep(60) 
+      if i>2:        #after n tries i increase the time between the tries
+        time.sleep(10)
+      if i>4:        #after n tries i increase the time between the tries
+        time.sleep(30) 
 
-      if i >10:
-        if (searchForSerialCable=="null"):
-          print "error serial connection, no serial ports found"
+      if i >0:
+        if (self.searchForSerialCable(self.exluded_port_list )=="null"):
+          print ("error serial connection, no serial ports found")
+          self.uart==-1
           self.working=0
           return(-1)
 
-
+      i=i+1
 
 
   def reconnectSerialPort():
-
+    print("reconnectSerialPort() executed")
+    self.exluded_port_list=[]
     self.uart=self.connectToPort()
     self.working=1
     i=0
@@ -57,44 +62,31 @@ class Serial_connection_Handler():
         time.sleep(60) 
 
       if i >10:
-        if (searchForSerialCable=="null"):
+        if (self.searchForSerialCable(self.exluded_port_list )=="null"):
           print "error serial reconnection, no serial ports found"
           self.working=0
           return(-1)
 
 
 
-
-  def verifyPort(self,port_to_search,port_exluded):
-    if port_to_search!=port_exluded:
-      result=os.path.exists("/dev/"+port_to_search) 
-    else:
-      return("no")
-
-    #result=os.popen("ls /dev/ | grep -v "+port_exluded+" | grep "+port_to_search).read()
-    if result:
-      return (port_to_search)
-    else:
-      return ("no")
-
-
-
   def connectToPort(self):
-
-    port=self.searchForSerialCable("nothing") 
+    print("connectSerialPort() executed")
+    port=self.searchForSerialCable(self.exluded_port_list ) 
     if port!="null":   # if i found the port then use it
       try:
-        old_port=port       #  [0:len(port)-1] 
+        #old_port=port       #  [0:len(port)-1] 
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, baud_rate)     
         print "arduino connected correctly to onos system" 
         return(self.ser)
       except:  #some error occured while using the port i found 
-        print "port error i will retry with another port" 
-        port=self.searchForSerialCable(old_port)  
+        print "port error with port:"+port+" i will retry with another port" 
+        if port not in self.exluded_port_list:
+          self.exluded_port_list.append(port)
+        port=self.searchForSerialCable(self.exluded_port_list )  
         if port!="null":   # if i found the port then use it
           try:
-            old_port=port[0:len(port)-1] 
+            #old_port=port[0:len(port)-1] 
             port='/dev/'+port    #[0:len(port)-1]   #remove /n of ls
             self.ser =arduinoserial.SerialPort(port, baud_rate)     
             print "arduino connected correctly to onos system" 
@@ -112,81 +104,33 @@ class Serial_connection_Handler():
 
 
 
-  def searchForSerialCable(self,exluded_port):
-
+  def searchForSerialCable(self,list_of_port_to_not_use):
+    print ("searchForSerialCable() executed with self.exluded_port_list= "+str(list_of_port_to_not_use))
     list_of_dev=os.listdir("/dev")
 
     for dev in  list_of_dev:
-      if (dev.find("ttyATH0")!=-1)and(dev!=exluded_port):
+      if (dev.find("ttyATH")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyUSB0")!=-1)and(dev!=exluded_port):
+      if (dev.find("ttyUSB")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyUSB1")!=-1)and(dev!=exluded_port):
+      if (dev.find("ttyACM")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyUSB2")!=-1)and(dev!=exluded_port):
+      if (dev.find("ttyS")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
-    for dev in  list_of_dev:
-      if (dev.find("ttyUSB3")!=-1)and(dev!=exluded_port):
-        return(dev)
-
-    for dev in  list_of_dev:
-      if (dev.find("ttyACM0")!=-1)and(dev!=exluded_port):
-        return(dev)
-
-    for dev in  list_of_dev:
-      if (dev.find("ttyACM1")!=-1)and(dev!=exluded_port):
-        return(dev)
-
-    for dev in  list_of_dev:
-      if (dev.find("ttyACM2")!=-1)and(dev!=exluded_port):
-        return(dev)
-
-    for dev in  list_of_dev:
-      if (dev.find("ttyACM3")!=-1)and(dev!=exluded_port):
-        return(dev)
-
-    for dev in  list_of_dev:
-      if (dev.find("ttyS0")!=-1)and(dev!=exluded_port):
-        return(dev)
+    return("null")
 
 
-    port=self.verifyPort("ttyUSB0",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyUSB1",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyUSB2",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyUSB3",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyUSB4",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyUSB",exluded_port)
-
-    if len (port)<3:
-      port=self.verifyPort("ttyACM0",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyACM1",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyACM2",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyACM3",exluded_port)
-    if len (port)<3:
-      port=self.verifyPort("ttyACM",exluded_port)
-    if len (port)<3:
-      return("null")
-
-    return(port)     
 
     
-
-
+  def __del__(self):
+    print ("class Serial_connection_Handler destroyed")
 
 
 
