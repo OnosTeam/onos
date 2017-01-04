@@ -22,7 +22,19 @@ class Serial_connection_Handler():
     self.exit=0 
     self.uart=self.connectToPort()
     self.working=1
-    self.exluded_port_list 
+    self.exluded_port_list=[] 
+    self.connectSerialPort()
+
+   
+    #return(self.connectSerialPort())
+
+
+
+  def connectSerialPort(self):
+    print("connectSerialPort() executed")
+    self.exluded_port_list=[]
+    self.uart=self.connectToPort()
+    self.working=1
     i=0
     while (self.uart ==0) :  #while port is not connected retry to connect   banana to make it clever..
       print ("retry serial connection number:"+str(i))
@@ -30,12 +42,7 @@ class Serial_connection_Handler():
       if self.uart==1:
         break
       time.sleep(1)
-      if i>2:        #after n tries i increase the time between the tries
-        time.sleep(10)
-      if i>4:        #after n tries i increase the time between the tries
-        time.sleep(30) 
-
-      if i >0:
+      if i >1:
         if (self.searchForSerialCable(self.exluded_port_list )=="null"):
           print ("error serial connection, no serial ports found")
           self.uart==-1
@@ -45,30 +52,7 @@ class Serial_connection_Handler():
       i=i+1
 
 
-  def reconnectSerialPort():
-    print("reconnectSerialPort() executed")
-    self.exluded_port_list=[]
-    self.uart=self.connectToPort()
-    self.working=1
-    i=0
-    while (self.uart ==0) :  #while port is not connected retry to connect   banana to make it clever..
-      self.uart=self.connectToPort()
-      if self.uart==1:
-        return(1)
-      time.sleep(1)
-      if i>2:        #after 60 tries i increase the time between the tries
-        time.sleep(30)
-      if i>4:        #after 120 tries i increase the time between the tries
-        time.sleep(60) 
-
-      if i >10:
-        if (self.searchForSerialCable(self.exluded_port_list )=="null"):
-          print "error serial reconnection, no serial ports found"
-          self.working=0
-          return(-1)
-
-
-
+    return(1)#the connection was successful    
   def connectToPort(self):
     print("connectSerialPort() executed")
     port=self.searchForSerialCable(self.exluded_port_list ) 
@@ -109,18 +93,26 @@ class Serial_connection_Handler():
     list_of_dev=os.listdir("/dev")
 
     for dev in  list_of_dev:
+      if (dev.find("ttyATH0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
+        return(dev)
       if (dev.find("ttyATH")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
+      if (dev.find("ttyUSB0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
+        return(dev)
       if (dev.find("ttyUSB")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
+      if (dev.find("ttyACM0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
+        return(dev)
       if (dev.find("ttyACM")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
+      if (dev.find("ttyS0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
+        return(dev)
       if (dev.find("ttyS")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 

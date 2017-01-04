@@ -190,6 +190,7 @@ def importConfig():
   mail_whiteList=readConfigurationsFromSavedFile(u"mail_whiteList")  
   online_server_enable=readConfigurationsFromSavedFile(u"online_server_enable")  
   online_usersDict.update(readConfigurationsFromSavedFile(u"online_usersDict"))  
+  usersDict.update(online_usersDict)
   timezone=readConfigurationsFromSavedFile(u"timezone")  
   enable_onos_auto_update=readConfigurationsFromSavedFile(u"enable_onos_auto_update")  
   scenarios_enable=readConfigurationsFromSavedFile(u"scenarios_enable") 

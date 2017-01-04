@@ -29,6 +29,11 @@
       "hwModelName": "WPlugAvx", 
       "nodeAddress": "003", 
       "node_serial_number": "WPlugAvx0008"
+    }, 
+    "WPlugAvx0080": {
+      "hwModelName": "WPlugAvx", 
+      "nodeAddress": "254", 
+      "node_serial_number": "WPlugAvx0080"
     }
   }, 
   "objectDictionary": {
@@ -204,7 +209,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -312,6 +317,41 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button0_WPlugAvx0080": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_WPlugAvx0080=0", 
+        "1": "button0_WPlugAvx0080=1", 
+        "onoswait": "button0_WPlugAvx0080WAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx0080", 
+      "notes": " ", 
+      "objname": "button0_WPlugAvx0080", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
       "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
@@ -347,7 +387,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -453,6 +493,41 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
+      "status": 0, 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_WPlugAvx0080": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_WPlugAvx0080=0", 
+        "1": "button1_WPlugAvx0080=1", 
+        "onoswait": "button1_WPlugAvx0080WAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx0080", 
+      "notes": " ", 
+      "objname": "button1_WPlugAvx0080", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
       "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
@@ -524,7 +599,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -630,7 +705,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 3, 
+      "status": 4, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -666,7 +741,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 997, 
+      "status": 1427, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -710,7 +785,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 16, 
+      "status": 23, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -756,7 +831,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 37, 
+      "status": 47, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -864,7 +939,42 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "0", 
+      "status": "onoswait", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_obj"
+    }, 
+    "plug0_WPlugAvx0080": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "plug0_WPlugAvx0080=0", 
+        "1": "plug0_WPlugAvx0080=1", 
+        "onoswait": "plug0_WPlugAvx0080WAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx0080", 
+      "notes": " ", 
+      "objname": "plug0_WPlugAvx0080", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        0
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -899,7 +1009,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -1045,7 +1155,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -1866,6 +1976,18 @@
         "plug21_WPlugAvx0008"
       ], 
       "order": 6, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "WPlugAvx0080": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "button0_WPlugAvx0080", 
+        "button1_WPlugAvx0080", 
+        "plug0_WPlugAvx0080"
+      ], 
+      "order": 7, 
       "owner": "onos_sys", 
       "permissions": "777"
     }

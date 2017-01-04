@@ -5181,7 +5181,7 @@ def onlineServerSync():
         #result=f.read()
         f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
         result=f.data
-        print result
+        #print result
         last_internet_check=time.time() #if it has connected to the server then also internet is working...
         online_object_dict=object_json_dictionary
       except Exception as e  :
@@ -5507,7 +5507,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   global last_server_sync_time
   global last_error_check_time
   global last_internet_check
-  
+  global reconnect_serial_port_enable
   read_pin=1   #banana
   #time.sleep(5)  #wait for webserver to startup 
   print "hardwareHandlerThread() executed"
@@ -5528,7 +5528,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
   while (exit==0): 
 
-    time.sleep(0.5)# was 1.5 .. to save cpu load
+    time.sleep(1.5)# was 1.5 .. to save cpu load
+
 
 
     if ( (time.time()-last_internet_check) >internetCheckThreshold ):   #was EVERY 5 SECONDS
@@ -5542,7 +5543,18 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
     if ( (time.time()-last_node_check) >2 ):   #EVERY 2 SECONDS   todo: make this function..
       #print "threads:",len(threading.enumerate())
       #print "check nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-     
+
+      if enable_usb_serial_port==1:
+
+        if (hardware.serialCommunicationIsWorking==0)&(reconnect_serial_port_enable==0):
+          reconnect_serial_port_enable=time.time()+10   
+
+        if(reconnect_serial_port_enable!=0)&(reconnect_serial_port_enable<time.time()) :  #check if serial port has to be reconnected
+          hardware.serialCommunicationIsWorking=0
+        #if reconnect_serial_port_enable<time.time():
+          layerExchangeDataQueue.put( {"cmd":"reconnectSerialPort"}) 
+          reconnect_serial_port_enable=0     
+
       last_node_check=time.time()
       #banana try...
       for a in nodeDict.keys():
@@ -5656,6 +5668,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             hardware.serial_communication.uart.readed_packets_list.pop(0)   
 
 
+
     if (mail_error_log_enable==1):
 
       if (  (  (time.time()-last_error_check_time)>error_log_mail_frequency)  ):
@@ -5702,6 +5715,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 def executeQueueFunction(dataExchanged):
+
   if ((dataExchanged["cmd"])=="setNodePin"):
     try: 
       node_serial_number=dataExchanged["nodeSn"]
@@ -5856,21 +5870,36 @@ def executeQueueFunction(dataExchanged):
 
 
   if (dataExchanged["cmd"]=="reconnectSerialPort"): #todo check if it works
-    hardware.serial_communication.working=0
+    hardware.serialCommunicationIsWorking=0
     print "I try to reconnectg serial port from webserver.py"
+    try:
+        tryToReconnect=0
+        try:
+          if hardware.serial_communication.uart.ser.isOpen() == False:
+            tryToReconnect=0
+        except:
+          print ("can't do hardware.serial_communication.uart.ser.isOpen() ") 
+          tryToReconnect=1
 
-    if hardware.serial_communication.uart.ser.isOpen() == False :
-      result=hardware.serial_communication.reconnectSerialPort() 
-      if result==1:
-        hardware.serial_communication.working=1
-        print "serial port successfully reconnected from webserver.py"
-        errorQueue.put("serial port successfully reconected from webserver.py")
-      else:
-        hardware.serial_communication.working=0
-        print "serial port can't be reconnected from webserver.py"
-        errorQueue.put("serial port can't be reconnected  from webserver.py")
-    else:
-      print "serial port is already connected"
+        if tryToReconnect==1:
+          result=hardware.connectSerialPort() 
+          if result==1:
+            hardware.serial_communication.working=1
+            print "serial port successfully reconnected from webserver.py"
+            errorQueue.put("serial port successfully reconected from webserver.py")
+          else:
+            hardware.serial_communication.working=0
+            print "serial port can't be reconnected from webserver.py"
+            errorQueue.put("serial port can't be reconnected  from webserver.py")
+            print "serial port is already connected"
+
+    except Exception as e: 
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)   
+      print str(e.args)
+      print("error in serial port reconnection")  
+
 
   print "dataExchanged = : ", dataExchanged
 

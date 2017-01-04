@@ -62,11 +62,11 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
       time.sleep(1) 
 
 
-    if serialCom.uart.ser.isOpen() == False :
-      print "serial port is not open in make_query_to_radio_node()"
+    #if serialCom.uart.ser.isOpen() == False :
+     # print "serial port is not open in make_query_to_radio_node()"
       priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
     # time.sleep(1)  
-      return(-1)
+      #return(-1)
 
 
     try:  
@@ -93,9 +93,9 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     
   
      # return(1) 
-    print "expected confirm:"+expected_confirm
-    print "uart rx list:"
-    print serialCom.uart.readed_packets_list
+    #print "expected confirm:"+expected_confirm
+    #print "uart rx list:"
+    #print serialCom.uart.readed_packets_list
 
 
 

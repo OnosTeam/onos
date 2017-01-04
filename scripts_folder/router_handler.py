@@ -117,9 +117,11 @@ class RouterHandler:
 
 
       if self.serial_arduino_used==1:
+        
+        #self.serial_communication=self.connectSerialPort()
         try:
           self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
-          self.serialCommunicationIsWorking=self.serial_communication.working 
+          self.serialCommunicationIsWorking=self.serial_communication.working
         except Exception, e:
           print "error in opening arduino serial port e:"+str(e.args)
           errorQueue.put("error in opening arduino serial port e:"+str(e.args))
@@ -217,6 +219,21 @@ class RouterHandler:
 #          print "i don't start the reading thread because i can't read the hw pins"
 
 
+    def connectSerialPort(self):
+        global Serial_connection_Handler 
+        try:
+          serial_communication=Serial_connection_Handler.Serial_connection_Handler()
+          self.serialCommunicationIsWorking=serial_communication.working
+          return(serial_communication)
+        except Exception as e: 
+
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+          print(exc_type, fname, exc_tb.tb_lineno)   
+          print str(e.args)
+          print "error in opening arduino serial port e:"+str(e.args)
+          errorQueue.put("error in opening arduino serial port e:"+str(e.args))
+          self.serialCommunicationIsWorking=0
 
 
     def getProgressive_msg_id(self):
@@ -543,7 +560,8 @@ class RouterHandler:
           tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
           tr_handle_new_query_to_serial_node.start()         
         else:
-          print("handle_new_query_to_radio_node_thread from setAddressToNode  not executed because there is not a serial transciver connected") 
+          print("handle_new_query_to_radio_node_thread from setAddressToNode  not executed because there is not a serial transceiver connected") 
+          errorQueue.put("handle_new_query_to_radio_node_thread from setAddressToNode  not executed because there is not a serial transceiver connected")
 
       return()
 
@@ -553,7 +571,8 @@ class RouterHandler:
       if self.serialCommunicationIsWorking==1:
         result=make_query_to_radio_node(self.serial_communication,node_serial_number,node_address,msg)
       else:
-        print("make_query_to_radio_node from writeRawMsgToNode not executed because there is not a serial transciver connected")
+        print("make_query_to_radio_node from writeRawMsgToNode not executed because there is not a serial transceiver connected")
+        errorQueue.put("make_query_to_radio_node from writeRawMsgToNode not executed because there is not a serial transceiver connected")
         result=-2
  
       return(result)
@@ -673,7 +692,7 @@ class RouterHandler:
         if self.serialCommunicationIsWorking!=1: 
           print "error no serial cable"
           errorQueue.put("error no serial cable")  
-          priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
+          #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
           return(-1)
 
 
@@ -701,7 +720,8 @@ class RouterHandler:
               tr_handle_new_query_to_serial_node.daemon = True  #make the thread a daemon thread
               tr_handle_new_query_to_serial_node.start()   
             else:
-              print("handle_new_query_to_radio_node_thread from outputWrite not executed because there is not a serial transciver connected")
+              print("handle_new_query_to_radio_node_thread from outputWrite not executed because there is not a serial transceiver connected")
+              errorQueue.put("handle_new_query_to_radio_node_thread from outputWrite not executed because there is not a serial transceiver connected")
 
           return()
 

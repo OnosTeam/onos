@@ -141,7 +141,7 @@ class SerialPort:
 
 
     self.ser.open()
-    
+
 
 
 
@@ -186,7 +186,8 @@ class SerialPort:
               print "I tried to reconnect serial port from arduinoserial module but I failed" 
               errorQueue.put("I tried to reconnect serial port from arduinoserial module but I failed")
               #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"})
-              self.exit=1
+              return()
+
 
 
           if self.exit==1:
@@ -215,6 +216,7 @@ class SerialPort:
             except Exception, e :
               print "can't write to uart"+str(e.args) 
               errorQueue.put( "can't write to uart"+str(e.args) )
+              return()
 
             try:
               self.ser.flushOutput()
@@ -238,17 +240,18 @@ class SerialPort:
                 byte=-1
                 self.status=0
                 continue
-
+ 
               if byte=="\x00":
                 continue
-
-              if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
-                print "end of serial packet for /n"
-                break
-              else:   
-                #print "in byte="+byte+" end of in byte"
-                buf=buf+byte
-              
+              try:
+                if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
+                  print "end of serial packet for /n"
+                  break
+                else:   
+                  #print "in byte="+byte+" end of in byte"
+                  buf=buf+byte
+              except:  #not a string , probably is null
+                continue 
 
               if len(buf)>5:
                 waitTowriteUntilIReceive=1 
@@ -523,7 +526,9 @@ class SerialPort:
 
 
   def __del__(self):
-    print "class arduinoserial destroyed"
+    print ("class arduinoserial destroyed")
+      #reconnect_serial_port_enable==time.time()+60
+
  #   try:
  #     os.close(self.fd)
  #   except:

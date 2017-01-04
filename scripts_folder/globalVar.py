@@ -96,6 +96,7 @@ hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
 enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
 router_sn="RouterGA0000"
 uart_router_sn="" #the sn of the node connected to the usb of the pc where onos is run..
 router_hardware_type="RouterGA" #select the type of hardware
@@ -1638,7 +1639,7 @@ usersDict["onos_node"]={"pw":"onos","mail_control_password":"onosm","priority":9
 usersDict["onos_node_reconnect"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 
-
+#usersDict["mauro"]={"pw":"12345678","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 
 
 online_usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
