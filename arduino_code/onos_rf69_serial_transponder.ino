@@ -834,7 +834,7 @@ void forwardRadioMsgToSerialPort(){
 
 void setup() {
 
-  delay(95000); //wait for glinet to power on
+  //delay(95000); //wait for glinet to power on
   while (!Serial); // wait until serial console is open
   Serial.begin(SERIAL_BAUD);
 
@@ -870,7 +870,7 @@ void setup() {
 
 
 
-  Serial.println(F("[S_arduino_ready_#]"));
+
 
 
 
@@ -886,6 +886,22 @@ void setup() {
   // driver.setTxPower(14);
 
 
+  while (1){
+    delayMicroseconds(20);
+    if (Serial.available() > 2) {
+       if (Serial.read()=='['){
+         if (Serial.read()=='S'){
+           if (Serial.read()=='_'){
+             break;
+           }
+         }
+       }
+    }// end of if (Serial.available() > 3)
+
+
+  } // end of   while (1){
+
+  Serial.println(F("[S_arduino_ready_#]"));
   composeSyncMessage();
   makeSyncMessage();
 

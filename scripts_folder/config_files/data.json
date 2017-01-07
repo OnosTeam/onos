@@ -30,10 +30,20 @@
       "nodeAddress": "003", 
       "node_serial_number": "WPlugAvx0008"
     }, 
-    "WPlugAvx0080": {
+    "WPlugAvx00WP": {
       "hwModelName": "WPlugAvx", 
-      "nodeAddress": "254", 
-      "node_serial_number": "WPlugAvx0080"
+      "nodeAddress": "003", 
+      "node_serial_number": "WPlugAvx00WP"
+    }, 
+    "WPlugAvx00[S": {
+      "hwModelName": "WPlugAvx", 
+      "nodeAddress": "003", 
+      "node_serial_number": "WPlugAvx00[S"
+    }, 
+    "WPlugAvx0800": {
+      "hwModelName": "WPlugAvx", 
+      "nodeAddress": "003", 
+      "node_serial_number": "WPlugAvx0800"
     }
   }, 
   "objectDictionary": {
@@ -209,7 +219,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "onoswait", 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -317,7 +327,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -326,7 +336,7 @@
       }, 
       "type": "digital_output"
     }, 
-    "button0_WPlugAvx0080": {
+    "button0_WPlugAvx00WP": {
       "cmdDict": {
         "0": "", 
         "1": "", 
@@ -337,14 +347,84 @@
         "onos_mail_guest"
       ], 
       "htmlDict": {
-        "0": "button0_WPlugAvx0080=0", 
-        "1": "button0_WPlugAvx0080=1", 
-        "onoswait": "button0_WPlugAvx0080WAIT"
+        "0": "button0_WPlugAvx00WP=0", 
+        "1": "button0_WPlugAvx00WP=1", 
+        "onoswait": "button0_WPlugAvx00WPWAIT"
       }, 
       "mail_l": [], 
-      "node_sn": "WPlugAvx0080", 
+      "node_sn": "WPlugAvx00WP", 
       "notes": " ", 
-      "objname": "button0_WPlugAvx0080", 
+      "objname": "button0_WPlugAvx00WP", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button0_WPlugAvx00[S": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_WPlugAvx00[S=0", 
+        "1": "button0_WPlugAvx00[S=1", 
+        "onoswait": "button0_WPlugAvx00[SWAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx00[S", 
+      "notes": " ", 
+      "objname": "button0_WPlugAvx00[S", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        5
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button0_WPlugAvx0800": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button0_WPlugAvx0800=0", 
+        "1": "button0_WPlugAvx0800=1", 
+        "onoswait": "button0_WPlugAvx0800WAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx0800", 
+      "notes": " ", 
+      "objname": "button0_WPlugAvx0800", 
       "own": "onos_admin", 
       "perm": "111111111", 
       "pins": [
@@ -387,7 +467,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "onoswait", 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -493,7 +573,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 0, 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -502,7 +582,7 @@
       }, 
       "type": "digital_output"
     }, 
-    "button1_WPlugAvx0080": {
+    "button1_WPlugAvx00WP": {
       "cmdDict": {
         "0": "", 
         "1": "", 
@@ -513,14 +593,84 @@
         "onos_mail_guest"
       ], 
       "htmlDict": {
-        "0": "button1_WPlugAvx0080=0", 
-        "1": "button1_WPlugAvx0080=1", 
-        "onoswait": "button1_WPlugAvx0080WAIT"
+        "0": "button1_WPlugAvx00WP=0", 
+        "1": "button1_WPlugAvx00WP=1", 
+        "onoswait": "button1_WPlugAvx00WPWAIT"
       }, 
       "mail_l": [], 
-      "node_sn": "WPlugAvx0080", 
+      "node_sn": "WPlugAvx00WP", 
       "notes": " ", 
-      "objname": "button1_WPlugAvx0080", 
+      "objname": "button1_WPlugAvx00WP", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_WPlugAvx00[S": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_WPlugAvx00[S=0", 
+        "1": "button1_WPlugAvx00[S=1", 
+        "onoswait": "button1_WPlugAvx00[SWAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx00[S", 
+      "notes": " ", 
+      "objname": "button1_WPlugAvx00[S", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        6
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_output"
+    }, 
+    "button1_WPlugAvx0800": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "button1_WPlugAvx0800=0", 
+        "1": "button1_WPlugAvx0800=1", 
+        "onoswait": "button1_WPlugAvx0800WAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx0800", 
+      "notes": " ", 
+      "objname": "button1_WPlugAvx0800", 
       "own": "onos_admin", 
       "perm": "111111111", 
       "pins": [
@@ -599,7 +749,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "onoswait", 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -705,7 +855,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 4, 
+      "status": 7, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -741,7 +891,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1427, 
+      "status": 207, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -785,7 +935,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 23, 
+      "status": 3, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -831,7 +981,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 47, 
+      "status": 27, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -948,7 +1098,7 @@
       }, 
       "type": "digital_obj"
     }, 
-    "plug0_WPlugAvx0080": {
+    "plug0_WPlugAvx00WP": {
       "cmdDict": {
         "0": "", 
         "1": "", 
@@ -959,14 +1109,84 @@
         "onos_mail_guest"
       ], 
       "htmlDict": {
-        "0": "plug0_WPlugAvx0080=0", 
-        "1": "plug0_WPlugAvx0080=1", 
-        "onoswait": "plug0_WPlugAvx0080WAIT"
+        "0": "plug0_WPlugAvx00WP=0", 
+        "1": "plug0_WPlugAvx00WP=1", 
+        "onoswait": "plug0_WPlugAvx00WPWAIT"
       }, 
       "mail_l": [], 
-      "node_sn": "WPlugAvx0080", 
+      "node_sn": "WPlugAvx00WP", 
       "notes": " ", 
-      "objname": "plug0_WPlugAvx0080", 
+      "objname": "plug0_WPlugAvx00WP", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        0
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_obj"
+    }, 
+    "plug0_WPlugAvx00[S": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "plug0_WPlugAvx00[S=0", 
+        "1": "plug0_WPlugAvx00[S=1", 
+        "onoswait": "plug0_WPlugAvx00[SWAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx00[S", 
+      "notes": " ", 
+      "objname": "plug0_WPlugAvx00[S", 
+      "own": "onos_admin", 
+      "perm": "111111111", 
+      "pins": [
+        0
+      ], 
+      "priority": 0, 
+      "scenarios": [], 
+      "status": "inactive", 
+      "styleDict": {
+        "0": "background-color:#A9E2F3;", 
+        "1": "background-color:#8181F7;", 
+        "default_s": "background-color:red ;color black", 
+        "onoswait": "background-color:grey ;color black"
+      }, 
+      "type": "digital_obj"
+    }, 
+    "plug0_WPlugAvx0800": {
+      "cmdDict": {
+        "0": "", 
+        "1": "", 
+        "s_cmd": ""
+      }, 
+      "grp": [
+        "web_interface", 
+        "onos_mail_guest"
+      ], 
+      "htmlDict": {
+        "0": "plug0_WPlugAvx0800=0", 
+        "1": "plug0_WPlugAvx0800=1", 
+        "onoswait": "plug0_WPlugAvx0800WAIT"
+      }, 
+      "mail_l": [], 
+      "node_sn": "WPlugAvx0800", 
+      "notes": " ", 
+      "objname": "plug0_WPlugAvx0800", 
       "own": "onos_admin", 
       "perm": "111111111", 
       "pins": [
@@ -1155,7 +1375,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "onoswait", 
+      "status": "inactive", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -1979,13 +2199,37 @@
       "owner": "onos_sys", 
       "permissions": "777"
     }, 
-    "WPlugAvx0080": {
+    "WPlugAvx00WP": {
       "group": [], 
       "hidden": 0, 
       "objects": [
-        "button0_WPlugAvx0080", 
-        "button1_WPlugAvx0080", 
-        "plug0_WPlugAvx0080"
+        "button0_WPlugAvx00WP", 
+        "button1_WPlugAvx00WP", 
+        "plug0_WPlugAvx00WP"
+      ], 
+      "order": 8, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "WPlugAvx00[S": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "button0_WPlugAvx00[S", 
+        "button1_WPlugAvx00[S", 
+        "plug0_WPlugAvx00[S"
+      ], 
+      "order": 9, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "WPlugAvx0800": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [
+        "button0_WPlugAvx0800", 
+        "button1_WPlugAvx0800", 
+        "plug0_WPlugAvx0800"
       ], 
       "order": 7, 
       "owner": "onos_sys", 

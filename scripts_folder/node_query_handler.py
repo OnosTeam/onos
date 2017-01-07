@@ -48,15 +48,16 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
     if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
 
-      for i in xrange(len(serialCom.uart.readed_packets_list) - 1, -1, -1):  #iterate the list from the last element to the first
-        a=serialCom.uart.readed_packets_list[i]
+      for a in serialCom.uart.readed_packets_list:  #iterate the list from the last element to the first
+        #a=serialCom.uart.readed_packets_list[i]
+        print ("check of all received answers000000000 current was:"+str(a))
 
         if a.find(expected_confirm)!=-1 :  #found the answer
-          serialCom.uart.readed_packets_list.pop(i)
+          serialCom.uart.readed_packets_list.remove(a)
           return (a)
 
         if a=="[S_ertx1_#]":
-          serialCom.uart.readed_packets_list.pop(i)
+          serialCom.uart.readed_packets_list.remove(a)
           continue 
 
       time.sleep(1) 
@@ -104,15 +105,16 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
     #for a in serialCom.uart.readed_packets_list.:
 
-    for i in xrange(len(serialCom.uart.readed_packets_list) - 1, -1, -1):  #iterate the list from the last element to the first
-      a=serialCom.uart.readed_packets_list[i]
+    for a in serialCom.uart.readed_packets_list:  #iterate the list from the last element to the first
+      #a=serialCom.uart.readed_packets_list[i]
 
+      print ("check of all received answers current was:"+str(a))
       if a.find(expected_confirm)!=-1 :  #found the answer
-        serialCom.uart.readed_packets_list.pop(i)
+        serialCom.uart.readed_packets_list.remove(a)
         return (a)
 
       if a=="[S_ertx1_#]":
-        serialCom.uart.readed_packets_list.pop(i)
+        serialCom.uart.readed_packets_list.remove(a)
         continue 
 
 

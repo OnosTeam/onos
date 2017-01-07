@@ -122,6 +122,7 @@ class RouterHandler:
         try:
           self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
           self.serialCommunicationIsWorking=self.serial_communication.working
+          self.serial_communication.uart.write("[S_begin_#]")
         except Exception, e:
           print "error in opening arduino serial port e:"+str(e.args)
           errorQueue.put("error in opening arduino serial port e:"+str(e.args))

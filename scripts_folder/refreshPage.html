@@ -10,7 +10,7 @@ stop_update=1;
 
 function startUpdatePag(){
 
-setTimeout('updatePag()',450);
+setTimeout('updatePag()',350);
 
 }
 function changePag(url){
@@ -28,7 +28,7 @@ stop_update=0;
 function updatePag(){
 
 if (stop_update==1){
-setTimeout('updatePag()',512);
+setTimeout('updatePag()',312);
 return;
 }
 
@@ -64,12 +64,12 @@ xmlHttp.onreadystatechange=function(){
 
           //oldHtml=xmlHttp.responseText;
 		  }
-          setTimeout('updatePag()',512);
+          setTimeout('updatePag()',312);
 
         }
         else{     //problem in rx  , i retry 
 
-            setTimeout('updatePag()',512);
+            setTimeout('updatePag()',312);
            } 
         
 

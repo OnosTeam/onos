@@ -951,7 +951,15 @@ void setup() {
   Serial.print("\nListening at ");
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(" MHz");
-  
+
+  changeObjStatus(0,1);
+  delay(300);
+  changeObjStatus(0,0);
+  delay(100);
+  changeObjStatus(0,1);
+  delay(300);
+  changeObjStatus(0,0);
+
   composeSyncMessage();
 
 

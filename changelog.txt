@@ -619,6 +619,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 now onos will not crash if there is not a serial port connected, changed Serial_connection_Handler.py
                 bugfix after last mod the serial port did not work anymore..
                 online_usersDict will be loaded in usersDict at startup..
+                now the arduino serial transciever will exit the setup() and begin to talk only after it has received a '[S_' from serialport 
 
 
 (110, 'Connection timed out');;;

@@ -192,7 +192,7 @@ class SerialPort:
 
           if self.exit==1:
             break
-          
+          buf=''
 
 
 
@@ -210,7 +210,7 @@ class SerialPort:
             try:
               self.ser.write(data_to_write)
               print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
-              time.sleep(0.2) #0.02 
+              time.sleep(0.1) #0.02 
               write_enable=0
               msgWasWritten=1
             except Exception, e :
@@ -225,26 +225,33 @@ class SerialPort:
               errorQueue.put( "can't flush output"+str(e.args) )
 
           waitTowriteUntilIReceive=0
-          buf=''
-          next_buf=''
           while (self.exit==0):
-            byte=''
-            buf=next_buf
-            next_buf=''
-            time.sleep(0.01) 
+            time.sleep(0.1) 
 
             if self.ser.inWaiting()<1:   #skip if there is no incoming data
-              time.sleep(0.01) 
+              time.sleep(0.1) 
               continue
             else: 
 ##################################################################
               try:
-                buf =buf+ self.ser.read(self.ser.inWaiting())   #  self.usbR.read(1)
+                byte = self.ser.read(1)   #  self.usbR.read(1)
                 #print byte
               except:
-                print ("error in self.ser.read(self.ser.inWaiting()) ")
+                byte=-1
+                self.status=0
                 continue
  
+              if byte=="\x00":
+                continue
+              try:
+                if (ord(byte)==10):  # 10 is the value for new line (\n) end of packet on incoming serial buffer  
+                  print "end of serial packet for /n"
+                  break
+                else:   
+                  #print "in byte="+byte+" end of in byte"
+                  buf=buf+byte
+              except:  #not a string , probably is null
+                continue 
 
               if len(buf)>5:
                 waitTowriteUntilIReceive=1 
@@ -271,14 +278,13 @@ class SerialPort:
             buf=buf.replace("\n", "")  #to remove \n
             buf=buf.replace("\r", "")  #to remove \r
 
-            buf=buf.replace("\x00", "")  #to remove \n
+
 
 
             cmd_start=buf.find("[S_")
             cmd_end=buf.find("_#]")
-
            
-            if ( (cmd_start!=-1)&(cmd_end!=-1)&(cmd_start<cmd_end) ): #there is a full onos command packet
+            if ( (cmd_start!=-1)&(cmd_end!=-1) ): #there is a full onos command packet
 
               print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 input :"+buf
               #time.sleep(1) #todo remove,justfordebug
@@ -291,7 +297,7 @@ class SerialPort:
  
 
               cmd=buf[cmd_start:cmd_end+3]
-              next_buf=buf[cmd_end+3:]
+
 
 
               if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i received a confirm from the node
@@ -450,14 +456,14 @@ class SerialPort:
 
     #  if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
     #    print "rx after write timeout0"
-    #time.sleep(0.01) 
+    time.sleep(0.02) 
     self.ser.write(data)   
 
     self.ser.flush()
     #while self.ser.inWaiting()<5:
     #  time.sleep(0.01)
 
-    time.sleep(0.1)
+    time.sleep(0.5)
    
    #answer=self.ser.read(self.ser.inWaiting())
    # if len(self.readed_packets_list)>0:
