@@ -69,6 +69,7 @@ global incomingByteAfterWriteAvaible
 global serial_incomingBuffer
 global waitTowriteUntilIReceive
 
+msgWasWritten=0
 
 
 serial_incomingBuffer=""  
@@ -156,6 +157,7 @@ class SerialPort:
       global incomingByteAfterWriteAvaible
       global waitTowriteUntilIReceive
       global write_enable
+      global msgWasWritten
       print "read_data thread executed"
  
 
@@ -247,7 +249,7 @@ class SerialPort:
  
 
               if len(buf)>5:
-                waitTowriteUntilIReceive=1 
+                #waitTowriteUntilIReceive=1 
                 if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   print "end of serial packet:_#] "
                   break 
@@ -275,41 +277,44 @@ class SerialPort:
 
 
             cmd_start=buf.find("[S_")
-            cmd_end=buf.find("_#]")
+            cmd_end=buf.find("_#]",cmd_start) #serch the end of the packet ..starting from the "[S_"
 
-           
-            if ( (cmd_start!=-1)&(cmd_end!=-1)&(cmd_start<cmd_end) ): #there is a full onos command packet
+            cmd='' 
+            if ( (cmd_start!=-1)&(cmd_end!=-1)): #there is a full onos command packet
 
-              print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 input :"+buf
+
               #time.sleep(1) #todo remove,justfordebug
-              #if msgWasWritten==1:
-                #last_received_packet=buf
-                #msgWasWritten=0 
-                #incomingByteAfterWriteAvaible=1 
-                #print "packet received after the write is :"+last_received_packet
-
- 
-
               cmd=buf[cmd_start:cmd_end+3]
               next_buf=buf[cmd_end+3:]
+              buf=''              
+
+              print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 cmd input :"+cmd
+
+
+              if msgWasWritten==1:
+                last_received_packet=cmd
+                msgWasWritten=0 
+                incomingByteAfterWriteAvaible=1 
+                print "packet received after the write is :"+last_received_packet
+
+
 
 
               if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i received a confirm from the node
                 
 
                 #with lock_serial_input:              
-                serial_incomingBuffer=buf
-                self.readed_packets_list.append(buf)
+                #serial_incomingBuffer=buf
+                self.readed_packets_list.append(cmd)
                 buf=""
                 self.dataAvaible=1 
-                waitTowriteUntilIReceive=0
+                #waitTowriteUntilIReceive=0
                 continue
 
               if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
               # [S_001sy3.05ProminiS0001_#]   or [S_123ul5.24WPlugAvx000810000_#]
 
                 print "serial rx cmd="+cmd
-                buf=""
                 try:
                   serial_number=cmd[12:24]   
                   node_fw=cmd[8:12]
@@ -333,14 +338,13 @@ class SerialPort:
                   errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
 
                 priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
-                waitTowriteUntilIReceive=0
+                #waitTowriteUntilIReceive=0
                 continue
 
 
 
               if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
                 print "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd
-                buf=""
                 try:
                   numeric_serial_number=cmd[13:25]
 
@@ -354,14 +358,15 @@ class SerialPort:
 
                
                   priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })               
-                  waitTowriteUntilIReceive=0  
+                  #waitTowriteUntilIReceive=0  
                   continue
 
 
                 except Exception, e  :               
                   print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
                   errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
-        
+
+                continue 
 
 
 
@@ -371,24 +376,14 @@ class SerialPort:
            # print "serial input="+buf
 
               #with lock_serial_input:              
-              serial_incomingBuffer=buf
-              self.readed_packets_list.append(buf)
+              serial_incomingBuffer=cmd
+              self.readed_packets_list.append(cmd)
 
               self.dataAvaible=1 
-              waitTowriteUntilIReceive=0
-            #time.sleep(0.18)  #important to not remove..
-
-           # timeout=time.time()
-           # while waitToReceiveUntilIRead==1:
-          #    time.sleep(0.001)
-              #print "i wait until you read"
-          #    if (time.time>(timeout+10) ): #timeout to exit the loop
-           #     break
 
               print "incoming buffer="+serial_incomingBuffer
-              buf=""
-            else: #len buf ==0
-            
+            else: #cmd not found
+              print "incoming buffer="+buf
               self.dataAvaible=0
 
 
@@ -435,6 +430,9 @@ class SerialPort:
 #    self.usbW.write(data)
 
   def write(self, data):#test..
+    global incomingByteAfterWriteAvaible
+    global msgWasWritten
+    global last_received_packet
     #self.ser.flushOutput()
     #while self.ser.inWaiting()>0:
     #  time.sleep(0.01)
@@ -451,19 +449,29 @@ class SerialPort:
     #  if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
     #    print "rx after write timeout0"
     #time.sleep(0.01) 
+    incomingByteAfterWriteAvaible=0 
     self.ser.write(data)   
-
+    msgWasWritten=1
     self.ser.flush()
     #while self.ser.inWaiting()<5:
     #  time.sleep(0.01)
 
-    time.sleep(0.1)
+    #time.sleep(0.1)
+    rx_after_tx_timeout=time.time()+0.5
+    while rx_after_tx_timeout>time.time():
+      time.sleep(0.01)
+      if incomingByteAfterWriteAvaible==1:
+        print ("i exit the loop because i received a message after I have write one")
+        break
+    print ("i exit the loop because of timeout or rx message")
+
    
    #answer=self.ser.read(self.ser.inWaiting())
    # if len(self.readed_packets_list)>0:
    #   answer=self.readed_packets_list[-1]
    # else:
-    answer="answer"
+    answer=last_received_packet
+    last_received_packet=''
     return(answer)
 
 

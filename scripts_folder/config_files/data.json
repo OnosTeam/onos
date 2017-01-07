@@ -27,7 +27,7 @@
     }, 
     "WPlugAvx0008": {
       "hwModelName": "WPlugAvx", 
-      "nodeAddress": "004", 
+      "nodeAddress": "003", 
       "node_serial_number": "WPlugAvx0008"
     }
   }, 
@@ -666,7 +666,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 1098, 
+      "status": 1355, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -710,7 +710,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 18, 
+      "status": 22, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -756,7 +756,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 18, 
+      "status": 35, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
