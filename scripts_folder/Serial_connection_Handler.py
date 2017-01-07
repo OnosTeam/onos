@@ -51,8 +51,9 @@ class Serial_connection_Handler():
 
       i=i+1
 
+    return(1)#the connection was successful  
 
-    return(1)#the connection was successful    
+  
   def connectToPort(self):
     print("connectSerialPort() executed")
     port=self.searchForSerialCable(self.exluded_port_list ) 
@@ -61,7 +62,11 @@ class Serial_connection_Handler():
         #old_port=port       #  [0:len(port)-1] 
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, baud_rate)     
-        print "arduino connected correctly to onos system" 
+        print ("arduino connected correctly to onos system on port:"+port) 
+        print ("arduino connected correctly to onos system on port:"+port) 
+        print ("arduino connected correctly to onos system on port:"+port) 
+        print ("arduino connected correctly to onos system on port:"+port) 
+        print ("arduino connected correctly to onos system on port:"+port) 
         return(self.ser)
       except:  #some error occured while using the port i found 
         print "port error with port:"+port+" i will retry with another port" 
@@ -92,27 +97,29 @@ class Serial_connection_Handler():
     print ("searchForSerialCable() executed with self.exluded_port_list= "+str(list_of_port_to_not_use))
     list_of_dev=os.listdir("/dev")
 
+    if ("ttyUSB0" in list_of_dev)and('/dev/ttyUSB0' not in list_of_port_to_not_use):
+      return("ttyUSB0")
+
+    if ("ttyATH0" in list_of_dev)and('/dev/ttyATH0' not in list_of_port_to_not_use):
+      return("ttyATH0")
+
+    if ("ttyACM0" in list_of_dev)and('/dev/ttyACM0' not in list_of_port_to_not_use):
+      return("ttyACM0")
+
+
     for dev in  list_of_dev:
-      if (dev.find("ttyATH0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
-        return(dev)
       if (dev.find("ttyATH")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyUSB0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
-        return(dev)
       if (dev.find("ttyUSB")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyACM0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
-        return(dev)
       if (dev.find("ttyACM")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 
     for dev in  list_of_dev:
-      if (dev.find("ttyS0")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
-        return(dev)
       if (dev.find("ttyS")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
 

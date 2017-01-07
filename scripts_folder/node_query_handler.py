@@ -16,7 +16,7 @@ from conf import *
 
 
 
-def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_already_done=0):
+def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_already_done):
   """
   | This function make a query to a radio/serial node and wait the answer from the serial gateway.
   | If the answer is positive 
@@ -27,7 +27,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
 
   """
-
+  print ("make_query_to_radio_node executed with number_of_retry_already_done:"+str(number_of_retry_already_done))
   max_retry=1 
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
@@ -47,25 +47,29 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
      #if data.find("ok"+query[3:end_of_query+3])!=-1:    
 
     if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
-
-      for a in serialCom.uart.readed_packets_list:  #iterate the list from the last element to the first
+      copy_of_readed_packets_list=serialCom.uart.readed_packets_list
+      for a in copy_of_readed_packets_list:  #iterate the list from the last element to the first
         #a=serialCom.uart.readed_packets_list[i]
-        print ("check of all received answers000000000 current was:"+str(a))
+        print ("check of all received answers000000000 current one was:"+str(a))
 
         if a.find(expected_confirm)!=-1 :  #found the answer
           serialCom.uart.readed_packets_list.remove(a)
+          print ("I have found the answer I was looking for")
           return (a)
 
         if a=="[S_ertx1_#]":
           serialCom.uart.readed_packets_list.remove(a)
-          continue 
 
-      time.sleep(1) 
+        if a=="[S_nocmd0_#]":
+          serialCom.uart.readed_packets_list.remove(a)
+
+
+      time.sleep(0.4) 
 
 
     #if serialCom.uart.ser.isOpen() == False :
      # print "serial port is not open in make_query_to_radio_node()"
-      priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
+      #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
     # time.sleep(1)  
       #return(-1)
 
@@ -87,8 +91,8 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     if data.find(expected_confirm)!=-1:
       return(data)
 
-    if data=="error_reception":
-      continue
+    #if data=="error_reception":
+    #  continue
   
     
     
@@ -105,18 +109,22 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
     #for a in serialCom.uart.readed_packets_list.:
 
-    for a in serialCom.uart.readed_packets_list:  #iterate the list from the last element to the first
+    copy_of_readed_packets_list=serialCom.uart.readed_packets_list
+
+    for a in copy_of_readed_packets_list:  #iterate the list from the last element to the first
       #a=serialCom.uart.readed_packets_list[i]
 
       print ("check of all received answers current was:"+str(a))
       if a.find(expected_confirm)!=-1 :  #found the answer
         serialCom.uart.readed_packets_list.remove(a)
+        print ("I have found the answer I was looiking for")
         return (a)
 
       if a=="[S_ertx1_#]":
         serialCom.uart.readed_packets_list.remove(a)
-        continue 
-
+     
+      if a=="[S_nocmd0_#]":
+        serialCom.uart.readed_packets_list.remove(a)
 
     #print "uart rx list after:"
     #print serialCom.uart.readed_packets_list
@@ -328,9 +336,10 @@ def handle_new_query_to_radio_node_thread(serialCom):
     node_address=nodeDict[node_serial_number].getNodeAddress()
 
 
-    query_answer=make_query_to_radio_node(serialCom,node_serial_number,query)
+    query_answer=make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_done)
     if query_answer==-1 : #invalid answer received
-
+      print ("error query_answer wrong UUUUUUUUuuuuuuuuuuuuuuUUUUUUUUUUUUuuuuuuuuuuuUUUUUUUUUUUUUUuuuuuuuuUUUUUUUUUUUuuuuuuuUUU")
+      number_of_retry_done=number_of_retry_done+1
       if priority==99: #if the priority is 99 then the query will be always retrayed infinites times.
         query_order=time.time()+1 #make the query less important..to allow other queries to run
         if number_of_retry_done>35:  #if greater that n wait a bit
@@ -338,7 +347,6 @@ def handle_new_query_to_radio_node_thread(serialCom):
           time.sleep(0.2)   #need this to allow the serial node to pick up the messages from the radio nodes..
       else:
         query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
-        number_of_retry_done=number_of_retry_done+1
         if number_of_retry_done>25:  #if greater that n don't repeat the query.
           print ("i retried the query:"+query+"more than 15 times , I giveup")
           errorQueue.put("i retried the query:"+query+"more than 15 times , I giveup")

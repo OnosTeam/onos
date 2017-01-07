@@ -5661,7 +5661,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         print hardware.serial_communication.uart.readed_packets_list
      
         with lock_serial_input:
-          if len (hardware.serial_communication.uart.readed_packets_list)>10: #if the list became long cut the first 4 elements
+          if len (hardware.serial_communication.uart.readed_packets_list)>20: #if the list became long cut the first 4 elements
             hardware.serial_communication.uart.readed_packets_list.pop(0)  
             hardware.serial_communication.uart.readed_packets_list.pop(0) 
             hardware.serial_communication.uart.readed_packets_list.pop(0)  

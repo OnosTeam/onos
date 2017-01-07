@@ -141,9 +141,9 @@ class SerialPort:
 
 
     self.ser.open()
-
-
-
+    
+    
+    
 
 
 
@@ -163,9 +163,9 @@ class SerialPort:
       filedev=self.port
       self.dataAvaible=0
       self.exit=exit
+   
 
-
-      try:
+      try: 
         self.ser.flushInput() #flush input buffer, discarding all its contents
       except Exception, e :
         print "can't flush input"+str(e.args) 
@@ -204,27 +204,27 @@ class SerialPort:
            # except Exception, e :
            #   print "can't flush input"+str(e.args) 
            #   errorQueue.put( "can't flush input"+str(e.args) )
-          msgWasWritten=0
+          #msgWasWritten=0
 
-          if write_enable==1:
-            try:
-              self.ser.write(data_to_write)
-              print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
-              time.sleep(0.2) #0.02 
-              write_enable=0
-              msgWasWritten=1
-            except Exception, e :
-              print "can't write to uart"+str(e.args) 
-              errorQueue.put( "can't write to uart"+str(e.args) )
-              return()
+          #if write_enable==1:
+           # try:
+            #  self.ser.write(data_to_write)
+             # print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
+             # time.sleep(0.2) #0.02 
+             # write_enable=0
+             # msgWasWritten=1
+            #except Exception, e :
+            #  print "can't write to uart"+str(e.args) 
+            #  errorQueue.put( "can't write to uart"+str(e.args) )
+            #  return()
 
-            try:
-              self.ser.flushOutput()
-            except Exception, e :
-              print "can't flush output"+str(e.args) 
-              errorQueue.put( "can't flush output"+str(e.args) )
+            #try:
+            #  self.ser.flushOutput()
+            #except Exception, e :
+            #  print "can't flush output"+str(e.args) 
+            #  errorQueue.put( "can't flush output"+str(e.args) )
 
-          waitTowriteUntilIReceive=0
+          #waitTowriteUntilIReceive=0
           buf=''
           next_buf=''
           while (self.exit==0):
@@ -253,9 +253,9 @@ class SerialPort:
                   break 
 
 
-              if (buf.find("\n")!=-1):
-                print ("end of line received but no onoscmd found")
-                break
+              #if (buf.find("\n")!=-1):
+              #  print ("end of line received but no onoscmd found")
+              #  break
 
               print(buf) 
 
@@ -282,11 +282,11 @@ class SerialPort:
 
               print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 input :"+buf
               #time.sleep(1) #todo remove,justfordebug
-              if msgWasWritten==1:
-                last_received_packet=buf
-                msgWasWritten=0 
-                incomingByteAfterWriteAvaible=1 
-                print "packet received after the write is :"+last_received_packet
+              #if msgWasWritten==1:
+                #last_received_packet=buf
+                #msgWasWritten=0 
+                #incomingByteAfterWriteAvaible=1 
+                #print "packet received after the write is :"+last_received_packet
 
  
 
