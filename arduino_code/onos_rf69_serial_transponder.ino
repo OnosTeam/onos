@@ -84,9 +84,8 @@
 #define RFM69_CS      10
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     3
+#define RFM69_RST     9
  
-#define LED           5  // onboard blinky
  
 #define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
  
@@ -103,7 +102,7 @@ unsigned long sync_time=0;
 
 char serial_number[13]="ProminiS0001";
 
-char node_fw[]="5.13";
+char node_fw[]="5.26";
 
 int this_node_address=1; //must be int..
 
@@ -129,7 +128,7 @@ char str_this_node_address[4];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
 uint8_t radioRetry=3;      //todo: make this changable from serialport
-uint8_t radioTxTimeout=60;  //todo: make this changable from serialport
+uint8_t radioTxTimeout=70;  //todo: make this changable from serialport
 
 uint8_t counter=0;
 char data_from_serial[rx_msg_lenght+5];
@@ -799,7 +798,7 @@ void forwardRadioMsgToSerialPort(){
 
     if(strcmp(received_message_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
 
-
+      memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
         Serial.print(filtered_onos_message[pointer]);
           
@@ -834,17 +833,28 @@ void forwardRadioMsgToSerialPort(){
 
 void setup() {
 
+  //pinMode(RFM69_RST, OUTPUT);
   //delay(95000); //wait for glinet to power on
   while (!Serial); // wait until serial console is open
   Serial.begin(SERIAL_BAUD);
 
+
+
+/*  
+
+  WARNING do not uncomment this part or the radio will not work anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+
+
   // Hard Reset the RFM module
-  pinMode(RFM69_RST, OUTPUT);
-  digitalWrite(RFM69_RST, HIGH);
-  delay(100);
+
   digitalWrite(RFM69_RST, LOW);
-  delay(100);
- 
+  delay(50);
+  digitalWrite(RFM69_RST, HIGH);
+  delay(120);
+  digitalWrite(RFM69_RST, LOW);
+  delay(120);
+  */
 
   // Initialize radio
   radio.initialize(FREQUENCY,this_node_address,NETWORKID);
@@ -859,7 +869,6 @@ void setup() {
 
 
 
-  pinMode(LED, OUTPUT);
 
 /*
   Serial.print("\nTransmitting at ");

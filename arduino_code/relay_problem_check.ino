@@ -84,8 +84,9 @@
 #define RFM69_CS      10
 #define RFM69_IRQ     2
 #define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     9
+#define RFM69_RST     2
 
+#define LED           5  // onboard blinky
 
 #define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
 #define targetRSSI    -40
@@ -94,14 +95,14 @@ int16_t packetnum = 0;  // packet counter, we increment per xmission
  
 RFM69_ATC radio;
 
-
+byte i=0;
 
 boolean radio_enabled=1;
 
 unsigned long sync_time=0;
 
 char serial_number[13]="WPlugAvx0008";
-char node_fw[]="5.26";
+char node_fw[]="5.24";
 
 int this_node_address=254; //i start with 254
 
@@ -201,7 +202,7 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay1_reset_pin,!status_to_set); 
     digitalWrite(relay2_set_pin,status_to_set); 
     digitalWrite(relay2_reset_pin,!status_to_set); 
-    delay(20);
+    delay(70);
     digitalWrite(relay1_set_pin,0); 
     digitalWrite(relay1_reset_pin,0); 
     digitalWrite(relay2_set_pin,0); 
@@ -903,7 +904,7 @@ void setup() {
   while (!Serial); // wait until serial console is open, remove if not tethered to computer
   noInterrupts(); // Disable interrupts    //important for lamp node
 
-//  pinMode(RFM69_RST, OUTPUT);
+  pinMode(RFM69_RST, OUTPUT);
 
 
   pinMode(relay1_set_pin, OUTPUT);
@@ -923,27 +924,9 @@ void setup() {
   Serial.println("Feather RFM69W Receiver");
 
 
-/*  
-
-  WARNING do not uncomment this part or the radio will not work anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-
-
-/*  
-
-  WARNING do not uncomment this part or the radio will not work anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-
-
   // Hard Reset the RFM module
-
-  digitalWrite(RFM69_RST, LOW);
-  delay(50);
-  digitalWrite(RFM69_RST, HIGH);
-  delay(120);
-  digitalWrite(RFM69_RST, LOW);
-  delay(120);
-  */
+  
 
   interrupts(); // Enable interrupts
 
@@ -956,21 +939,13 @@ void setup() {
 
   radio.encrypt(ENCRYPTKEY);
   
-
+  pinMode(LED, OUTPUT);
 
   radio.enableAutoPower(targetRSSI);
  
   Serial.print("\nListening at ");
-  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(" MHz");
 
-  changeObjStatus(0,1);
-  delay(300);
-  changeObjStatus(0,0);
-
-  Blink(obj_led_pin,100,3);  
-
-  composeSyncMessage();
+  Blink(obj_led_pin,100,5);  
 
 
 }
@@ -979,30 +954,16 @@ void loop() {
 
 
 
-  //check if something was received (could be an interrupt from the radio)
+  changeObjStatus(0,0);
+  changeObjStatus(0,1);
 
-  handleButton();
+  changeObjStatus(0,0);
+  changeObjStatus(0,1);
 
-  if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
-    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
-    Serial.println("I skip the rxradio part once");
-    goto radioTx;
+  i=i+1;
 
-
-  }
-
-
-
-checkAndHandleIncomingRadioMsg();
-
-
-radioTx:
- 
-  radio.receiveDone(); //put radio in RX mode
-  Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
-
-  checkCurrentRadioAddress();
-
+  Serial.print("i:"); 
+  Serial.println(i); 
 
 }//END OF LOOP()
 

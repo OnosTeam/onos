@@ -637,13 +637,21 @@ void setup() {
 
   Serial.println(lamp_state);
   
+/*  
+
+  WARNING do not uncomment this part or the radio will not work anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+
+
   // Hard Reset the RFM module
 
-  digitalWrite(RFM69_RST, HIGH);
-  delay(100);
   digitalWrite(RFM69_RST, LOW);
-  delay(100);
-  
+  delay(50);
+  digitalWrite(RFM69_RST, HIGH);
+  delay(120);
+  digitalWrite(RFM69_RST, LOW);
+  delay(120);
+  */
 
   interrupts(); // Enable interrupts
 
