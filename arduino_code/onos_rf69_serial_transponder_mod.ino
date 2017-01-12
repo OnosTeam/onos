@@ -120,11 +120,9 @@ char received_message_type_of_onos_cmd[3];
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
-char decoded_uart_answer[24]="er00_#]";
-char decoded_radio_answer[24]="er00_#]";
+char received_message_answer[24]="er00_#]";
 int received_message_address=0; //must be int..
-char filtered_uart_message[rx_msg_lenght+3];
-char filtered_radio_message[rx_msg_lenght+3];
+char filtered_onos_message[rx_msg_lenght+3];
 char syncMessage[28];
 char str_this_node_address[4];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
@@ -249,7 +247,7 @@ void Blink(byte PIN, byte DELAY_MS, byte loops)
 
 
 
-void decodeOnosCmd(char *received_message,char *decoded_result){
+void decodeOnosCmd(const char *received_message){
  
 /*
   Serial.println(F("decodeOnosCmd executed"));
@@ -264,7 +262,7 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
 
 */
 
-  strcpy(decoded_result,"[S_err01_#]");
+  strcpy(received_message_answer,"[S_err01_#]");
 
 
 
@@ -272,7 +270,7 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
  // the onos cmd was found           [S_001dw06001_#]
 
 
-    strcpy(decoded_result,"[S_cmdRx_#]");               
+    strcpy(received_message_answer,"[S_cmdRx_#]");               
 
 
     received_message_type_of_onos_cmd[0]=received_message[6];
@@ -284,7 +282,7 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
          
 
     if (received_message_address!=this_node_address) {//onos command for a remote arduino node
-      strcpy(decoded_result,"[S_remote_#]");
+      strcpy(received_message_answer,"[S_remote_#]");
 
 /*
 
@@ -302,7 +300,7 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
 
       received_message_value=received_message[12]-48;
       if (received_message_value>1){ 
-        strcpy(decoded_result,"[S_er0_status_#]"); 
+        strcpy(received_message_answer,"[S_er0_status_#]"); 
         return;
       }
 
@@ -310,7 +308,7 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
 
       pinMode(received_message_first_pin_used, OUTPUT); 
       digitalWrite(received_message_first_pin_used, received_message_value); 
-      strcpy(decoded_result,"ok");
+      strcpy(received_message_answer,"ok");
       return;
     }
     
@@ -322,13 +320,13 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
       if ((received_message_value<0)||(received_message_value>255)){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
-        strcpy(decoded_result,"[S_er0_status_#]"); 
+        strcpy(received_message_answer,"[S_er0_status_#]"); 
         return;
       }
 
       received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
       analogWrite(received_message_first_pin_used, received_message_value); 
-      strcpy(decoded_result,"ok");
+      strcpy(received_message_answer,"ok");
       return;
     } 
 
@@ -339,7 +337,7 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
       received_message_value=received_message[12]-48;      
 
       if (received_message_value>1){ 
-        strcpy(decoded_result,"[S_er0_status_#]"); 
+        strcpy(received_message_answer,"[S_er0_status_#]"); 
         return;
       }
 
@@ -359,13 +357,13 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
       digitalWrite(received_message_first_pin_used,0); 
       digitalWrite(received_message_second_pin_used,0);  
 
-      strcpy(decoded_result,"ok");
+      strcpy(received_message_answer,"ok");
       return;
     }
 
     else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
       first_sync=0; //this node has made the first sync with the onoscenter
-      strcpy(decoded_result,"ok");
+      strcpy(received_message_answer,"ok");
       return;
     }
 
@@ -588,21 +586,21 @@ boolean checkAndReceiveSerialMsg(){
     //   Serial.println("cmd end found-------------------------------");
       onos_cmd_end_position=counter-2;
 
-      memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
+      memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
 
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
-        filtered_uart_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
-          //Serial.println(filtered_uart_message[pointer]);
-        if ((filtered_uart_message[pointer-1]=='#')&&(filtered_uart_message[pointer]==']')  ) {//  
+        filtered_onos_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
+          //Serial.println(filtered_onos_message[pointer]);
+        if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
           break;
         }
 
       }
 
 
-      decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
-      if ( strcmp(decoded_uart_answer,"[S_remote_#]")==0){
-        ForwardSerialMessageToRadio(filtered_uart_message,received_message_address);
+      decodeOnosCmd(filtered_onos_message);
+      if ( strcmp(received_message_answer,"[S_remote_#]")==0){
+        ForwardSerialMessageToRadio();
       }
       else {
         sendSerialAnswerFromSerialMsg();
@@ -628,7 +626,7 @@ boolean checkAndReceiveSerialMsg(){
 
 
 
-  strcpy(decoded_uart_answer,"[S_nocmd0_#]");
+  strcpy(received_message_answer,"[S_nocmd0_#]");
   sendSerialAnswerFromSerialMsg();
   return(0);//no cmd found
 
@@ -644,14 +642,14 @@ boolean checkAndReceiveSerialMsg(){
 
 
 
-boolean ForwardSerialMessageToRadio(char *msg_to_send_to_radio,int radio_address){
-  memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array
-  if (radio.sendWithRetry(radio_address, msg_to_send_to_radio, strlen(msg_to_send_to_radio),radioRetry,radioTxTimeout)) {
+boolean ForwardSerialMessageToRadio(){
+  memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
+  if (radio.sendWithRetry(received_message_address, filtered_onos_message, strlen(filtered_onos_message),radioRetry,radioTxTimeout)) {
               // note that the max delay time is 255..because is uint8_t
               //target node Id, message as string or byte array, message length,retries, milliseconds before retry
               //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 
-            strcpy(decoded_uart_answer,"ok_#]");
+            strcpy(received_message_answer,"ok_#]");
             radio.receiveDone(); //put radio in RX mode
             sendSerialAnswerFromSerialMsg();
             return(1);
@@ -659,7 +657,7 @@ boolean ForwardSerialMessageToRadio(char *msg_to_send_to_radio,int radio_address
 
           else{// failed to contact radio node or radion node 
                // Serial.println("sendtoWait failed");
-            strcpy(decoded_uart_answer,"[S_ertx1_#]");  
+            strcpy(received_message_answer,"[S_ertx1_#]");  
             radio.receiveDone(); //put radio in RX mode
             sendSerialAnswerFromSerialMsg();
             delay(10);//delay to allow the remote node to talk after a transmission failure
@@ -675,19 +673,19 @@ void sendSerialAnswerFromSerialMsg(){
     return;
   }
 
-  if((decoded_uart_answer[0]=='o')&&(decoded_uart_answer[1]=='k')){
+  if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
-    memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array
-    strcat(decoded_uart_answer,filtered_uart_message);
+    memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
+    strcat(received_message_answer,filtered_onos_message);
     Serial.print(F("[S_ok"));
     for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
       if (pointer<3){//to skip the "[S_"  because I have just sent it..
         continue;
       }
-      Serial.print(filtered_uart_message[pointer]);
+      Serial.print(filtered_onos_message[pointer]);
 
-      if ((filtered_uart_message[pointer-1]=='#')&&(filtered_uart_message[pointer]==']')  ) {//  
+      if ((filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {//  
         break;
       }
     }   
@@ -701,16 +699,16 @@ void sendSerialAnswerFromSerialMsg(){
 
   else{
 
-    Serial.print(decoded_uart_answer); 
+    Serial.print(received_message_answer); 
     Serial.print('\n'); 
     Serial.flush(); //make sure all serial data is clocked out 
 
   }
     
-  memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array  
-  strcpy(decoded_uart_answer,"[S_nocmd2_#]");  
-  //strcpy(filtered_uart_message,""); 
-  memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
+  memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array  
+  strcpy(received_message_answer,"[S_nocmd2_#]");  
+  //strcpy(filtered_onos_message,""); 
+  memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
   Serial.flush(); //make sure all serial data is clocked out 
   enable_answer_back=0;
 
@@ -735,24 +733,24 @@ boolean checkAndHandleIncomingRadioMsg(){
       onos_cmd_start_position=-99;  
       onos_cmd_end_position=-99;  
 
-      //strcpy(filtered_radio_message,"");
-      memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
+      //strcpy(filtered_onos_message,"");
+      memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
 
       for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
-        filtered_radio_message[counter]=radio.DATA[counter];
-      //  Serial.println(filtered_radio_message[counter]);
+        filtered_onos_message[counter]=radio.DATA[counter];
+      //  Serial.println(filtered_onos_message[counter]);
 
     //[S_001dw06001_#]
         if (counter<2){
           continue;
         }
-        if ( (filtered_radio_message[counter-2]=='[')&&(filtered_radio_message[counter-1]=='S')&&(filtered_radio_message[counter]=='_')  ){//   
+        if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
          // Serial.println("cmd start found-------------------------------");
           onos_cmd_start_position=counter-2;
         }
 
 
-        if( (filtered_radio_message[counter-2]=='_')&&(filtered_radio_message[counter-1]=='#')&&(filtered_radio_message[counter]==']')  ){//   
+        if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
         //  Serial.println("cmd end found-------------------------------");
           onos_cmd_end_position=counter-2;
           break;// now the message has ended
@@ -765,9 +763,9 @@ boolean checkAndHandleIncomingRadioMsg(){
 
       if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
     //    Serial.println("onos cmd  found-------------------------------");
-        decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
+        decodeOnosCmd(filtered_onos_message);
 
-        if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')||(strcmp(decoded_radio_answer,"[S_remote_#]")==0)){//if the message was ok...
+        if( (received_message_answer[0]=='o')&&(received_message_answer[1]=='k')||(strcmp(received_message_answer,"[S_remote_#]")==0)){//if the message was ok...
       //check if sender wanted an ACK
           if (radio.ACKRequested()){
             radio.sendACK();
@@ -784,7 +782,7 @@ boolean checkAndHandleIncomingRadioMsg(){
 
       }
       else{
-        strcpy(decoded_uart_answer,"[S_nocmd1_#]");
+        strcpy(received_message_answer,"[S_nocmd1_#]");
         Serial.print(F("error in message nocmd1_#]"));
         Serial.print('\n'); 
         Serial.flush(); //make sure all serial data is clocked out 
@@ -799,18 +797,18 @@ boolean checkAndHandleIncomingRadioMsg(){
 
 void forwardRadioMsgToSerialPort(){
 
-    if(strcmp(decoded_radio_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
+    if(strcmp(received_message_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
 
-      memset(decoded_radio_answer,0,sizeof(decoded_radio_answer)); //to clear the array
+      memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
       for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
-        Serial.print(filtered_radio_message[pointer]);
+        Serial.print(filtered_onos_message[pointer]);
           
 
         if (pointer<2){
           continue;
         }
 
-        if ((filtered_radio_message[pointer-2]=='_')&&(filtered_radio_message[pointer-1]=='#')&&(filtered_radio_message[pointer]==']')  ) {// 
+        if ((filtered_onos_message[pointer-2]=='_')&&(filtered_onos_message[pointer-1]=='#')&&(filtered_onos_message[pointer]==']')  ) {// 
           sync_time=millis();  
           break;
         }

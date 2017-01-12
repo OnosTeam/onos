@@ -621,6 +621,10 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 online_usersDict will be loaded in usersDict at startup..
                 Now the radiotransciever will exit the setup() and begin to talk only after it has received a '[S_' from serialport 
                 Given priority at ttyUSB0 ttyATH0 ttyACM0  over all the other serial port ..
+                bugfix uncommented memset(received_message_answer,0,sizeof(received_message_answer)); from radiotransciever
+                separated the 2 messages array in radiotransciever
+
+
 
 
 (110, 'Connection timed out');;;

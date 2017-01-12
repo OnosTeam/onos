@@ -27,7 +27,7 @@
     }, 
     "WPlugAvx0008": {
       "hwModelName": "WPlugAvx", 
-      "nodeAddress": "003", 
+      "nodeAddress": "123", 
       "node_serial_number": "WPlugAvx0008"
     }
   }, 
@@ -204,7 +204,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -347,7 +347,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -524,7 +524,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
@@ -666,7 +666,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 79, 
+      "status": 135, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -710,7 +710,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 1, 
+      "status": 2, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -756,7 +756,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 19, 
+      "status": 15, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -1045,7 +1045,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": "inactive", 
+      "status": "onoswait", 
       "styleDict": {
         "0": "background-color:#A9E2F3;", 
         "1": "background-color:#8181F7;", 
