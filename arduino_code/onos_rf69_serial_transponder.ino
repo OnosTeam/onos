@@ -675,7 +675,8 @@ void sendSerialAnswerFromSerialMsg(){
 
   if((received_message_answer[0]=='o')&&(received_message_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
-      //strcat(received_message_answer,filtered_onos_message);
+    memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
+    strcat(received_message_answer,filtered_onos_message);
     Serial.print(F("[S_ok"));
     for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
