@@ -19,6 +19,11 @@ git push -u origin html_gui
 
 per salvare le credenziali
 
+spostarsi sulla cartella che si vuole caricare e dare
+
 
 git config credential.helper store
 
+
+
+poi caricare le modifiche allo stesso modo di sempre inserendo le credenziali, la prossima volta non le chiederà più
