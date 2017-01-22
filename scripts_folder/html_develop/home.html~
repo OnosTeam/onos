@@ -78,15 +78,18 @@ if (funzione_da_eseguire=="click"){
 	</div>
 
 
-		<div id="riga" >
+		<div class="riga" >
 
-			<div id="oggettobutton1" class="bottoneoggetto col1">1</div>
+			<div id="oggettobutton1" class="bottoneoggetto col1">
+					<div class="img-button"><i class="icon-switch"></i></div>
+					<div class="text-button">testo di prova</div>
+			</div>
 			<div id="oggettobutton2" class="bottoneoggetto col2">2</div>
 			<div id="oggettobutton3" class="bottoneoggetto col3">3</div>
 
 		</div>
 
-		<div id="riga" >
+		<div class="riga" >
 
 			<div id="oggettobutton1" class="bottoneoggetto col1">4</div>
 			<div id="oggettobutton2" class="bottoneoggetto col2">5</div>

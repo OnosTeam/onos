@@ -9,6 +9,15 @@ margin-top:50px;
 }
 
 
+
+
+.col1{left:calc(16.66% - 35px);}
+
+.col2{left:calc(49.99% - 35px);}
+
+.col3{left:calc(83.32% - 35px);}
+
+
 .bottoneoggetto{
 	
 	position:absolute;
@@ -19,18 +28,41 @@ margin-top:50px;
 	border-radius: 5px;
 	line-height:70px;
 	text-align:center;
+	background-color:black;
+
 
 
 }
 
 
-.col1{left:calc(16.66% - 35px);}
 
-.col2{left:calc(49.99% - 35px);}
+.img-button{
 
-.col3{left:calc(83.32% - 35px);}
+	position:absolute;
+	top:5px;
+	width:70px;
+	height:50px;
+	line-height:30px;
+	text-align:center;
+	font-size:40px;
+	color:green;
+
+}
+
+.testo-button{
 
 
+	position:absolute;
+	top:50px;
+	width:70px;
+	height:20px;
+	line-height:20px;
+	text-align:center;
+	overflow:hidden;
+	color:white;
+
+
+}
 
 
 

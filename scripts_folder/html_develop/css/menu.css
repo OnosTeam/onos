@@ -102,7 +102,7 @@ body{
 
 #side{
 
-
+    	z-index:1;
 	position:fixed;
 	top:35px;
 	left:0%;

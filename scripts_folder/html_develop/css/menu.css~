@@ -31,7 +31,15 @@ body{
 
 }
 
+#invisible_top_banner{
 
+
+	position:relative;
+	width:100%;
+	height:35px;
+
+
+}
 #top_banner{
 
 	position:fixed;
@@ -94,7 +102,7 @@ body{
 
 #side{
 
-
+    	z-index:1;
 	position:fixed;
 	top:35px;
 	left:0%;
