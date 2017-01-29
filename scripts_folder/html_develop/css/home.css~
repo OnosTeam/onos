@@ -24,11 +24,11 @@ margin-top:50px;
 	top:0px;
 	height:70px;
 	width:70px;
-	border: 1px solid black;
+	border: 2px solid white;
 	border-radius: 5px;
 	line-height:70px;
 	text-align:center;
-	background-color:black;
+	background-color:#00ddff;
 
 
 
@@ -59,6 +59,7 @@ margin-top:50px;
 	line-height:20px;
 	text-align:center;
 	overflow:hidden;
+	color:white;
 
 
 }

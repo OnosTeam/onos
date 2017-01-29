@@ -15,7 +15,7 @@
 
 
 
-a, a:visited  {text-decoration:none; color:white;}
+a, a:visited  {text-decoration:none; color:black;}
 
 
 
@@ -25,7 +25,7 @@ a, a:visited  {text-decoration:none; color:white;}
 
 body{
 	
-	background-color:#7ef1fc;
+	background-color:#4acce0;
 	margin: 0px;
 	padding-top:0px;
 
@@ -48,10 +48,10 @@ body{
 	width:100%;
 	padding:0px;
 	margin:0px;
-	height:35px;
-	color:black;
-	border-bottom: 1px solid #12494f;
-	background-color:#32bcc9;opacity:0.9;/* #043a91 */
+	height:50px;
+	color:white;
+	border-bottom: 1px solid white;
+	background-color:#4acce0;
 	overflow:hidden;
 }
 
@@ -111,8 +111,8 @@ body{
 	padding-left:8px;
 	padding-right:8px;
 	margin-left:-100%;/*transizione modifica javascript */
-	background-color: #001b56;
-	color:white;
+	background-color: #e8fbff;
+
 
 	-webkit-transition: margin-left 0.5s; /* Safari */
 	transition: margin-left 0.5s;
