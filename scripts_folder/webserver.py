@@ -488,7 +488,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
 def replace_conditions(scenario_conditions,scenario_name):#given a string ,replace web_object names with their value 
 
   obj_list=[]
-  scenario_conditions=scenario_conditions.replace("!","not ")  
+  #scenario_conditions=scenario_conditions.replace("!","not ")  
   while 1:  # until all the objects are replaced by their value
     objname_prev=""
 

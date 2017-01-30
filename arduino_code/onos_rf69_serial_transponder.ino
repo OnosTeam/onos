@@ -228,7 +228,7 @@ void makeSyncMessage(){
       }
     }   
     Serial.print('\n'); 
-    Serial.flush(); //make sure all serial data is clocked out 
+    Serial.flush(); //make sure all serial data is clocked out ,waiting until is done
 
 
 }
@@ -692,7 +692,7 @@ void sendSerialAnswerFromSerialMsg(){
       }
     }   
     Serial.print('\n'); 
-    Serial.flush(); //make sure all serial data is clocked out 
+    Serial.flush(); //make sure all serial data is clocked out ,waiting until is done
     sync_time=millis();
     enable_answer_back=0;
     // the answer will be : [S_ok+ message received
@@ -703,7 +703,7 @@ void sendSerialAnswerFromSerialMsg(){
 
     Serial.print(decoded_uart_answer); 
     Serial.print('\n'); 
-    Serial.flush(); //make sure all serial data is clocked out 
+    Serial.flush(); //make sure all serial data is clocked out ,waiting until is done
 
   }
     
@@ -711,7 +711,7 @@ void sendSerialAnswerFromSerialMsg(){
   strcpy(decoded_uart_answer,"[S_nocmd2_#]");  
   //strcpy(filtered_uart_message,""); 
   memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
-  Serial.flush(); //make sure all serial data is clocked out 
+  //Serial.flush(); //make sure all serial data is clocked out 
   enable_answer_back=0;
 
 
@@ -777,7 +777,7 @@ boolean checkAndHandleIncomingRadioMsg(){
 
         }
         else{
-          Serial.println(F("error in message decode from radio node i will not send the ACK"));
+          Serial.println(F("[S_error in message decode from radio node i will not send the ACK_#]"));
           return(0);
         }
 
@@ -825,7 +825,7 @@ void forwardRadioMsgToSerialPort(){
 
  
     radio.receiveDone(); //put radio in RX mode
-    Serial.flush(); //make sure all serial data is clocked out 
+    Serial.flush(); //make sure all serial data is clocked out ,waiting until is done
 
 }
 
@@ -914,6 +914,7 @@ void setup() {
   } // end of   while (1){
 
   Serial.println(F("[S_arduino_ready_#]"));
+  Serial.flush(); //make sure all serial data is clocked out ,waiting until is done
   composeSyncMessage();
   makeSyncMessage();
 

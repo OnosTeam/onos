@@ -100,6 +100,12 @@ class Serial_connection_Handler():
     if ("ttyUSB0" in list_of_dev)and('/dev/ttyUSB0' not in list_of_port_to_not_use):
       return("ttyUSB0")
 
+    if ("ttyUSB1" in list_of_dev)and('/dev/ttyUSB1' not in list_of_port_to_not_use):
+      return("ttyUSB1")
+
+    if ("ttyUSB2" in list_of_dev)and('/dev/ttyUSB2' not in list_of_port_to_not_use):
+      return("ttyUSB2")
+
     if ("ttyATH0" in list_of_dev)and('/dev/ttyATH0' not in list_of_port_to_not_use):
       return("ttyATH0")
 

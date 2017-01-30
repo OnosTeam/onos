@@ -623,7 +623,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Given priority at ttyUSB0 ttyATH0 ttyACM0  over all the other serial port ..
                 bugfix uncommented memset(received_message_answer,0,sizeof(received_message_answer)); from radiotransciever
                 separated the 2 messages array in radiotransciever
-
+                bugfix: commented  scenario_conditions=scenario_conditions.replace("!","not ")  to fix the bug 
 
 
 
