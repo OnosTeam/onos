@@ -1,5 +1,5 @@
 <?php
-
+ini_set('display_errors', 'On');
 
 function test_input($data) {
   $data = trim($data);

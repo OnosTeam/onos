@@ -3,6 +3,7 @@
 
 
 <?php
+ini_set('display_errors', 'On');
 $db_folder=realpath('./').'/users_db/';
 
 
@@ -81,6 +82,7 @@ if(file_exists($dbFile)){
 ##part used by the onoscenter to check if there is already the username..
   $db_user_File = $db_folder.'.db_users_account' ;
   $db = new SQLite3($db_user_File);
+  $db->exec("CREATE TABLE if not exists onos_user (onos_username VARCHAR(40) PRIMARY KEY,user_password VARCHAR(40),onos_db TEXT )" );
   $query_string="select * from onos_user where onos_username='$username' ;";
   $result = $db->query($query_string);
   $row = $result->fetchArray();
