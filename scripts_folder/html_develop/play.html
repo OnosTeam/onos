@@ -15,32 +15,22 @@
 var x = 0; //la metto prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
 
 
-
-function myFunction(side,funzione_da_eseguire) {
-
-
-
-if (funzione_da_eseguire=="click"){
-
-  if(x === 0) 
-    { 
-      x=1;
-      document.getElementById('side').style.marginLeft = "0%";
- 
-    } else {
-      x=0;
-
-      
-
-      document.getElementById('side').style.marginLeft = "-100%"; 
-
-
-    }  
-  }
-
-
-
+function menufunction(side,funzione_da_eseguire) {
+		if (funzione_da_eseguire=="click"){
+	  		if(x === 0){ 
+	      	x=1;
+	      	document.getElementById('side').style.marginLeft = "0%";
+	    	} 
+	  		else {
+	      	x=0;
+	      	document.getElementById('side').style.marginLeft = "-100%"; 
+	    	}  
+	  	}
 }
+
+var y = 0;
+
+
 </script>
 
 
@@ -52,7 +42,7 @@ if (funzione_da_eseguire=="click"){
 	<div id="top_banner">
 
 
-		<div id="menu" class="iconamenu" onclick="myFunction(this.id,'click');"><i class="icon-menu"></i></div>
+		<div id="menu" class="iconamenu" onclick="menufunction(this.id,'click');"><i class="icon-menu"></i></div>
 		<div id="date">12-10-2016</div>
 		<div id="time">23:36</div>
 
@@ -65,37 +55,28 @@ if (funzione_da_eseguire=="click"){
 
 
 		<a href="#"><div id="homebutton" class="vocemenu" ><i class="icon-home3"></i>Home</div></a>
-		<hr>
 		<a href="#"><div id="zonebutton" class="vocemenu" ><i class="icon-book"></i>Zone</div></a>
-		<hr>
 		<a href="#"><div id="scenaributton" class="vocemenu"><i class="icon-calculator"></i>Scenari</div></a>
-		<hr>
 		<a href="#"><div id="impostazionibutton" class="vocemenu"><i class="icon-settings"></i>Impostazioni</div></a>
-		<hr>
 		<a href="#"><div id="accountbutton" class="vocemenu"><i class="icon-user2"></i>Account</div></a>
 
 
-		<div id="closebutton" onclick="myFunction(this.id,'click');"><i class="icon-cross"></i></div>
+		<div id="closebutton" onclick="menufunction(this.id,'click');"><i class="icon-cross"></i></div>
 
 	</div>
 
 
 		<div class="riga" >
 
-			<div id="oggettobutton1" class="bottoneoggetto col1">
-					<div class="img-button"><i class="icon-switch"></i></div>
-					<div class="testo-button">testo di prova</div>
-			</div>
-			<div id="oggettobutton2" class="bottoneoggetto col2">2</div>
-			<div id="oggettobutton3" class="bottoneoggetto col3">3</div>
+			<div id="oggetto1" class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+			<div class="specs col2">oggetto1</div>
 
 		</div>
 
 		<div class="riga" >
 
-			<div id="oggettobutton4" class="bottoneoggetto col1">4</div>
-			<div id="oggettobutton5" class="bottoneoggetto col2">5</div>
-			<div id="oggettobutton6" class="bottoneoggetto col3">6</div>
+			<div id="oggetto2" class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+			<div class="specs col2">oggetto2</div>
 
 		</div>
 
