@@ -118,7 +118,7 @@ onos allarms must remain active also if the current went out
 
 
 12)Is difficult to make a onos node that will act as server and also as client 
-   bacause while the node is writing the pin status to the server , the server can't change the pin status on the node.
+   because while the node is writing the pin status to the server , the server can't change the pin status on the node.
      the solution is to have different node types :
      The nodes with fast data read update which will have a fast data reading update and a slow act on query(turn on things)
      The nodes with slow data reading which will give the onos server the data only when requested or every n minutes
@@ -128,7 +128,7 @@ onos allarms must remain active also if the current went out
 13)Arduino send binary data but onos give error sometimes:
 
 192.168.0.15 - - [29/Mar/2015 13:34:53] code 400, message Bad request version ('0000470180204603501150702\x00%\x00\x00%\x00%\xa1+\x13%+\x13\x00\x085+\x13\x00\x08Q')
-I will use post instead that get message
+I will use post instead of get message
 
 
 14)If a node lost connection to the router and then regain connection...then the node ip will change and the webserver will still think that node has the old ip:
@@ -160,7 +160,7 @@ I will use post instead that get message
 
   If a node A recived a cmd it doesn't recognise from node B (because is not implemented in that node)  it will not send an ack...
 
-  The node B will retry n times to transmit and wait for an ack from nodeA and after that (if it sill hasn't received an ack from node A)  it will wait listening for a possible answer for n milliseconds.
+  The node B will retry n times to transmit and wait for an ack from nodeA and after that (if it still hasn't received an ack from node A)  it will wait listening for a possible answer for n milliseconds.
   Node A after the first message  received from node B started to try to send the error code to node B waiting for an ack
 
   alternative : each time the node write to another node it will wait for an answer..not just   

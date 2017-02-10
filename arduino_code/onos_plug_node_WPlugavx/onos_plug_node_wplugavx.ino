@@ -201,14 +201,15 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     digitalWrite(relay1_reset_pin,!status_to_set); 
     digitalWrite(relay2_set_pin,status_to_set); 
     digitalWrite(relay2_reset_pin,!status_to_set); 
+    digitalWrite(obj_led_pin,status_to_set);
+    main_obj_state=status_to_set;
+/*
     delay(20);
     digitalWrite(relay1_set_pin,0); 
     digitalWrite(relay1_reset_pin,0); 
     digitalWrite(relay2_set_pin,0); 
     digitalWrite(relay2_reset_pin,0); 
-
-    digitalWrite(obj_led_pin,status_to_set);
-    main_obj_state=status_to_set;
+*/
     return(1);
   }
 
@@ -492,8 +493,9 @@ void decodeOnosCmd(const char *received_message){
      // Serial.print("decode time01=") ;
      // Serial.println(decodetime) ;
       get_decode_time=millis();
-
-    if (received_message_address!=this_node_address) {//onos command for a remote arduino node
+    Serial.print("received_message_address:") ;
+    Serial.println(received_message_address) ;
+    if ((received_message_address!=this_node_address)&(received_message_address!=254)) {//onos command for a remote arduino node
       strcpy(received_message_answer,"remote_#]");
 
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
@@ -722,7 +724,7 @@ void decodeOnosCmd(const char *received_message){
 
 
 
- } // end of if message start with onos_   
+ } // end of if message start [S_
 
 
 
@@ -734,6 +736,10 @@ void decodeOnosCmd(const char *received_message){
 
 
 void checkAndHandleIncomingRadioMsg(){
+
+   
+  onos_cmd_start_position=-99;
+  onos_cmd_end_position=-99;
 
   if (radio.receiveDone()){
 
@@ -753,26 +759,109 @@ void checkAndHandleIncomingRadioMsg(){
     //strcpy(filtered_onos_message,"");
     memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
     Serial.print("msg_start:");
+
+    uint8_t onos_cmd_start_detector=0;
+    uint8_t onos_cmd_end_detector=0;
+
     for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
       filtered_onos_message[counter]=radio.DATA[counter];
       message_copy[counter]=radio.DATA[counter]; 
       Serial.print(filtered_onos_message[counter]);
 
     //[S_001dw06001_#]
-      if (counter<2){
-        continue;
+
+
+
+      switch (filtered_onos_message[counter]) {
+        case '[':{
+          onos_cmd_start_detector=1; 
+        }
+        case 'S':{
+          if (onos_cmd_start_detector==1){ 
+            onos_cmd_start_detector=2; 
+          }
+          else{// reset automa
+            onos_cmd_start_detector=0;
+          }
+        }
+
+        case '_':{
+          if (onos_cmd_start_detector==2){ 
+            onos_cmd_start_detector=0; 
+            onos_cmd_start_position=counter-2;
+
+          }
+          else{// reset automa
+            onos_cmd_start_detector=0;
+          }
+        }
+
+
+
+
+      } 
+
+
+/*
+      if (filtered_onos_message[counter]=='['){//   
+        onos_cmd_start_detector=1;
       }
-      if ( (filtered_onos_message[counter-2]=='[')&&(filtered_onos_message[counter-1]=='S')&&(filtered_onos_message[counter]=='_')  ){//   
-       // Serial.println("cmd start found-------------------------------");
-        onos_cmd_start_position=counter-2;
+      else{
+
+        if (filtered_onos_message[counter]=='S'){//   
+          if (onos_cmd_start_detector==1){
+            onos_cmd_start_detector=2;
+          }
+        }
+        else{
+
+          if (filtered_onos_message[counter]=='_'){//   
+            if (onos_cmd_start_detector==2){
+              onos_cmd_start_detector=0;
+              onos_cmd_start_position=counter-2;
+            }
+          }
+          else{ //reset the automa
+            onos_cmd_start_detector=0;
+          }
+
+        } 
+
+
+      }
+
+*/
+
+      if (filtered_onos_message[counter]=='['){//   
+        onos_cmd_end_detector=1;
+      }
+      else{
+
+        if (filtered_onos_message[counter]=='S'){//   
+          if (onos_cmd_end_detector==1){
+            onos_cmd_end_detector=2;
+          }
+        }
+        else{
+
+          if (filtered_onos_message[counter]=='_'){//   
+            if (onos_cmd_end_detector==2){
+              onos_cmd_end_detector=0;
+              onos_cmd_end_position=counter-2;
+              break;
+            }
+          }
+          else{ //reset the automa
+            onos_cmd_end_detector=0;
+  
+          }
+
+        } 
+
+
       }
 
 
-      if( (filtered_onos_message[counter-2]=='_')&&(filtered_onos_message[counter-1]=='#')&&(filtered_onos_message[counter]==']')  ){//   
-      //  Serial.println("cmd end found-------------------------------");
-        onos_cmd_end_position=counter-2;
-        break;// now the message has ended
-      }
 
 
     }
@@ -780,6 +869,7 @@ void checkAndHandleIncomingRadioMsg(){
 
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+
       Serial.println("onos cmd  found-------------------------------");
       //noInterrupts(); // Disable interrupts    //important for lamp node 
       decodeOnosCmd(filtered_onos_message);
@@ -799,7 +889,13 @@ void checkAndHandleIncomingRadioMsg(){
 
       }
       else{
-        Serial.println("error in message decode i will not send the ACK");
+        Serial.print("error in message decode i will not send the ACK,i found:");
+        Serial.print(received_message_answer[0]);
+        Serial.print(received_message_answer[1]);
+        Serial.print(received_message_answer[2]);
+        Serial.print(received_message_answer[3]);
+        Serial.println(received_message_answer[4]);
+
        // checkCurrentRadioAddress(); //if the mesage received is wrong i will check and send a address request if needed becausethe onos gateway will wait a moment after the tranmission failure.
 
         //interrupts(); // Enable interrupts 
@@ -810,8 +906,9 @@ void checkAndHandleIncomingRadioMsg(){
     }
     else{
       strcpy(received_message_answer,"nocmd0_#]");
-      Serial.println("error in message nocmd0_#]");
-
+      Serial.print("error in message nocmd0_#]");
+      Serial.print(onos_cmd_start_position);
+      Serial.println(onos_cmd_end_position);
     }
 
   
@@ -979,9 +1076,13 @@ void loop() {
 
 
 
-  //check if something was received (could be an interrupt from the radio)
 
+  digitalWrite(relay1_set_pin,0); 
+  digitalWrite(relay1_reset_pin,0); 
+  digitalWrite(relay2_set_pin,0); 
+  digitalWrite(relay2_reset_pin,0); 
   handleButton();
+
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
@@ -993,7 +1094,7 @@ void loop() {
 
 
 
-checkAndHandleIncomingRadioMsg();
+  checkAndHandleIncomingRadioMsg();
 
 
 radioTx:

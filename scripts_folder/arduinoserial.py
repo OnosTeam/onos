@@ -457,8 +457,12 @@ class SerialPort:
     #  time.sleep(0.01)
 
     #time.sleep(0.1)
-    rx_after_tx_timeout=time.time()+0.5
-    while rx_after_tx_timeout>time.time():
+    rx_after_tx_timeout=time.time()+0.7
+    while self.ser.inWaiting()<6:
+
+      if rx_after_tx_timeout<time.time():
+        print ("i exit the loop because of timeout")
+        break 
       time.sleep(0.01)
       if incomingByteAfterWriteAvaible==1:
         print ("i exit the loop because i received a message after I have write one")

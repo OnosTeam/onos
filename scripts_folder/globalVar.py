@@ -97,7 +97,7 @@ hardwareModelDict={}
 #read_onos_sensor_enabled=1
 enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
-router_sn="RouterGL0001"
+router_sn="RouterGA0000"
 uart_router_sn="" #the sn of the node connected to the usb of the pc where onos is run..
 router_hardware_type="RouterGA" #select the type of hardware
 router_hardware_fw_version="5.14"
@@ -158,7 +158,7 @@ online_usersDict={}
 online_first_contact=1  #tell if is the first contact between this router and the online server
 onos_online_key=router_sn  #unique key used by the router to login on the online server 
 onos_online_password="1234"  #password used by the router to login on the online server 
-onos_online_site_url="http://94.177.171.250/onos/"  #remote online server url (where the php onos scripts are located)
+onos_online_site_url="http://myonos.com/onos/"  #remote online server url (where the php onos scripts are located)
 
 internet_connection=0  #tell onos if there is internet connection, do not change it..onos will change it if there is internet
 
