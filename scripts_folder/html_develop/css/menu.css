@@ -21,7 +21,6 @@ a, a:visited  {text-decoration:none; color:inherit;}
 
 
 
-@media screen and (min-width: 300px) /*iphone 6s, 6 plus portrait*/{
 
 body{
 	
@@ -147,7 +146,7 @@ body{
 
 .vocemenu:hover{
 
-	color:#0072ca;
+	color:black;
 	-webkit-transition: color 0.3s; /* Safari */
 	transition: color 0.3s;
 
@@ -162,83 +161,28 @@ margin-right:10px;
 }
 
 
-}/*fine media mobile*/
+
+@media screen and (min-width: 600px) /*laptops-desktop*/{
 
 
-
-@media screen and (min-width: 960px) /*laptop-desktop*/{
-body {
-
-	width:700px;
-	background-color:#0072ca;
+body{
+	
+	position:relative;
+	width:600px;
 	margin-left:auto;
 	margin-right:auto;
-	padding-top:0px;
-
- }
-
-.top_banner{
-
-	position:relative;
-	top:0px;
-	left:0px;
-	width:100%;
 	padding:0px;
-	margin:0px;
-	height:35px;
-	background-color:#043a91;opacity:0.9;
-	border-bottom:1px solid black;
+	
+	
+	
 }
 
-.top_banner::after {
-    content: "";
-    clear: both;
-    display: table;
-}
-
-.menu{
-
-	cursor:pointer;
-	width:12%;
-	height:35px;
-	text-align:center;
-	line-height:35px;
-	color:white;
-	float: left;
-
-}
-
-
-
-.time{
-
+#side{
 
 	width:20%;
-	height:35px;
-	text-align:center;
-	line-height:35px;
-	color:white;
-	float: left;
-
-
-}
-
-
-
-.date{
 	
-
-	width:68%;
-	height:35px;
-	text-align:center;
-	line-height:35px;
-	color:white;
-	float: left;
-
 }
 
 
-
-
-}/*fine media laptop/tv*/
+}
 
