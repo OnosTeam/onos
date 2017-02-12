@@ -458,19 +458,17 @@ void getAddressFromGateway(){
 
 
 
-void decodeOnosCmd(const char *received_message){
-/*
-  Serial.println(F("decodeOnosCmd executed"));
+void decodeOnosCmd( char *received_message){
 
-  Serial.println(received_message[0]);
-  Serial.println(received_message[1]);
-  Serial.println(received_message[2]);
-  Serial.println(received_message[3]);
-  Serial.println(received_message[4]);
-  Serial.println(received_message[5]);
-  Serial.println(received_message[6]);
+ // Serial.println(F("decodeOnosCmd executed"));
 
-*/
+
+
+
+
+      
+  get_decode_time=millis();
+
   memset(received_message_answer,0,sizeof(received_message_answer)); //to clear the array
   strcpy(received_message_answer,"err01_#]");
 
@@ -492,8 +490,7 @@ void decodeOnosCmd(const char *received_message){
      // int decodetime= millis()-get_decode_time;    
      // Serial.print("decode time01=") ;
      // Serial.println(decodetime) ;
-      get_decode_time=millis();
-    Serial.print("received_message_address:") ;
+    Serial.print("r_address:") ;
     Serial.println(received_message_address) ;
     if ((received_message_address!=this_node_address)&(received_message_address!=254)) {//onos command for a remote arduino node
       strcpy(received_message_answer,"remote_#]");
@@ -747,14 +744,15 @@ void checkAndHandleIncomingRadioMsg(){
 
     get_decode_time=millis();
     //print message received to serial
-    Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
+    Serial.print(" id:");
+    Serial.println(radio.SENDERID);
     Serial.print((char*)radio.DATA);
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
 
  
     //check if received message contains Hello World
 
-    uint8_t message_copy[rx_msg_lenght+1];
+    //uint8_t message_copy[rx_msg_lenght+1];
 
     //strcpy(filtered_onos_message,"");
     memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
@@ -762,17 +760,21 @@ void checkAndHandleIncomingRadioMsg(){
 
     uint8_t onos_cmd_start_detector=0;
     uint8_t onos_cmd_end_detector=0;
+    uint8_t filtered_count=0;  
+ 
+    char tmp_byte=0;
+    for (uint8_t counter = 0; counter <= sizeof(radio.DATA); counter++) {
 
-    for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
-      filtered_onos_message[counter]=radio.DATA[counter];
-      message_copy[counter]=radio.DATA[counter]; 
-      Serial.print(filtered_onos_message[counter]);
+      tmp_byte=radio.DATA[counter];
+      
+      //message_copy[counter]=radio.DATA[counter]; 
+      Serial.print(tmp_byte);
 
     //[S_001dw06001_#]
 
 
 
-      switch (filtered_onos_message[counter]) {
+      switch (tmp_byte) {
         case '[':{
           onos_cmd_start_detector=1; 
         }
@@ -788,7 +790,7 @@ void checkAndHandleIncomingRadioMsg(){
         case '_':{
           if (onos_cmd_start_detector==2){ 
             onos_cmd_start_detector=0; 
-            onos_cmd_start_position=counter-2;
+            onos_cmd_start_position=0;
 
           }
           else{// reset automa
@@ -796,10 +798,57 @@ void checkAndHandleIncomingRadioMsg(){
           }
         }
 
+      } // end switch
+
+      if(onos_cmd_start_position!=-99){ //save the data only if the onos cmd is started
+        filtered_onos_message[0]='[';
+        filtered_onos_message[1]='S';
+
+        filtered_onos_message[filtered_count]=tmp_byte;  //first time it should be '_'
+        filtered_count=filtered_count+1; 
 
 
 
-      } 
+
+
+
+        if (filtered_onos_message[counter]=='_'){//   
+          onos_cmd_end_detector=1;
+        }
+        else{
+
+          if (filtered_onos_message[counter]=='#'){//   
+            if (onos_cmd_end_detector==1){
+              onos_cmd_end_detector=2;
+            }
+          }
+          else{
+
+            if (filtered_onos_message[counter]==']'){//   
+              if (onos_cmd_end_detector==2){
+                onos_cmd_end_detector=0;
+                onos_cmd_end_position=filtered_count;
+                break;
+              }
+            }
+            else{ //reset the automa
+              onos_cmd_end_detector=0;
+  
+            }
+
+          } 
+
+
+        }
+
+
+
+
+
+
+
+
+      }    //end  if(onos_cmd_start_position!=-99){ //save the data only if the onos cmd is started
 
 
 /*
@@ -831,36 +880,6 @@ void checkAndHandleIncomingRadioMsg(){
       }
 
 */
-
-      if (filtered_onos_message[counter]=='['){//   
-        onos_cmd_end_detector=1;
-      }
-      else{
-
-        if (filtered_onos_message[counter]=='S'){//   
-          if (onos_cmd_end_detector==1){
-            onos_cmd_end_detector=2;
-          }
-        }
-        else{
-
-          if (filtered_onos_message[counter]=='_'){//   
-            if (onos_cmd_end_detector==2){
-              onos_cmd_end_detector=0;
-              onos_cmd_end_position=counter-2;
-              break;
-            }
-          }
-          else{ //reset the automa
-            onos_cmd_end_detector=0;
-  
-          }
-
-        } 
-
-
-      }
-
 
 
 

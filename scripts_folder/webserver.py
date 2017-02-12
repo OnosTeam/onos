@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 #   Copyright 2014 Marco Rigoni                                               #
 #   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
