@@ -131,6 +131,9 @@ char str_this_node_address[4];
 
 uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=70;  //todo: make this changable from serialport
+uint8_t uartPriority=0;
+uint8_t radioPriority=0;
+
 
 uint8_t counter=0;
 char data_from_serial[rx_msg_lenght+5];
@@ -657,7 +660,7 @@ boolean ForwardSerialMessageToRadio(char *msg_to_send_to_radio,int radio_address
             return(1);
           }
 
-          else{// failed to contact radio node or radion node 
+          else{// failed to contact radio node or radio node didn't answer
                // Serial.println("sendtoWait failed");
             strcpy(decoded_uart_answer,"[S_ertx1_#]");  
             radio.receiveDone(); //put radio in RX mode
@@ -785,7 +788,7 @@ boolean checkAndHandleIncomingRadioMsg(){
       }
       else{
         strcpy(decoded_uart_answer,"[S_nocmd1_#]");
-        Serial.print(F("error in message nocmd1_#]"));
+        Serial.print(F("[S_error in message nocmd1_#]"));
         Serial.print('\n'); 
         Serial.flush(); //make sure all serial data is clocked out 
         return(0); 
@@ -939,6 +942,26 @@ sync:
 restart:
 
 
+  if (Serial.available() > 0) {
+
+    if (radioPriority>uartPriority){
+      if (radioPriority>1){
+        radioPriority=radioPriority-1; 
+      }
+      goto radioRxCheck; 
+       
+    }
+    else{
+      if (uartPriority>1){
+        uartPriority=uartPriority-1; 
+      }
+      goto uartRxCheck;  
+
+    }
+
+  }
+
+
 radioRxCheck:
   radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
   if (radio_msg_to_decode_is_avaible==1){
@@ -948,15 +971,17 @@ radioRxCheck:
 
 
 
-  if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update the current ip address
-    sync_time=millis();
-
-    composeSyncMessage();
-    makeSyncMessage();
-
+uartRxCheck:
+  if (Serial.available() > 0) {
+    serial_msg_to_decode_is_avaible=checkAndReceiveSerialMsg();
   }
-
-
+  else{
+    if ( (millis()-sync_time)>12000){   //each n sec time contact the onosCenter and update
+      sync_time=millis();
+      composeSyncMessage();
+      makeSyncMessage();
+    }
+  }
 
  
   if (first_sync==1){  //if the node is not synced yet..sync it

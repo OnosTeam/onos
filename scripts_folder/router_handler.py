@@ -119,14 +119,25 @@ class RouterHandler:
       if self.serial_arduino_used==1:
         
         #self.serial_communication=self.connectSerialPort()
-        try:
-          self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
-          self.serialCommunicationIsWorking=self.serial_communication.working
+        #try:
+        self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
+        self.serialCommunicationIsWorking=self.serial_communication.working
+        self.serial_communication.uart.write("[S_begin_#]")
+        timeout=time.time()+70
+        self.serialCommunicationIsWorking=1
+        while self.serial_communication.uart.ser.inWaiting()<1:
           self.serial_communication.uart.write("[S_begin_#]")
-        except Exception, e:
-          print "error in opening arduino serial port e:"+str(e.args)
-          errorQueue.put("error in opening arduino serial port e:"+str(e.args))
-          self.serialCommunicationIsWorking=0
+          if time.time()>timeout:
+            print ("arduino is not anwering on serial port")
+            self.serialCommunicationIsWorking=0
+            break
+
+
+
+   #     except Exception, e:
+   #       print "error in opening arduino serial port e:"+str(e.args)
+   #       errorQueue.put("error in opening arduino serial port e:"+str(e.args))
+   #       self.serialCommunicationIsWorking=0
 
 
     
