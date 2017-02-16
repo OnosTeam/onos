@@ -190,11 +190,13 @@ void composeSyncMessage(){
   strcat(syncMessage, str_this_node_address);
   if (first_sync==1 ){
     strcat(syncMessage, "ga");
+    strcat(syncMessage, node_fw);
   }
   else{
     strcat(syncMessage, "sy");
+
   }
-  strcat(syncMessage, node_fw);
+
   strcat(syncMessage, serial_number);
   strcat(syncMessage, "_#]");
 

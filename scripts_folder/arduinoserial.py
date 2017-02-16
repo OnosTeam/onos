@@ -312,16 +312,15 @@ class SerialPort:
                 continue
 
               if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
-              # [S_001sy3.05ProminiS0001_#]   or [S_123ul5.24WPlugAvx000810000_#]
+              # [S_001syProminiS0001_#]   or [S_123ulWPlugAvx000810000_#]
 
                 print "serial rx cmd="+cmd
                 try:
-                  serial_number=cmd[12:24]   
-                  node_fw=cmd[8:12]
+                  serial_number=cmd[8:20]   
                   node_address=cmd[3:6]
-
-                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_123ul5.24WPlugAvx000810000_#]
-                    obj_value=cmd[24]
+                  node_fw="def0"  #default
+                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_123ulWPlugAvx000810000_#]
+                    obj_value=cmd[20]
                     obj_number_to_update="0"
                     priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_number_to_update:obj_value} }) 
 
@@ -331,7 +330,9 @@ class SerialPort:
 
 
                   if node_address=="254":  #the node is looking for a free address
+
                     priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    continue
 
                 except Exception, e  :               
                   print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
@@ -346,9 +347,9 @@ class SerialPort:
               if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
                 print "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd
                 try:
-                  numeric_serial_number=cmd[13:25]
 
-                  serial_number=numeric_serial_number=cmd[12:24]   
+
+                  serial_number=cmd[12:24]   
 
                   node_fw=cmd[8:12]
                   node_address=cmd[3:6]

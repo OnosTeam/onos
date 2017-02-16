@@ -627,6 +627,10 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 bugfix: problem when creating a new sqlite database for the users,added table creation if the onos_user table does not exist yet
                 added ini_set('display_errors', 'On'); to debug php
                 created an example to set scenarios conditions from javascript /html_develop/prova_send_post_javascript.html
+                changed the sy and ul radio protocol now they will not send the fw version anymore to make them shorter  
+
+
+
 
 
 (110, 'Connection timed out');;;

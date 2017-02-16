@@ -147,6 +147,7 @@ uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
 char received_serial_number[13];
 # define gateway_address 1
+boolean first_sync=1;
 
 
 
@@ -328,9 +329,18 @@ void composeSyncMessage(){
   memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
   strcpy(syncMessage, "[S_");
   strcat(syncMessage, str_this_node_address);
-  strcat(syncMessage, "ul");
+
+
+  if (first_sync==1 ){
+    strcat(syncMessage, "ga");
+    strcat(syncMessage, node_fw);
+  }
+  else{
+    strcat(syncMessage, "ul");
+
+  }
+
  // strcat(syncMessage, "sy");
-  strcat(syncMessage, node_fw);
   strcat(syncMessage, serial_number);
   
 
@@ -369,8 +379,14 @@ void composeSyncMessage(){
 void sendSyncMessage(uint8_t retry,uint8_t timeout=150){
 
   composeSyncMessage();
-  syncMessage[6]='u'; //modify the message
-  syncMessage[7]='l'; //modify the message
+
+
+  if (first_sync!=1 ){
+    syncMessage[6]='u'; //modify the message
+    syncMessage[7]='l'; //modify the message
+  }
+
+
   Serial.println(" sendWithRetry sendSyncMessage executed");
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,timeout)) {
     // note that the max delay time is 255..because is uint8_t
@@ -692,6 +708,8 @@ void decodeOnosCmd( char *received_message){
       strcpy(received_message_answer,"ok");
       Serial.print("i will change radio address to:");
       Serial.println(this_node_address);
+      first_sync=0;
+        
 
     }
 

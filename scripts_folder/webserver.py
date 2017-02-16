@@ -5852,7 +5852,6 @@ def executeQueueFunction(dataExchanged):
     try:
       node_serial_number=dataExchanged["nodeSn"]
       node_address=dataExchanged["nodeAddress"]
-      node_fw=dataExchanged["nodeFw"]
 
       #   [S_254sa123WLightSS0003_#]
       if node_address=="001":   #the router node will not need another address ..only a confirm for first message sync
