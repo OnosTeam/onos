@@ -30,6 +30,8 @@ body{
 
 }
 
+/*menù in alto*/
+
 #invisible_top_banner{
 
 	z-index:1;
@@ -58,7 +60,7 @@ body{
 
 .banner-col4{left:85%; color:black;}
 
-#menu{
+#menu_top_button{
 
 	cursor:pointer;
 	position:fixed;
@@ -94,7 +96,7 @@ body{
 }
 
 
-#right-menu{
+#right_menu_button{
 	position:fixed;
 	top:0px;	
 	width:15%;
@@ -103,9 +105,11 @@ body{
 	line-height:50px;
 }
 
+/*fine menù in alto*/
+
 /*menu a sinistra*/
 
-#side{
+#menu_sx{
 
     z-index:2;
 	position:fixed;
@@ -126,7 +130,7 @@ body{
 
 }
 
-#closebutton{
+#closebutton_sx{
 
 	cursor:pointer;
 	position:relative;
@@ -137,7 +141,7 @@ body{
 	color:black;
 }
 
-.vocemenu {
+.vocemenu_sx {
 	
 	position:relative;
 	color:white;
@@ -149,7 +153,7 @@ body{
 
 }
 
-.vocemenu:hover{
+.vocemenu_sx:hover{
 
 	color:black;
 	-webkit-transition: color 0.3s; /* Safari */
@@ -159,7 +163,7 @@ body{
 
 }
 
-.vocemenu i{
+.vocemenu_sx i{
 
 margin-right:10px;
 
@@ -169,7 +173,7 @@ margin-right:10px;
 
 /*menù a destra */
 
-#side-right{
+#menu_rx{
 
     z-index:2;
 	position:fixed;
@@ -184,8 +188,8 @@ margin-right:10px;
 	background-color:#a366ff;
 
 
-	-webkit-transition: margin-left 0.5s; /* Safari */
-	transition: margin-left 0.5s;
+	-webkit-transition: margin-right 0.5s; /* Safari */
+	transition: margin-right 0.5s;
 
 
 }
@@ -195,7 +199,7 @@ margin-right:10px;
 
 .side-col2{right:15%;}
 
-.side-riga{	
+.menu_rx_riga{	
 	
 	position:relative;
 	width:100%;
@@ -234,7 +238,16 @@ margin-right:10px;
 
 .sub{color:#40ff00;}
 
+#closebutton_rx{
 
+	cursor:pointer;
+	position:relative;
+	margin-top:70px;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+	color:black;
+}
 /*fine menu a destra*/
 
 @media screen and (min-width: 600px) /*laptops-desktop*/{
@@ -249,9 +262,9 @@ body{
 	padding:0px;
     }
 
-#side{width:20%;}
+#menu_sx{width:20%;}
 
-#side-right{width:20%}
+#menu_rx{width:20%}
 
 
 
