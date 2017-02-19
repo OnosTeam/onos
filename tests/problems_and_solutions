@@ -269,6 +269,38 @@ I will use post instead of get message
 
 
 
+
+  The message to change the value of a generic object node will be: #to implement
+
+  3 bytes with "[S_" for the start of the message
+  3 bytes for the address of the node
+  2 bytes containing "do" for the type of msg , set digital object
+  1 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  1 byte to tell arduino the value (0 or 1 ) to set the object
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001do01x_#]    to set the first object of the node to 1
+             [S_001do00x_#]    to set the first object of the node to 0
+
+
+
+  The message to change the value of a generic object node will be: #to implement
+
+  3 bytes with "[S_" for the start of the message
+  3 bytes for the address of the node
+  2 bytes containing "ao" for the type of msg , set analog object
+  1 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  3 byte to tell arduino the value to set the object to expressed in hexadecimal (min 0x000  max 0xFFF)
+          in this way the value can range from 0 to 65535 (16 bit)
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001ao1000x_#]    to set the first object of the node to 0  which is the  hex value of "000" converted
+             [S_001ao10FFx_#]    to set the first object of the node to 255  which is the  hex value of "00F" converted
+
+
+
+
+
   If a node needs to get a free address from the OnosCenter it will write:
 
   3 bytes with "[S_" for the start of the message
@@ -1026,21 +1058,28 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 
 44) Node parameters:   Todo
-    Every node must have some special parameters about its function , every parameter will be stored as webojects 
+
+    Each node will have number of variables (objects) that can be changed from onos throught radio.
+    Onos will know from the node type which object number refer to which variable for example in the lamp node the object number 0 will be the value of the lamp relay.
+
     For example a lamp node could have :
       A ligth threshold  (how much light will be needed to turn off the lamp)
       A counter value (enabled only if an iRbarrier or other sensors are associated) to tun on the lamp if >0
       A timeout value after that the lamp will shut down assuming noone is still inside.
       A light sensor value (the analog reading from the photoresistor)
       A current sensor (to read the power consumption of the lamp)
-      This webobjects will be stored ind hardwareModelDict{}
+      This webobjects will be stored in hardwareModelDict{}
       for example:  
         hardwareModelDict["WLightSS"]["var_mode"]["numeric_var"]={"ligth_threshold":[(5)]} in this case 5 is the threshold value
         hardwareModelDict["WLightSS"]["var_mode"]["analog_input"]={"ligth_sensor":[(6)]} in this case the 6 is the analog pin number
      
        The objects in the  "var_mode" dictionary will not be shown in the node zone created by onos,
          the user will see them in general node weboject list
+       
 
+  
+
+ 
 
 
 45) Node addresses assignment:
@@ -1059,7 +1098,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
    The lamp will have a photoresistor to detect the lumos of the room
      It will have also a connector to update the onos firmware.
    Each time the lamp turns on the micro will read a flag in the eprom
-     then it will turn on the lamp if the previous status is 0 ,then it will write the status in the eprom and send the status to onos.
+   then it will turn on the lamp if the previous status is 0 ,then it will write the status in the eprom and send the status to onos.
     
 
 
@@ -1070,7 +1109,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
    digital_obj    : handled on the node arduino firmware side
    analog_obj     : handled on the node arduino firmware side     
-   cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone nut avaible in the config...
+   cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone but avaible in the config...
    
    To define the query that will be sent to the node there will be a placeholder like this:
 
