@@ -1,0 +1,40 @@
+.flex {max-width: 100%}
+	
+.riga{
+	position:relative;
+	width:100%;
+	height:50px;
+
+}
+
+
+
+.name_text{
+	
+	position:absolute;
+	width:90%;
+	height:30px;
+	top:0px;
+	left:5%;
+	color:black;
+	
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

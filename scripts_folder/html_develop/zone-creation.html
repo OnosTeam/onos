@@ -8,7 +8,7 @@
 
 	<link rel="stylesheet" href="css/onos-font.css">
 	<link rel="stylesheet" href="css/menu.css">
-	<link rel="stylesheet" href="css/object-creation.css">
+	<link rel="stylesheet" href="css/zone-creation.css">
 	<meta charset="utf-8">
    	<title>Creazione Zona</title>
 
@@ -57,7 +57,7 @@ function menudxfunction(menu_rx,funzionedx) {
 		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-menu"></i></div>
 		<div id="date" class="banner-color banner-col2">12-10-2016</div>
 		<div id="time" class="banner-color banner-col3">23:36</div>
-		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
+		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"></div>
 
 
 
@@ -104,13 +104,11 @@ function menudxfunction(menu_rx,funzionedx) {
 	
 
 		<div class="riga" >
-			<a href="#"><div class="zone-name col1">oggetto esistente</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+			<input class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome della zona') { this.value = ''; }" value="Scrivi il nome della zona"/>
 		</div>
 
 		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Giardino</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+			<input class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome della zona') { this.value = ''; }" value="Scrivi il nome della zona"/>
 		</div>
 		
 		
