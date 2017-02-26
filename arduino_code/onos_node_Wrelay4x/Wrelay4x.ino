@@ -18,7 +18,13 @@
 *          SCK pin D13----------SCK   (SPI clock in)
 *         MOSI pin D11----------MOSI  (SPI Data in)
 *         MISO pin D12----------MISO  (SPI Data out)
-
+                   D3 ----------switch	
+                   D5 ----------led
+                   D6 ----------1 simple relay
+                   D7 ----------1 simple relay
+                   D8 ----------1 simple relay
+                   D9 ----------1 simple relay
+                    
 
 */
 
@@ -76,7 +82,7 @@
 //#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY      RF69_433MHZ
 #define ENCRYPTKEY     "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
-#define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
+#define IS_RFM69HCW    false // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
@@ -100,8 +106,8 @@ boolean radio_enabled=1;
 
 unsigned long sync_time=0;
 
-char serial_number[13]="WPlugAvx0008";
-char node_fw[]="5.26";
+char serial_number[13]="Wrelay4x0001";
+char node_fw[]="5.27";
 
 int this_node_address=254; //i start with 254
 
@@ -162,14 +168,25 @@ uint8_t skipRadioRxMsgThreshold=5;
 char main_obj_state=0;
 //int old_main_obj_state=5;
 
-// node object pinuot// 
-int relay1_set_pin=6;    
-int relay1_reset_pin=5;
-int relay2_set_pin=8;    
-int relay2_reset_pin=7;
-int obj_button_pin=3;
-int obj_led_pin=4; 
-//end node object pinuot// 
+
+
+
+// node object pinuot//
+
+// define object numbers to use in the pin configuration
+#define relay1  0
+#define relay2  1
+#define relay3  2
+#define relay4  3
+#define button  4
+#define led     5
+#define number_of_total_objects 7      // 7 because there are 6 elements + a null 
+uint8_t node_obj_pinout[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as void for array in c..
+uint8_t node_obj_status[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as void for array in c..
+
+//end node object pinuot, continue in setup() // 
+
+
 
 
 /*
@@ -193,26 +210,24 @@ int freeRam ()
 
 
 boolean changeObjStatus(char obj_number,int status_to_set){
+
    Serial.print("changeObjStatus executed with  status:");
    Serial.println(status_to_set);
 
-  if (obj_number==0){
+  if (obj_number!=button){ //will not change the status to the button...
 
-    digitalWrite(relay1_set_pin,status_to_set); 
-    digitalWrite(relay1_reset_pin,!status_to_set); 
-    digitalWrite(relay2_set_pin,status_to_set); 
-    digitalWrite(relay2_reset_pin,!status_to_set); 
-    digitalWrite(obj_led_pin,status_to_set);
-    main_obj_state=status_to_set;
-/*
-    delay(20);
-    digitalWrite(relay1_set_pin,0); 
-    digitalWrite(relay1_reset_pin,0); 
-    digitalWrite(relay2_set_pin,0); 
-    digitalWrite(relay2_reset_pin,0); 
-*/
+    digitalWrite(node_obj_pinout[obj_number],status_to_set); 
+
+    if (obj_number==0){
+      main_obj_state=status_to_set;
+      changeObjStatus(led,status_to_set);
+    }
+    node_obj_status[obj_number]=status_to_set;
+
     return(1);
   }
+
+
 
 
 
@@ -559,8 +574,8 @@ void decodeOnosCmd( char *received_message){
     } 
 
  
-    //[S_123wb01x_#]
-    else if( received_message_type_of_onos_cmd[0]=='w' && received_message_type_of_onos_cmd[1]=='b' ){
+    //[S_123do01x_#]  digital object
+    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='o' ){
 
 /*
       Serial.print("decode time03=") ;
@@ -582,15 +597,12 @@ void decodeOnosCmd( char *received_message){
 
 
 
-      if (rx_obj_selected==main_obj_selected){ //first object selected
-        strcpy(received_message_answer,"cmdRx_#]"); // just to make something..              
-
-      }
-      else{//there is only one main wp object in this wp node
+      if (rx_obj_selected>number_of_total_objects){ //object out of the range
         Serial.println(F("er_obj_number_#]"));  
         strcpy(received_message_answer,"er_obj_number_#]"); 
-        return;
+        return; 
       }
+
 
 /*
       Serial.print("decode time04=") ;
@@ -598,7 +610,7 @@ void decodeOnosCmd( char *received_message){
       get_decode_time=millis();
 */
       boolean change_status_ok=0; 
-      change_status_ok=changeObjStatus(main_obj_selected,received_message_value);
+      change_status_ok=changeObjStatus(rx_obj_selected,received_message_value);
 
 
       if (change_status_ok!=1){
@@ -963,7 +975,7 @@ void checkAndHandleIncomingRadioMsg(){
 
 
 void handleButton(){
-
+  int obj_button_pin=node_obj_pinout[button];
   if (digitalRead(obj_button_pin)==0) {
     Serial.print("obj_button pressed");
 
@@ -1034,24 +1046,34 @@ void checkCurrentRadioAddress(){
  
 void setup() {
 
+  node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
+  node_obj_pinout[relay2]=8;  // the second object is the relay 1 connected on pin 8  
+  node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
+  node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 
+  node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
+  node_obj_pinout[4]=4;  // the sixth  object is the button  connected on pin 4 
+
+
   while (!Serial); // wait until serial console is open, remove if not tethered to computer
   noInterrupts(); // Disable interrupts    //important for lamp node
 
 //  pinMode(RFM69_RST, OUTPUT);
 
 
-  pinMode(relay1_set_pin, OUTPUT);
-  pinMode(relay1_reset_pin, OUTPUT);
-  pinMode(relay2_set_pin, OUTPUT);
-  pinMode(relay2_reset_pin, OUTPUT);
-  pinMode(obj_button_pin, INPUT);
-  pinMode(obj_led_pin, OUTPUT);
+  pinMode(node_obj_pinout[relay1], OUTPUT);
+  pinMode(node_obj_pinout[relay2], OUTPUT);
+  pinMode(node_obj_pinout[relay3], OUTPUT);
+  pinMode(node_obj_pinout[relay4], OUTPUT);
+  pinMode(node_obj_pinout[led], OUTPUT);
+  pinMode(node_obj_pinout[button], INPUT);
+
+  digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
   //while (!Serial); // wait until serial console is open, remove if not tethered to computer
   Serial.begin(SERIAL_BAUD);
 
 
-  digitalWrite(obj_button_pin, HIGH); //enable pull up resistors
+
 
 
   Serial.println("Feather RFM69W Receiver");
@@ -1059,11 +1081,6 @@ void setup() {
 
 /*  
 
-  WARNING do not uncomment this part or the radio will not work anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-
-
-/*  
 
   WARNING do not uncomment this part or the radio will not work anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -1102,7 +1119,7 @@ void setup() {
   delay(300);
   changeObjStatus(0,0);
 
-  Blink(obj_led_pin,100,3);  
+  Blink(node_obj_pinout[led],100,3);  
 
   composeSyncMessage();
 
@@ -1114,10 +1131,7 @@ void loop() {
 
 
 
-  digitalWrite(relay1_set_pin,0); 
-  digitalWrite(relay1_reset_pin,0); 
-  digitalWrite(relay2_set_pin,0); 
-  digitalWrite(relay2_reset_pin,0); 
+
   handleButton();
 
 

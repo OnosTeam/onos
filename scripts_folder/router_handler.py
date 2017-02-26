@@ -126,19 +126,22 @@ class RouterHandler:
         timeout=time.time()+70
         self.serialCommunicationIsWorking=1
         while self.serial_communication.uart.ser.inWaiting()<1:
-          self.serial_communication.uart.write("[S_begin_#]")
+          received_answer=self.serial_communication.uart.write("[S_begin_#]\n")
           if time.time()>timeout:
-            print ("arduino is not anwering on serial port")
+            print ("arduino is not answering on serial port")
             self.serialCommunicationIsWorking=0
             break
-
+          if "[S_" in received_answer:
+             self.serialCommunicationIsWorking=1
+             print ("arduino answered on serial port")
+             break
+          
 
 
    #     except Exception, e:
    #       print "error in opening arduino serial port e:"+str(e.args)
    #       errorQueue.put("error in opening arduino serial port e:"+str(e.args))
    #       self.serialCommunicationIsWorking=0
-
 
     
         if self.serialCommunicationIsWorking==1:
@@ -398,15 +401,27 @@ class RouterHandler:
         remoteNodeHwModelName=node_obj.getNodeHwModel()
 
         obj_selected=pinNumbers[0]#in this case the obj selected is passed from the pinNumbers number...
-    #    print "obj_selected:"+str(obj_selected)
+        print ("obj_selected:"+str(obj_selected) )
     #    print "remoteNodeHwModelName"+str(remoteNodeHwModelName)
     #    print "remoteNodeHwModelName[pin_mode][digital_obj].keys():"+str(hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected])
 
-      
+        for a in hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys() :
+          print (a)
+          for b in hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"][a]:
+            print (b)
+            if b==obj_selected:
+              obj_html_name=a
 
-        obj_html_name=hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected]  
+
+        #obj_html_name=hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected] 
+        print ("obj_html_name"+obj_html_name)
+     #example : get "relay" from  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]
+
+ 
       #  print "obj_html_name"+obj_html_name
         query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["query"]["digital_obj"][obj_html_name]
+     #example : get "relay" from  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]
+ 
      #   print "query_placeholder:"+query_placeholder
         query_placeholder=query_placeholder.replace("#_objnumber_#",str(pinNumbers[0]))
       #  print "query_placeholder2:"+query_placeholder

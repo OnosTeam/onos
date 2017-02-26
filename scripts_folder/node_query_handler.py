@@ -48,8 +48,11 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
     if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
       copy_of_readed_packets_list=serialCom.uart.readed_packets_list
-      for a in copy_of_readed_packets_list:  #iterate the list from the last element to the first
-        #a=serialCom.uart.readed_packets_list[i]
+
+      i=len(serialCom.uart.readed_packets_list)-1 
+      while i>0:  #iterate the list from the last element to the first
+        a=serialCom.uart.readed_packets_list[i]
+      
         print ("check of all received answers000000000 current one was:"+str(a))
 
         if a.find(expected_confirm)!=-1 :  #found the answer
@@ -59,9 +62,12 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
         if a=="[S_ertx1_#]":
           serialCom.uart.readed_packets_list.remove(a)
+          
 
         if a=="[S_nocmd0_#]":
           serialCom.uart.readed_packets_list.remove(a)
+   
+        i=i-1 
 
 
       time.sleep(0.4) 

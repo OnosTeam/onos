@@ -631,6 +631,16 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
 
 
 
+5.27            bugfix:hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)] 
+                       now the objects numbers are handled correctly. 
+
+
+
+
+
+
+
+
 
 
 (110, 'Connection timed out');;;

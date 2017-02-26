@@ -242,7 +242,7 @@ I will use post instead of get message
 
 
 
-  The message to change the status of the onos_plug_node_WPlugavx contact status will be: 
+  The message to change the status of the onos_plug_node_WPlugavx contact status will be:  
 
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
@@ -255,7 +255,7 @@ I will use post instead of get message
              [S_001wp00x_#]    to set the first object of the node to 0
 
 
-  The message to change the status of the onos_lamp_node_WLightSA lamp status will be: 
+  The message to change the status of the onos_lamp_node_WLightSA lamp status will be:   
 
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
@@ -270,7 +270,7 @@ I will use post instead of get message
 
 
 
-  The message to change the value of a generic object node will be: #to implement
+  The message to change the value of a generic digital object node will be: #to implement hex part
 
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
@@ -284,7 +284,7 @@ I will use post instead of get message
 
 
 
-  The message to change the value of a generic object node will be: #to implement
+  The message to change the value of a generic analog object node will be: #to implement
 
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node

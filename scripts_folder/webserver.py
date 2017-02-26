@@ -1127,12 +1127,12 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
      # status_list=[statusToSet] 
       #while len(pins_to_set)!=len(status_list): #to make the same len...to bypass check in routerhandler..
       #  status_list.append(statusToSet)
-      #print "pins_to_set_digital_obj:"+str(pins_to_set)
-      #print "len pins_to_set="+str(len(pins_to_set))
-      #print "statusToSet_digital_obj:"+str(statusToSet)
-      #print "nodeSerialNumber_digital_obj:"+str(nodeSerialNumber) 
-      #print "nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber])
-      #print "obj_type_digital_obj:"+str(obj_type) 
+      print "pins_to_set_digital_obj:"+str(pins_to_set)
+      print "len pins_to_set="+str(len(pins_to_set))
+      print "statusToSet_digital_obj:"+str(statusToSet)
+      print "nodeSerialNumber_digital_obj:"+str(nodeSerialNumber) 
+      print "nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber])
+      print "obj_type_digital_obj:"+str(obj_type) 
       hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
       return(1)   
 
@@ -1741,12 +1741,13 @@ def updateDir():
 
 
 def createNewNode(node_sn,node_address,node_fw):
+  print ("createNewNode executed with :"+node_sn)
   global uart_router_sn
   msg=""
   if node_address=="001":  #uart_node
     uart_router_sn=node_sn
   if node_sn in nodeDict.keys():
-    print "found node in the dict"
+    print ("found node in the dict")
 
     #nodeDict[node_sn].setNodeAddress(node_address)
     updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
@@ -5780,9 +5781,9 @@ def executeQueueFunction(dataExchanged):
     print "end data_exanged"
     try:
       #{obj_number_to_update:obj_value}  
-      for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update..
+      for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update.. 
         print "a="+str(a)
-        print "list="+str(hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys())
+        print "list="+str(hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys())#todo extend to any type of obj..
         obj_name_part=""
         for b in hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys():#find "plug" from{"plug":[(0)],"plug2":[(1)]}
           print "b="
