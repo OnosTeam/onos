@@ -406,16 +406,18 @@ class RouterHandler:
     #    print "remoteNodeHwModelName[pin_mode][digital_obj].keys():"+str(hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected])
 
         for a in hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys() :
-          print (a)
+          # example: a is equal to hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]
+          #print (a)
           for b in hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"][a]:
-            print (b)
-            if b==obj_selected:
+            #example: b is equal to 0,1,2... in hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)] 
+            #print (b)
+            if b==obj_selected:  # if b is equal to the number of the object selected: for example 0
               obj_html_name=a
 
 
-        #obj_html_name=hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected] 
+
         print ("obj_html_name"+obj_html_name)
-     #example : get "relay" from  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]
+   #example:obj_html_name is equal to"relay"from hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]
 
  
       #  print "obj_html_name"+obj_html_name
@@ -430,8 +432,14 @@ class RouterHandler:
 
         valuelen_pos=query_placeholder.find("#_valuelen")
         if valuelen_pos != -1:
-        #  print "valuelen_pos != -1"    
+        #  print "valuelen_pos != -1"   
+ 
           value=str(status_to_set)
+          #if (query_placeholder.find("sts_not_"))!=-1:  #if the query must be negated...for object with active low pin..
+          #  print ("found sts_not_ in placeholder,i will negate the status")
+          #  value=str(int(not (int(status_to_set)))) 
+          #  query_placeholder=query_placeholder.replace("sts_not_","")#clear the query from "sts_not_" 
+
          # print "try:"+re.search('#_valuelen:(.+?)_#',query_placeholder).group(1)  # get the 1 from wp0#_valuelen:1_#
           desidered_len=int (re.search('#_valuelen:(.+?)_#',query_placeholder).group(1))  # get the 1 from wp0#_valuelen:1_#
          # print "desidered_len:"+str(desidered_len)  

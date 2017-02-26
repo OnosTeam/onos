@@ -216,11 +216,11 @@ boolean changeObjStatus(char obj_number,int status_to_set){
 
   if (obj_number!=button){ //will not change the status to the button...
 
-    digitalWrite(node_obj_pinout[obj_number],status_to_set); 
+    digitalWrite(node_obj_pinout[obj_number],!status_to_set); // !  is only for this hardware since the ralay are actived low..
 
     if (obj_number==0){
       main_obj_state=status_to_set;
-      changeObjStatus(led,status_to_set);
+      changeObjStatus(led,!status_to_set);
     }
     node_obj_status[obj_number]=status_to_set;
 

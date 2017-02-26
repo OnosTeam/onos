@@ -1638,12 +1638,12 @@ usersDict["scenario"]={"pw":"onos","mail_control_password":"onosm","priority":0,
 usersDict["onos_node"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["onos_node_reconnect"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
-
+usersDict["casa"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 #usersDict["mauro"]={"pw":"12345678","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 
 
 online_usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
-
+online_usersDict["casa"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 
 usersDict.update(online_usersDict) #insert the online users in the local dictionary
 
@@ -1707,11 +1707,13 @@ hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wb#_objnumber_##_
 
 hardwareModelDict["Wrelay4x"]={"hwName":"Wrelay4x","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
 hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]={}
-hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]#see arduino code at :"define object numbers to use in the pin configuration"
+hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["caldaia"]=[(0)]   #
+hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["router"]=[(1)]   #
+hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(2),(3)]#see arduino code at :"define object numbers to use in the pin configuration"
 #hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["local_button"]=[(4)]   #
-hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["led"]=[(5)]   #
 
-hardwareModelDict["Wrelay4x"]["query"]["digital_obj"]={"relay":"do#_objnumber_##_valuelen:1_#","led":"do#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001do01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
+hardwareModelDict["Wrelay4x"]["query"]["digital_obj"]={"caldaia":"do#_objnumber_##_valuelen:1_#","router":"do#_objnumber_##_valuelen:1_#","relay":"do#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001do01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
+
 
 
 
