@@ -16,7 +16,6 @@
 <script>
 var x = 0; //la metto prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
 var y = 0;
-var z = 0;
 
 function menusxfunction(menu_sx,funzionesx) {
 		if (funzionesx=="open_close_sx"){
@@ -46,18 +45,7 @@ function menudxfunction(menu_rx,funzionedx) {
 
 
 
-function ogg_sel_func(select_box,add_ogg_func) {
-	if (add_ogg_func=="open_close"){
-  		if(z === 0){ 
-      	z=1;
-      	document.getElementById('select_box').style.height = "200px";
-    	} 
-  		else {
-      	z=0;
-      	document.getElementById('select_box').style.height = "0px"; 
-    	}  
-  	}
-}
+
 </script>
 
 
@@ -71,7 +59,7 @@ function ogg_sel_func(select_box,add_ogg_func) {
 		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-menu"></i></div>
 		<div id="date" class="banner-color banner-col2">12-10-2016</div>
 		<div id="time" class="banner-color banner-col3">23:36</div>
-		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
+		<div id="right_menu_button" class="banner-color banner-col4"></div>
 
 
 
@@ -112,7 +100,8 @@ function ogg_sel_func(select_box,add_ogg_func) {
 		</div>
 
 		<div class="riga" >
-					<div class="dropdown_oggetti" onclick="ogg_sel_func(this.id,'open_close');" >Aggiungi oggetti  <i class="icon-folder-open"></i></div>
+					 <p class="testo_big">Lista oggetti della Zona</p> 
+					  <p class="testo_small">Seleziona la spunta per aggiungere o rimuovere gli oggetti </p> 					
 		</div>
 		
 		<div id="select_box" >
@@ -132,10 +121,11 @@ function ogg_sel_func(select_box,add_ogg_func) {
 					<div class="ogg_selection" >Oggetto 2</div>
 					
 				</div></label>
-					
 		</div>
 		
-		
+		<div class="riga" >
+					<div class="save_button" >Salva  <i class="icon-floppy-disk"></i></div>
+		</div>
 		
 		
 		

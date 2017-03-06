@@ -14,12 +14,12 @@
 	position:absolute;
 	width:90%;
 	height:30px;
-	top:0px;
+	top:20px;
 	left:5%;
 	color:black;
 }
 
-.dropdown_oggetti{
+.save_button{
 	
 	
 	position:absolute;
@@ -43,14 +43,43 @@
 	
 }
 
+
+p { 
+	left:5%;
+	color:white;
+	width:90%;
+	height:30px;
+	text-align:left;
+
+}
+
+.testo_big{
+	
+	
+		top:0px;
+		position:absolute;
+		font-size:22px;
+	
+}
+
+.testo_small{
+	
+	top:40px;
+	position:absolute;
+	font-size:12px;
+	
+}
+
+
+
 #select_box{
 	position:relative;
 	width:90%;
 	left:5%;
-	height:0px;
+	height:200px;
 	background-color:#1e9bae;
 	overflow-y:scroll;
-	margin-top:10px;
+	margin-top:40px;
 	-webkit-transition: height 0.5s; /* Safari */
 	transition: height 0.5s;
 	border-top-left-radius:10px; 
@@ -85,7 +114,7 @@ input[type="checkbox"]{
 	width:10%;
 	top:0px;
 	left:0px;
-	font-size:20px;
+	font-size:15px;
 	color:white;
 	
 	-webkit-transition: color 0.5s; /* Safari */
@@ -113,24 +142,24 @@ input:checked + .check {
 	line-height:30px;
 	width:90%;
 	top:0px;
-	left:10%;
+	left:8%;
 	text-align:left;
 	padding-left:10px;
-	font-size:20px;
+	font-size:15px;
 	color:white;
 	
 }
 
 
 
+@media screen and (min-width: 600px) /*laptops-desktop*/{
 
+.testo_big{font-size:25px;}
 
+.testo_small{font-size:15px;}
 
+.check {font-size:20px;}
 
-
-
-
-
-
+.ogg_selection{font-size:20px;}
 
 
