@@ -31,7 +31,8 @@ global router_hardware_type
 
 
 
-class WebObject:
+class WebObject(object):   # inherit from object python class
+    __slots__ = 'name', 'baz','object_type','start_status','styleDict','htmlDict','cmdDict','note','hardware_pin','HwNodeSerialNumber','spareDict','__dict__'
 
     global exit  #if exit ==1 all the program stop and exit
     __object_type="b"   #alternative is "s" for status viewer or "t" for timer button  or "sb" for static button  
@@ -82,10 +83,23 @@ class WebObject:
       self.group=["web_interface","onos_mail_guest"] #list of users that can change the webobject
       self.mail_report_list=[] #list of mail to send the report
 
+
+
       try:
         self.attachedScenarios=list(set(self.attachedScenarios + spareDict["scenarios"]))
       except:
         self.attachedScenarios=[]  #list of attached scenarios  
+
+
+
+      try:
+        self.obj_address_in_the_node=spareDict["obj_address_in_the_node"]
+      except:
+        self.obj_address_in_the_node=9999  # if is 9999 this object is not part of a node
+
+
+
+
 
       try:
         self.required_priority=spareDict["priority"]

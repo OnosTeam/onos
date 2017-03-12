@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: UTF-8 -*-
 #   Copyright 2014 Marco Rigoni                                               #
 #   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
 #   This program is free software: you can redistribute it and/or modify      #
@@ -20,7 +20,7 @@
 
 
 #usefull sources  http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-# -*- coding: UTF-8 -*-
+
 
 
 from conf import *           # import parameter from conf.py  which will read the data from the  json 
@@ -390,7 +390,14 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
 
 
 
-def changeWebObjectType(objName,typeToSet):#change the type of webobject and the relative pin mode in hardware_node class
+def changeWebObjectType(objName,typeToSet):#
+
+  """
+  | change the type of webobject and the relative pin mode in hardware_node class
+  | Todo: remove this function
+
+  """
+
   print "executed changeWebObjectType() with :"+objName
   if objName in object_dict.keys(): #if the web object exist
     object_dict[objName].setType(typeToSet)
@@ -1635,17 +1642,17 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
   #roomHtml=play_zone_start_html+ '''<div id="header">'''+room.upper()+'''</div>'''
   
   if room in roomDictionary.keys():  
-    cgi_name="gui/pag_creator.py"
+    cgi_name="gui/display_zone_objects.py"
     zone=zoneDict[room]
     namespace={} 
     web_page=""
-    roomHtml="error executing /gui/pag_creator.py"
+    roomHtml="error executing /gui/display_zone_objects.py"
     try:
-      execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py
+      execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py
       roomHtml=namespace["web_page"]  
     except Exception as e: 
-      print "error executing /gui/pag_creator.py e:"+str(e.args)
-      errorQueue.put("error executing /gui/pag_creator.py e:"+str(e.args)) 
+      print "error executing /gui/display_zone_objects.py e:"+str(e.args)
+      errorQueue.put("error executing /gui/display_zone_objects.py e:"+str(e.args)) 
     return(roomHtml)
 
 
@@ -2525,7 +2532,7 @@ class MyHandler(BaseHTTPRequestHandler):
             if (self.path=="/"):
               #print "rrrrrrrrrrrrrrrrrrrrrooooooooooooooooooooooot"
               namespace={}
-              cgi_name="gui/play.py"       
+              cgi_name="gui/home.py"       
               execfile(cgi_name,globals(),namespace)
               web_page=namespace["web_page"]
 
@@ -2855,7 +2862,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if ((self.path.endswith(".jpg"))|(self.path.endswith(".gif"))|(self.path.endswith(".png"))|(self.path.endswith(".JPG"))|(self.path.endswith(".PNG"))):
+            if ((self.path.endswith(".jpg"))|(self.path.endswith(".gif"))|(self.path.endswith(".png"))|(self.path.endswith(".JPG"))|(self.path.endswith(".PNG")) |(self.path.endswith(".ico")) ):
                 f = open(curdir + sep + self.path,'rb') #self.path has /test.html
                 photoFile=f.read()
                 f.close()
@@ -2961,10 +2968,11 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
 
 
-            if (self.path.endswith(".ttf"))|(self.path.endswith(".TTF")):
-                f = open(curdir + sep + self.path,'rb') #self.path has /test.html
-                askedFile=f.read()
-                f.close()
+
+            if ((self.path.find(".ttf")!=-1))|((self.path.find(".TTF")!=-1)):
+                fileName=curdir + sep + self.path.split(".ttf")[0]+".ttf"       #get only the filename without parameters 
+                with open(fileName, 'rb') as f:   #read the pin status
+                  askedFile=f.read()
 #note that this potentially makes every file on your computer readable by the internet
                 
                 try:
@@ -2979,6 +2987,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   print "error9b in send_header "+" e:"+str(e.args)   
                   errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
                 return
+
+
+
 
 
             if (self.path.endswith(".js"))| (self.path.endswith(".JS")):
@@ -3034,7 +3045,7 @@ class MyHandler(BaseHTTPRequestHandler):
               try:   
 
                 namespace={}   
-                cgi_name="/gui/play.py"       
+                cgi_name="/gui/home.py"       
                 execfile(cgi_name,globals(),namespace)
                 web_page=namespace["web_page"]
 
@@ -4891,7 +4902,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
@@ -4909,7 +4920,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
@@ -4944,7 +4955,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -4962,7 +4973,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -4983,7 +4994,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5000,7 +5011,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5015,7 +5026,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   cgi_name="gui/new_user.py"
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/pag_creator.py                  
+                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')

@@ -1,110 +1,237 @@
+
 <!DOCTYPE html>
 
 <html>
 
-    <head><!--onos_automatic_page--><!--onos_automatic_javascript--><link rel="stylesheet" href="../css/zone.css"><style type="text/css"><!--onos_automatic_body_style--></style>
+    <head><!--onos_automatic_page--><!--onos_automatic_javascript--><link rel="stylesheet" href="/css/display_zone_objects.css"><style type="text/css"><!--onos_automatic_body_style--></style>
+   	<title>Object list</title>
 
 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!--onos_automatic_meta-->
-	<link rel="stylesheet" href="../css/menu.css">
+	<link rel="stylesheet" href="/css/onos-font.css">
+	<link rel="stylesheet" href="/css/menu.css">
+
+	<meta charset="utf-8">
+
+
+<script>
+var x = 0; //la metto prima della funzione perche voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
+var y = 0;
+
+
+function menusxfunction(menu_sx,funzionesx) {
+		if (funzionesx=="open_close_sx"){
+	  		if(x === 0){ 
+	      	x=1;
+	      	y=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "0%";
+	    	} 
+	  		else {
+	      	x=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%"; 
+	    	}  
+	  	}
+}
+
+function menudxfunction(menu_rx,funzionedx) {
+	if (funzionedx=="open_close_dx"){
+  		if(y === 0){ 
+      	y=1;
+      	X=0;
+      	document.getElementById('menu_rx').style.marginRight = "0%";
+    	} 
+  		else {
+      	y=0;
+      	document.getElementById('menu_rx').style.marginRight = "-100%"; 
+    	}  
+  	}
+}
+
+</script>
+
 
 
     </head>
-    <body>
+   <body>
 
-<div id="big-container">	
+	<div id="invisible_top_banner"></div>
+
+
+		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-menu"></i></div>
+		<div id="date" class="banner-color banner-col2">12-10-2016</div>
+		<div id="time" class="banner-color banner-col3">23:36</div>
+		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
 
 
 
-		<div id="upper-bar-image"><img class="flex" src="../img/upper-bar.png" class="image" /></div>
-		<div id="upper-bar-testo">ONOS House</div>
-		
 
-		<div id="container-menu"> 
+	<div id="menu_sx">
+
+
+		<a href="/"><div id="homebutton" class="vocemenu_sx" ><i class="icon-home3"></i>Home</div></a>
+		<a href="/"><div id="zonebutton" class="vocemenu_sx" ><i class="icon-book"></i>Zone</div></a>
+		<a href="/scenarios_list/"><div id="scenaributton" class="vocemenu_sx"><i class="icon-calculator"></i>Scenari</div></a>
+		<a href="#"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Oggetti</div></a>
+		<a href="/setup/"><div id="impostazionibutton" class="vocemenu_sx"><i class="icon-settings"></i>Impostazioni</div></a>
+		<a href="#"><div id="accountbutton" class="vocemenu_sx"><i class="icon-user2"></i>Account</div></a>
+
+
+		<div id="closebutton_sx" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-cross"></i></div>
+
+	</div>
+
+	<div id="menu_rx">
+
+		<a href="/zone-creation.html"><div class="menu_rx_riga" >
+			<div id="newzone" class="voce-menu-R side-col1" >Nuova</div>
+			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
+		</div></a>
 			
-
-
-			<div id="play-button" class="menu-button"><a href="/"><img class="flex" src="../img/play.png" class="image" /></a></div>
-			<div id="scenario-button" class="menu-button"><a href="/scenarios_list/"><img class="flex" src="../img/scenario.png" class="image" /></a></div>
-			<div id="settings-button" class="menu-button"><a href="/setup/"><img class="flex" src="../img/settings.png" class="image" /></a></div>
-			<div id="exit-button" class="menu-button"><a href="#"><img class="flex" src="../img/exit.png" class="image" /></a></div>
-
+		<div class="menu_rx_riga" >
+			<div id="deletezone" class="voce-menu-R side-col1" >Elimina</div>
+			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
+		</div>
+		
+		<div class="menu_rx_riga" >
+			<div id="submit" class="voce-menu-R side-col1" >Applica</div>
+			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
 		</div>
 
+		<div id="closebutton_rx" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-cross"></i></div>
 
-<!--fine pezzo standard per header menu e nome pagina 2321-->    
+	</div>
+	
+
+ 
 <body>
 
 <div id="ReloadThis" >
 
 
- <div class="divisorio">ROUTERGA0000</div>
+ <title>ROUTERGA0000</title>
 
-<div class="oggetto-container"> 
-    <!--onos_automatic_object_a-->   
-  <div class="oggetto" <!--onos_automatic_local_style--> >
+  <div class="oggetto" <!--onos_automatic_local_style--> 
 
     <!--onos_automatic_object_html-->
 
   </div> 
 
-      <div id="stato-oggetto">
-      <!--start_imgsocket0_RouterGA0000--><img class="flex" src="/img/on.png" class="image" />  <!--end_imgsocket0_RouterGA0000-->
+
+    <div class="riga" >
+
+	  <div id=socket0_RouterGA0000 class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+
+
+      <div class="specs col2"      <!--onos_automatic_local_style-->  >  
+        <!--onos_automatic_object_a-->   
+        <!--onos_automatic_object_html-->
+
+
+
+
+        
+		<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
+		<div class="scenario-link col3"><i class="icon-calculator"></i></div>
+
+
       </div>
-    </a>
+      <br>      <br>      <br>      <br>
+
+      <br>      <br>      <br>      <br>
 
 
 
-  </div>
-
-<div class="oggetto-container"> 
-    <!--onos_automatic_object_a-->   
-  <div class="oggetto" <!--onos_automatic_local_style--> >
+  <div class="oggetto" <!--onos_automatic_local_style--> 
 
     <!--onos_automatic_object_html-->
 
   </div> 
 
-      <div id="stato-oggetto">
-      <!--start_imgbutton0_RouterGA0000--><img class="flex" src="/img/on.png" class="image" />  <!--end_imgbutton0_RouterGA0000-->
+
+    <div class="riga" >
+
+	  <div id=button0_RouterGA0000 class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+
+
+      <div class="specs col2"      <!--onos_automatic_local_style-->  >  
+        <!--onos_automatic_object_a-->   
+        <!--onos_automatic_object_html-->
+
+
+
+
+        
+		<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
+		<div class="scenario-link col3"><i class="icon-calculator"></i></div>
+
+
       </div>
-    </a>
+      <br>      <br>      <br>      <br>
+
+      <br>      <br>      <br>      <br>
 
 
 
-  </div>
-
-<div class="oggetto-container"> 
-    <!--onos_automatic_object_a-->   
-  <div class="oggetto" <!--onos_automatic_local_style--> >
+  <div class="oggetto" <!--onos_automatic_local_style--> 
 
     <!--onos_automatic_object_html-->
 
   </div> 
 
-      <div id="stato-oggetto">
-      <!--start_imgbutton1_RouterGA0000--><img class="flex" src="/img/on.png" class="image" />  <!--end_imgbutton1_RouterGA0000-->
+
+    <div class="riga" >
+
+	  <div id=button1_RouterGA0000 class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+
+
+      <div class="specs col2"      <!--onos_automatic_local_style-->  >  
+        <!--onos_automatic_object_a-->   
+        <!--onos_automatic_object_html-->
+
+
+
+
+        
+		<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
+		<div class="scenario-link col3"><i class="icon-calculator"></i></div>
+
+
       </div>
-    </a>
+      <br>      <br>      <br>      <br>
+
+      <br>      <br>      <br>      <br>
 
 
 
-  </div>
-
-<div class="oggetto-container"> 
-    <!--onos_automatic_object_a-->   
-  <div class="oggetto" <!--onos_automatic_local_style--> >
+  <div class="oggetto" <!--onos_automatic_local_style--> 
 
     <!--onos_automatic_object_html-->
 
   </div> 
 
-      <div id="stato-oggetto">
-      <!--start_imgd_sensor0_RouterGA0000--><img class="flex" src="/img/on.png" class="image" />  <!--end_imgd_sensor0_RouterGA0000-->
+
+    <div class="riga" >
+
+	  <div id=d_sensor0_RouterGA0000 class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+
+
+      <div class="specs col2"      <!--onos_automatic_local_style-->  >  
+        <!--onos_automatic_object_a-->   
+        <!--onos_automatic_object_html-->
+
+
+
+
+        
+		<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
+		<div class="scenario-link col3"><i class="icon-calculator"></i></div>
+
+
       </div>
-    </a>
+      <br>      <br>      <br>      <br>
 
+      <br>      <br>      <br>      <br>
 
-
-  </div><div id="footer"></div></div><!--end reload--></body></html>
+<div id="footer"></div></div><!--end reload--></body></html>
