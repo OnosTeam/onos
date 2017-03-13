@@ -1,42 +1,113 @@
+
 <!DOCTYPE html>
 
 <html>
 
-    <head><!--onos_automatic_page--><!--onos_automatic_javascript--><link rel="stylesheet" href="../css/zone.css"><style type="text/css"><!--onos_automatic_body_style--></style>
+    <head><!--onos_automatic_page--><!--onos_automatic_javascript--><link rel="stylesheet" href="/css/display_zone_objects.css"><style type="text/css"><!--onos_automatic_body_style--></style>
+   	<title>Object list</title>
 
 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!--onos_automatic_meta-->
-	<link rel="stylesheet" href="../css/menu.css">
+	<link rel="stylesheet" href="/css/onos-font.css">
+	<link rel="stylesheet" href="/css/menu.css">
+
+	<meta charset="utf-8">
+
+
+<script>
+var x = 0; //la metto prima della funzione perche voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
+var y = 0;
+
+
+function menusxfunction(menu_sx,funzionesx) {
+		if (funzionesx=="open_close_sx"){
+	  		if(x === 0){ 
+	      	x=1;
+	      	y=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "0%";
+	    	} 
+	  		else {
+	      	x=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%"; 
+	    	}  
+	  	}
+}
+
+function menudxfunction(menu_rx,funzionedx) {
+	if (funzionedx=="open_close_dx"){
+  		if(y === 0){ 
+      	y=1;
+      	X=0;
+      	document.getElementById('menu_rx').style.marginRight = "0%";
+    	} 
+  		else {
+      	y=0;
+      	document.getElementById('menu_rx').style.marginRight = "-100%"; 
+    	}  
+  	}
+}
+
+</script>
+
 
 
     </head>
-    <body>
+   <body>
 
-<div id="big-container">	
+	<div id="invisible_top_banner"></div>
+
+
+		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-menu"></i></div>
+		<div id="date" class="banner-color banner-col2">12-10-2016</div>
+		<div id="time" class="banner-color banner-col3">23:36</div>
+		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
 
 
 
-		<div id="upper-bar-image"><img class="flex" src="../img/upper-bar.png" class="image" /></div>
-		<div id="upper-bar-testo">ONOS House</div>
-		
 
-		<div id="container-menu"> 
+	<div id="menu_sx">
+
+
+		<a href="/"><div id="homebutton" class="vocemenu_sx" ><i class="icon-home3"></i>Home</div></a>
+		<a href="/"><div id="zonebutton" class="vocemenu_sx" ><i class="icon-book"></i>Zone</div></a>
+		<a href="/scenarios_list/"><div id="scenaributton" class="vocemenu_sx"><i class="icon-calculator"></i>Scenari</div></a>
+		<a href="#"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Oggetti</div></a>
+		<a href="/setup/"><div id="impostazionibutton" class="vocemenu_sx"><i class="icon-settings"></i>Impostazioni</div></a>
+		<a href="#"><div id="accountbutton" class="vocemenu_sx"><i class="icon-user2"></i>Account</div></a>
+
+
+		<div id="closebutton_sx" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-cross"></i></div>
+
+	</div>
+
+	<div id="menu_rx">
+
+		<a href="/zone-creation.html"><div class="menu_rx_riga" >
+			<div id="newzone" class="voce-menu-R side-col1" >Nuova</div>
+			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
+		</div></a>
 			
-
-
-			<div id="play-button" class="menu-button"><a href="/"><img class="flex" src="../img/play.png" class="image" /></a></div>
-			<div id="scenario-button" class="menu-button"><a href="/scenarios_list/"><img class="flex" src="../img/scenario.png" class="image" /></a></div>
-			<div id="settings-button" class="menu-button"><a href="/setup/"><img class="flex" src="../img/settings.png" class="image" /></a></div>
-			<div id="exit-button" class="menu-button"><a href="#"><img class="flex" src="../img/exit.png" class="image" /></a></div>
-
+		<div class="menu_rx_riga" >
+			<div id="deletezone" class="voce-menu-R side-col1" >Elimina</div>
+			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
+		</div>
+		
+		<div class="menu_rx_riga" >
+			<div id="submit" class="voce-menu-R side-col1" >Applica</div>
+			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
 		</div>
 
+		<div id="closebutton_rx" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-cross"></i></div>
 
-<!--fine pezzo standard per header menu e nome pagina 2321-->    
+	</div>
+	
+
+ 
 <body>
 
 <div id="ReloadThis" >
 
 
- <div class="divisorio">WPLUGAVX0080</div>No objects present in this zone<div id="footer"></div></div><!--end reload--></body></html>
+ <title>WPLUGAVX0080</title>No objects present in this zone<div id="footer"></div></div><!--end reload--></body></html>

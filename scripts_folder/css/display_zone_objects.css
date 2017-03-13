@@ -26,7 +26,7 @@
 	top:0px;
 	height:100px;
 	width:100px;
-	background-image: url("/img/presa.png");
+	background-image: url("../img/presa.png");
     background-repeat: no-repeat;
     background-size:100px 100px;
 	background-color:red;

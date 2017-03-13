@@ -32,39 +32,30 @@ web_page_old=web_page
 
 
 
-for a in obj_name_list :      # for every web_obj in the room
+for a in obj_name_list :      # for every web_obj in the zone
 
 
   web_page=web_page+'''
 
-  <div class="oggetto" <!--onos_automatic_local_style--> 
-
-    <!--onos_automatic_object_html-->
-
-  </div> 
-
-
-    <div class="riga" >
-
-	  <div id='''+a+''' class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
-
-
-      <div class="specs col2"      <!--onos_automatic_local_style-->  >  
-        <!--onos_automatic_object_a-->   
-        <!--onos_automatic_object_html-->
 
 
 
+		<div class="riga" <!--onos_automatic_local_style--> >
 
-        
-		<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
-		<div class="scenario-link col3"><i class="icon-calculator"></i></div>
+			<div id="'''+a+'''"   class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+
+            <!--onos_automatic_object_a-->  
+			<div class="specs col2"><!--onos_automatic_object_html--></div>
+			<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
+			<div class="scenario-link col3"><i class="icon-calculator"></i></div>
 
 
-      </div>
-      <br>      <br>      <br>      <br>
+		</div>
 
-      <br>      <br>      <br>      <br>
+
+
+
+
 
 '''
 
