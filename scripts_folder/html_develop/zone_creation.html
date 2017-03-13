@@ -6,17 +6,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
 
-	<link rel="stylesheet" href="css/onos-font.css">
+	<link rel="stylesheet" href="css/onos_font.css">
 	<link rel="stylesheet" href="css/menu.css">
-	<link rel="stylesheet" href="css/zone-list.css">
+	<link rel="stylesheet" href="css/zone_creation.css">
 	<meta charset="utf-8">
-   	<title>Zone list</title>
+   	<title>Creazione Zona</title>
 
 
 <script>
 var x = 0; //la metto prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
 var y = 0;
-
 
 function menusxfunction(menu_sx,funzionesx) {
 		if (funzionesx=="open_close_sx"){
@@ -36,7 +35,7 @@ function menudxfunction(menu_rx,funzionedx) {
 	if (funzionedx=="open_close_dx"){
   		if(y === 0){ 
       	y=1;
-      	X=0;
+      	x=0;
       	document.getElementById('menu_rx').style.marginRight = "0%";
     	} 
   		else {
@@ -45,6 +44,9 @@ function menudxfunction(menu_rx,funzionedx) {
     	}  
   	}
 }
+
+
+
 
 </script>
 
@@ -59,7 +61,7 @@ function menudxfunction(menu_rx,funzionedx) {
 		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-menu"></i></div>
 		<div id="date" class="banner-color banner-col2">12-10-2016</div>
 		<div id="time" class="banner-color banner-col3">23:36</div>
-		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
+		<div id="right_menu_button" class="banner-color banner-col4"></div>
 
 
 
@@ -81,16 +83,6 @@ function menudxfunction(menu_rx,funzionedx) {
 
 	<div id="menu_rx">
 
-		<a href="/zone-creation.html"><div class="menu_rx_riga" >
-			<div id="newzone" class="voce-menu-R side-col1" >Nuova</div>
-			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
-		</div></a>
-			
-		<div class="menu_rx_riga" >
-			<div id="deletezone" class="voce-menu-R side-col1" >Elimina</div>
-			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
-		</div>
-		
 		<div class="menu_rx_riga" >
 			<div id="submit" class="voce-menu-R side-col1" >Applica</div>
 			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
@@ -106,39 +98,50 @@ function menudxfunction(menu_rx,funzionedx) {
 	
 
 		<div class="riga" >
-			<a href="/play.html"><div class="zone-name col1">Soggiorno</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+			<input class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome della zona') { this.value = ''; }" value="Scrivi il nome della zona"/>
 		</div>
 
 		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Giardino</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+					 <p class="testo_big">Lista oggetti della Zona</p> 
+					  <p class="testo_small">Seleziona la spunta per aggiungere o rimuovere gli oggetti </p> 					
+		</div>
+		
+		<div id="select_box" >
+				
+				<label for="oggetto1"><div class="riga_box" >
+				
+					<input  type="checkbox" value="oggetto1" id="oggetto1"/>
+					<div class="check" ><i class="icon-checkmark"></i></div>
+					<div class="ogg_selection" >Oggetto 1</div>
+					
+				</div></label>
+				
+				<label for="oggetto2"><div class="riga_box" >
+				
+					<input  type="checkbox" value="oggetto2" id="oggetto2"/>
+					<div class="check" ><i class="icon-checkmark"></i></div>
+					<div class="ogg_selection" >Oggetto 2</div>
+					
+				</div></label>
 		</div>
 		
 		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Camera Padronale</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+					<div class="save_button" >Salva  <i class="icon-floppy-disk"></i></div>
 		</div>
 		
-		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Camera Enrico</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
-		</div>
 		
-		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Camera Marco</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
-		</div>
-
-		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Garage</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
-		</div>
-
-		<div class="riga" >
-			<a href="#"><div class="zone-name col1">Cucina</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
-		</div>
-
-   </body>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</body>
 </html>
