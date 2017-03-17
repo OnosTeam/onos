@@ -92,10 +92,10 @@ class WebObject(object):   # inherit from object python class
 
 
 
-      try:
-        self.obj_address_in_the_node=spareDict["obj_address_in_the_node"]
-      except:
-        self.obj_address_in_the_node=9999  # if is 9999 this object is not part of a node
+      #try:
+      #  self.obj_address_in_the_node=spareDict["obj_address_in_the_node"]
+      #except:
+      #  self.obj_address_in_the_node=9999  # if is 9999 this object is not part of a node
 
 
 
@@ -501,6 +501,13 @@ class WebObject(object):   # inherit from object python class
       return (self.attachedPins[0])
 
     def getAttachedPinList(self):
+      """
+      |  Return a list containing the object pins used in the hardware and if the webobject is a is a digital_obj 
+      |  or an analog_obj or ...obj   it will return the address of this object in the node, 
+      |  example:  0 means first object in the node, 1 means second object in the node ...
+      |
+
+      """
       return (self.attachedPins)
 
 

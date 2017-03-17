@@ -64,6 +64,8 @@ class HwNode:
       self.maxPin=hwModel["max_pin"] 
       self.hwType=hwModel["hardware_type"]  
       self.timeout=hwModel["timeout"]  #time (in seconds) onos will let pass without contact with the node after which the node will be setted as inactive 
+
+      self.nodeObjectsDict={}
       self.NodeSerialNumber=self.NodeSerialNumber
       self.total_pin={}
       self.last_node_sync=time.time()
@@ -301,8 +303,32 @@ class HwNode:
    
 
 
+    def setNodeObjectAddress(self,objectAddress,objectName):
+      """
+        |  Set the objectname to a node address
+        |   
+      """
 
-   
+      self.nodeObjectsDict[objectAddress]=objectName
+      return(1)
+
+
+    def getNodeObjectFromAddress(self,objectAddress):
+      """
+        |  Get the objectname in the node address
+        |   
+      """
+      return(self.nodeObjectsDict[objectAddress])
+
+
+
+    def getnodeObjectsDict(self):
+      """
+       |  Get the objectname in the node address
+       |   
+      """
+      return(self.nodeObjectsDict)
+
 
 
 

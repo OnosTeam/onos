@@ -1121,7 +1121,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
    #_valuelen:1_# will be replaced by a number (1 char long) to rappresent the value of the object  
    
 
-48) What happen if two  neighbors persons buy 2 onoscenter ?The systems will interfer with each others?
+48) What happen if two  neighbors buy 2 onoscenter ?The systems will interfer with each others?
     We need to implement a way to pair the network of radio modules with each onoscenter. 
     Partial solution A), every time we sell a new node we will ask the customer for they onosUsername and from the online server we will extract the key password for that onoscenter.
     To implement a variable password set from the onoscenter to the radio transciver ...and the web interface to get the password from local and from remote webpage.
@@ -1135,7 +1135,24 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 50) How can a node send the status of an object that has changed?todo
     the node will send a syncmessage where it will tell onos the number of the objects it will send,the type of the object(to know how many bytes it will use) , the number of each object followed by the value of that object (variable byte lenght based on the type of obj that onos will get from the hardwareModelDict in globalVar.py) 
-    Every webobject created automaticly from linux will have a variable obj_address_in_the_node that contain the number of the object in the node, the first object in a node will have obj_address_in_the_node =0 
+
+51) Need a way to make the user able to rename a weboject.
+    The user will rename the object in the form , then onos will search the old name in every zone dictionary , scenario dictionary
+    object dictionary node dictionary and replace the old name with the new one.
+    Every node object will have a dict called nodeObjectsDict where there will be a relation to the key and the object .
+    With the function getNodeObjectFromAddress() it will return the objectname given a key.
+    The first object in the node will have key =0 ...
+    This setting will be readed from hardwareModelDict
+ 
+    Every webobject object has a getAttachedPinList() function that returns the pins attached, if the webobject is a digital_obj or an analog_obj or ...obj  then that function will return the address of the object in the node...for example 0 means it is the first object of the node.
+ 
+    if a node ask to run "updateObjFromNode" then it will pass the node serial number ,the address of the object to update and the value to set the object.
+
+    Onos will search in the nodeDict the node serial number and will get the objectname to change from the getNodeObjectFromAddress() function in the node.
+      
+
+
+#    Every node created automaticly from linux will have a variable obj_address_in_the_node that contain the number of the object #in the node, the first object in a node will have obj_address_in_the_node =0 
 
 
 

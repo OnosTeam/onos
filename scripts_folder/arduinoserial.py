@@ -321,8 +321,8 @@ class SerialPort:
                   node_fw="def0"  #default
                   if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_123ulWPlugAvx000810000_#]
                     obj_value=cmd[20]
-                    obj_number_to_update="0"
-                    priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_number_to_update:obj_value} }) 
+                    obj_address_to_update="0"
+                    priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_address_to_update:obj_value} }) 
 
                     #todo update the first node obj reading the name from hardwaremodel
 

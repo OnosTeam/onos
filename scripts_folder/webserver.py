@@ -252,7 +252,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
   for a in nodeDictionary.keys():
     try: 
       sn=nodeDictionary[a].getNodeSerialNumber() 
-      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress()}
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress(),u"nodeObjectsDict":nodeDictionary[a].getnodeObjectsDict()}
     except:
       print "error in updateJson, with node:"+str(a)
     # note that the i/o modes for the node pins will be saved in the relative webobjects .
@@ -1320,8 +1320,8 @@ def createNewWebObjFromNode(hwType0,node_sn):
     print "list_of_different_objects_type:"
     print list_of_different_objects_type
     for a in list_of_different_objects_type:
-      #now i'm inside #for example  hardwareModelDict["onosPlug6way"]["pin_mode"]
-      # so the first a will be "sr_relay"
+      #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]
+      # so the first a will be "digital_obj"
       objType=a 
       i=0
 
@@ -1330,19 +1330,18 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 
       for b in hardwareModelDict[hwType0]["pin_mode"][a]:
-        #now i'm inside #for example  hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"]
+        #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]
         #print hardwareModelDict[hwType0]["pin_mode"][a][b]
-        #so the first b will be "socket"
+        #so the first b will be "relay"
         
         list_of_different_webobject_names=hardwareModelDict[hwType0]["pin_mode"][a][b]
          
-        i=0
+        progressive_number=0
         for c in list_of_different_webobject_names: 
                      
           #print c
           #now i'm inside the last dictionary  
-          #the first c will be equal to (1,2) if the hwtype is sr_relay otherwise it will be like 1
-          #for example  hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"]["socket"]
+          #c will be for example (0,1)  and then (2) from{"plug":[(0,1)],"plug2":[(2)]}
           #in this example there aren't other webobject names...
           if type(c) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
             c=[c]
@@ -1350,11 +1349,25 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
           if a=="digital_obj" or a=="analog_obj" or a=="cfg_obj" :  #special type obj ..
 
-            new_obj_name=b+str(c[0])+"_"+node_sn  #progressive_number
+         
+            for object_address_in_the_node in hardwareModelDict[hwType0]["pin_mode"][a][b][c]:
+
+              print ("object_address_in_the_node:"+str(object_address_in_the_node))
+
+              if len (hardwareModelDict[hwType0]["pin_mode"][a][b][c].keys()) >1:
+                new_obj_name=b+object_address_in_the_node+"_"+node_sn   
+
+              else:
+                new_obj_name=b+"_"+node_sn  
+
+              nodeDict[node_sn].setNodeObjectAddress(new_obj_name,object_address_in_the_node)#set the new object address in the node
+
+              progressive_number=progressive_number+1
+
 
           else:
             new_obj_name=b+str(i)+"_"+node_sn  #progressive_number
-          i=i+1            
+          progressive_number=progressive_number+1            
           if new_obj_name not in (zoneDict[node_sn]["objects"]):
             zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
           else:
@@ -1367,9 +1380,15 @@ def createNewWebObjFromNode(hwType0,node_sn):
             print "warning001  the object "+new_obj_name+" already exist in the object_dict" 
 
   else:
-    print "no hardware of this thipe in hardwareModelDict"
+    print "no hardware of this type in hardwareModelDict"
 
   return()
+
+
+
+
+
+
 
 
 
@@ -1759,7 +1778,7 @@ def createNewNode(node_sn,node_address,node_fw):
     #nodeDict[node_sn].setNodeAddress(node_address)
     updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     msg=nodeDict[node_sn].getSetupMsg() 
-  else: #created a new node
+  else: #create a new node
     print "requested setup for a node not existing yet "                  
     hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
      #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
@@ -1794,6 +1813,13 @@ def createNewNode(node_sn,node_address,node_fw):
           #os.system("mkdir "+baseRoomPath+node_sn) 
           #with lock_bash_cmd:
           #  subprocess.check_output("mkdir "+baseRoomPath+node_sn, shell=True,close_fds=True)
+
+
+
+
+
+
+
 
 
           try:
@@ -5793,26 +5819,9 @@ def executeQueueFunction(dataExchanged):
     try:
       #{obj_number_to_update:obj_value}  
       for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update.. 
-        print "a="+str(a)
-        print "list="+str(hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys())#todo extend to any type of obj..
-        obj_name_part=""
-        for b in hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"].keys():#find "plug" from{"plug":[(0)],"plug2":[(1)]}
-          print "b="
-          print hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][b][0] 
-          print "end b"
-          if hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][b][0]==int(a):
-            obj_name_part=b
-            break    
+        print "object address in the node="+str(a)
 
-
-
-
-        print "obj_name_part:"+obj_name_part
-
-
-
-        objName_number=a #=hardwareModelDict[node_model_name]["pin_mode"]["digital_obj"][obj_name_part][0]  # get the number of the object
-        objName=obj_name_part+str(objName_number)+"_"+node_serial_number
+        objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
         status_to_set=dataExchanged["objects_to_update"][objName_number]
         write_hw_enable=0
         usr="onos_node"
