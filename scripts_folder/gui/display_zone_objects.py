@@ -32,7 +32,7 @@ web_page_old=web_page
 
 
 
-for a in obj_name_list :      # for every web_obj in the zone
+for a in obj_name_list :      # for every web_obj in the zone make a row...
 
 
   web_page=web_page+'''
@@ -42,7 +42,7 @@ for a in obj_name_list :      # for every web_obj in the zone
 
 		<div class="riga" <!--onos_automatic_local_style--> >
 
-			<div id="'''+a+'''"   class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+			<div id="<!--onos_automatic_object_id-->"   class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
 
             <!--onos_automatic_object_a-->  
 			<div class="specs col2"><!--onos_automatic_object_html--></div>

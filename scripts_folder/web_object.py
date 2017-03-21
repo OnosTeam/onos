@@ -74,7 +74,7 @@ class WebObject(object):   # inherit from object python class
       self.__function0=self.cmdDict[u"0"]   #banana to remove
       self.__function1=self.cmdDict[u"1"]   #banana to remove
       self.init_function=self.cmdDict[u"s_cmd"]
-      self.html_name=name
+      self.object_name=name
 
 
       self.required_priority=0
@@ -387,7 +387,7 @@ class WebObject(object):   # inherit from object python class
           return(self.htmlDict[u"onoswait"]) 
         if (self.status==1)|(self.status=="1"):
           return(self.htmlDict[u"1"])   
-        return (self.html_name+u"="+str(self.status)) #for analog type
+        return (self.object_name+u"="+str(self.status)) #for analog type
           
           
     def getOtherHtml(self):             #return the opposite  html  respect the actual  of the web object ,obsolete
@@ -429,6 +429,13 @@ class WebObject(object):   # inherit from object python class
           return(self.htmlDict[key])
 
 
+
+    def setHtmlDict(self,htmlDict):             #set the static html1  of the button
+          self.htmlDict=htmlDict 
+          return(self.htmlDict[key])
+
+    def getHtmlDict(self):             #set the static html1  of the button
+          return(self.htmlDict)
 
     def changeCommand(self,status,cmd):
       self.cmdDict[status]=cmd
@@ -714,14 +721,16 @@ class WebObject(object):   # inherit from object python class
       return(self.__object_type)
 
     def getName(self):
-        return(self.html_name)
+        return(self.object_name)
 
 
-
+    def setName(self,new_name):
+        self.object_name=new_name
+        return(self.object_name)
 
         
     def getObjectDictionary(self):
-      tmp_dict={u"objname":self.html_name,u"type":self.__object_type,u"status":self.status,u"styleDict":self.styleDict,u"htmlDict":self.htmlDict,u"cmdDict":self.cmdDict,u"notes":self.note,u"node_sn":self.HwNodeSerialNumber,u"pins":self.attachedPins,u"scenarios":self.attachedScenarios,u"priority":self.required_priority,u"perm":self.permissions,u"own":self.owner,u"grp":self.group,u"mail_l":self.mail_report_list}
+      tmp_dict={u"objname":self.object_name,u"type":self.__object_type,u"status":self.status,u"styleDict":self.styleDict,u"htmlDict":self.htmlDict,u"cmdDict":self.cmdDict,u"notes":self.note,u"node_sn":self.HwNodeSerialNumber,u"pins":self.attachedPins,u"scenarios":self.attachedScenarios,u"priority":self.required_priority,u"perm":self.permissions,u"own":self.owner,u"grp":self.group,u"mail_l":self.mail_report_list}
       return(tmp_dict)
     
 

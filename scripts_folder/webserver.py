@@ -252,7 +252,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
   for a in nodeDictionary.keys():
     try: 
       sn=nodeDictionary[a].getNodeSerialNumber() 
-      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress(),u"nodeObjectsDict":nodeDictionary[a].getnodeObjectsDict()}
+      node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress(),u"nodeObjectsList":nodeDictionary[a].getnodeObjectsList()}
     except:
       print "error in updateJson, with node:"+str(a)
     # note that the i/o modes for the node pins will be saved in the relative webobjects .
@@ -677,7 +677,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
       scenario_functions_to_run=[]
 
     #if "afterDelayFunctionsToRun" in scenario_to_check.keys():  #if the reference exist
-    try:
+    try:  #todo not implemented in the gui..
       afterDelayFunctionsToRun=scenario_to_check["afterDelayFunctionsToRun"]
     except KeyError:#set the value to default
       afterDelayFunctionsToRun=[]
@@ -3240,6 +3240,38 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
+            if (self.path.endswith("=")&( string.find(self.path,"?")!=-1)&((string.find(self.path,".html")!=-1))): # not an object change but just a webpage show 
+
+                
+              html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
+              print  ("html_filename=",html_filename)
+
+
+              try:              
+                  #b1 = open(baseRoomPath+self.path[1:end_file_name] ,'r')    
+                b1 = open(baseRoomPath+html_filename ,'r')    
+                web_page=b1.read()    
+                b1.close()
+              except Exception as e  :
+                print "error opening the htlm file"+" e:"+str(e.args)
+                errorQueue.put( "error opening the htlm file"+" e:"+str(e.args))  
+                web_page="error no html found"
+
+              pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
+
+              try:
+                self.send_response(202)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers() 
+                self.wfile.write(pag) 
+        #      print "percorso="+self.path+"fine percorso"   
+              except Exception as e  :
+                pass
+                print "error11 in send_header "+" e:"+str(e.args)      
+                errorQueue.put("error11a in send_header "+" e:"+str(e.args) ) 
+
+              return
+
 
             if (    ( string.find(self.path,"?")!=-1)&(string.find(self.path,"=")!=-1)&(string.find(self.path,"r_onos_s")==-1)):
               print "get query found############################################################################"
@@ -3251,7 +3283,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 #x=(string.find(self.path,"/")) 
                 
                 html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
-                print  "html_filename=",html_filename
+                print  ("html_filename=",html_filename)
                 #end_file_name=string.find(self.path,".html")+5
 
                 #print "addressbar1= "+self.path
@@ -3326,7 +3358,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 print "i set"+objName+" to :"+str(status_to_set)
 
               else:
-                print "the objName :"+objName+" not in dictionary"
+                print "the objName :"+objName+" not in dictionary 2"
 
 
               address_bar=address_bar[next_point_position-2:]
@@ -3368,10 +3400,10 @@ class MyHandler(BaseHTTPRequestHandler):
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
                   priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})    
 
-                  print "i set"+objName+" to :"+str(status_to_set)
+                  print ("i set"+objName+" to :"+str(status_to_set))
 
                 else:
-                  print "objName :"+objName+" not in dictionary"
+                  print ("objName :"+objName+" not in dictionary 1")
                 
 
                 address_bar=address_bar[(equal_position+1):] #remove the first '?'
@@ -3855,6 +3887,163 @@ class MyHandler(BaseHTTPRequestHandler):
                 #print " '/setup' not found  or len list= "+str(len(lista))  
                   
 
+#############experimental use only todo: to remove later#####################################
+
+            #path example: localhost/cmd=mvobj&old=caldaia&new=caldaia2
+
+
+            if ((string.find(self.path,"mvobj")!=-1)&(string.find(self.path,"old=")!=-1)&(string.find(self.path,"new=")!=-1)  ):
+              print("found rename object query")
+              current_obj_name=""
+
+              try:              
+                current_obj_name=re.search('old=(.+?)&',self.path).group(1)
+                new_obj_name_start=string.find(self.path,"new=")+4 
+                new_obj_name=self.path[new_obj_name_start:]
+
+                print("current_obj_name="+current_obj_name+"end")
+                print("new_obj_name="+new_obj_name+"end")
+                pag="ok"
+
+
+              except Exception as e  :
+                error="error4.1 search"
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)   
+                print str(e.args)
+                print(error+" e:"+str(e.args))
+                errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+                pag=error
+
+
+              if current_obj_name not in object_dict.keys():
+                pag="error renaming webobject not in dict"
+                #print (object_dict.keys())
+                print(pag)
+
+              else:  
+
+            
+                try:        
+
+                  for a in zoneDict.keys() : 
+                    for b in range(len(zoneDict[a]["objects"])):
+                      if zoneDict[a]["objects"][b]==current_obj_name: # if there is the webobject in this zone I replace it with the new one
+                        zoneDict[a]["objects"][b]=new_obj_name
+
+                  pag="ok"
+
+
+                except Exception as e  :
+                  error="error4.2 rename obj in zone"
+                  exc_type, exc_obj, exc_tb = sys.exc_info()
+                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                  print(exc_type, fname, exc_tb.tb_lineno)   
+                  print str(e.args)
+                  print(error+" e:"+str(e.args))
+                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+                  pag=error
+
+
+                try:             
+
+                  object_dict[current_obj_name].setName(new_obj_name)    #rename the object_name in the object..
+                  tmp_htmlDict=object_dict[current_obj_name].getHtmlDict()
+
+                  for a in tmp_htmlDict.keys():
+                    tmp_htmlDict[a]=tmp_htmlDict[a].replace(current_obj_name+"=",new_obj_name+"=") 
+                  tmp_htmlDict["onoswait"]=new_obj_name+u"WAIT"  
+
+                  object_dict[new_obj_name]=object_dict[current_obj_name]  #copy the old dictionary key to the new one
+                  del object_dict[current_obj_name] #delete the old key
+
+                  pag="ok"
+
+
+                except Exception as e  :
+                  error="error4.3 rename obj in object_dict"
+                  exc_type, exc_obj, exc_tb = sys.exc_info()
+                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                  print(exc_type, fname, exc_tb.tb_lineno)   
+                  print str(e.args)
+                  print(error+" e:"+str(e.args))
+                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+                  pag=error
+
+                try:             
+
+                  for a in nodeDict.keys():
+                    if current_obj_name in nodeDict[a].getnodeObjectsList():
+                      nodeDict[a].getNodeObjectAddress(current_obj_name)
+                      nodeDict[a].setNodeObjectAddress(new_obj_name)
+                      
+
+                  pag="ok"
+
+
+                except Exception as e  :
+                  error="error4.4 rename obj in node_dict"
+                  exc_type, exc_obj, exc_tb = sys.exc_info()
+                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                  print(exc_type, fname, exc_tb.tb_lineno)   
+                  print str(e.args)
+                  print(error+" e:"+str(e.args))
+                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+                  pag=error
+
+
+
+
+                try:             
+
+                  for a in scenarioDict.keys():#for each scenario replace everywhere the old webobject name with the new one 
+                    scenarioDict[a]["conditions"]=scenarioDict[a]["conditions"].replace("#_"+current_obj_name+"_#","#_"+new_obj_name+"_#")  
+
+                    for b in range(len(scenarioDict[a]["functionsToRun"])):
+                      scenarioDict[a]["functionsToRun"][b]=scenarioDict[a]["functionsToRun"][b].replace(current_obj_name+"=",new_obj_name+"=")  
+
+
+                    if "afterDelayFunctionsToRun" in scenarioDict[a]: 
+                      for b in range(len(scenarioDict[a]["afterDelayFunctionsToRun"])):                        
+                        scenarioDict[a]["afterDelayFunctionsToRun"][b]=scenarioDict[a]["afterDelayFunctionsToRun"][b].replace(current_obj_name+"=",new_obj_name+"=")  
+
+
+
+                  pag="ok"
+
+
+                except Exception as e  :
+                  error="error4.5 rename obj in scenarioDict"
+                  exc_type, exc_obj, exc_tb = sys.exc_info()
+                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                  print(exc_type, fname, exc_tb.tb_lineno)   
+                  print str(e.args)
+                  print(error+" e:"+str(e.args))
+                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+                  pag=error
+
+           
+              try:
+                self.send_response(202)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()          
+                self.wfile.write(pag) 
+              except Exception as e  :
+                pass
+                print("error24 in send_header "+" e:"+str(e.args))    
+                errorQueue.put("error24 in send_header "+" e:"+str(e.args)  )  
+              return
+
+########################################################################### end experimental code
+
+
+
+
+
+
+
+
 
 
 
@@ -3948,9 +4137,15 @@ class MyHandler(BaseHTTPRequestHandler):
             return
                 
         except Exception as e  :
+            error="Generic error in Get method"
             self.send_error(404,'File Not Found: %s' % self.path)
-            print "error 404 File Not Found"+" e:"+str(e.args)
-            errorQueue.put("err 404 File Not Found"+" e:"+str(e.args) ) 
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)   
+            print str(e.args)
+            print(error+" e:"+str(e.args))
+            errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+
 
 
               
@@ -4981,7 +5176,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -4999,7 +5194,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                 
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5020,7 +5215,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5037,7 +5232,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                 
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5052,7 +5247,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   cgi_name="gui/new_user.py"
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
