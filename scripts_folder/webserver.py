@@ -3954,13 +3954,13 @@ class MyHandler(BaseHTTPRequestHandler):
                   for a in tmp_htmlDict.keys():
                     tmp_htmlDict[a]=tmp_htmlDict[a].replace(current_obj_name+"=",new_obj_name+"=") 
                   tmp_htmlDict["onoswait"]=new_obj_name+u"WAIT"  
-
+                  object_dict[current_obj_name].setHtmlDict(tmp_htmlDict)
                   object_dict[new_obj_name]=object_dict[current_obj_name]  #copy the old dictionary key to the new one
                   del object_dict[current_obj_name] #delete the old key
 
                   pag="ok"
 
-
+                #todo  save all to json
                 except Exception as e  :
                   error="error4.3 rename obj in object_dict"
                   exc_type, exc_obj, exc_tb = sys.exc_info()

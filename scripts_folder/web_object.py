@@ -432,7 +432,7 @@ class WebObject(object):   # inherit from object python class
 
     def setHtmlDict(self,htmlDict):             #set the static html1  of the button
           self.htmlDict=htmlDict 
-          return(self.htmlDict[key])
+          return(1)
 
     def getHtmlDict(self):             #set the static html1  of the button
           return(self.htmlDict)
