@@ -22,7 +22,7 @@ except :
 
 
 if (free_ram_space < 4000): #if there are not at least 4 mbyte of free space in ram ...
-  print "error the hardware has not enaught free ram space"
+  print "error the hardware has not enought free ram space"
   quit()
 else: # there is enough free memory
   #os.system("touch va.txt")
