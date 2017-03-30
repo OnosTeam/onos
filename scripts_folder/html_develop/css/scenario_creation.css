@@ -8,12 +8,17 @@
 
 }
 
+hr {
+	margin-top:30px;
+	margin-bottom:30px;
+	align:center;
+	width:90%;
+	}
 
 
+.col1{left:5%;}
 
-.col1{left:0%;}
-
-.col2{left:85%;}
+.col2{left:55%;}
 
 
 .name_text{
@@ -23,4 +28,25 @@
 	top:20px;
 	left:5%;
 	color:black;
+}
+
+.text{
+	
+	position:absolute;
+	width:50%;
+	height:30px;
+	line-height:30px;
+	color:black;
+	
+	
+}
+
+.dropdown{
+	
+	position:absolute;
+	width:50%;
+	height:30px;
+	color:black;
+	
+	
 }
