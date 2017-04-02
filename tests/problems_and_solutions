@@ -1154,6 +1154,32 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 #    Every node created automaticly from linux will have a variable obj_address_in_the_node that contain the number of the object #in the node, the first object in a node will have obj_address_in_the_node =0 
 
+52) Need a stucture for mqtt to controll all onos using it...
+    Onos will subscribe to all the mqtt topics..
+    Onos will check the following topics by default  :
+
+    to set a value to a webobject it will send the value to:
+    myonos/<objectName>/status
+
+    to set a value to a object in a node it will send the value to:
+    myonos/<NodeSerialNumber>/<objectAddress>/value
+
+    If a node lost connection it will send this topic
+    myonos/<NodeSerialNumber>/activity     and activity will be setted to "0"
+
+    and then onos will send myonos/<NodeSerialNumber>/<objectAddress>/value
+
+
+    The first time a node connects to the server it will send this:
+    myonos/<NodeSerialNumber>/activity     and activity will be setted to "1"
+
+
+   Number temperature "temp [%.1f]" {mqtt="<[publicweatherservice:london-city/temperature:state:default]"}
+Number waterConsumption "consum [%d]" {mqtt="<[mybroker:myHome/watermeter:state:XSLT(parse_water_message.xslt)]"} 
+Switch doorbell "bell [%s]" {mqtt="<[mybroker:myHome/doorbell:command:ON]"}
+Number mfase1 "mfase1 [%.3f]" {mqtt="<[flukso:sensor/9cf3d75543fa82a4662fe70df5bf4fde/gauge:state:REGEX(.*,(.*),.*)]"}
+Number humidity "humidity [%.1f%%] {mqtt="<[broker:weatherstation/readings:state:JS(convertPercent.js):humidity=.*]"}
+
 
 
 

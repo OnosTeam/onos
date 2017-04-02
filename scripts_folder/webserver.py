@@ -5818,26 +5818,31 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           print "the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"
           print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())    
           errorQueue.put( "The node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"+"at:" +getErrorTimeString())
-          for b in object_dict.keys():
-            if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
+
+          for b in nodeDict[a].getnodeObjectsList():#for each object in the node 
+            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
+
+          #for b in object_dict.keys():
+          #  if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
               #object_dict[b].setStatus("inactive")
-              priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
+          #    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
         else:#now the node is connected
           if nodeDict[a].getNodeActivity()==0: #the node was not connected but now it is
             nodeDict[a].setNodeActivity(1)  #set the node as active
             print "node:"+a+" returned active" 
             errorQueue.put( "The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString())
-            for b in object_dict.keys():
+            #for b in object_dict.keys():
+            for b in nodeDict[a].getnodeObjectsList():#for each object in the node 
               print "object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber())
-              if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
-                print "webobject:"+b+"returned active"
-                prev_s=object_dict[b].getPreviousStatus() 
-                current_s=object_dict[b].getStatus()
-                if ((current_s=="inactive") or (current_s=="onoswait") ): 
-                #  prev_s=object_dict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
-                  print "the new status will be:"+str(prev_s)
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
+              #if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
+              print "webobject:"+b+"returned active"
+              prev_s=object_dict[b].getPreviousStatus() 
+              current_s=object_dict[b].getStatus()
+              if ((current_s=="inactive") or (current_s=="onoswait") ): 
+              #  prev_s=object_dict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
+                print "the new status will be:"+str(prev_s)
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
                 #set the web_object to the status before the disconnection 
           
           #nodeDict[a].updateLastNodeSync(time.time())
