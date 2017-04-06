@@ -41,6 +41,18 @@
       "nodeAddress": "123", 
       "nodeObjectsList": [], 
       "node_serial_number": "WPlugAvx0008"
+    }, 
+    "Wrelay4x0002": {
+      "hwModelName": "Wrelay4x", 
+      "nodeAddress": "003", 
+      "nodeObjectsList": [], 
+      "node_serial_number": "Wrelay4x0002"
+    }, 
+    "Wrelay4x0003": {
+      "hwModelName": "Wrelay4x", 
+      "nodeAddress": "254", 
+      "nodeObjectsList": [], 
+      "node_serial_number": "Wrelay4x0003"
     }
   }, 
   "objectDictionary": {
@@ -712,7 +724,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 21, 
+      "status": 7, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -748,7 +760,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 95, 
+      "status": 25, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -792,7 +804,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 1, 
+      "status": 0, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -838,7 +850,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 35, 
+      "status": 25, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -874,7 +886,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 3, 
+      "status": 4, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -1995,6 +2007,22 @@
         "plug21_WPlugAvx0008"
       ], 
       "order": 6, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "Wrelay4x0002": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [], 
+      "order": 9, 
+      "owner": "onos_sys", 
+      "permissions": "777"
+    }, 
+    "Wrelay4x0003": {
+      "group": [], 
+      "hidden": 0, 
+      "objects": [], 
+      "order": 8, 
       "owner": "onos_sys", 
       "permissions": "777"
     }

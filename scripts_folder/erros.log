@@ -1,17 +1,63 @@
-erros
+Exception in thread Thread-10:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "/usr/lib/python2.7/threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "/media/data/progetti/web_interface/onos_versions/onos_5.27/scripts_folder/node_query_handler.py", line 345, in handle_new_query_to_radio_node_thread
+    query_answer=make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_done)
+  File "/media/data/progetti/web_interface/onos_versions/onos_5.27/scripts_folder/node_query_handler.py", line 130, in make_query_to_radio_node
+    serialCom.uart.readed_packets_list.remove(a)
+ValueError: list.remove(x): x not in list
 
 
 
 
-error
-error
-7
-8
-9
-10
-error
-1
-2
-3
-4
-5
+
+
+
+
+
+
+
+
+current query_order:99for query:[S_254sa003Wrelay4x00032_#]
+
+make_query_to_radio_node executed with number_of_retry_already_done:0
+current query_order:1491518285.97for query:[S_254sa003Wrelay4x00031_#]
+
+make_query_to_radio_node executed with number_of_retry_already_done:24
+i started the online server sync service
+onlineServerSync() excuted
+ok1okokreal_password:1234onos_password_oktime sync2017:04:06:21:38:11#_cmd_[]_cmd_#
+filtered sync_message :[]
+json_cmd_list: []
+end of serial packet:_#] 
+AAAAAAAAAAAAAAAAAAAAAAAApacket 232 cmd input :[S_ertx1_#]
+packet received after the write is :[S_ertx1_#]
+ i exit the loop because i received a message after I have write one
+incoming buffer=[S_ertx1_#]
+i exit the loop because i received a message after I have write one
+check of all received answers current was:[S_ertx1_#]
+check of all received answers current was:[S_ertx1_#]
+Great serial error,answer received from serial port was wrong:[S_ertx1_#]end_data, trying query the serial,node the query was[S_254sa003Wrelay4x00031_#]
+the number of try was 1 at:0:38n:51
+error query_answer wrong UUUUUUUUuuuuuuuuuuuuuuUUUUUUUUUUUUuuuuuuuuuuuUUUUUUUUUUUUUUuuuuuuuuUUUUUUUUUUUuuuuuuuUUU
+Exception in thread Thread-9:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "/usr/lib/python2.7/threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "/media/data/progetti/web_interface/onos_versions/onos_5.27/scripts_folder/node_query_handler.py", line 345, in handle_new_query_to_radio_node_thread
+    query_answer=make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_done)
+  File "/media/data/progetti/web_interface/onos_versions/onos_5.27/scripts_folder/node_query_handler.py", line 130, in make_query_to_radio_node
+    serialCom.uart.readed_packets_list.remove(a)
+ValueError: list.remove(x): x not in list
+
+wait to allow rx from radio nodes
+current query_order:1491518289.17for query:[S_254sa003Wrelay4x00031_#]
+
+make_query_to_radio_node executed with number_of_retry_already_done:25
+end of serial packet:_#] 
+

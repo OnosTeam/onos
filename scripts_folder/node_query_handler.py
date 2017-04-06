@@ -126,12 +126,15 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
         print ("I have found the answer I was looiking for")
         return (a)
 
-      if a=="[S_ertx1_#]":
-        serialCom.uart.readed_packets_list.remove(a)
+      try:
+        if a=="[S_ertx1_#]":
+          serialCom.uart.readed_packets_list.remove(a)
      
-      if a=="[S_nocmd0_#]":
-        serialCom.uart.readed_packets_list.remove(a)
+        if a=="[S_nocmd0_#]":
+          serialCom.uart.readed_packets_list.remove(a)
 
+      except:
+        print ("error serialCom.uart.readed_packets_list.remove(a) ")
     #print "uart rx list after:"
     #print serialCom.uart.readed_packets_list
  

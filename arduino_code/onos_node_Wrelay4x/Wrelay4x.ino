@@ -82,7 +82,7 @@
 //#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY      RF69_433MHZ
 #define ENCRYPTKEY     "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
-#define IS_RFM69HCW    false // set to 'true' if you are using an RFM69HCW module
+#define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
@@ -106,7 +106,7 @@ boolean radio_enabled=1;
 
 unsigned long sync_time=0;
 
-char serial_number[13]="Wrelay4x0001";
+char serial_number[13]="Wrelay4x0003";
 char node_fw[]="5.27";
 
 int this_node_address=254; //i start with 254
@@ -154,7 +154,7 @@ uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
 char received_serial_number[13];
 # define gateway_address 1
 boolean first_sync=1;
-
+int random_time=0;
 
 
 unsigned long time_continuos_on=0;
@@ -429,14 +429,18 @@ void getAddressFromGateway(){
 
   Serial.println(" sendWithRetry getAddressFromGateway executed");
 
-  if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),radioRetry,radioTxTimeout)) {
-    // note that the max delay time is 255..because is uint8_t
-    //target node Id, message as string or byte array, message length,retries, milliseconds before retry
-    //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 
 
+  uint8_t tryed_times=0;
 
-    Serial.println("sent_get_address");
+  while (tryed_times < radioRetry ){
+
+    if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),1,radioTxTimeout)) {
+      // note that the max delay time is 255..because is uint8_t
+      //target node Id, message as string or byte array, message length,retries, milliseconds before retry
+      //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
+
+      Serial.println("sent_get_address");
     /*
     for (char a=0;a<(35);a=a+1){
       Serial.print(syncMessage[a]);
@@ -445,8 +449,16 @@ void getAddressFromGateway(){
     */
 
 
+      skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+      break;// exit the while (tryed_times < radioRetry )
+    }
+    else{
+      random_time=random(10,radioTxTimeout*3);
+      tryed_times=tryed_times+1;
+      delay(random_time);
+    }
 
-    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+
   }
 
   syncMessage[6]='u'; //modify the message
@@ -1014,8 +1026,11 @@ void checkCurrentRadioAddress(){
 
     }
 
+    random_time=random(4000,5000);
 
-    if ((millis()-get_address_timeout)>5000){ //every 5000 ms
+
+
+    if ((millis()-get_address_timeout)>random_time){ //every 4000/5000 ms
    
       get_address_timeout=millis();
 
@@ -1027,8 +1042,8 @@ void checkCurrentRadioAddress(){
 
   }
   else{
-
-    if ((millis()-sync_time)>2000){ //every 5000 ms
+    random_time=random(1500,2500);
+    if ((millis()-sync_time)>random_time){ //every 1500/2500 ms
    
       sync_time=millis();
 
@@ -1119,7 +1134,14 @@ void setup() {
   delay(300);
   changeObjStatus(0,0);
 
-  Blink(node_obj_pinout[led],100,3);  
+  Blink(node_obj_pinout[led],100,3); 
+
+
+  // if analog input pin 1 is unconnected, random analog
+  // noise will cause the call to randomSeed() to generate
+  // different seed numbers each time the sketch runs.
+  // randomSeed() will then shuffle the random function.
+  randomSeed(analogRead(1));
 
   composeSyncMessage();
 
