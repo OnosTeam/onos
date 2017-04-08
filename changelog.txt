@@ -634,8 +634,9 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
 5.27            bugfix:hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)] 
                        now the objects numbers are handled correctly. 
                 started using  __slots__ in WebObject class 
-                developed the core part to rename a webobject, now with localhost/cmd=mvobj&old=oldname&new=newname you can rename it
-
+                developed the core part to rename a webobject,now with localhost/cmd=mvobj&old=oldname&new=newname you can rename it
+                
+                bugfix: now in the arduino ccode i use radio.DATALEN to delimitate the array of data received, this fixed some random behaviour when using more than one node at the same time
 
 
 

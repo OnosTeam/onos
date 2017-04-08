@@ -50,7 +50,7 @@
     }, 
     "Wrelay4x0003": {
       "hwModelName": "Wrelay4x", 
-      "nodeAddress": "254", 
+      "nodeAddress": "003", 
       "nodeObjectsList": [], 
       "node_serial_number": "Wrelay4x0003"
     }
@@ -724,7 +724,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 7, 
+      "status": 8, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -760,7 +760,7 @@
       ], 
       "priority": 0, 
       "scenarios": [], 
-      "status": 25, 
+      "status": 1103, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -804,7 +804,7 @@
         "scenario5", 
         "scenario4"
       ], 
-      "status": 0, 
+      "status": 18, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 
@@ -850,7 +850,7 @@
         "scenario4", 
         "scenario8"
       ], 
-      "status": 25, 
+      "status": 23, 
       "styleDict": {
         "0": "background-color:green;", 
         "1": "background-color:red;", 

@@ -158,12 +158,8 @@ I will use post instead of get message
 
   To handle errors cmd:
 
-  If a node A recived a cmd it doesn't recognise from node B (because is not implemented in that node)  it will not send an ack...
+  If a node A received a cmd it doesn't recognise from node B (because is not implemented in that node)  it will not send an ack...
 
-  The node B will retry n times to transmit and wait for an ack from nodeA and after that (if it still hasn't received an ack from node A)  it will wait listening for a possible answer for n milliseconds.
-  Node A after the first message  received from node B started to try to send the error code to node B waiting for an ack
-
-  alternative : each time the node write to another node it will wait for an answer..not just   
 
 
 

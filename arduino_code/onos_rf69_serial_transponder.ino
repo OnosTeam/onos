@@ -726,7 +726,7 @@ void sendSerialAnswerFromSerialMsg(){
 
 boolean checkAndHandleIncomingRadioMsg(){
 
-    if (radio.receiveDone()){
+  if (radio.receiveDone()){
     //print message received to serial
 
 /*
@@ -737,64 +737,78 @@ boolean checkAndHandleIncomingRadioMsg(){
  
     //check if received message contains Hello World
 
-      onos_cmd_start_position=-99;  
-      onos_cmd_end_position=-99;  
+    onos_cmd_start_position=-99;  
+    onos_cmd_end_position=-99;  
 
       //strcpy(filtered_radio_message,"");
-      memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
+    memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
 
-      for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
-        filtered_radio_message[counter]=radio.DATA[counter];
+    //Serial.println(radio.SENDERID);
+    /*
+    if (radio.TARGETID!=this_node_address){
+      Serial.println(F("[S_er9_radioAddress_#]"));
+      return(0); // todo: implement a forward of the message? 
+    }
+    */
+
+    //unsigned long get_decode_time=micros();  //64 o 68
+    //for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
+
+    for (uint8_t counter = 0; counter < radio.DATALEN; counter++) {
+
+      filtered_radio_message[counter]=radio.DATA[counter];
       //  Serial.println(filtered_radio_message[counter]);
 
     //[S_001dw06001_#]
-        if (counter<2){
-          continue;
-        }
-        if ( (filtered_radio_message[counter-2]=='[')&&(filtered_radio_message[counter-1]=='S')&&(filtered_radio_message[counter]=='_')  ){//   
-         // Serial.println("cmd start found-------------------------------");
-          onos_cmd_start_position=counter-2;
-        }
-
-
-        if( (filtered_radio_message[counter-2]=='_')&&(filtered_radio_message[counter-1]=='#')&&(filtered_radio_message[counter]==']')  ){//   
-        //  Serial.println("cmd end found-------------------------------");
-          onos_cmd_end_position=counter-2;
-          break;// now the message has ended
-        }
-
-
+      if (counter<2){
+        continue;
+      }
+      if ( (filtered_radio_message[counter-2]=='[')&&(filtered_radio_message[counter-1]=='S')&&(filtered_radio_message[counter]=='_')  ){//   
+       // Serial.println("cmd start found-------------------------------");
+        onos_cmd_start_position=counter-2;
       }
 
 
+      if( (filtered_radio_message[counter-2]=='_')&&(filtered_radio_message[counter-1]=='#')&&(filtered_radio_message[counter]==']')  ){//   
+        //  Serial.println("cmd end found-------------------------------");
+        onos_cmd_end_position=counter-2;
+        break;// now the message has ended
+      }
 
-      if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+
+    }
+
+
+    //Serial.println(micros()-get_decode_time);
+
+
+    if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
     //    Serial.println("onos cmd  found-------------------------------");
-        decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
+      decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
 
-        if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')||(strcmp(decoded_radio_answer,"[S_remote_#]")==0)){//if the message was ok...
+      if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')||(strcmp(decoded_radio_answer,"[S_remote_#]")==0)){//if the message was ok...
       //check if sender wanted an ACK
-          if (radio.ACKRequested()){
-            radio.sendACK();
-  //          Serial.println(" - ACK sent");
-            return(1); 
-          }
+        if (radio.ACKRequested()){
+          radio.sendACK();
+  //        Serial.println(" - ACK sent");
 
         }
-        else{
-          Serial.println(F("[S_error in message decode from radio node i will not send the ACK_#]"));
-          return(0);
-        }
-
-
+        return(1); 
       }
       else{
-        strcpy(decoded_uart_answer,"[S_nocmd1_#]");
-        Serial.print(F("[S_error in message nocmd1_#]"));
-        Serial.print('\n'); 
-        Serial.flush(); //make sure all serial data is clocked out 
-        return(0); 
+        Serial.println(F("[S_error in message decode from radio node i will not send the ACK_#]"));
+        return(0);
       }
+
+
+    }
+    else{
+      strcpy(decoded_uart_answer,"[S_nocmd1_#]");
+      Serial.print(F("[S_error in message nocmd1_#]"));
+      Serial.print('\n'); 
+      Serial.flush(); //make sure all serial data is clocked out 
+      return(0); 
+    }
 
   }
 
@@ -965,10 +979,12 @@ restart:
 
 
 radioRxCheck:
-  radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
-  if (radio_msg_to_decode_is_avaible==1){
-    forwardRadioMsgToSerialPort();
-  }
+    radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+    if (radio_msg_to_decode_is_avaible==1){
+      forwardRadioMsgToSerialPort();
+    }
+  
+
 
 
 
