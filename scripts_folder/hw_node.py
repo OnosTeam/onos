@@ -1,4 +1,5 @@
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 #   Copyright 2014 Marco Rigoni                                               #
 #   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
 #   This program is free software: you can redistribute it and/or modify      #
@@ -65,7 +66,7 @@ class HwNode:
       self.hwType=hwModel["hardware_type"]  
       self.timeout=hwModel["timeout"]  #time (in seconds) onos will let pass without contact with the node after which the node will be setted as inactive 
 
-      self.nodeObjectsList=[]
+      self.nodeObjectsDict={}
       self.NodeSerialNumber=self.NodeSerialNumber
       self.total_pin={}
       self.last_node_sync=time.time()
@@ -308,8 +309,8 @@ class HwNode:
         |  Set the objectname to an address in the node
         |   
       """
-
-      self.nodeObjectsList[objectAddress]=objectName
+      self.nodeObjectsDict[objectAddress]=objectName
+   
       return(1)
 
 
@@ -319,7 +320,13 @@ class HwNode:
         |  Given a objectname it will return its address in the node
         |   
       """
-      return( self.nodeObjectsList.index(objectName))  #works because there will be only one objectName in the list
+      #print ("getNodeObjectAddress executed with :"+objectName)
+      for a in self.nodeObjectsDict.keys():
+        if self.nodeObjectsDict[a]==objectName:
+          #print ("found objectName address")
+          return(a) 
+
+      return(-1)  
 
 
 
@@ -328,16 +335,16 @@ class HwNode:
         |  Get the objectname in the node address
         |   
       """
-      return(self.nodeObjectsList[objectAddress])
+      return(self.nodeObjectsDict[objectAddress])
 
 
 
-    def getnodeObjectsList(self):
+    def getnodeObjectsDict(self):
       """
        |  Get the objectname in the node address
        |   
       """
-      return(self.nodeObjectsList)
+      return(self.nodeObjectsDict)
 
 
 

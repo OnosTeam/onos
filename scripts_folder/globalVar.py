@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 """
   This module is imported from all the others and it stores the global variables and some global functions.
 
@@ -60,7 +63,7 @@ url_request_manager = PoolManager(8)
 
 
 exit=0
-debug=1  #debug mode , if set to 1  the debug mode is on 
+debug=2  #debug mode , if set to 1  the debug mode is on if setted to 2 the debug is medium
 object_dict={} #object_dict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
 zoneDict={}#dict where the key is the name from roomList and the value is a list of all the webobject names present in the room  
 router_hardware={}
@@ -1705,14 +1708,30 @@ hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wb#_objnumber_##_
 
 
 
-hardwareModelDict["Wrelay4x"]={"hwName":"Wrelay4x","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
-hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]={}
-hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["caldaia"]=[(0)]   #
-hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["router"]=[(1)]   #
-hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(2),(3)]#see arduino code at :"define object numbers to use in the pin configuration"
-#hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["local_button"]=[(4)]   #
+hardwareModelDict["Wrelay4x"]={"hwName":"Wrelay4x","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]   #
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["router"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["router"]["object_numbers"]=[1]   #
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["router"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]#see arduino code at :"define object numbers to use in the pin configuration"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]={}
 
-hardwareModelDict["Wrelay4x"]["query"]["digital_obj"]={"caldaia":"do#_objnumber_##_valuelen:1_#","router":"do#_objnumber_##_valuelen:1_#","relay":"do#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001do01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["object_numbers"]=[4]
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["query"]="do#_objnumber_##_valuelen:1_#"
+
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["object_numbers"]=[5]
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["query"]="do#_objnumber_##_valuelen:1_#"
+
+
+ #define the base query for this node digital_obj..so onos will write for example: [S_001do01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
 
 
@@ -1801,15 +1820,37 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 
 
 
+error_count=0
+
+def getErrorTimeString():
+  """
+  Called when an error occours ,return the current time and a progressive number of the error, incrementing the error_count.
+  Used to send the error time and error_count to debug the software.
+ 
+"""
+
+  global error_count
+  error_count=error_count+1 
+  return(str(datetime.datetime.today().hour)+":"+str(datetime.datetime.today().minute)+"n:"+str(error_count) )
 
 
 
+def printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb,error_gravity=0):
+  if debug>0 or error_gravity>1:
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print (error_message+", e:"+str(e.args)+str(exc_type)+str(fname)+" at line:"+str(exc_tb.tb_lineno))
+    if debug>1 or error_gravity>1:
+      errorQueue.put(error_message+", e:"+str(e.args)+str(exc_type)+str(fname)+" at line:"+str(exc_tb.tb_lineno))  
 
 
-
-
-
-
+# error handler example:
+#try:
+#  a=0+"aa"
+#except Exception as e  :
+#  error_message="error in prototype error"
+#  exc_type, exc_obj, exc_tb = sys.exc_info()
+#  error_gravity=0
+#  printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb ,error_gravity)  
 
 
 
@@ -1901,7 +1942,7 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
     errorQueue.put( "the hardware model "+hwName+" doesn't exist" )
     return([])
   if pin_mode not in hardwareModelDict[hwName]["pin_mode"].keys(): #if the type  doesn't exist in the hardware model 
-    print "the hardware type "+pin_mode+" doesn't exist in this hardware model"+hwName
+    #print "the hardware type "+pin_mode+" doesn't exist in this hardware model"+hwName
     #errorQueue.put("the hardware type "+pin_mode+" doesn't exist in this hardware model"+hwName )
     return([])
  # else:
@@ -1924,18 +1965,7 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
   return(pin_list) 
 
 
-error_count=0
 
-def getErrorTimeString():
-  """
-  Called when an error occours ,return the current time and a progressive number of the error, incrementing the error_count.
-  Used to send the error time and error_count to debug the software.
- 
-"""
-
-  global error_count
-  error_count=error_count+1 
-  return(str(datetime.datetime.today().hour)+":"+str(datetime.datetime.today().minute)+"n:"+str(error_count) )
 
 def get_ip_address():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

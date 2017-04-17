@@ -639,8 +639,11 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 bugfix: now in the arduino ccode i use radio.DATALEN to delimitate the array of data received, this fixed some random behaviour when using more than one node at the same time
 
 
-
-
+5.28            Now onos will reconnect the serial port after a delay if it was disconnected!!! 
+                So now you can remove and reconnect the usn serial port and onos will continue to work!!!
+                Modified all the hardwareModelDict regarding the structure of objects in the node.
+                example: hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]  
+                declared an object of type digital_obj named caldaia with address in the node equal to 0
 
 
 

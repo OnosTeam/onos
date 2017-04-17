@@ -51,24 +51,30 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
       i=len(serialCom.uart.readed_packets_list)-1 
       while i>0:  #iterate the list from the last element to the first
-        a=serialCom.uart.readed_packets_list[i]
-      
-        print ("check of all received answers000000000 current one was:"+str(a))
+        try:
+          a=serialCom.uart.readed_packets_list[i]
+                
+          print ("check of all received answers000000000 current one was:"+str(a))
 
-        if a.find(expected_confirm)!=-1 :  #found the answer
-          serialCom.uart.readed_packets_list.remove(a)
-          print ("I have found the answer I was looking for")
-          return (a)
+          if a.find(expected_confirm)!=-1 :  #found the answer
+            serialCom.uart.readed_packets_list.remove(a)
+            print ("I have found the answer I was looking for")
+            return (a)
 
-        if a=="[S_ertx1_#]":
-          serialCom.uart.readed_packets_list.remove(a)
+          if a=="[S_ertx1_#]":
+            serialCom.uart.readed_packets_list.remove(a)
           
 
-        if a=="[S_nocmd0_#]":
-          serialCom.uart.readed_packets_list.remove(a)
+          if a=="[S_nocmd0_#]":
+            serialCom.uart.readed_packets_list.remove(a)
    
-        i=i-1 
+          i=i-1 
 
+        except Exception as e  :
+          error_message="make_query_to_radio_node"
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+          return(-1)
 
       time.sleep(0.4) 
 

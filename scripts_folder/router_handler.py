@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 
@@ -118,23 +119,7 @@ class RouterHandler:
 
       if self.serial_arduino_used==1:
         
-        #self.serial_communication=self.connectSerialPort()
-        #try:
-        self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
-        self.serialCommunicationIsWorking=self.serial_communication.working
-        self.serial_communication.uart.write("[S_begin_#]")
-        timeout=time.time()+70
-        self.serialCommunicationIsWorking=1
-        while self.serial_communication.uart.ser.inWaiting()<1:
-          received_answer=self.serial_communication.uart.write("[S_begin_#]\n")
-          if time.time()>timeout:
-            print ("arduino is not answering on serial port")
-            self.serialCommunicationIsWorking=0
-            break
-          if "[S_" in received_answer:
-             self.serialCommunicationIsWorking=1
-             print ("arduino answered on serial port")
-             break
+        self.initializeArduinoCommunication()
           
 
 
@@ -167,10 +152,11 @@ class RouterHandler:
             #os.popen('echo '+str(pin)+' > /sys/class/gpio/export ').read()  #Create a GPIO file access
               subprocess.call('echo '+str(pin)+' > /sys/class/gpio/export ', shell=True,close_fds=True)
 
-          except Exception, e :
+          except Exception as e:
             error_number=error_number+1
-            print "error can't create GPIO pin:"+str(pin)+" and set its mode :"+str(e.args)
-            errorQueue.put("error can't create GPIO pin:"+str(pin)+" and set its mode :"+str(e.args))
+            error_message="error can't create GPIO pin:"+str(pin)+" and set its mode :"+str(e.args)
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
           time.sleep(1)
 
 
@@ -199,11 +185,13 @@ class RouterHandler:
                 #status=subprocess.check_output("cat /sys/class/gpio/gpio"+str(pin)+"/value", shell=True,close_fds=True)
               #status=os.popen("cat /sys/class/gpio/gpio"+str(pin)+"/value").read()
               self.pins_status[pin]=int(status)
-            except Exception, e :
+
+            except Exception as e  :
+              error_message="error in reading pin"+str(pin)
+              exc_type, exc_obj, exc_tb = sys.exc_info()
+              printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
               self.pins_status[pin]=0
-              print "error in reading pin"+str(pin)
-              errorQueue.put("error00 in reading pin"+str(pin) ) 
-              error_number=error_number+1
+              error_number=error_number+1 
 
           else:
             self.pins_mode[pin]=1  # set the pin as output
@@ -214,11 +202,13 @@ class RouterHandler:
                 f.write('out')
                 #os.popen('echo out > /sys/class/gpio/gpio'+str(pin)+'/direction').read()  #set the GPIO as output 
                 #subprocess.call('echo out > /sys/class/gpio/gpio'+str(pin)+'/direction', shell=True,close_fds=True)
-            except Exception, e :
-              error_number=error_number+1
-              print "error setting pin"+str(pin)+ "as output"
-              errorQueue.put( "error setting pin"+str(pin)+ "as output")
-              errorQueue.put(e.args) 
+
+            except Exception as e  :
+              error_message="error setting pin"+str(pin)+ "as output"
+              exc_type, exc_obj, exc_tb = sys.exc_info()
+              printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+
+
         if error_number >5:
           self.bash_pin_enable=0  #disable the bash pin command if too many error happen
           print "too many error command the router pins  , are you running onos on a pc?"
@@ -236,21 +226,70 @@ class RouterHandler:
 
     def connectSerialPort(self):
         global Serial_connection_Handler 
+        if self.serialCommunicationIsWorking==1:
+          return(self.serialCommunicationIsWorking)
         try:
           serial_communication=Serial_connection_Handler.Serial_connection_Handler()
           self.serialCommunicationIsWorking=serial_communication.working
-          return(serial_communication)
-        except Exception as e: 
+          self.initializeArduinoCommunication()
+          return(self.serialCommunicationIsWorking)
 
+        except Exception as e  :
+          error_message="error in opening arduino serial port"
           exc_type, exc_obj, exc_tb = sys.exc_info()
-          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-          print(exc_type, fname, exc_tb.tb_lineno)   
-          print str(e.args)
-          print "error in opening arduino serial port e:"+str(e.args)
-          errorQueue.put("error in opening arduino serial port e:"+str(e.args))
+          printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
           self.serialCommunicationIsWorking=0
+          return(0)
 
 
+    def initializeArduinoCommunication(self):
+
+      #try:
+      #  del self.serial_communication
+      #  print("deleted the reference to serial_communication ") 
+      #except:
+      #  print("")
+  
+
+        #self.serial_communication=self.connectSerialPort()
+      try:
+        self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
+        self.serialCommunicationIsWorking=self.serial_communication.working
+        self.serial_communication.uart.write("[S_begin_#]")
+        self.serialCommunicationIsWorking=1
+      except Exception as e  :
+        error_message="error in the init of serial port check if is it connected"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+        self.serialCommunicationIsWorking=0        
+
+
+
+      timeout=time.time()+70
+      if self.serialCommunicationIsWorking==1:
+        while self.serial_communication.uart.ser.inWaiting()<1:
+          received_answer=self.serial_communication.uart.write("[S_begin_#]\n")
+          if time.time()>timeout:
+            print("arduino is not answering on serial port")
+            print("I will retry other time till "+str(time.time()+" < "+str(timeout)))
+            self.serialCommunicationIsWorking=0
+            break
+          if "[S_" in received_answer:
+             self.serialCommunicationIsWorking=1
+             print("arduino answered on serial port")
+             break
+
+         
+
+
+
+
+
+
+
+
+
+ 
     def getProgressive_msg_id(self):
 
       """
@@ -321,10 +360,11 @@ class RouterHandler:
                 read_data = f.read()
               status=read_data[0]
               #status=subprocess.check_output("cat /sys/class/gpio/gpio"+str(pin)+"/value", shell=True,close_fds=True)
-            except Exception, e:
-              current_state=-1 
-              print "error reading router pin status  "+str(pin)+", e:"+str(e.args)
-              errorQueue.put("error reading router pin status  "+str(pin)+", e:"+str(e.args))  
+
+            except Exception as e  :
+              error_message="error reading router pin status  "+str(pin)
+              exc_type, exc_obj, exc_tb = sys.exc_info()
+              printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
             
 
             current_state=int(status)
@@ -347,6 +387,42 @@ class RouterHandler:
 
 
       return(1)
+
+
+
+
+    def searchObjectBaseName(self,obj_selected,node_serial_number):
+
+
+      remoteNodeHwModelName=nodeDict[node_serial_number].getNodeHwModel()
+      try:
+
+        for a in hardwareModelDict[remoteNodeHwModelName]["object_list"].keys():   
+          #a will iterate all the ["object_list"] ..for example will be digital_obj from :
+          #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]   #
+          for b in  hardwareModelDict[remoteNodeHwModelName]["object_list"][a].keys(): 
+            #b will iterate all the digital_obj ..for example will be caldaia from :
+            #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]   #
+            for c in hardwareModelDict[remoteNodeHwModelName]["object_list"][a][b]["object_numbers"]:
+              #c will iterate all the object adresses ..for example will be 0 from :
+              #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0] 
+              print ("""(hardwareModelDict[remoteNodeHwModelName]["object_list"][a][b]["object_numbers"]) : """)
+              print (str(hardwareModelDict[remoteNodeHwModelName]["object_list"][a][b]["object_numbers"]) )
+              print ("c:"+str(c)) 
+              print ("b:"+str(b)) 
+
+              if c==obj_selected:
+                generic_object_name=b
+                return(generic_object_name)   
+
+
+      except Exception as e  :
+        error_message="error searchObjectBaseName() iterating the hardwareModelDict searching the generic_object_name"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+
+      return(-1)
+
 
 
 
@@ -385,7 +461,7 @@ class RouterHandler:
     
 
 
-      address=node_obj.getNodeAddress()
+      address=nodeDict[node_serial_number].getNodeAddress()
       query="error_compose_query"
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
    
@@ -394,38 +470,44 @@ class RouterHandler:
         print "digital_obj compose query"
         #query example:  [S_123wp01x_#]
  
-        if status_to_set>1:
+        if status_to_set not in [0,1]:
           print "error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1"
           errorQueue.put("error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1") 
           return (-1)
-        remoteNodeHwModelName=node_obj.getNodeHwModel()
+        remoteNodeHwModelName=nodeDict[node_serial_number].getNodeHwModel()
+        #print ( str(nodeDict[node_serial_number].getnodeObjectsDict()) )
+        #print ("objName:"+objName+"end")
+        try:
+          obj_selected=nodeDict[node_serial_number].getNodeObjectAddress(objName)
 
-        obj_selected=pinNumbers[0]#in this case the obj selected is passed from the pinNumbers number...
+        except Exception as e  :
+          error_message="error getNodeObjectAddress"
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+
+
+
         print ("obj_selected:"+str(obj_selected) )
-    #    print "remoteNodeHwModelName"+str(remoteNodeHwModelName)
-    #    print "remoteNodeHwModelName[pin_mode][digital_obj].keys():"+str(hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys()[obj_selected])
-
-        for a in hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"].keys() :
-          # example: a is equal to hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]
-          #print (a)
-          for b in hardwareModelDict[remoteNodeHwModelName]["pin_mode"]["digital_obj"][a]:
-            #example: b is equal to 0,1,2... in hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)] 
-            #print (b)
-            if b==obj_selected:  # if b is equal to the number of the object selected: for example 0
-              obj_html_name=a
 
 
+        generic_object_name=self.searchObjectBaseName(obj_selected,node_serial_number)    
+     
+        print ("generic_object_name:"+generic_object_name)
+   
+        query_placeholder=""
 
-        print ("obj_html_name"+obj_html_name)
-   #example:obj_html_name is equal to"relay"from hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]
+        try:
+          query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["object_list"]["digital_obj"][generic_object_name]["query"]
 
- 
-      #  print "obj_html_name"+obj_html_name
-        query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["query"]["digital_obj"][obj_html_name]
-     #example : get "relay" from  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]["relay"]=[(0),(1),(2),(3)]
+
+        except Exception as e  :
+          error_message="error in query_placeholder replacing the query from NodeHwModelName"
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+
  
      #   print "query_placeholder:"+query_placeholder
-        query_placeholder=query_placeholder.replace("#_objnumber_#",str(pinNumbers[0]))
+        query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected))
       #  print "query_placeholder2:"+query_placeholder
         acceptable_len=0
         value=0
@@ -617,11 +699,11 @@ class RouterHandler:
     
 
     def outputWrite(self,node_serial_number,pinList,statusList,node_obj,objName,previous_status,statusToSetWebObject,output_type,user,priority,mail_report_list):
-      
+      #called from changeWebObjectStatus() in  webserver.py 
       
       print "executed router_handler digitalwrite()"
-      node_address=node_obj.getNodeAddress()
-      remoteNodeHwModelName=node_obj.getNodeHwModel()
+      node_address=nodeDict[node_serial_number].getNodeAddress()
+      remoteNodeHwModelName=nodeDict[node_serial_number].getNodeHwModel()
       if len(pinList)<1:
         print "error len pinList<1 ,len="+str(len(pinList))
         errorQueue.put( "error len pinList<1 ,len="+str(len(pinList)))
@@ -680,10 +762,11 @@ class RouterHandler:
 
                   #subprocess.call('echo out > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
                 print "pin"+str(pinNumber)+" setted as output "
-              except Exception, e :
-                print "error can't configure the pin:"+str(pinNumber)+" as output and set it to "+str(tmp_status_to_set)   
-                errorQueue.put("error can't configure the pin:"+str(pinNumber)+" as output and set it to "+str(tmp_status_to_set) )
-                errorQueue.put(e.args) 
+              except Exception as e:
+                error_message="error can't configure the pin:"+str(pinNumber)+" as output and set it to "+str(tmp_status_to_set) 
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+
                 i=i+1
                 return(-1)
             try:
@@ -696,10 +779,11 @@ class RouterHandler:
 
                 #subprocess.check_output('echo '+str(tmp_status_to_set)+' > /sys/class/gpio/gpio'+str(pinNumber)+'/value', shell=True,close_fds=True) 
               print "pin"+str(pinNumber)+" setted to "+str(tmp_status_to_set)
-            except Exception, e :
-              print "error can't set the pin:"+str(pinNumber)+" to "+str(tmp_status_to_set)   
-              errorQueue.put("error can't set the pin:"+str(pinNumber)+" to "+str(tmp_status_to_set)   )
-              errorQueue.put(e.args) 
+            except Exception as e:
+              error_message="error can't set the pin:"+str(pinNumber)+" to "+str(tmp_status_to_set)  
+              exc_type, exc_obj, exc_tb = sys.exc_info()
+              printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+
               return(-1)
 
 
@@ -827,10 +911,12 @@ class RouterHandler:
 
                   #subprocess.check_output('echo "out" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
                 #os.popen('echo "out" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction').read()  #set the GPIO as output
-              except Exception, e :
-                print "error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber)
-                errorQueue.put("error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber) )
-                errorQueue.put(e.args) 
+              except Exception as e:
+                error_message="error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber) 
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+
+
               for a in self.pins_mode: #check every pin to understand if there are pin setted as input 
                 if a==0:
                   self.total_in_pin=self.total_in_pin+1   
@@ -844,10 +930,12 @@ class RouterHandler:
                   f.write('in')
                   subprocess.check_output('echo "in" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction', shell=True,close_fds=True)
                 #os.popen('echo "in" > /sys/class/gpio/gpio'+str(pinNumber)+'/direction').read()  #set the GPIO as input  
-              except Exception, e :
-                print "error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber)
-                errorQueue.put( "error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber)) 
-                errorQueue.put(e.args) 
+              except Exception as e:
+                error_message="error can't set the direction of the pin:  /sys/class/gpio/gpio"+str(pinNumber)
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+
+
               #if self.read_thread_running==0:  #if the thread is not running then run it
               #  self.tr_read = threading.Thread(target=self.read_router_pins)
               #  self.tr_read.daemon = True  #make the thread a daemon thread

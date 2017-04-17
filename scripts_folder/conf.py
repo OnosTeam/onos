@@ -1,4 +1,5 @@
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 #   Copyright 2014 Marco Rigoni                                               #
 #   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
 #   This program is free software: you can redistribute it and/or modify      #
@@ -48,9 +49,11 @@ hardware_labels=hardwareModelDict.keys()
 
 try:
   hardware=router_handler.RouterHandler(router_hardware,router_sn)
-except Exception, e  :               
-  print "error in the init of class router_handler  e:"+str(e.args)  
-  errorQueue.put("error in the init of class router_handler  e:"+str(e.args) )
+except Exception as e  :
+  error_message="error in the init of class router_handler"
+  exc_type, exc_obj, exc_tb = sys.exc_info()
+  printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+  self.serialCommunicationIsWorking=0
 
 
 print "router hardware selected is"+router_hardware_type
@@ -72,7 +75,7 @@ def newDefaultWebObjBody(name):
   return(WebObject(name,"b",0,{u"0":"background-color:#A9E2F3;",u"1":"background-color:#8181F7;"},{u"0":name+u"=0",u"1":name+u"=1"},{}," ",[9999],9999,{}))
 
 
-def newNodeWebObj(name,objType,node_sn,pinList):
+def newNodeWebObj(name,objType,node_sn,pinList=[]):
   """
   Return a new web_object given its name,objType,node_sn,pinList used to create new web_objects for exemple when a new node is added 
   """

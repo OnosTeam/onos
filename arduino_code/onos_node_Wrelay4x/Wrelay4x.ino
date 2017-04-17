@@ -454,7 +454,7 @@ void getAddressFromGateway(){
       break;// exit the while (tryed_times < radioRetry )
     }
     else{
-      random_time=random(10,radioTxTimeout*3);
+      random_time=10;//random(10,radioTxTimeout*3);
       tryed_times=tryed_times+1;
       delay(random_time);
     }
@@ -918,8 +918,8 @@ void checkCurrentRadioAddress(){
 
     }
 
-    random_time=random(4000,5000);
-
+    random_time=4000;//random(4000,5000);
+    
 
 
     if ((millis()-get_address_timeout)>random_time){ //every 4000/5000 ms
@@ -934,7 +934,7 @@ void checkCurrentRadioAddress(){
 
   }
   else{
-    random_time=random(1500,2500);
+    random_time=1500;//random(1500,2500);
     if ((millis()-sync_time)>random_time){ //every 1500/2500 ms
    
       sync_time=millis();

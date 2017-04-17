@@ -33,6 +33,6 @@
       "user_mail": "elettronicaopensource@gmail.com"
     }
   }, 
-  "scenarios_enable": 1, 
+  "scenarios_enable": 0, 
   "timezone": "CET-1CEST,M3.5.0,M10.5.0/3"
 }

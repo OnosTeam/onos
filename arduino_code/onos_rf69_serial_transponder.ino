@@ -302,8 +302,22 @@ void decodeOnosCmd(char *received_message,char *decoded_result){
     }
 
 
-    //[S_001dw06001_#]
-    if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
+    //[S_123ga5.24WPlugAvx000810000x_#]
+
+       
+    if ( received_message_type_of_onos_cmd[0]=='g' && received_message_type_of_onos_cmd[1]=='a' ){
+
+      strcpy(decoded_result,"ok");
+      return; 
+    }
+
+    else if ( received_message_type_of_onos_cmd[0]=='u' && received_message_type_of_onos_cmd[1]=='l' ){
+
+      strcpy(decoded_result,"ok");
+      return;
+    }
+
+    else if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
 
       received_message_value=received_message[12]-48;
       if (received_message_value>1){ 
@@ -790,7 +804,7 @@ boolean checkAndHandleIncomingRadioMsg(){
       //check if sender wanted an ACK
         if (radio.ACKRequested()){
           radio.sendACK();
-  //        Serial.println(" - ACK sent");
+          //Serial.println(" - ACK sent");
 
         }
         return(1); 

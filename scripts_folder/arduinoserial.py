@@ -143,7 +143,7 @@ class SerialPort:
 
     self.ser.open()
     
-    
+    self.port_was_opened=0
     
 
 
@@ -188,12 +188,13 @@ class SerialPort:
               print "I tried to reconnect serial port from arduinoserial module but I failed" 
               errorQueue.put("I tried to reconnect serial port from arduinoserial module but I failed")
               #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"})
+              self.exit=1
               return()
 
 
 
           if self.exit==1:
-            break
+            return()
           
 
 
@@ -227,6 +228,7 @@ class SerialPort:
             #  errorQueue.put( "can't flush output"+str(e.args) )
 
           #waitTowriteUntilIReceive=0
+          self.port_was_opened=1
           buf=''
           next_buf=''
           while (self.exit==0):
@@ -319,9 +321,9 @@ class SerialPort:
                   serial_number=cmd[8:20]   
                   node_address=cmd[3:6]
                   node_fw="def0"  #default
-                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_123ulWPlugAvx000810000_#]
+                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_003ulWrelay4x000100000u_#]
                     obj_value=cmd[20]
-                    obj_address_to_update="0"
+                    obj_address_to_update=0
                     priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_address_to_update:obj_value} }) 
 
                     #todo update the first node obj reading the name from hardwaremodel
@@ -524,7 +526,12 @@ class SerialPort:
 
   def __del__(self):
     print ("class arduinoserial destroyed")
-      #reconnect_serial_port_enable==time.time()+60
+    self.exit=1
+    #layerExchangeDataQueue.put( {"cmd":"set_serialCommunicationIsWorking=0"}) 
+    if self.port_was_opened==1:
+      layerExchangeDataQueue.put( {"cmd":"reconnectSerialPort"}) 
+      self.port_was_opened=0
+    return()
 
  #   try:
  #     os.close(self.fd)
@@ -537,7 +544,6 @@ class SerialPort:
 
   def close(self):
     self.exit=1
-
     print "class arduinoserial destroyed by close()"
 #    try:
  #     os.close(self.ser)     

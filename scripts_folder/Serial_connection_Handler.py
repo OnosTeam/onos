@@ -23,15 +23,15 @@ class Serial_connection_Handler():
     self.uart=self.connectToPort()
     self.working=1
     self.exluded_port_list=[] 
-    self.connectSerialPort()
+    self.connectSerialPortOrRetry()
 
    
-    #return(self.connectSerialPort())
 
 
 
-  def connectSerialPort(self):
-    print("connectSerialPort() executed")
+
+  def connectSerialPortOrRetry(self):
+    print("connectSerialPortOrRetry() executed")
     self.exluded_port_list=[]
     self.uart=self.connectToPort()
     self.working=1
@@ -55,7 +55,7 @@ class Serial_connection_Handler():
 
   
   def connectToPort(self):
-    print("connectSerialPort() executed")
+    print("connectToPort() executed")
     port=self.searchForSerialCable(self.exluded_port_list ) 
     if port!="null":   # if i found the port then use it
       try:
@@ -136,7 +136,10 @@ class Serial_connection_Handler():
     
   def __del__(self):
     print ("class Serial_connection_Handler destroyed")
-
+    #try:
+    #  self.ser.close()
+    #except:
+    #  print("")
 
 
 

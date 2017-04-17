@@ -193,7 +193,7 @@ int freeRam ()
 
 
 boolean changeObjStatus(char obj_number,int status_to_set){
-   Serial.print("changeObjStatus executed with  status:");
+   Serial.print(F("changeObjStatus executed with  status:"));
    Serial.println(status_to_set);
 
   if (obj_number==0){
@@ -224,7 +224,7 @@ return(0);
 
 void composeSyncMessage(){
 
-  Serial.println("composeSyncMessage executed");
+  Serial.println(F("composeSyncMessage executed"));
   //[S_123ul5.24WPlugAvx000810000x_#]
 
   if (progressive_msg_id<122){  //122 is z in ascii
@@ -357,7 +357,7 @@ void composeSyncMessage(){
   syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
 
-   Serial.print("composeSyncMessage executed with  status:");
+   Serial.print(F("composeSyncMessage executed with  status:"));
    Serial.println(main_obj_state);
 
 
@@ -387,12 +387,12 @@ void sendSyncMessage(uint8_t retry,uint8_t timeout=150){
   }
 
 
-  Serial.println(" sendWithRetry sendSyncMessage executed");
+  Serial.println(F(" sendWithRetry sendSyncMessage executed"));
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,timeout)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
-    Serial.println("sent_sync_message1");
+    Serial.println(F("sent_sync_message1"));
 //    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
   }
@@ -404,7 +404,7 @@ void sendSyncMessage(uint8_t retry,uint8_t timeout=150){
 
 
 void getAddressFromGateway(){
-   Serial.println("getAddressFromGateway executed");
+   Serial.println(F("getAddressFromGateway executed"));
 
   //[S_123ga5.24WPlugAvx000810000x_#]
 
@@ -412,7 +412,7 @@ void getAddressFromGateway(){
   syncMessage[6]='g'; //modify the message to get a address instead of just sync.
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
 
-  Serial.println(" sendWithRetry getAddressFromGateway executed");
+  Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
 
   if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),radioRetry,radioTxTimeout)) {
     // note that the max delay time is 255..because is uint8_t
@@ -421,7 +421,7 @@ void getAddressFromGateway(){
 
 
 
-    Serial.println("sent_get_address");
+    Serial.println(F("sent_get_address ok"));
     /*
     for (char a=0;a<(35);a=a+1){
       Serial.print(syncMessage[a]);
@@ -432,6 +432,10 @@ void getAddressFromGateway(){
 
 
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+  }
+  else{
+    Serial.println(F(" failed to receive ack from sendWithRetry"));
+
   }
 
   syncMessage[6]='u'; //modify the message
@@ -506,7 +510,7 @@ void decodeOnosCmd( char *received_message){
      // int decodetime= millis()-get_decode_time;    
      // Serial.print("decode time01=") ;
      // Serial.println(decodetime) ;
-    Serial.print("r_address:") ;
+    Serial.print(F("r_address:")) ;
     Serial.println(received_message_address) ;
     if ((received_message_address!=this_node_address)&(received_message_address!=254)) {//onos command for a remote arduino node
       strcpy(received_message_answer,"remote_#]");
@@ -706,7 +710,7 @@ void decodeOnosCmd( char *received_message){
 
       this_node_address=received_message_value;
       strcpy(received_message_answer,"ok");
-      Serial.print("i will change radio address to:");
+      Serial.print(F("i will change radio address to:"));
       Serial.println(this_node_address);
       first_sync=0;
         
@@ -762,7 +766,7 @@ void checkAndHandleIncomingRadioMsg(){
 
     get_decode_time=millis();
     //print message received to serial
-    Serial.print(" id:");
+    Serial.print(F(" id:"));
     Serial.println(radio.SENDERID);
     Serial.print((char*)radio.DATA);
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
@@ -774,7 +778,7 @@ void checkAndHandleIncomingRadioMsg(){
 
     //strcpy(filtered_onos_message,"");
     memset(filtered_onos_message,0,sizeof(filtered_onos_message)); //to clear the array
-    Serial.print("msg_start:");
+    Serial.print(F("msg_start:"));
 
     uint8_t onos_cmd_start_detector=0;
     uint8_t onos_cmd_end_detector=0;
@@ -902,16 +906,16 @@ void checkAndHandleIncomingRadioMsg(){
 
 
     }
-    Serial.println(":msg_stop");
+    Serial.println(F(":msg_stop"));
 
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
 
-      Serial.println("onos cmd  found-------------------------------");
+      Serial.println(F("onos cmd  found-------------------------------"));
       //noInterrupts(); // Disable interrupts    //important for lamp node 
       decodeOnosCmd(filtered_onos_message);
 
-      Serial.print("decode time1=") ;
+      Serial.print(F("decode time1=")) ;
       Serial.println(millis()-get_decode_time) ;
       get_decode_time=millis();
 
@@ -919,14 +923,14 @@ void checkAndHandleIncomingRadioMsg(){
       //check if sender wanted an ACK
         if (radio.ACKRequested()){
           radio.sendACK();
-          Serial.println(" - ACK sent");
+          Serial.println(F(" - ACK sent"));
           sync_time=millis();
         }
         //interrupts(); // Enable interrupts
 
       }
       else{
-        Serial.print("error in message decode i will not send the ACK,i found:");
+        Serial.print(F("error in message decode i will not send the ACK,i found:"));
         Serial.print(received_message_answer[0]);
         Serial.print(received_message_answer[1]);
         Serial.print(received_message_answer[2]);
@@ -943,7 +947,7 @@ void checkAndHandleIncomingRadioMsg(){
     }
     else{
       strcpy(received_message_answer,"nocmd0_#]");
-      Serial.print("error in message nocmd0_#]");
+      Serial.print(F("error in message nocmd0_#]"));
       Serial.print(onos_cmd_start_position);
       Serial.println(onos_cmd_end_position);
     }
@@ -965,7 +969,7 @@ void checkAndHandleIncomingRadioMsg(){
 void handleButton(){
 
   if (digitalRead(obj_button_pin)==0) {
-    Serial.print("obj_button pressed");
+    Serial.print(F("obj_button pressed"));
 
     while (digitalRead(obj_button_pin)==0){ //wait for button release
       delay(280);//todo change it smaller
@@ -995,7 +999,7 @@ void checkCurrentRadioAddress(){
       radio.setAddress(this_node_address);
       old_address=this_node_address;
       get_address_timeout=millis();
-      Serial.print("radio address changed to:");
+      Serial.print(F("radio address changed to:"));
       Serial.println(this_node_address);
       sendSyncMessage(radioRetry,radioTxTimeout);
 
@@ -1054,7 +1058,7 @@ void setup() {
   digitalWrite(obj_button_pin, HIGH); //enable pull up resistors
 
 
-  Serial.println("Feather RFM69W Receiver");
+  Serial.println(F("Feather RFM69W Receiver"));
 
 
 /*  
@@ -1094,9 +1098,9 @@ void setup() {
 
   radio.enableAutoPower(targetRSSI);
  
-  Serial.print("\nListening at ");
+  Serial.print(F("\nListening at "));
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(" MHz");
+  Serial.println(F(" MHz"));
 
   changeObjStatus(0,1);
   delay(300);
@@ -1123,7 +1127,7 @@ void loop() {
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
-    Serial.println("I skip the rxradio part once");
+    Serial.println(F("I skip the rxradio part once"));
     goto radioTx;
 
 
