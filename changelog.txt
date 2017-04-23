@@ -644,7 +644,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Modified all the hardwareModelDict regarding the structure of objects in the node.
                 example: hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]  
                 declared an object of type digital_obj named caldaia with address in the node equal to 0
-
+                added support for cfg_obj in the nodes and in the webserver.
+                changed the object query from 1 byte to 2 in order to reach 99 objects in a node.
 
 
 (110, 'Connection timed out');;;

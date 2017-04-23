@@ -1130,7 +1130,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       return(1)
 
         
-    if (obj_type=="digital_obj"): #general digital object (for example a plug node)
+    if (obj_type in ("digital_obj","cfg_obj")): #general digital object (for example a plug node)  todo remove cfg_obj..
      # status_list=[statusToSet] 
       #while len(pins_to_set)!=len(status_list): #to make the same len...to bypass check in routerhandler..
       #  status_list.append(statusToSet)
@@ -1168,6 +1168,13 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
       return(1)    
+
+
+    else:
+      print("error in changeWebObjectStatus(),the out_type"+obj_type+" is not yet implemented") 
+
+
+
 
 
   except Exception as e  : # the webobject does not exist
@@ -1605,10 +1612,17 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
     onos_automatic_object_id=''' id="'''+obj+'''" '''
 
     objType=WebObjectdictionary[obj].getType() 
-    if (objType=="b")|(objType=="sb")|(objType=="digital_obj")|(objType=="sr_relay")|(objType=="digital_output"):  #banana to use group and to update the onlyne php server with digital_obj...
+    if objType in ("b","sb","digital_obj","cfg_obj","sr_relay","digital_output"):  #banana to use group and to update the online php server with digital_obj...
       onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
       onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
       onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
+
+    elif objType in  ("analog_obj","numeric_var","digital_obj","servo_output","analog_output"):  #banana to use group and to update the onlyne php server with digital_obj...
+      onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
+      onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
+      onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
+
+
     else:
       onos_automatic_object_href=''
       onos_automatic_object= '''<a id="'''+obj+'''" > '''+onos_automatic_object_html+'''</a>'''

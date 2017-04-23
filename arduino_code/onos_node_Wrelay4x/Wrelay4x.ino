@@ -223,6 +223,8 @@ boolean changeObjStatus(char obj_number,int status_to_set){
       main_obj_state=status_to_set;
       changeObjStatus(led,!status_to_set);
     }
+
+
     node_obj_status[obj_number]=status_to_set;
 
     return(1);
@@ -557,9 +559,61 @@ void decodeOnosCmd( char *received_message){
       return;
     } 
 
+    //[S_001ac06125_#]    #configuration analog object
+    else if( received_message_type_of_onos_cmd[0]=='a' && received_message_type_of_onos_cmd[1]=='c' ){
  
-    //[S_123do01x_#]  digital object
-    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='o' ){
+      received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
+
+      if ((received_message_value<0)||(received_message_value>255)){ //status check
+        received_message_value=0;
+      //Serial.println(F("onos_cmd_value_error"));  
+        strcpy(received_message_answer,"er_ac_status_#]"); 
+        return;
+      }
+
+      rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+         
+      strcpy(received_message_answer,"ok");
+
+      if (rx_obj_selected>number_of_total_objects){ //object out of the range
+        Serial.println(F("er_ac_obj_number_#]"));  
+        strcpy(received_message_answer,"er_ac_obj_number_#]"); 
+        return; 
+      }
+
+      return;
+    } 
+
+
+    //[S_001dc001x_#]    #configuration digital object
+    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='c' ){
+ 
+      received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
+
+      if ((received_message_value<0)||(received_message_value>255)){ //status check
+        received_message_value=0;
+      //Serial.println(F("onos_cmd_value_error"));  
+        strcpy(received_message_answer,"er_dc_status_#]"); 
+        return;
+      }
+
+      rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+         
+      strcpy(received_message_answer,"ok");
+
+      if (rx_obj_selected>number_of_total_objects){ //object out of the range
+        Serial.println(F("er_dc_obj_number_#]"));  
+        strcpy(received_message_answer,"er_dc_obj_number_#]"); 
+        return; 
+      }
+
+      return;
+    } 
+
+
+ 
+    //[S_123do001x_#]  digital object
+    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='o' ){//todo make analog object..
 
 /*
       Serial.print("decode time03=") ;
@@ -568,7 +622,7 @@ void decodeOnosCmd( char *received_message){
 */
 
 
-      received_message_value=received_message[9]-48;   
+      received_message_value=received_message[10]-48;   
       
 
       if (received_message_value>1){ 
@@ -577,7 +631,7 @@ void decodeOnosCmd( char *received_message){
         return;
       }
 
-      rx_obj_selected= (received_message[8])-48;
+      rx_obj_selected=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
 
 
 
@@ -662,7 +716,7 @@ void decodeOnosCmd( char *received_message){
     }
 
       
-    //[S_254sa123Wrelay4x0003_#]  
+    //[S_254sa123Wrelay4x0007_#]  
 
     else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
 

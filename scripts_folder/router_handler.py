@@ -466,13 +466,13 @@ class RouterHandler:
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
    
 
-      if (out_type=="digital_obj"):
+      if (out_type in ("digital_obj","cfg_obj","analog_obj") ):
         print "digital_obj compose query"
         #query example:  [S_123wp01x_#]
  
         if status_to_set not in [0,1]:
-          print "error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1"
-          errorQueue.put("error in composeChangeNodeOutputPinStatusQuery in digital_obj section,status_to_set>1") 
+          print "error in composeChangeNodeOutputPinStatusQuery in obj section,status_to_set>1"
+          errorQueue.put("error in composeChangeNodeOutputPinStatusQuery in obj section,status_to_set>1") 
           return (-1)
         remoteNodeHwModelName=nodeDict[node_serial_number].getNodeHwModel()
         #print ( str(nodeDict[node_serial_number].getnodeObjectsDict()) )
@@ -497,7 +497,7 @@ class RouterHandler:
         query_placeholder=""
 
         try:
-          query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["object_list"]["digital_obj"][generic_object_name]["query"]
+          query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name]["query"]
 
 
         except Exception as e  :
@@ -507,7 +507,13 @@ class RouterHandler:
 
  
      #   print "query_placeholder:"+query_placeholder
-        query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected))
+
+        if obj_selected<10:
+          query_placeholder=query_placeholder.replace("#_objnumber_#","0"+str(obj_selected))
+        else:
+          query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected))      
+          
+
       #  print "query_placeholder2:"+query_placeholder
         acceptable_len=0
         value=0
@@ -545,7 +551,10 @@ class RouterHandler:
           errorQueue.put("the query was:"+query) 
 
 
-      if (out_type=="sr_relay"):
+
+
+
+      elif (out_type=="sr_relay"):
         pin1=str(pinNumbers[1])
         pin0=str(pinNumbers[0])
         if (len (pin0) <2):
@@ -556,7 +565,7 @@ class RouterHandler:
         #  [S_001sr04051_#] 
         query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
 
-      if (out_type=="digital_output"):# [S_001dw06001_#]
+      elif (out_type=="digital_output"):# [S_001dw06001_#]
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -570,7 +579,7 @@ class RouterHandler:
 
 
       # [S_001sm11135_#]
-      if (out_type=="servo_output"):
+      elif (out_type=="servo_output"):
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -585,7 +594,7 @@ class RouterHandler:
         query=base_query+'''[S_'''+node_address+'''sm'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''+'''\n'''
 
       #  [S_001aw06155_#] 
-      if (out_type=="analog_output"):
+      elif (out_type=="analog_output"):
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -597,6 +606,12 @@ class RouterHandler:
           status_to_set='0'+status_to_set 
 
         query=base_query+'''[S_'''+node_address+'''aw'''+pin+str(status_to_set)+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
+
+      else :
+        print("error in composeChangeNodeOutputPinStatusQuery,the out_type:"+out_type+" is not yet implemented")
+        
+
+
 
 
 

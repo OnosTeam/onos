@@ -5,6 +5,12 @@
 uint8_t radioRetry=3;      //todo: make this changable from serialport arduinoserialtranponder
 uint8_t radioTxTimeout=150  //todo: make this changable from serialport
 
+//todo fare si che onoscenter si accorga se due nodi stanno usando lo stesso indirizzo e riassegni ad uno dei due un'altro indirizzo inoltre potrebbe essere utile far si che all risveglio dallo stamby un nodo chieda se un indirizzo è libero..
+
+
+Codificare anche un comando di ping ..o status al quale il nodo risponda con dei dati.. 
+
+
 
 avvio di onos anche senza internet?  update_check...
 

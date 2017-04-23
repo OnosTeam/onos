@@ -1724,14 +1724,14 @@ hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]={}
 
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["object_numbers"]=[4]
-hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["query"]="ac#_objnumber_##_valuelen:3_#"
 
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["object_numbers"]=[5]
-hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["query"]="ac#_objnumber_##_valuelen:3_#"
 
 
- #define the base query for this node digital_obj..so onos will write for example: [S_001do01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
+ #define the base query for this node digital_obj..so onos will write for example: [S_001do001x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
 
 

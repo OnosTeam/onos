@@ -271,12 +271,12 @@ I will use post instead of get message
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
   2 bytes containing "do" for the type of msg , set digital object
-  1 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
   1 byte to tell arduino the value (0 or 1 ) to set the object
   1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001do01x_#]    to set the first object of the node to 1
-             [S_001do00x_#]    to set the first object of the node to 0
+  example:   [S_001do001x_#]    to set the first object of the node to 1
+             [S_001do000x_#]    to set the first object of the node to 0
 
 
 
@@ -285,13 +285,13 @@ I will use post instead of get message
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
   2 bytes containing "ao" for the type of msg , set analog object
-  1 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
   3 byte to tell arduino the value to set the object to expressed in hexadecimal (min 0x000  max 0xFFF)
           in this way the value can range from 0 to 65535 (16 bit)
   1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_001ao1000x_#]    to set the first object of the node to 0  which is the  hex value of "000" converted
-             [S_001ao10FFx_#]    to set the first object of the node to 255  which is the  hex value of "00F" converted
+  example:   [S_001ao10000x_#]    to set the first object of the node to 0  which is the  hex value of "000" converted
+             [S_001ao100FFx_#]    to set the first object of the node to 255  which is the  hex value of "00F" converted
 
 
 
@@ -1151,23 +1151,41 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 #    Every node created automaticly from linux will have a variable obj_address_in_the_node that contain the number of the object #in the node, the first object in a node will have obj_address_in_the_node =0 
 
 52) Need a stucture for mqtt to controll all onos using it...
-    Onos will subscribe to all the mqtt topics..
-    Onos will check the following topics by default  :
+    OnosCenter will subscribe to all the mqtt topics..
+    Onos will use the following topics by default  using QoS 0 (because the check will be done using another topic) :
 
-    to set a value to a webobject it will send the value to:
-    myonos/<objectName>/status
+    To set a value to a webobject OnosCenter will send the value to:
+      myonos/web_objects/<objectName>/status    using QoS 2
 
-    to set a value to a object in a node it will send the value to:
-    myonos/<NodeSerialNumber>/<objectAddress>/value
+    To set a value to a object in a node OnosCenter will send the value to:
+      myonos/nodes/<NodeSerialNumber>/<objectAddress>/valueToset  using QoS 0
+    when the node receives the command it will set:
+      myonos/nodes/<NodeSerialNumber>/<objectAddress>/currentValue  QoS 2
+    after onos detect that it will set the relatives webobjects status with : 
+      myonos/web_objects/<objectName>/status       using QoS 2
 
     If a node lost connection it will send this topic
-    myonos/<NodeSerialNumber>/activity     and activity will be setted to "0"
-
+      myonos/nodes/<NodeSerialNumber>/activity     and activity will be setted to "0"
     and then onos will send myonos/<NodeSerialNumber>/<objectAddress>/value
 
-
     The first time a node connects to the server it will send this:
-    myonos/<NodeSerialNumber>/activity     and activity will be setted to "1"
+      myonos/nodes/<NodeSerialNumber>/activity     and activity will be setted to "1"
+    then will set all the node objects:
+      myonos/nodes/<NodeSerialNumber>/<objectAddress>/currentValue
+
+
+    From the outside of the onoscenter if someone want to set a webobject status he or she will have to use:
+      myonos/web_objects/<objectName>/statusToset
+    onos will then process the request and if all is ok it will call:
+      myonos/web_objects/<objectName>/status
+    to set the webobject to the status requested  , otherwise (if the node is offline or other problems happens..)
+    nothing will be done..
+
+
+    If a  node or a scenario or a user from webpage change the status of an webobject then onosCenter will set it using:
+      myonos/web_objects/<objectName>/status    using QoS 2
+
+
 
 
    Number temperature "temp [%.1f]" {mqtt="<[publicweatherservice:london-city/temperature:state:default]"}

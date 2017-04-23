@@ -147,7 +147,7 @@ class WebObject(object):   # inherit from object python class
       self.general_analog_output_group=["analog_output","servo_output","numeric_var","analog_obj"]
       self.general_out_group=self.general_digital_output_group+self.general_analog_output_group+["string_var"] #all output
       self.simply_digital_input_group=["d_sensor","digital_input"]     #make alias
-      self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var"]#objtype with num values
+      self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var","cfg_obj"]#objtype with num values
 
       self.isActive=1 #tell onos if the web_object is connected or not
 
@@ -183,94 +183,16 @@ class WebObject(object):   # inherit from object python class
 
           return(1)  
 
-
-        if (self.__object_type in self.simply_digital_output_group):  #normal button  like an arduino digital write controlled by web interface 
-          if status in self.cmdDict.keys():
+        if status in self.cmdDict.keys():
             #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-            with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
-          if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
-            self.previous_status=self.status 
+          with lock_bash_cmd:
+            subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
+        if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
+          self.previous_status=self.status 
 
-          self.status=status
-          return(1)
+        self.status=status
+        return(1)
 
-        if (self.__object_type=="sb"):  #static button   digital output button that don't  change the web page once pressed,deprecated because blocked in webserver.py
-
-          if status in self.cmdDict.keys():
-            #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-            with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
-            return(1)
-
-
-
-        if (self.__object_type in self.general_digital_output_group):  # latch relay  with 2 coil  one to set  one to reset 
-          result=1   #banana     to remove in the future
-      #    if (len(self.attachedPins)!=2) :
-       #     print "can't set the relay because i don't have two pin attached"
-       #     return(-1)
-
-          if status in self.cmdDict.keys():
-            #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-            with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
-          if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
-            self.previous_status=self.status 
-
-          self.status=status
-          return(1)
-
-
-        if (self.__object_type in self.simply_digital_input_group):  #digital sensor like read digital pin status  with digitalRead() on arduino
-
-          if status in self.cmdDict.keys():
-            #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-            with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
-          if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
-            self.previous_status=self.status 
-
-          self.status=status
-          return(1)
-
-
-
-        if (self.__object_type=="a_sensor")or(self.__object_type=="analog_input"): 
-
-          if status in self.cmdDict.keys():
-            #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-            with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
-
-          if self.status!=status:
-            if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
-              self.previous_status=self.status 
-
-            self.status=status
-            print "analog state changed to "+str(self.status)
-
-          else:
-            print "analog state not changed from "+str(self.status)
-
-
-
-
-
-
-        if (self.__object_type in self.general_analog_output_group):  #servo_output,analog output...
-
-          if status in self.cmdDict.keys():
-            #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-            with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
-          if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
-            self.previous_status=self.status 
-          self.status=status
-          return(1)
-
-
-        return(result)   #banana     to remove in the future
 
     def setHwNodeSerialNumber(self,HwNodeSerialNumber):  # set the hwnode serial number not used
 
