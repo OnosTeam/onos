@@ -3,50 +3,86 @@
 .riga{
 	position:relative;
 	width:100%;
-	height:50px;
-	margin-top:10px;
+	height:60px;
 
 }
 
-hr {
-	margin-top:30px;
-	margin-bottom:30px;
-	align:center;
-	width:90%;
-	}
+.testo{
+	
+	
+	position:absolute;
+	width:100%;
+	height:30px;
+	line-height:60px;
+	text-align:center;
+	color:white;
+	font-size:15px;
+	font-weight:bold;
+	
+}
 
-
-.col1{left:5%;}
-
-.col2{left:55%;}
 
 
 .name_text{
 	position:absolute;
 	width:90%;
-	height:30px;
-	top:20px;
+	height:50%;
+	top:30%;
 	left:5%;
 	color:black;
 }
 
-#text{
+
+.inn_common{
+		position:absolute;
+		width:33.3%;
+		height:60px;
+		text-align:center;
+		line-height:60px;
+		font-size:30px;	
+   		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    	background-color:white;
+		
+}
+
+.inn_text{
 	
-	position:absolute;
-	width:50%;
-	height:30px;
-	line-height:30px;
-	color:black;
-	
+		position:absolute;
+		width:33.3%;
+		text-align:center;
+		font-size:15px;	
+		color:black;
+		font-weight:bold;
+		font-style: oblique;
+		
+		
+		
+}
+
+
+.innesco_oggetto{
+	left:0%;
+}
+
+.innesco_sensore{
+	left:33.3%;
+}
+
+.innesco_variabile{
+	left:66.6%;
 	
 }
 
-.dropdown{
-	
-	position:absolute;
-	width:50%;
-	height:30px;
-	color:black;
-	
-	
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
