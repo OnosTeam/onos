@@ -200,6 +200,7 @@ def sortZonesByOrderNumber():
   zone_list=[]
   print "zoneDict"
   print zoneDict
+
   for a in range (0,len(zoneDict.keys())):
     for b in zoneDict.keys():
       if (a==zoneDict[b]["order"]) :  # select the next zone by the order number
@@ -1326,66 +1327,54 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 #hardwareModelDict["onosPlug6way"]={"max_pin":12,"hardware_type":"arduino_2009","pin_mode":{"sr_relay":{"socket":[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)]}  }    }
 
+    if "object_list" in  hardwareModelDict[hwType0]:
 
-    try:
-#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]#see globalVar.py
-
-      list_of_different_object_type=hardwareModelDict[hwType0]["object_list"].keys() #get a list of different obj  
-
-
-      for a in list_of_different_object_type: 
+      try:#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]#see globalVar.py
+        list_of_different_object_type=hardwareModelDict[hwType0]["object_list"].keys() #get a list of different obj  
+        for a in list_of_different_object_type: 
  # a will be for example "digital_obj" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3] 
-        objType=a
-        
-        for b in hardwareModelDict[hwType0]["object_list"][a].keys():
+          objType=a  
+          for b in hardwareModelDict[hwType0]["object_list"][a].keys():
 # b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]
 
-          progressive_number=0
+            progressive_number=0
+            print ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
+            print (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
 
-
-          print ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
-          print (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
-
-          for c in hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:
-
+            for c in hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:
 # c will be for example 2 from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]
 
-            object_address_in_the_node=c
+              object_address_in_the_node=c
 
-            new_obj_name=b+"_"+node_sn 
+              new_obj_name=b+"_"+node_sn 
 
+              if len (hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]) >1: #there is more than 1 object with this name
+                new_obj_name=b+str(progressive_number)+"_"+node_sn   
+                progressive_number=progressive_number+1
 
-            if len (hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]) >1: #there is more than 1 object with this name
-              new_obj_name=b+str(progressive_number)+"_"+node_sn   
-              progressive_number=progressive_number+1
-
-            else:
-              new_obj_name=b+"_"+node_sn  
-
-            
-            print ("new object name="+new_obj_name)
-            #print ("object_address_in_the_node:"+str(type(object_address_in_the_node)))
-            nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
-
-            if new_obj_name not in (zoneDict[node_sn]["objects"]):
-              zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
-            else:
-              print "warning000 the object "+new_obj_name+" already exist in the zoneDict " 
+              else:
+                new_obj_name=b+"_"+node_sn  
       
-            if new_obj_name not in  object_dict.keys():  #if the object does not exist yet, create it: 
-              print "added new webobj from node"         
-              object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
-            else:
-              print "warning001  the object "+new_obj_name+" already exist in the object_dict" 
-         
+              print ("new object name="+new_obj_name)
+              #print ("object_address_in_the_node:"+str(type(object_address_in_the_node)))
+              nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
 
+              if new_obj_name not in (zoneDict[node_sn]["objects"]):
+                zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
+              else:
+                print "warning000 the object "+new_obj_name+" already exist in the zoneDict " 
+      
+              if new_obj_name not in  object_dict.keys():  #if the object does not exist yet, create it: 
+                print "added new webobj from node"         
+                object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
+              else:
+                print "warning001  the object "+new_obj_name+" already exist in the object_dict" 
+        print("now the object dict of the node:"+str(object_dict.keys()))
 
-
-
-    except Exception as e:
-      error_message="error createNewWebObjFromNode in the object part"
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+      except Exception as e:
+        error_message="error createNewWebObjFromNode in the object part"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
 
 
 
@@ -1841,8 +1830,8 @@ def updateDir():
 
 
 
-def createNewNode(node_sn,node_address,node_fw):
-  print ("createNewNode executed with :"+node_sn)
+def createNewNode(node_sn,node_address,node_fw,force_recreate=0):
+  print ("0createNewNode() executed with :"+node_sn)
   global uart_router_sn
   msg=""
   if node_address=="001":  #uart_node
@@ -1852,10 +1841,15 @@ def createNewNode(node_sn,node_address,node_fw):
   #hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
   #createNewWebObjFromNode(hwType,node_sn)
 
-  if node_sn in nodeDict.keys():
+  if (node_sn in nodeDict.keys())&(force_recreate==0):
     print ("found node in the dict")
 
     #nodeDict[node_sn].setNodeAddress(node_address)
+    if len(nodeDict[node_sn].getnodeObjectsDict())==0 :
+      print("I force a node update")
+      createNewNode(node_sn,node_address,node_fw,1) 
+      # if the node doesn't have any object it means there is a problem so will force an update
+
     updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #create a new node
@@ -5969,24 +5963,37 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
     #analyze incoming serial message from serial port
 
-    if hardware.serial_communication.uart!=0:
+    try: 
 
-      if hardware.serialCommunicationIsWorking==1:
-        #print str(hardware.serial_communication.uart)
-        if len (hardware.serial_communication.uart.readed_packets_list)>0:
-          print "there is an incoming data on serial port buffer"
-          print hardware.serial_communication.uart.readed_packets_list
+      if hardware.serial_communication.uart!=0:
+
+        if hardware.serialCommunicationIsWorking==1:
+          #print str(hardware.serial_communication.uart)
+          if len (hardware.serial_communication.uart.readed_packets_list)>0:
+            print "there is an incoming data on serial port buffer"
+            print hardware.serial_communication.uart.readed_packets_list
      
-          with lock_serial_input:
-            if len (hardware.serial_communication.uart.readed_packets_list)>20: #if the list became long cut the first 4 elements
-              hardware.serial_communication.uart.readed_packets_list.pop(0)  
-              hardware.serial_communication.uart.readed_packets_list.pop(0) 
-              hardware.serial_communication.uart.readed_packets_list.pop(0)  
-              hardware.serial_communication.uart.readed_packets_list.pop(0)   
+            with lock_serial_input:
+              if len (hardware.serial_communication.uart.readed_packets_list)>20: #if the list became long cut the first 4 elements
+                hardware.serial_communication.uart.readed_packets_list.pop(0)  
+                hardware.serial_communication.uart.readed_packets_list.pop(0) 
+                hardware.serial_communication.uart.readed_packets_list.pop(0)  
+                hardware.serial_communication.uart.readed_packets_list.pop(0)   
 
+        else:
+          hardware.serialCommunicationIsWorking==0
+          print("serial port not working correctly")  
+
+    except Exception as e:
+
+      if enable_usb_serial_port==1:
+        print("serial port not working correctly2")   
+        error_message="error in the analyze of serial port incoming bytes"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+        print(error_message)
       else:
-        hardware.serialCommunicationIsWorking==0
-        print ("serial port not working correctly")  
+        pass
 
 
 
