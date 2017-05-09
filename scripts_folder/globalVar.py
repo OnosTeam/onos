@@ -568,7 +568,7 @@ usersDict.update(online_usersDict) #insert the online users in the local diction
 
 
 
-onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
+onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta1234","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
 
 
 conf_options={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}

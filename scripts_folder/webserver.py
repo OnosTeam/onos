@@ -1439,6 +1439,12 @@ def createNewWebObjFromNode(hwType0,node_sn):
   else:
     print "no hardware of this type in hardwareModelDict"
 
+
+  if node_sn in zoneDict:
+    updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
+
+
+
   return()
 
 
@@ -1739,14 +1745,14 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     return(roomHtml)
 
 
-def updateOneRoom(room):
+def updateOneZone(zone):
   retval = os.getcwd()
-  html_file_location=retval+"/"+baseRoomPath+room+"/index.html"
-  print "updateOneRoom()  executed  with room:"+room+";"
+  html_file_location=retval+"/"+baseRoomPath+zone+"/index.html"
+  print "updateOneZone()  executed  with zone:"+zone+";"
   if os.path.isfile(html_file_location):   #if the directory exist don't create it
-    print room+" exist so i don't create it"
-    fileToWrite=getRoomHtml(room,object_dict,"",zoneDict)
-    file0 = open(baseRoomPath+room+"/index.html", "w")
+    print zone+" exist so i don't create it"
+    fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
+    file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
     file0.close()
     #os.system("chmod 777 "+html_file_location)
@@ -1756,19 +1762,19 @@ def updateOneRoom(room):
 
 
   else:
-    print "i make the directory"+room
-    #os.system("mkdir "+baseRoomPath+room) 
+    print "i make the directory"+zone
+    #os.system("mkdir "+baseRoomPath+zone) 
     #with lock_bash_cmd:
-    #  subprocess.call("mkdir "+baseRoomPath+room, shell=True,close_fds=True) 
+    #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True) 
 
 
     try:
-      os.stat(baseRoomPath+room)
+      os.stat(baseRoomPath+zone)
     except:
-      os.mkdir(baseRoomPath+room)  
+      os.mkdir(baseRoomPath+zone)  
 
-    fileToWrite=getRoomHtml(room,object_dict,"",zoneDict)
-    file0 = open(baseRoomPath+room+"/index.html", "w")
+    fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
+    file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
 
     file0.close()
@@ -1782,7 +1788,7 @@ def updateDir():
   retval = os.getcwd()
   print "updateDir()  executed"
 
-  for zone  in zoneDict.keys() :  #will be call updateOneRoom()   ....onosimprove
+  for zone  in zoneDict.keys() :  #will be call updateOneZone()   ....onosimprove
     
   
     index=retval+"/"+baseRoomPath+zone+"/index.html"
@@ -1830,7 +1836,7 @@ def updateDir():
 
 
 
-def createNewNode(node_sn,node_address,node_fw,force_recreate=0):
+def createNewNode(node_sn,node_address,node_fw):
   print ("0createNewNode() executed with :"+node_sn)
   global uart_router_sn
   msg=""
@@ -1841,13 +1847,13 @@ def createNewNode(node_sn,node_address,node_fw,force_recreate=0):
   #hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
   #createNewWebObjFromNode(hwType,node_sn)
 
-  if (node_sn in nodeDict.keys())&(force_recreate==0):
+  if (node_sn in nodeDict.keys()): #&(force_recreate==0):
     print ("found node in the dict")
 
     #nodeDict[node_sn].setNodeAddress(node_address)
-    if len(nodeDict[node_sn].getnodeObjectsDict())==0 :
-      print("I force a node update")
-      createNewNode(node_sn,node_address,node_fw,1) 
+    #if len(nodeDict[node_sn].getnodeObjectsDict())==0 :
+    #  print("I force a node update")
+    #  createNewNode(node_sn,node_address,node_fw,1) 
       # if the node doesn't have any object it means there is a problem so will force an update
 
     updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
@@ -1882,6 +1888,7 @@ def createNewNode(node_sn,node_address,node_fw,force_recreate=0):
          #   object_dict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
          #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
           zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+          updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
 
 
             #create a new web_object and insert only his name          
@@ -1920,7 +1927,7 @@ def createNewNode(node_sn,node_address,node_fw,force_recreate=0):
           os.chmod(baseRoomPath+node_sn, 0o777)
           print "create a new zone"+node_sn
           #print zoneDict
-          updateOneRoom(node_sn) 
+          updateOneZone(node_sn) 
 
 
     else:
@@ -2434,7 +2441,7 @@ class MyHandler(BaseHTTPRequestHandler):
     def get_RoomObjectList(self,room,objectDictionary):#return the html for the web_objects form present in a room
 
       #room_index=roomList.index(room)
-      #updateOneRoom(room)          if uncommented make the htmlobj double...
+      #updateOneZone(room)          if uncommented make the htmlobj double...
       html_tmp='''<html><head><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/css/zone_object_list_config.css" type="text/css" media="all" /><style> </style><script type="text/javascript" language="javascript">function SelectAll(id){    document.getElementById(id).focus();   document.getElementById(id).select();}</script></head><body><form action="" method="POST"><input type="hidden" name="current_room" value="'''+room+'''"> <table border="1" style="width:100%"><tr class="web_obj_title"> <td>Room web objects , click them to modify:</td><td>Html example to use the web object on a html page</td></tr>'''
       html=''
       if room  in zoneDict.keys() :
@@ -4397,7 +4404,7 @@ class MyHandler(BaseHTTPRequestHandler):
                        #  subprocess.check_output("mv "+baseRoomPath+room+" "+baseRoomPath+new_name, shell=True,close_fds=True) 
                        os.rename(baseRoomPath+room, baseRoomPath+new_name,)
  
-                       updateOneRoom(new_name)
+                       updateOneZone(new_name)
                        
                        print ("mv "+room+" "+new_name) 
                      except Exception as e  :
@@ -4435,7 +4442,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     f.write(getRoomHtml(new_name,object_dict,"",zoneDict))
 
                   os.chmod(baseRoomPath+new_name+"/index.html", 0o777)
-                  updateOneRoom(new_name)       
+                  updateOneZone(new_name)       
                   print "create a new room"+new_name 
                   data_to_update=1
 
@@ -4540,7 +4547,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
               postvars={}
-              updateOneRoom(zone)#to update the zone with the new objects
+              updateOneZone(zone)#to update the zone with the new objects
 
               webpag=self.get_Zone_Objects_Setup(self.path,object_dict,zone)
               try:
@@ -4606,7 +4613,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 
                 if ((string.find(a,"add_obj_to_room")!=-1)&((postvars[a][0]) in object_dict.keys())&(postvars[a][0]not in zoneDict[currentRoom]["objects"]  )):  #add a obj to the room
                   zoneDict[currentRoom]["objects"].append(postvars[a][0])
-                  updateOneRoom(currentRoom)
+                  updateOneZone(currentRoom)
                   #html_to_write=getRoomHtml(currentRoom,object_dict,"",zoneDict)
                   #file0 = open(currentRoom+"/index.html", "w")
                   #file0.write(html_to_write) 
@@ -4627,7 +4634,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 else:
                   print "error obj to remove not found "
                   errorQueue.put("error obj to remove not found " )
-                #updateOneRoom(currentRoom)           
+                #updateOneZone(currentRoom)           
               if data_to_update==1:    #update the html removing the webobj removed by the form 
                 html_to_write=getRoomHtml(currentRoom,object_dict,"",zoneDict)
                # file0 = open(baseRoomPath+currentRoom+"/index.html", "w")
@@ -4650,7 +4657,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 print "error32 in send_header "+" e:"+str(e.args)  
                 errorQueue.put("error32 in send_header "+" e:"+str(e.args) )
               #updateJson()
-              #updateOneRoom(currentRoom)        
+              #updateOneZone(currentRoom)        
               
 
      
@@ -4660,7 +4667,7 @@ class MyHandler(BaseHTTPRequestHandler):
               print "new_html_room="+new_html_room
 
               print "currentroom_modhtm="+currentRoom
-              #updateOneRoom(currentRoom)
+              #updateOneZone(currentRoom)
               html_to_write=modPage(new_html_room,object_dict,currentRoom,zoneDict)
               print "html wrote to the file "+currentRoom+"/index.html="+html_to_write
               print "correction..not wrote because commented part"
@@ -6111,10 +6118,16 @@ def executeQueueFunction(dataExchanged):
         print "object address in the node="+str(a)
         try:
           objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
+          object_dict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
         except: #todo place this somewhere else..
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
-          createNewWebObjFromNode(hwType,node_serial_number)  
-          objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
+          try:
+            createNewWebObjFromNode(hwType,node_serial_number)  
+            objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
+          except Exception as e:
+            error_message="""error in dataExchanged["cmd"]=="updateObjFromNode" """
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
 
         print("objName to upade the value:"+objName) 
         status_to_set=dataExchanged["objects_to_update"][a]

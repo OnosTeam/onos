@@ -646,6 +646,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 declared an object of type digital_obj named caldaia with address in the node equal to 0
                 added support for cfg_obj in the nodes and in the webserver.
                 changed the object query from 1 byte to 2 in order to reach 99 objects in a node.
+                added updateOneZone(node_sn) to createNewWebObjFromNode to fix the bug of the first html zone creation
 
 
 (110, 'Connection timed out');;;
