@@ -1404,7 +1404,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
           progressive_number=0
           for c in list_of_different_webobject_names: 
                      
-            #print c
+            print (c)
             #now i'm inside the last dictionary  
             #c will be for example (0,1)  and then (2) from{"plug":[(0,1)],"plug2":[(2)]}
             #in this example there aren't other webobject names...
@@ -1416,7 +1416,9 @@ def createNewWebObjFromNode(hwType0,node_sn):
             #note_to_myself now probably the sr_relay will not work anymore...
             
             new_obj_name=b+str(i)+"_"+node_sn  #progressive_number
-            progressive_number=progressive_number+1            
+            progressive_number=progressive_number+1   
+            print("new_obj_name:"+new_obj_name)   
+            print("zoneDict:"+str(zoneDict))       
             if new_obj_name not in (zoneDict[node_sn]["objects"]):
               zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
             else:
@@ -1872,10 +1874,7 @@ def createNewNode(node_sn,node_address,node_fw):
         nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
         #nodeDict[node_sn].updateLastNodeSync(time.time())
 
-        updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
-        createNewWebObjFromNode(hwType,node_sn)
-        #nodeDict[node_sn].setNodeAddress(node_address)
-        msg=nodeDict[node_sn].getSetupMsg() 
+
       
 
         #if the room doesn't exist yet ...then:
@@ -1888,27 +1887,17 @@ def createNewNode(node_sn,node_address,node_fw):
          #   object_dict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
          #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
           zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+
+          updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
+          createNewWebObjFromNode(hwType,node_sn)
+          msg=nodeDict[node_sn].getSetupMsg() 
+
           updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
-
-
-            #create a new web_object and insert only his name          
-          #os.system("mkdir "+baseRoomPath+node_sn) 
-          #with lock_bash_cmd:
-          #  subprocess.check_output("mkdir "+baseRoomPath+node_sn, shell=True,close_fds=True)
-
-
-
-
-
-
-
-
 
           try:
             os.stat(baseRoomPath+node_sn)
           except:
             os.mkdir(baseRoomPath+node_sn)  
-
 
           try:
             text_file = open(baseRoomPath+node_sn+"/index.html", "w")
@@ -1917,12 +1906,6 @@ def createNewNode(node_sn,node_address,node_fw):
           except Exception as e: 
             print "error creating new node index file  "+node_sn+" e:"+str(e.args)
             errorQueue.put("error creating new node index file  "+node_sn+" e:"+str(e.args))  
-
-
-          #os.system("cat "+getRoomHtml(node_sn,object_dict,"",zoneDict)+" >> "+baseRoomPath+node_sn+"/index.html")          
-          #os.system("chmod 777 "+baseRoomPath+node_sn)
-          #with lock_bash_cmd:
-          #  subprocess.check_output("chmod 777 "+baseRoomPath+node_sn, shell=True,close_fds=True)
 
           os.chmod(baseRoomPath+node_sn, 0o777)
           print "create a new zone"+node_sn
@@ -5979,6 +5962,12 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           if len (hardware.serial_communication.uart.readed_packets_list)>0:
             print "there is an incoming data on serial port buffer"
             print hardware.serial_communication.uart.readed_packets_list
+
+            if hardware.serial_communication.uart.readed_packets_list[0]=="[S_ertx1_#]":
+              hardware.serial_communication.uart.readed_packets_list.pop(0)  
+
+            elif hardware.serial_communication.uart.readed_packets_list[0]=="[S_nocmd0_#]":
+              hardware.serial_communication.uart.readed_packets_list.pop(0)  
      
             with lock_serial_input:
               if len (hardware.serial_communication.uart.readed_packets_list)>20: #if the list became long cut the first 4 elements
@@ -6108,10 +6097,13 @@ def executeQueueFunction(dataExchanged):
 
     node_serial_number=dataExchanged["nodeSn"]
     node_address=dataExchanged["nodeAddress"]
+    node_fw=dataExchanged["nodeFw"]
+
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
     print str(dataExchanged["objects_to_update"].keys())
     print "end data_exanged"
+
     try:
       #{obj_number_to_update:obj_value}  
       for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update.. 
