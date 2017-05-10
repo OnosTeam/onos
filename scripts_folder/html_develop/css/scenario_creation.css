@@ -35,41 +35,44 @@
 
 .inn_common{
 		position:absolute;
-		width:33.3%;
+		width:30%;
 		height:60px;
 		text-align:center;
 		line-height:60px;
 		font-size:30px;	
-   		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     	background-color:white;
-		
+		border-left: 1px solid black;
+		border-top: 1px solid black;
+		border-right: 1px solid black;
+	
 }
 
 .inn_text{
 	
 		position:absolute;
-		width:33.3%;
+		width:30%;
 		text-align:center;
-		font-size:15px;	
+		font-size:12px;	
 		color:black;
 		font-weight:bold;
 		font-style: oblique;
-		
-		
-		
+		background-color:white;
+		border-left: 1px solid black;
+		border-bottom: 1px solid black;
+		border-right: 1px solid black;		
 }
 
 
 .innesco_oggetto{
-	left:0%;
+	left:1.66%;
 }
 
 .innesco_sensore{
-	left:33.3%;
+	left:34.99%;
 }
 
 .innesco_variabile{
-	left:66.6%;
+	left:68.26%;
 	
 }
 
