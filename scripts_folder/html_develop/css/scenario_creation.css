@@ -78,6 +78,35 @@
 
 
 
+/*ghost part */
+
+.attuatore_ghost{
+	
+	position:relative;
+	width:100%;
+	display:inherit;
+	
+}
+
+
+
+
+
+
+
+.sensore_ghost{
+	
+	position:relative;
+	width:100%;
+	height:60px;
+	display:inherit;
+	
+}
+
+
+
+/*end ghost part*/
+
 
 
 
