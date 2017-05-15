@@ -50,10 +50,9 @@ hardware_labels=hardwareModelDict.keys()
 try:
   hardware=router_handler.RouterHandler(router_hardware,router_sn)
 except Exception as e  :
-  error_message="error in the init of class router_handler"
-  exc_type, exc_obj, exc_tb = sys.exc_info()
-  printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
-  self.serialCommunicationIsWorking=0
+  message="error in the init of class router_handler"
+  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+
 
 
 print "router hardware selected is"+router_hardware_type
@@ -113,7 +112,7 @@ def readDictionaryFromSavedFile(key):
 
  
   """
-  print "readDictionaryFromSavedFile() executed to read: "+str(key)
+  logprint("readDictionaryFromSavedFile() executed to read: "+str(key) )
   try:
     json_file = codecs.open(base_cfg_path+"config_files/data.json",'r',"utf8")
     readed_data = json_file.read()
@@ -121,9 +120,8 @@ def readDictionaryFromSavedFile(key):
     readed_dict=json.loads(readed_data)
     value=readed_dict[key]
   except Exception, e: 
-    print "error in readDictionaryFromSavedFile with key: "+str(key)+" e:"+str(e.args)
-    errorQueue.put( "error in readDictionaryFromSavedFile with key: "+str(key)+" e:"+str(e.args)) 
-    print "can't import data.json file , i will load the recovery one "
+    message="error in readDictionaryFromSavedFile with key:"+str(key)+", can't import data.json, I will load the recovery"
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
     readed_data=recoverydata_json  # is in globalVar.py
     readed_dict=json.loads(readed_data)
     value=readed_dict[key]
@@ -141,7 +139,7 @@ def readConfigurationsFromSavedFile(key):
  
   """
 
-  print "readConfigurationsFromSavedFile() executed to read: "+str(key)
+  logprint("readConfigurationsFromSavedFile() executed to read: "+str(key))
   try:
     cfg_json_file = codecs.open(base_cfg_path+"config_files/cfg.json",'r',"utf8")
     cfg_readed_data = cfg_json_file.read()
@@ -149,9 +147,8 @@ def readConfigurationsFromSavedFile(key):
     data=json.loads(cfg_readed_data)
     value=data[key] 
   except Exception, e: 
-    print "error in readConfigurationsFromSavedFile with key: "+str(key)+" e:"+str(e.args)
-    errorQueue.put( "error in readConfigurationsFromSavedFile with key: "+str(key)+" e:"+str(e.args))  
-    print "can't import cfg.json file , i will load the recovery one "
+    message="error in readConfigurationsFromSavedFile with key:"+str(key)+", can't import cfg.json , I will load the recovery one "
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
     cfg_readed_data=recoverycfg_json # is in globalVar.py
     data=json.loads(cfg_readed_data)
     value=data[key]

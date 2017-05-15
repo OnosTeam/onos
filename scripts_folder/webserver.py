@@ -64,8 +64,7 @@ try:
       onos_automatic_javascript=in_file
 
 except Exception as e :
-  print "error i can't find refreshPage.html,    e:"+str(e.args)
-  errorQueue.put("error i can't find refreshPage.html,    e:"+str(e.args))
+  logprint("error I can't find refreshPage.html")
   onos_automatic_javascript="error_loading refreshPage.html"
 
 #in_file=open("refreshPage.html","r")     #get the javascript code to reload the webpages
@@ -187,25 +186,24 @@ def compareText(a,b): #return true if a==b
     ret=1
   except:
     ret=-1  
-    print "error cant decode ",a
-    print "or"
-    print "cant decode ",b
+    logprint( "error can't decode:"+str(a)+" or cant decode:"+str(b))
+
 
    
   return (ret)
 
 
 def sortZonesByOrderNumber():
-  print "sortZonesByOrderNumber() executed"
+  logprint ("sortZonesByOrderNumber() executed")
   zone_list=[]
-  print "zoneDict"
-  print zoneDict
+  logprint("zoneDict:"+str(zoneDict))
+ 
 
   for a in range (0,len(zoneDict.keys())):
     for b in zoneDict.keys():
       if (a==zoneDict[b]["order"]) :  # select the next zone by the order number
         zone_list.append(b)
-  print "list returned:",zone_list
+  logprint ("list returned:"+str(zone_list) )
   return(zone_list)
    
 
@@ -241,7 +239,7 @@ def transform_object_to_dict_to_backup(object_dictionary):
 
 def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
 
-  print "updateJson executed"
+  logprint("updateJson executed")
 
 #json doesn't support saving objects  ..so i save all the variables of each objects
 #to get back the pin of the object you have to write:
@@ -254,8 +252,10 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
     try: 
       sn=nodeDictionary[a].getNodeSerialNumber() 
       node_tmp_Dict[sn]={u"node_serial_number":sn,u"hwModelName":nodeDictionary[a].getNodeHwModel(),u"nodeAddress":nodeDictionary[a].getNodeAddress(),u"nodeObjectsDict":nodeDictionary[a].getnodeObjectsDict()}
-    except:
-      print "error in updateJson, with node:"+str(a)
+    except Exception as e  :
+      message="error in updateJson, with node:"+str(a)
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
     # note that the i/o modes for the node pins will be saved in the relative webobjects .
     # the pins not used by a webobject will be configured as output and cleared to 0 
         
@@ -286,11 +286,8 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
     os.chmod(base_cfg_path+"config_files/cfg.json", 0o777)
 
   except Exception as e :
-    print "error in updateJson()"+" e:"+str(e.args)
-    errorQueue.put("error in updateJson()"+" e:"+str(e.args)) 
-
-
-
+    message="error in updateJson()"+" e:"+str(e.args)
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -322,18 +319,17 @@ def updateNodeAddress(node_sn0,uart_router_sn,address,object_dictionary,nodeDict
         nodeDict[uart_router_sn].updateLastNodeSync(time.time())  #I update also the uart_router last time sync since it is him that sent the remote node message
 
     if (nodeDict[node_sn0].getNodeAddress())!=address:
-      print "node "+node_sn0+" address changed to "+address
+      logprint("node "+node_sn0+" address changed to "+address)
       nodeDict[node_sn0].setNodeAddress(address)
       updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
 
       
     else:
-      print "the node has still the same ip"
+      logprint("the node has still the same ip")
 
   except Exception as e  :
-    error_message="error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address
-    exc_type, exc_obj, exc_tb = sys.exc_info()
-    printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+    message="error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
   return()
@@ -346,8 +342,9 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
   | Used only for the radio nodes since the ethernet nodes 
   """
 
-  print "getNextFreeAddress executed"
-  print next_node_free_address_list
+  logprint("getNextFreeAddress executed with"+str(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary))
+
+  #logprint(next_node_free_address_list) 
   if node_sn0 in nodeDict:  #if the node has already an address..reuse it
     address=nodeDict[node_sn0].getNodeAddress()
     if (address!="254" ): 
@@ -358,7 +355,7 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
     if number not in next_node_free_address_list:# if the address is not used then assign it
      # next_node_free_address_list.append(number)
      # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
-      print "i found a free address "+str(number)+"for the node with sn:"+node_sn0
+      logprint("I found a free address "+str(number)+"for the node with sn:"+node_sn0)
       #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
       str_address=str(number)
       while (len(str_address)<3):
@@ -370,16 +367,11 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
     if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
         #updateNodeAddress(node_sn0,address) 
       updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
-      print( "I had finished all the free addresses so I recycled a not used one") 
-      errorQueue.put( "I had finished all the free addresses so I recycled a not used one") 
+      logprint( "I had finished all the free addresses so I recycled a not used one",verbose=5) 
       return(address)
 
-    print "I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one"
-    errorQueue.put( "I had finished all the free addresses i'm sorry but you have to disconnect one node to connect another one")  
+    logprint("I had finished all the free addresses I'm sorry but you have to disconnect one node to connect another one",verbose=10)
     return("254")
-
-
-
 
 
 
@@ -398,7 +390,7 @@ def changeWebObjectType(objName,typeToSet):#
 
   """
 
-  print "executed changeWebObjectType() with :"+objName
+  logprint("executed changeWebObjectType() with :"+objName)
   if objName in object_dict.keys(): #if the web object exist
     object_dict[objName].setType(typeToSet)
     pinList=object_dict[objName].getAttachedPinList()
@@ -411,8 +403,7 @@ def changeWebObjectType(objName,typeToSet):#
       node_address=nodeDict[SerialNumber].getNodeAddress()
       if (obj_type=="sr_relay"):
         if len (pins_to_set)!=2:
-          print "error , number of pins different from 2 for sr_relay type "
-          errorQueue.put("error , number of pins different from 2 for sr_relay type ")
+          logprint("error , number of pins different from 2 for sr_relay type ",verbose=7)
           return(-1)   
 
         hardware.setHwPinMode(node_address,pins_to_set[0],"DOUTPUT")
@@ -423,8 +414,7 @@ def changeWebObjectType(objName,typeToSet):#
         return(1)
 
       if len (pins_to_set)!=1:   # under this i put every object with one single hardware pin 
-          print "error , number of pins different from 1 for this obj type "
-          errorQueue.put("error , number of pins different from 1 for this obj type  ")
+          logprint("error , number of pins different from 1 for this obj type ",verbose=7)
           return(-1)   
 
       if ((typeToSet=="b")|(typeToSet=="sb")):
@@ -446,7 +436,7 @@ def changeWebObjectType(objName,typeToSet):#
 
 
   else:
-    print "the webobject:"+objName+" doesn't exist"
+    logprint("the webobject:"+objName+" doesn't exist",verbose=7)
 
   return()
 
@@ -460,22 +450,22 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
     try:
       objname=re.search(r"#_.+?_#",scenario_functions).group(0)[2:-2]
     except Exception as e :
-      print "no objects found in the scenario_functions or scenario_functions fully analyzed "+" e:"+str(e.args)
+      message="no objects found in the scenario_functions or scenario_functions fully analyzed" 
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
       #errorQueue.put("no objects found in the scenario_functions or scenario_functions fully analyzed "+" e:"+str(e.args)) 
       break
         #errorQueue.put("error00 in the scenario operation search ,scenario_functions: "+scenario_functions)
 
     if objname is None:
-      print ("error002 in the scenario operation search ,nonetype "+scenario_functions)
-      errorQueue.put("error002 in the scenario operation search ,nonetype "+scenario_functions)
+      logprint ("error002 in the scenario operation search ,nonetype "+scenario_functions,verbose=9)
       return(-1)
  
     try:
       scenario_functions=scenario_functions.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))      
     except Exception as e :
-      print "error01 the webobject does not exist in the dict, i close the scenario check,objname: "+objname+" e:"+str(e.args)
+      message="error01 the webobject does not exist in the dict, i close the scenario check,objname: "
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
-      errorQueue.put("error01 the webobject does not exist in the dict, i close the scenario check ,objname: "+objname+" e:"+str(e.args))
 
       return(-1)
  # now all the obj value are replaced
@@ -483,11 +473,10 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
   try:# replace all the #p_webobjectname_# with the previous webobject status value
     scenario_functions=re.sub(r'#p_.+?_#',lambda x: str( object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_functions)
   except Exception as e :
-    print "error1 the webobject does not exist in the dict, i close the scenario check"+" e:"+str(e.args)
-    errorQueue.put("error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_functions+",scenario_name"+scenario_name+" e:"+str(e.args))
-
+    message="error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_functions+",scenario_name"+scenario_name
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()) )
     return(-1)
-  print "scenario_functions replaced:",scenario_functions
+  logprint("scenario_functions replaced:"+str(scenario_functions) )
   return(scenario_functions)
 
 
@@ -513,14 +502,14 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
         objname_prev=re.search(r"#p_.+?_#",scenario_conditions).group(0)[3:-2]
       except:         #no previus object status found , serch terminated
         objname_prev=""
-        print "no objects found in the scenario_conditions or scenario_conditions fully analyzed "+" e:"+str(e.args)
+        message="no objects found in the scenario_conditions or scenario_conditions fully analyzed"
+        logprint(message,verbose=2,error_tuple=(e,sys.exc_info()) )
         break
         #errorQueue.put("error00 in the scenario operation search ,scenario_conditions: "+scenario_conditions)
 
 
     if objname is None:
-      print ("error002 in the scenario operation search ,nonetype "+scenario_conditions)
-      errorQueue.put("error002 in the scenario operation search ,nonetype "+scenario_conditions)
+      logprint ("error003 in the scenario operation search ,nonetype "+scenario_conditions,verbose=9)
       return(-1)
  
     try:
@@ -532,30 +521,28 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
 
 
     except Exception as e :
-      print "error01 the webobject does not exist in the dict, i close the scenario check,objname: "+objname+" e:"+str(e.args)
-
-      errorQueue.put("error01 the webobject does not exist in the dict, i close the scenario check ,objname: "+objname+" e:"+str(e.args))
-
+      message="error01 the webobject does not exist in the dict, I close the scenario check,objname: "+objname+" e:"+str(e.args)
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
       return(-1)
  # now all the obj value are replaced
 
   try:# replace all the #p_webobjectname_# with the previous webobject status value
     scenario_conditions=re.sub(r'#p_.+?_#',lambda x: str( object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_conditions)
   except Exception as e :
-    print "error1 the webobject does not exist in the dict, i close the scenario check"+" e:"+str(e.args)
-    errorQueue.put("error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_conditions+",scenario_name"+scenario_name+" e:"+str(e.args))
+    message="error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_conditions+",scenario_name"+scenario_name
+    logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
     return(-1)
-  print "scenario_conditions replaced:",scenario_conditions
+  logprint("scenario_conditions replaced:"+str(scenario_conditions) )
   return([scenario_conditions,obj_list])
 
 
 
 
 def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scenario passed
-  print "checkwebObjectScenarios() executed"
+  logprint("checkwebObjectScenarios() executed")
   if conf_options["scenarios_enable"]==0 :
-    print "scenario disabled"
+    logprint("scenario disabled")
     return()
 
 
@@ -563,8 +550,8 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
   try:
     scenario_to_check=scenarioDict[scenario_name]#get the scenario from the dictionary
   except KeyError:
-    print "error scenarioname:"+scenario_name+" not found in the dict"
-    errorQueue.put(" error scenarioname:"+scenario_name+" not found in the dict")
+    message="error scenarioname:"+scenario_name+" not found in the dict"
+    logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
     return()
 
 #scenario dictionary structure:
@@ -583,7 +570,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     scenario_enabled=1
 
   if scenario_enabled!=1:# if the scenario is disabled  exit
-    print "scenario:"+scenario_name+" is disabled"
+    logprint("scenario:"+scenario_name+" is disabled")
     return()
 
 #  try:   #if the reference exist
@@ -610,33 +597,32 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     scenario_conditions=scenario_to_check["conditions"]
 
   except KeyError:#set the value to default
-    print "error conditions not in scenario dictionary"
-    errorQueue.put("error conditions not in scenario dictionary")
+    logprint("error conditions not in scenario dictionary",verbose=6)
     scenario_conditions="0"
 
   if len(scenario_conditions)<1:
     scenario_conditions="0"
-    print "error scenario conditions of "+scenario_name+"are a void string"
-    errorQueue.put("error scenario conditions of  "+scenario_name+"  are a void string")
+    logprint("error scenario conditions of "+scenario_name+"are a void string",verbose=6)
 
 
-  print "scenario scenario_conditions : ",scenario_conditions 
+
+  logprint("scenario scenario_conditions : "+str(scenario_conditions) ) 
   if (scenario_conditions!="0")and(scenario_conditions!="1"):
     scenario_conditions=replace_conditions(scenario_conditions,scenario_name)[0]
   if scenario_conditions==-1:
     return(-1)
   
-  print "scenario conditions after replace : ",scenario_conditions
+  logprint("scenario conditions after replace : "+str(scenario_conditions) )
   cond=0  #if the conditions are a void string ..
   try:
     cond=eval(scenario_conditions)
   except Exception as e :
-    print "error in eval("+scenario_name+"), scenario_conditions="+str(scenario_conditions)+" e:"+str(e.args)
-    errorQueue.put("error in eval("+scenario_name+"), scenario_conditions="+str(scenario_conditions)+" e:"+str(e.args))
+    message="error in eval("+scenario_name+"), scenario_conditions="+str(scenario_conditions)
+    logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
   if (cond==1):  #the condition are true , onos will execute the operations
 
-    print "scenario conditions are true"
+    logprint("scenario conditions are true")
 
 #    try:# replace all #_webobjectname_# with the webobjectname status value
 #      scenario_math=re.sub(r'#_.+?_#',lambda x: str(object_dict[x.group(0)[2:-2]].getStatus()),scenario_math)
@@ -670,10 +656,8 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     try:
       scenario_functions_to_run=scenario_to_check["functionsToRun"]
     except Exception as e :
-      print "scenario_functions_to_run of "+scenario_name+ " scenario is empty"+" e:"+str(e.args)
-
-      errorQueue.put("scenario_functions_to_run of "+scenario_name+ " scenario is empty"+" e:"+str(e.args))
-
+      message="scenario_functions_to_run of "+scenario_name+ " scenario is empty"
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
       scenario_functions_to_run=[]
 
     #if "afterDelayFunctionsToRun" in scenario_to_check.keys():  #if the reference exist
@@ -708,20 +692,19 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         try:
           objname=re.search(r"#_.+?_#",f).group(0)[2:-2]
         except:
-          print "no objects found in the function_to_run  or function_to_run fully analyzed "
+          logprint("no objects found in the function_to_run  or function_to_run fully analyzed ")
           break
           #errorQueue.put("error00 in the scenario operation search ,scenario_conditions: "+scenario_conditions)
 
         if objname is None:
-          print "error003 in the scenario operation search ,nonetype "+f
-          errorQueue.put("error003 in the scenario operation search ,nonetype "+f)
+          logprint("error003 in the scenario operation search ,nonetype "+f,verbose=7)
           break
  
         try:
           f=f.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))      
         except Exception as e :
-          print "error003 the webobject does not exist in the dict, i close the scenario check of:"+scenario_name+",objname: "+objname+" e:"+str(e.args)
-          errorQueue.put("error003 the webobject does not exist in the dict, i close the scenario check of:"+scenario_name+",objname: "+objname+" e:"+str(e.args))
+          message="error003 the webobject does not exist in the dict, i close the scenario check of:"+scenario_name+",objname: "+objname
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
           return()
  # now all the obj value are replaced
 
@@ -737,16 +720,15 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
       try:# replcace all the #p_webobjectname_# with the previous webobject status value
         f=re.sub(r'#p_.+?_#',lambda x: str(object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),f)
       except Exception as e :
-        print "error2 the webobject does not exist in the dict, i close the scenario function to run check"+" e:"+str(e.args)
-        errorQueue.put(" error2 the webobject does not exist in the dict, i close the scenario function to run check"+" e:"+str(e.args))
-
+        message="error2 the webobject does not exist in the dict, i close the scenario function to run check"+" e:"+str(e.args)
+        logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
         return()
       
       executionList.append(f_before_equal_sign+"="+f)
 
    # if (scenario_set_type=="condition_to_set_status") :  # scenario_set_type  is  condition_to_set_status
       #execute the  executionList
-    print "conditions verified and true, i execute the executionList "
+    logprint("conditions verified and true, i execute the executionList ")
        
     statusToSet="void"
     try: 
@@ -759,19 +741,19 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
           obj_to_change=op.split("=" )[0]
           str_status=op.split("=" )[1]
         except Exception as e :
-          print ("error in the split of op in executionList ,op="+op+"obj_to_change:"+obj_to_change+",str_status:"+str_status+" e:"+str(e.args))
+          message="error in the split of op in executionList ,op="+op+"obj_to_change:"+obj_to_change+",str_status:"+str_status
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
-          errorQueue.put("error in the split of op in executionList ,op="+op+"obj_to_change:"+obj_to_change+",str_status:"+str_status+" e:"+str(e.args))
-
+  
         
         try:
           statusToSet= str(eval(str_status))
 
         except Exception as e :  #happens if statusToSet=  inactive or  onoswait
           statusToSet=str_status
-          print "error in the eval of for op in executionList :str_status="+str(str_status)+",op="+op+" e:"+str(e.args)
+          message="error in the eval of for op in executionList :str_status="+str(str_status)+",op="+op+" e:"+str(e.args)
+          logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
-          errorQueue.put("error in the eval of for op in executionList :str_status="+str(str_status)+",op="+op+" e:"+str(e.args))
 
 
         if (statusToSet==True)or(statusToSet=="True"):
@@ -783,23 +765,22 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         if (object_dict[obj_to_change].validateStatusToSetObj(statusToSet)==1):  #the status to set is valid for the object
 
           if obj_to_change in object_dict:
-            print "scenario act to change the weboject: ",obj_to_change
+            logprint("scenario act to change the weboject: "+str(obj_to_change) )
             layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":obj_to_change,"status_to_set":statusToSet,"write_to_hw":1,"user":"scenario","priority":scenario_priority,"mail_report_list":[]})
         else:
-          print "error in scenario op,statusToSet is :"+statusToSet 
-          errorQueue.put("error in scenario op,statusToSet is :"+statusToSet )
+          logprint("error in scenario op,statusToSet is :"+statusToSet,verbose=8 )
+
 
 
     except Exception as e :
-      print "error in the scenario for loop (for op in executionList) "+" e:"+str(e.args)
-
-      errorQueue.put("error in the scenario for loop (for op in executionList) "+" e:"+str(e.args))
+      message="error in the scenario for loop (for op in executionList) "
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
 
 
 
     if delayTime>0:
-      print "create a new scenario...banana"
+      logprint("create a new scenario...banana")
 
       currentDayTime=object_dict["dayTime"].getStatusForScenario()
   
@@ -815,8 +796,8 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
           c=c+1
 
   
-      print "created delay scenario named:"+new_scenario_name+"with conditions:dayTime=="+selectedMinutes
-      print "now real time is "+str((datetime.datetime.today().minute+(datetime.datetime.today().hour)*60 ))+" obj time is"+str(currentDayTime)
+      logprint("created delay scenario named:"+new_scenario_name+"with conditions:dayTime=="+selectedMinutes)
+      logprint("now real time is "+str((datetime.datetime.today().minute+(datetime.datetime.today().hour)*60 ))+" obj time is"+str(currentDayTime) )
          
       scenarioDict[new_scenario_name]={"enabled":1,"type_after_run":"autodelete","conditions":"#_dayTime_#=="+selectedMinutes,"functionsToRun":afterDelayFunctionsToRun,"afterDelayFunctionsToRun":[],"delayTime":0,"priority":scenario_priority}
       object_dict["dayTime"].attachScenario(new_scenario_name)
@@ -827,12 +808,12 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         object_dict[a].removeAttachedScenario(scenario_name) 
    
     if type_after_run=="one_time_shot":
-      print "i disable the one_time_shot :"+scenario_name
+      logprint("iI disable the one_time_shot :"+scenario_name)
       scenarioDict[scenario_name]["enabled"]=0    
 
 
   else: # #the condition are false 
-    print "the scenarios  condition are false"
+   logprint("the scenarios  condition are false")
 
 
 
@@ -841,7 +822,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
 
 
 
-  print "end of checkwebObjectScenarios"
+  #print "end of checkwebObjectScenarios"
   return()     
 
   
@@ -855,7 +836,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
 
 
 def compose_error_mail(error_type,objName=""):
-  print "compose_error_mail executed"
+  logprint("compose_error_mail executed")
   mailtext=""
   if error_type=="so_priority":
     obj_previous_status=object_dict[objName].getStatus()
@@ -896,11 +877,11 @@ def compose_error_mail(error_type,objName=""):
 
 def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",priority=0,mail_report_list=[]):#change a webobj status and its relative pin in the hardware_node class.
 
-  print  "changeWebObjectStatus executed with obj="+objName
+  logprint("changeWebObjectStatus executed with obj="+objName)
 
   if objName not in object_dict.keys(): #if the web object does not exist exit
-    print "error the webobject does NOT exist in the dictionary object_dict "
-    errorQueue.put(" error the webobject does NOT exist in the dictionary object_dict")
+    logprint("error the webobject does NOT exist in the dictionary object_dict ",verbose=9)
+
     return(-1)
 
   obj_previous_status=object_dict[objName].getStatus()
@@ -912,8 +893,8 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 #    errorQueue.put("the webobject "+objName+" has already the status value you want to set ")
 #    return(1)
 
-  print "write_to_hardware="+str(write_to_hardware)
-  print "attached pin0 ="+str(object_dict[objName].getAttachedPinList())+";"    
+  logprint("write_to_hardware="+str(write_to_hardware) )
+  #print "attached pin0 ="+str(object_dict[objName].getAttachedPinList())+";"    
   global nodeDict 
 
 
@@ -926,7 +907,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
   #print "2222222222222222222222222222222222222222222222222222222222222",mail_report_list
 
   if object_dict[objName].checkRequiredPriority(priority)==1:   #check priority 
-    print "priority ok"
+    logprint("priority ok")
   else:
 
     #obj_previous_status=object_dict[objName].getStatus()
@@ -936,14 +917,13 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
       mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
 
-    print "error ,required priority is "+str(object_dict[objName].required_priority())
-    errorQueue.put("error  priority not sufficent to change"+objName+" ,required priority is "+str(object_dict[objName].required_priority()) ) 
-
+    logprint("error ,required priority is "+str(object_dict[objName].required_priority()),verbose=10)
+ 
 
     return(-1)
 
   if object_dict[objName].checkPermissions(user,"x",priority):   #check permission  
-    print "permission ok, i set the obj"
+    logprint("permission ok, i set the obj")
   else:
     #obj_previous_status=object_dict[objName].getStatus()
     mailText=compose_error_mail("so_permissions",objName)
@@ -952,8 +932,8 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
       mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
 
-    print "error Permissions not sufficent to change"+objName+",required required permission is "+str(object_dict[objName].getPermissions())
-    errorQueue.put("error Permissions not sufficent to change"+objName+",required permission is "+str(object_dict[objName].getPermissions())) 
+    logprint("error Permissions not sufficent to change"+objName+",required required permission is "+str(object_dict[objName].getPermissions()),verbose=10 )
+
     return(-1)
 
 
@@ -966,7 +946,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
   if ( object_dict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
 
-    print "no pin attached to this webobject , i change its status"
+    logprint("no pin attached to this webobject , I change its status")
     if object_dict[objName].getType() not in ["digital_obj","analog_obj","cfg_obj"]:
       write_to_hardware=0
 
@@ -976,12 +956,12 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
   if (write_to_hardware==0):
 
-    print "i change the webobject status"
+    logprint("i change the webobject status")
 
 
     if object_dict[objName].getStatus()=="onoswait":
       if user=="onos_node":
-        print ("I will not set the status because the change is from a node")
+        logprint("I will not set the status because the change is from a node")
         return(-1)
 
 
@@ -991,7 +971,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
     
 
     if len(mail_report_list)>0:
-      print "mail_report,"+objName+" changed to "+str(statusToSet)
+      logprint("mail_report,"+objName+" changed to "+str(statusToSet) )
 
       mailText="onos_report_message,"+objName+",changed to:"+str(statusToSet)
       mailSubject="onos_report_about"+objName
@@ -1002,9 +982,9 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     scenarios_list=[]
     scenarios_list=object_dict[objName].getListAttachedScenarios()  #get the list of scenarios where there is a reference to this webobject
-    print "scenarios_list:",scenarios_list
+    logprint("scenarios_list:"+str(scenarios_list) )
     for tmp_scenario in scenarios_list:
-      print "scenario name:"+tmp_scenario
+      logprint("scenario name:"+tmp_scenario)
       #banana to add to queue
       layerExchangeDataQueue.put( {"cmd":"scen_check","scenarioName":tmp_scenario})
       #checkwebObjectScenarios(tmp_scenario)
@@ -1021,14 +1001,14 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
  #if write_to_hardware==1 then
 
 
-  print "write_to_hardware="+str(write_to_hardware)
+  logprint("write_to_hardware="+str(write_to_hardware) )
   try:# objName in object_dict.keys(): #if the web object exist    banana to remove
-    print "the web object:"+objName+" exist in the dict"
+    logprint("the web object:"+objName+" exist in the dict")
 
     nodeSerialNumber=object_dict[objName].getHwNodeSerialNumber()
     if  nodeDict[nodeSerialNumber].getNodeActivity()==0:
-      print "the web_object"+objName+" belongs to a disconnected node, i will not set it"
-      errorQueue.put("the web_object"+objName+" belongs to a disconnected node, i will not set it")
+      message="the web_object"+objName+" belongs to a disconnected node, i will not set it"
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))  
       return(-1)
 
     
@@ -1040,8 +1020,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
     if (object_dict[objName].validateStatusToSetObj(statusToSet)<1):
-      print "error the state"+str(statusToSet)+"is not valid for the obj:"+objName
-      errorQueue.put("error the state"+str(statusToSet)+"is not valid for the obj:"+objName)
+      logprint("error the state"+str(statusToSet)+"is not valid for the obj:"+objName,verbose=10)
       return(-1)  
 
     statusToSet=int(statusToSet)  #int nit float otherwise there will be errors
@@ -1056,27 +1035,24 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
     
 
     #if True:  # to remove..
-    print "there are one or more pins attached to this webobject"
+    logprint("there are one or more pins attached to this webobject")
     object_dict[objName].setStatus("onoswait")#set the wait status
     pins_to_set=object_dict[objName].getAttachedPinList()
     #single_pin=pins_to_set[0]
     #nodeSerialNumber=object_dict[objName].getHwNodeSerialNumber()
-    print "obj node="+str(nodeSerialNumber)
     #print nodeDict[nodeSerialNumber].getNodeName()
-    print "pins_to_set=",pins_to_set
-
-    print "status_to_set=",statusToSet
+    logprint("obj node="+str(nodeSerialNumber)+"pins_to_set="+str(pins_to_set) +str(statusToSet) )
 
 
     obj_type=object_dict[objName].getType()
 
-    print "obj_name="+objName
-    print "obj_type="+obj_type
+    logprint("obj_name="+objName)
+    logprint("obj_type="+obj_type)
       #nodeAddress=nodeDict[nodeSerialNumber].getNodeAddress()
     if (obj_type=="sr_relay"):
       if len (pins_to_set)!=2:
-        print "error , number of pins different from 2 for sr_relay type "
-        errorQueue.put(" error , number of pins different from 2 for sr_relay type")
+        message="error , number of pins different from 2 for sr_relay type "
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
         return(-1)      
 
       
@@ -1089,13 +1065,10 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         try:
           hardware.outputWrite(nodeSerialNumber,pins_to_set,[1,0],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
-        except Exception as e:
-          exc_type, exc_obj, exc_tb = sys.exc_info()
-          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-          print(exc_type, fname, exc_tb.tb_lineno)   
-          errorQueue.put("error in the outputWrite e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
-          print str(e.args)
-          time.sleep(2)
+        except Exception as e:   
+          message="error in the outputWrite"
+          logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+          
 # note that  hardware=router_handler.RouterHandler(router_hardware,router_sn)   in conf.py
           # put to rest the relay coil (the relay will continue to been mechanical activated)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],0)
@@ -1107,25 +1080,22 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
           hardware.outputWrite(nodeSerialNumber,pins_to_set,[0,1],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
         except Exception as e:
-          exc_type, exc_obj, exc_tb = sys.exc_info()
-          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-          print(exc_type, fname, exc_tb.tb_lineno)   
-          print str(e.args)
-          errorQueue.put("error in the outputWrite2 e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
-          time.sleep(2)  
+          message="error in the outputWrite2"
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
+
              
           # put to rest the relay coil (the relay will continue to been mechanical activated)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],0)
         #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[1],0)
 
     if (obj_type=="analog_output"):
-      print "analog output still to develop"  #banana to implement
+      logprint("analog output still to develop")  #banana to implement
       hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
       return(1)
 
 
     if (obj_type=="servo_output"):
-      print "servo_output still to develop"  #banana to implement
+      logprint("servo_output still to develop")  #banana to implement
       hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
 
       return(1)
@@ -1135,14 +1105,14 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
      # status_list=[statusToSet] 
       #while len(pins_to_set)!=len(status_list): #to make the same len...to bypass check in routerhandler..
       #  status_list.append(statusToSet)
-      print "pins_to_set_digital_obj:"+str(pins_to_set)
-      print "len pins_to_set="+str(len(pins_to_set))
-      print "statusToSet_digital_obj:"+str(statusToSet)
-      print "nodeSerialNumber_digital_obj:"+str(nodeSerialNumber) 
-      print "nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber])
-      print "obj_type_digital_obj:"+str(obj_type) 
+      logprint("pins_to_set_digital_obj:"+str(pins_to_set) )
+      logprint("len pins_to_set="+str(len(pins_to_set)) )
+      logprint("statusToSet_digital_obj:"+str(statusToSet) )
+      logprint("nodeSerialNumber_digital_obj:"+str(nodeSerialNumber) ) 
+      logprint("nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber]) )
+      logprint("obj_type_digital_obj:"+str(obj_type) )
     
-      print (str((nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)))
+      logprint (str((nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)))
 
 
       hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
@@ -1150,8 +1120,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     if ((obj_type=="b")|(obj_type=="sb")|(obj_type=="digital_output")): #banana to check and leave only digital_output
       if (len (pins_to_set))!=1:
-        print "error , number of pins different from 1 for button type "
-        errorQueue.put("error , number of pins different from 1 for button type , doutput section  ")
+        logprint("error , number of pins different from 1 for button type ",verbose=10)
         return(-1)      
       #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],statusToSet)
         #if (write_to_hardware==1): #only if you tell to write to hardware
@@ -1161,8 +1130,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     if (obj_type=="d_sensor")|(obj_type=="digital_input"): #banana to check and leave only digital_input
       if (len (pins_to_set))!=1:
-        print "error , number of pins different from 1 for d_sensor type "
-        errorQueue.put("error , number of pins different from 1 for d_sensor type  dread section ")
+        logprint("error , number of pins different from 1 for d_sensor type ",verbose=10)
         return(-1)  
       #nodeDict[nodeSerialNumber].setDigitalPinInputStatus(pins_to_set[0],statusToSet)
       #if (write_to_hardware==1): #only if you tell to write to hardware
@@ -1172,18 +1140,15 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
     else:
-      print("error in changeWebObjectStatus(),the out_type"+obj_type+" is not yet implemented") 
+      logprint("error in changeWebObjectStatus(),the out_type"+obj_type+" is not yet implemented",verebose=10) 
 
 
 
 
 
   except Exception as e  : # the webobject does not exist
-    exc_type, exc_obj, exc_tb = sys.exc_info()
-    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    print(exc_type, fname, exc_tb.tb_lineno)
-    print "the webobject:"+objName+" doesn't exist,or others error happened"+" e:"+str(e.args)
-    errorQueue.put("the webobject:"+objName+" doesn't exist,or others error happened"+" e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))
+    message="the webobject:"+objName+" doesn't exist,or others error happened"
+    logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
     return(-1)
 
   return(1)
@@ -1202,18 +1167,18 @@ def NodePinToWebObject(node_sn,pin_number,pin_status):#change the webobject stat
  
 
           if (object_dict[a].validateStatusToSetObj(pin_status)<1):
-            print "error NodePinToWebObject the state"+str(pin_status)+"is not valid for the obj:"+a
-            errorQueue.put("error NodePinToWebObject the state"+str(pin_status)+"is not valid for the obj:"+a)
+            logprint("error NodePinToWebObject the state"+str(pin_status)+"is not valid for the obj:"+a,verbose=10)
+
           else:#the status is legit with the webobj type
             objName=object_dict[a].getName()                      
             #changeWebObjectStatus(objName,int (pin_status),write_hw_enable) #banana add to queue
             layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str (pin_status),"write_to_hw":write_hw_enable,"user":"onos_node","priority":99,"mail_report_list":[]})
 
-            print "pin changed from external node"                        
+            logprint("pin changed from external node")                      
 
         else:
-          print "error number of pin in the NodePinToWebObject section"
-          errorQueue.put("error number of pin in the NodePinToWebObject section" )  
+          logprint("error number of pin in the NodePinToWebObject section",verbose=10)
+
           
   return()
 
@@ -1227,7 +1192,7 @@ def setWebObjectDigitalStatusFromReg(node_sn_tmp,section_number,status_byte):
       status=pinToWrite[pin]
       NodePinToWebObject(node_sn_tmp,pin,status)
   else:
-    print "void register"
+    logprint("void register")
 
 
   return()
@@ -1241,7 +1206,7 @@ def setWebObjectAnalogStatusFromReg(node_sn_tmp,analog_pin,analog_byte0):
   if analogvalue is not None:
       NodePinToWebObject(node_sn_tmp,analog_pin,analogvalue)
   else:
-    print "void register"
+    logprint("void register2")
 
   return()
 
@@ -1249,9 +1214,9 @@ def setWebObjectAnalogStatusFromReg(node_sn_tmp,analog_pin,analog_byte0):
 def updateNodeInputStatusFromReg(node_sn0,register):  # deprecated
 #decode the data register and then change the web objects status 
 # and update the node status values 
-  print "updateNodeInputStatusFromReg excuted with data="+register
-  print "first byte= "+str(ord(register[0]))
-  print "len reg="+str(len(register))
+  logprint("updateNodeInputStatusFromReg excuted with data="+register)
+  logprint("first byte= "+str(ord(register[0])) )
+  logprint("len reg="+str(len(register)) )
   setWebObjectDigitalStatusFromReg(node_sn0,0,register[0])  
   setWebObjectDigitalStatusFromReg(node_sn0,1,register[1])  
   setWebObjectDigitalStatusFromReg(node_sn0,2,register[2])  
@@ -1264,7 +1229,7 @@ def updateNodeInputStatusFromReg(node_sn0,register):  # deprecated
   msgr=" "
   for b in range (0,len(register)):
     msgr=msgr+str(ord(register[b]))+","
-  print "rx reg:"+msgr
+  logprint("rx reg:"+msgr)
 
  # time.sleep(3)#banana to remove
 
@@ -1290,12 +1255,12 @@ def updateNodeInputStatusFromReg(node_sn0,register):  # deprecated
            # setWebObjectAnalogStatusFromReg(node_sn0,a_pin,register[k+1],register[k])
             setWebObjectAnalogStatusFromReg(node_sn0,a_pin,register[k])
             #print "analog register=first:"+str(ord(register[k]))+" second:"+str(ord(register[k+1]))
-            print "analog register=first:"+str(ord(register[k]))
-            print "analog real value="+str((ord(register[k])))
+            logprint("analog register=first:"+str(ord(register[k])) )
+            logprint("analog real value="+str((ord(register[k]))) )
           except:#banana ? error?
-            print "end of analog"
+            logprint("end of analog")
             return()  
-    print "k="+str(k)
+    logprint("k="+str(k) )
     #k=k+2
     k=k+1
   return()    
@@ -1314,16 +1279,14 @@ def createNewWebObjFromNode(hwType0,node_sn):
   |
   """
 
-
-
   #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
-  print "createNewWebObjFromNode executed with hwType0:"+hwType0
+  logprint("createNewWebObjFromNode executed with node_sn:"+node_sn+"and hwType0:"+hwType0)
   global zoneDict
   global object_dict
-  print hardwareModelDict.keys()
+  logprint(hardwareModelDict.keys())
   if hwType0 in hardwareModelDict.keys():  #if the type exist in the hardwareModelDict
 #hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"][0]
-    print "i will create a new "+hwType0+"node "
+    logprint("I will create a new "+hwType0+"node ")
 
 #hardwareModelDict["onosPlug6way"]={"max_pin":12,"hardware_type":"arduino_2009","pin_mode":{"sr_relay":{"socket":[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)]}  }    }
 
@@ -1338,8 +1301,8 @@ def createNewWebObjFromNode(hwType0,node_sn):
 # b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]
 
             progressive_number=0
-            print ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
-            print (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
+            logprint ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
+            logprint (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
 
             for c in hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:
 # c will be for example 2 from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]
@@ -1355,26 +1318,25 @@ def createNewWebObjFromNode(hwType0,node_sn):
               else:
                 new_obj_name=b+"_"+node_sn  
       
-              print ("new object name="+new_obj_name)
+              logprint ("new object name="+new_obj_name)
               #print ("object_address_in_the_node:"+str(type(object_address_in_the_node)))
               nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
 
               if new_obj_name not in (zoneDict[node_sn]["objects"]):
                 zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
               else:
-                print "warning000 the object "+new_obj_name+" already exist in the zoneDict " 
+                logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
       
               if new_obj_name not in  object_dict.keys():  #if the object does not exist yet, create it: 
-                print "added new webobj from node"         
+                logprint("added new webobj from node")        
                 object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
               else:
-                print "warning001  the object "+new_obj_name+" already exist in the object_dict" 
-        print("now the object dict of the node:"+str(object_dict.keys()))
+                logprint("warning001  the object "+new_obj_name+" already exist in the object_dict") 
+        logprint("now the object dict of the node:"+str(object_dict.keys()))
 
       except Exception as e:
-        error_message="error createNewWebObjFromNode in the object part"
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+        message="error createNewWebObjFromNode in the object part"
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -1383,8 +1345,8 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 
       list_of_different_pin_type=hardwareModelDict[hwType0]["pin_mode"].keys() #get a list of different obj 
-      print "list_of_different_pin_type:"
-      print list_of_different_pin_type
+      logprint("list_of_different_pin_type:"+str(list_of_different_pin_type))
+
 
     
       for a in list_of_different_pin_type:
@@ -1404,7 +1366,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
           progressive_number=0
           for c in list_of_different_webobject_names: 
                      
-            print (c)
+            logprint (c)
             #now i'm inside the last dictionary  
             #c will be for example (0,1)  and then (2) from{"plug":[(0,1)],"plug2":[(2)]}
             #in this example there aren't other webobject names...
@@ -1417,29 +1379,28 @@ def createNewWebObjFromNode(hwType0,node_sn):
             
             new_obj_name=b+str(i)+"_"+node_sn  #progressive_number
             progressive_number=progressive_number+1   
-            print("new_obj_name:"+new_obj_name)   
-            print("zoneDict:"+str(zoneDict))       
+            logprint("new_obj_name:"+new_obj_name)   
+            logprint("zoneDict:"+str(zoneDict))       
             if new_obj_name not in (zoneDict[node_sn]["objects"]):
               zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
             else:
-              print "warning000 the object "+new_obj_name+" already exist in the zoneDict " 
+              logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
       
             if new_obj_name not in  object_dict.keys():  #if the object does not exist yet, create it: 
-              print "added new webobj from node"         
+              logprint("added new webobj from node")      
               object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn,c)
             else:
-              print "warning001  the object "+new_obj_name+" already exist in the object_dict" 
+              logprint("warning001  the object "+new_obj_name+" already exist in the object_dict")
          
         
     except Exception as e:
-      error_message="error createNewWebObjFromNode in the pin part"
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
+      message="error createNewWebObjFromNode in the pin part"
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
 
   else:
-    print "no hardware of this type in hardwareModelDict"
+    logprint("no hardware of this type in hardwareModelDict",verbose=10)
 
 
   if node_sn in zoneDict:
@@ -1545,14 +1506,14 @@ def formParse(text):
 #add also the id=web_object  on the end of the body
 
 def findRoomName(path,roomDictionary):
-  print "findRoomName()  executed"
+  logprint("findRoomName()  executed")
   if (len(path)>0):
     address_list=string.split(path,"/")  
     if address_list[1] in roomDictionary.keys() :    #if  the path is   /anyroomname/....   take the room name
       room=address_list[1]    
       return(room)
     else: 
-      print "no room name found"
+      logprint("no room name found")
       return (-1) #no room found
 
   return(-1)
@@ -1568,11 +1529,11 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
   onos_automatic_css_style=''
 
 
-  print "modPage()  executed"
+  logprint("modPage()  executed")
   if zone in zoneDictionary:
     zoneObjList=zoneDictionary[zone]["objects"]
   else:
-    print "zone not in the system"+ str(zone)
+    logprint("zone not in the system"+ str(zone) )
     zoneObjList=[]
     return(htmlPag)
   tmp_pag=htmlPag
@@ -1681,19 +1642,19 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 
 
 def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html to insert in the index.html of a room directory  which must be inside the baseRoomPath directory, modify to read the html ..
-  print "getRoomHtml()executed"
+  logprint("getRoomHtml()executed")
 
   
 
   retval = os.getcwd()   #you musn't have spaces on the path..
   #print "retval:"+retval
   #x=retval+"/"room+"/index.html"
-  print "room passed="+room
+  logprint("room passed="+room)
   x=retval+"/"+baseRoomPath+room+"/index.html"
   #x=string.replace(x, ',&%', '') 
   #x=string.replace(x, '\n', '') 
   readed_html="nothing"
-  print "file to open="+x
+  logprint("file to open="+x)
 
   
 
@@ -1706,7 +1667,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
       #readed_html =os.popen("cat "+x).read()   # don't use the standard method because the file is opened  otherwere
       
   except:
-    print "can't open file:"+x+"end"
+    logprint("can't open file:"+x+"end")
 
 
   #print "readed htm="+readed_html+"end"
@@ -1727,7 +1688,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     #  return(roomHtml)
 
   else:  #modify or update the page 
-    print "readed_html is:not <!--onos_automatic_page-->"
+    logprint("readed_html is:not <!--onos_automatic_page-->",verbose=5)
 
   #if the file does not exist
   #roomHtml=play_zone_start_html+ '''<div id="header">'''+room.upper()+'''</div>'''
@@ -1742,17 +1703,18 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
       execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py
       roomHtml=namespace["web_page"]  
     except Exception as e: 
-      print "error executing /gui/display_zone_objects.py e:"+str(e.args)
-      errorQueue.put("error executing /gui/display_zone_objects.py e:"+str(e.args)) 
+      message="error executing /gui/display_zone_objects.py e:"
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
     return(roomHtml)
 
 
 def updateOneZone(zone):
   retval = os.getcwd()
   html_file_location=retval+"/"+baseRoomPath+zone+"/index.html"
-  print "updateOneZone()  executed  with zone:"+zone+";"
+  logprint("updateOneZone()  executed  with zone:"+zone+";")
   if os.path.isfile(html_file_location):   #if the directory exist don't create it
-    print zone+" exist so i don't create it"
+    logprint(zone+" exist so i don't create it")
     fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
     file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
@@ -1764,7 +1726,7 @@ def updateOneZone(zone):
 
 
   else:
-    print "i make the directory"+zone
+    logprint("I make the directory"+zone)
     #os.system("mkdir "+baseRoomPath+zone) 
     #with lock_bash_cmd:
     #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True) 
@@ -1788,14 +1750,14 @@ def updateOneZone(zone):
 
 def updateDir():
   retval = os.getcwd()
-  print "updateDir()  executed"
+  logprint("updateDir()  executed")
 
   for zone  in zoneDict.keys() :  #will be call updateOneZone()   ....onosimprove
     
   
     index=retval+"/"+baseRoomPath+zone+"/index.html"
     if os.path.isfile(index):   #if the directory exist don't create it
-      print zone+" exist so i don't create it"
+      logprint(zone+" exist so i don't create it")
       fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
       file0 = open(baseRoomPath+zone+"/index.html", "w")
       file0.write(fileToWrite)
@@ -1805,7 +1767,7 @@ def updateDir():
       #  subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
       os.chmod(baseRoomPath+zone, 0o777)
     else:
-      print "create the file"+index
+      logprint("create the file"+index)
       #os.system("mkdir "+baseRoomPath+zone)
       #with lock_bash_cmd: 
       #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True)  
@@ -1824,8 +1786,9 @@ def updateDir():
         #  subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
         os.chmod(baseRoomPath+zone, 0o777)
       except Exception as e: 
-        print "error creating "+baseRoomPath+zone+"/index.html  e:" +str(e.args)
-        errorQueue.put("error creating "+baseRoomPath+zone+"/index.html  e:" +str(e.args)) 
+        message="error creating "+baseRoomPath+zone+"/index.html"
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
+
 
       #os.system("chmod 777 "+baseRoomPath+zone+"/index.html")
 
@@ -1839,7 +1802,7 @@ def updateDir():
 
 
 def createNewNode(node_sn,node_address,node_fw):
-  print ("0createNewNode() executed with :"+node_sn)
+  logprint("0createNewNode() executed with :"+node_sn)
   global uart_router_sn
   msg=""
   if node_address=="001":  #uart_node
@@ -1850,7 +1813,7 @@ def createNewNode(node_sn,node_address,node_fw):
   #createNewWebObjFromNode(hwType,node_sn)
 
   if (node_sn in nodeDict.keys()): #&(force_recreate==0):
-    print ("found node in the dict")
+    logprint("found node in the dict")
 
     #nodeDict[node_sn].setNodeAddress(node_address)
     #if len(nodeDict[node_sn].getnodeObjectsDict())==0 :
@@ -1861,13 +1824,13 @@ def createNewNode(node_sn,node_address,node_fw):
     updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #create a new node
-    print "requested setup for a node not existing yet "                  
+    logprint("requested setup for a node not existing yet ")                 
     hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
      #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
 
     if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
-      print "added node_hw from url :"+hwType
-      print "obj_type_to_add_from_node="+hwType
+      logprint("added node_hw from url :"+hwType)
+
 
       if((len(node_sn)>0)&((node_sn)!=" ")): 
         hardware_node_model=hardwareModelDict[hwType]  
@@ -1879,7 +1842,7 @@ def createNewNode(node_sn,node_address,node_fw):
 
         #if the room doesn't exist yet ...then:
         if (node_sn in zoneDict.keys()):
-          print "the node already exist in the zoneDict" 
+          logprint("the node:"+node_sn+" already exist in the zoneDict") 
         else:
          # if (node_sn+"_body" in object_dict.keys()):
          #   print "the node body already exist in the web_object_dict" 
@@ -1904,21 +1867,18 @@ def createNewNode(node_sn,node_address,node_fw):
             text_file.write(getRoomHtml(node_sn,object_dict,"",zoneDict))
             text_file.close()
           except Exception as e: 
-            print "error creating new node index file  "+node_sn+" e:"+str(e.args)
-            errorQueue.put("error creating new node index file  "+node_sn+" e:"+str(e.args))  
+            message= "error creating new node index file  "+node_sn+" e:"+str(e.args)
+            logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
           os.chmod(baseRoomPath+node_sn, 0o777)
-          print "create a new zone"+node_sn
+          logprint("create a new zone"+node_sn)
           #print zoneDict
           updateOneZone(node_sn) 
 
 
     else:
 
-      print "error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict "
-      errorQueue.put("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict" )  
-
-
+      logprint("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict ",verbose=10)
 
   return(msg)
 
@@ -1927,16 +1887,16 @@ def createNewNode(node_sn,node_address,node_fw):
 
 def setNodePin(node_sn,pin_number,pin_status,write_hw_enable):  # equal to NodePinToWebObject()
   #to change all the webobjects status that have the node and the pin given:
-  print "setNodePin() executed"
+  logprint("setNodePin() executed")
 
   if node_sn not in nodeDict.keys():
-    print "the serial number is not in the dictionary...so i add  the new node"
+    logprint("the serial number is not in the dictionary...so i add  the new node")
     return("error_the_node_does_not_exist")
   found=0
   for a in object_dict.keys():
-    print object_dict[a].getHwNodeSerialNumber()
+    logprint(object_dict[a].getHwNodeSerialNumber() )
     if (object_dict[a].getHwNodeSerialNumber()==node_sn):
-      print "node exist"
+      logprint("node exist")
       if object_dict[a].getAttachedPinList()[0]==int(pin_number):
         found=1  
         if (len(object_dict[a].getAttachedPinList())==1):#the sensor object must have only a pin attached
@@ -1945,15 +1905,13 @@ def setNodePin(node_sn,pin_number,pin_status,write_hw_enable):  # equal to NodeP
           layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str(pin_status),"write_to_hw":write_hw_enable })  
                 
 
-          print "pin"+str(pin_number)+" changed from setNodePin to:"+str(pin_status)                       
+          logprint("pin"+str(pin_number)+" changed from setNodePin to:"+str(pin_status))                      
 
         else:
-          print "error number of pin in the setNodePin section" 
-          errorQueue.put("error number of pin in the setNodePin section"  )  
+          logprint("error number of pin in the setNodePin section",verbose=10)
           return("error_no_pin_found_in_the_node")
   if found==0:
-    print "error_no_pin_found_in_the_node"
-    errorQueue.put("error_no_pin_found_in_the_node" )  
+    logprint("error_no_pin_found_in_the_node",verbose=10)
     return("error_no_pin_found_in_the_node")
   else:
     return("ok")
@@ -1991,23 +1949,23 @@ updateDir()
 
 
 def getUserFromIp(ipUserAddress):
-  print "getUserFromIp() executed"
+  logprint("getUserFromIp() executed")
   if ipUserAddress in user_active_time_dict.keys(): # the ip is in the dict
       username=user_active_time_dict[ipUserAddress][0]
       old_active_time=user_active_time_dict[ipUserAddress][1]
       current_time=(datetime.datetime.today().minute+(datetime.datetime.today().hour)*60 )
       if (current_time >(old_active_time+conf_options["logTimeout"]) ):   #timeout
       #if user was not active in the last 10 minutes logout
-        print "user:"+username+"logged out for timeout"
+        logprint("user:"+username+"logged out for timeout")
         del user_active_time_dict[ipUserAddress] #remove the ip from the dict   
-        print "deleted ip from user_active_time_dict "
+        logprint("deleted ip from user_active_time_dict ")
         return (-1)
       else:
-        print "user:" +username+"is still active" 
+        logprint("user:" +username+"is still active")
         user_active_time_dict[ipUserAddress][1]=current_time
         return(username)
   else:
-    print "ipaddress not in list"
+    logprint("ipaddress not in list")
     return(-1)
 
 
@@ -2025,7 +1983,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
     def finish_request(self, request, client_address):# i don't know if usefull to close client timout connections
-      print "finish_request() executed" 
+      logprint("finish_request() executed") 
       request.settimeout(30)
       # "super" can not be used because BaseServer is not created from object
       BaseHTTPServer.HTTPServer.finish_request(self, request, client_address)
@@ -2061,27 +2019,25 @@ class MyHandler(BaseHTTPRequestHandler):
           self.wfile.flush()
           self.wfile.close()
         except :
-          print "error in flush finish() socket closed "
-          errorQueue.put( "error in flush finish() socket closed ")  
+          logprint("error in flush finish() socket closed ")
           pass  #ignore the error
 
           try:
             self.wfile.close()
           except:
+            logprint("error in self.wfile.close() finish() socket closed ")
             pass  #ignore the error
-            print "error in self.wfile.close() finish() socket closed "
-            errorQueue.put( "error in self.wfile.close() finish() socket closed ")  
+
       try:  
         self.rfile.close()
       except:
+        logprint("error in self.wfile.close()  self.rfile.close()  socket closed ")
         pass
-        print "error in self.wfile.close()  self.rfile.close()  socket closed "
-        errorQueue.put("error in self.wfile.close()  self.rfile.close()  socket closed " )  
       return        
 
     def clear_PostData(self,data):
       if len(data)==0:
-        print "empty form"
+        logprint("empty form")
         return ("")
       tmp_data=data
       i=0
@@ -2116,7 +2072,7 @@ class MyHandler(BaseHTTPRequestHandler):
         web_page=h.read()
         h.close()
       except:
-        print "no index.html found in root directory"
+        logprint("no index.html found in root directory")
         web_page=web_page_not_found   
       try:
         self.send_response(200)
@@ -2124,9 +2080,8 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(web_page) 
       except:
+        logprint("error1 in send_header")
         pass
-        print "error1 in send_header "
-        errorQueue.put( "error1 in send_header ")  
       return   
 
 
@@ -2245,7 +2200,7 @@ class MyHandler(BaseHTTPRequestHandler):
       
 
     def get_Zone_Objects_Setup(self,current_path,objectDictionary,zone):         
-      print "current_path"+current_path
+      logprint("current_path"+current_path)
       if string.find(current_path,"/setup")!=-1:
         link_back="/setup/zone_manager/"
       else:
@@ -2291,7 +2246,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
       if zone  in zoneDict.keys() :
 
-        print "zone in zoneDict"
+        logprint("zone in zoneDict")
         obj_name_list=zoneDict[zone]["objects"]
       
         tmp_html='<tr><td class="web_obj_name">No web object present in this room</td><td></td><td class="web_obj_name"></td></tr>'
@@ -2330,13 +2285,13 @@ class MyHandler(BaseHTTPRequestHandler):
           en=1
 
           if (body_found!=-1):
-            print "found a body:"+b
+            logprint("found a body:"+b)
             part_without_body=string.replace(b, "_body", "")   #b[0:body_found]
             if (part_without_body==zone):
-                print "body enabled"
-                en=1                            #allow the display of the same body of the zone
+              logprint("body enabled")
+              en=1                            #allow the display of the same body of the zone
             else: 
-              print "body rejected"
+              logprint("body rejected")
               en=0                              #block the display of the body of others zones
 
 
@@ -2375,7 +2330,7 @@ class MyHandler(BaseHTTPRequestHandler):
     
 
       else:      #zone not the room object      
-        print "not a room"
+        logprint("not a room")
 
 
       html_page=html_page+'''</form></body></html>'''
@@ -2404,7 +2359,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
       i=0
       for room in l:  #for every object  in the dictionary
-        print "room[hidden]:",room["hidden"]
+        logprint("room[hidden]:",room["hidden"])
         #if (zoneDict[room]["hidden"]!=0):  #skip the hidden elements
         #  continue
                 
@@ -2629,13 +2584,13 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
               try:     
-                print self.path      
+                logprint(self.path)      
                 #h = open("index.html",'r')  
                 #web_page=h.read()
                 #h.close()
 
               except:
-                print "no index.html found in root directory"
+                logprint("no index.html found in root directory")
                 web_page=web_page_not_found   
               try:
                 self.send_response(200)
@@ -2643,14 +2598,14 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except:
-                print "error2 in send_header "
+                logprint("error2 in send_header ")
                 errorQueue.put( "error2 in send_header ")  
               return
             
 
              
             if (     (string.find(self.path,"info_hash=")!=-1)):  # if the address contain info_hash= then discard it 
-              print "address discarded "
+              logprint("address discarded ")
               return
 
 
@@ -2663,8 +2618,8 @@ class MyHandler(BaseHTTPRequestHandler):
 #   
 #
               url=self.path
-              print "onos_cmd received"
-              print url
+              logprint("onos_cmd received"+url)
+
               #example: /onos_cmd?cmd=setSts&obj=sensor1&status=1&hw=0__
               if string.find(url,"cmd=setSts&obj=")!=-1:
                 msg="ok"
@@ -2689,8 +2644,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 except Exception as e: 
 
-                  print "error in re.search 1   on onos_cmd url  "+url+" e:"+str(e.args)
-                  errorQueue.put("error in re.search 1   on onos_cmd url  "+url+" e:"+str(e.args))  
+                  message="error in re.search 1   on onos_cmd url  "+url
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -2699,11 +2654,11 @@ class MyHandler(BaseHTTPRequestHandler):
                 try:
                   write_hw_enable=int(hw_flag)
                 except Exception as e: 
-                  print "error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args)
-                  errorQueue.put( "error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args))  
+                  message="error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args)
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   write_hw_enable=1
 
-                print "------set "+objName+"to"+status_to_set
+                logprint("------set "+objName+"to"+status_to_set)
                   
                 #if objName in object_dict.keys():
                 #try:
@@ -2722,9 +2677,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(msg) 
                 except Exception as e  :
+                  message="error3 in send_header"
+                  logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
                   pass
-                  print "error3 in send_header "+" e:"+str(e.args)
-                  errorQueue.put( "error3 in send_header "+" e:"+str(e.args))  
                 return
 
 
@@ -2743,34 +2698,36 @@ class MyHandler(BaseHTTPRequestHandler):
 
                # webobjName=re.search('setSts&obj=(.+?)&',self.path).group(1)
               if string.find(self.path,"onos_cmd?cmd=setNodePin&")!=-1:
-                print "received a onos_cmd?cmd=setNodePin  query"
+                logprint("received a onos_cmd?cmd=setNodePin  query")
                 #start_node_sn=string.find(url,'node_sn=')+8
                 #end_node_sn=string.find(url,'&',start_node_sn)
                 #node_sn=url[start_node_sn:end_node_sn]
                 node_sn=re.search('&node_sn=(.+?)&',self.path).group(1)
 
-                print "node_sn="+node_sn             
+                logprint("node_sn="+node_sn)            
                 #pin_number_start=string.find(url,'&pin=')+5
                 #pin_number_end=string.find(url,'&',pin_number_start)
                 #pin_number=url[pin_number_start:pin_number_end]
                 pin_number=re.search('&pin=(.+?)&',self.path).group(1)
-                print "pin_number="+pin_number
+                logprint("pin_number="+pin_number)
                 #pin_status_start=string.find(url,'&status=')+8
                 #pin_status_end=string.find(url,'&',pin_status_start)
                 #pin_status=url[pin_status_start:pin_status_end]
                 pin_status=re.search('&status=(.+?)&',self.path).group(1)
-                print "pin_status="+pin_status
+                logprint( "pin_status="+pin_status)
                 #start_hw_flag=string.find(url,'&hw=')+4
                 #end_hw_flag=string.find(url,'__')
                 #hw_flag=url[start_hw_flag:end_hw_flag]
                 hw_flag=re.search('&hw=(.+?)__',self.path).group(1)
 
-                print "hw_flag="+hw_flag
+                logprint("hw_flag="+hw_flag)
                 try:
                   write_hw_enable=int(hw_flag)
                 except Exception as e  :
-                  print "error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args)
-                  errorQueue.put("error in write_hw_enable  on onos_cmd url  "+" e:"+str(e.args) )  
+                  message="error in write_hw_enable  on onos_cmd url  "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
+
                   write_hw_enable=1                
 #now i have to check in all the web obj which one is connected to the pin of this node
 
@@ -2784,8 +2741,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(answer) 
                 except Exception as e  :
-                  print "error4 in send_header "+" e:"+str(e.args)
-                  errorQueue.put( "error4 in send_header "+" e:"+str(e.args))  
+                  message= "error4 in send_header "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                 return
 
 
@@ -2797,24 +2754,24 @@ class MyHandler(BaseHTTPRequestHandler):
 #banana to implement ?
 
               if string.find(url,"onos_cmd?cmd=setNodeDReg&")!=-1:
-                print "received a onos_cmd?cmd=setNodeDReg  query"
+                logprint("received a onos_cmd?cmd=setNodeDReg  query")
                 start_node_sn=string.find(url,'node_sn=')+8
                 end_node_sn=string.find(url,'&',start_node_sn)
                 node_sn=url[start_node_sn:end_node_sn]
-                print "node_sn="+node_sn             
+                logprint("node_sn="+node_sn)             
                 data_reg_start=string.find(url,'&pin=')+5
                 data_reg_end=string.find(url,'__',data_reg_start)
                 data_reg=url[data_reg_start:data_reg_end]
-                print "data reg received="+data_reg
-                print "len data recived="+str(len(data_reg))
+                logprint("data reg received="+data_reg)
+                logprint("len data recived="+str(len(data_reg)) )
           
 #now i have to check in all the web obj which one is connected to the pin of this node
 #banana not working here?
                 for a in object_dict.keys():
-                  print object_dict[a].getHwNodeSerialNumber()
+                  logprint(object_dict[a].getHwNodeSerialNumber() )
                   if (object_dict[a].getHwNodeSerialNumber()==node_sn):
 
-                    print "node exist"
+                    logprint("node exist")
                     #banana to implement a decoding mode to get all pin status from the data received
 
 
@@ -2825,7 +2782,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.wfile.write("ok") 
                 except Exception as e  :
                   pass
-                  print "error5 in send_header "+" e:"+str(e.args)
+                  logprint("error5 in send_header "+" e:"+str(e.args) )
                   errorQueue.put( "error5 in send_header "+" e:"+str(e.args))  
                 return
 
@@ -2842,76 +2799,76 @@ class MyHandler(BaseHTTPRequestHandler):
               #OBSOLETE I use pure tcp message now!!! 
 
               if string.find(url,"onos_cmd?cmd=pinsetup&")!=-1:
-                print "received a onos_cmd?cmd=pinsetup  query"
+                logprint("received a onos_cmd?cmd=pinsetup  query")
                 #start_node_sn=string.find(url,'node_sn=')+8
                 #end_node_sn=string.find(url,'&',start_node_sn)
                 #node_sn=url[start_node_sn:end_node_sn]
                 node_sn=re.search('&node_sn=(.+?)&',self.path).group(1)
-                print "node_sn="+node_sn
+                logprint("node_sn="+node_sn)
 
                 #start_node_fw=string.find(url,'node_fw=')+8
                 #end_node_fw=string.find(url,'&',start_node_fw)
                 #node_fw=url[start_node_fw:end_node_fw]
                 node_fw=re.search('&node_fw=(.+?)__',self.path).group(1)
-                print "node_fw="+node_fw
+                logprint("node_fw="+node_fw)
                  
                # start_node_ip=string.find(url,'node_ip=')+8
                # end_node_ip=string.find(url,'__',start_node_ip)
                 #node_ip=url[start_node_ip:end_node_ip]
                 node_ip=str(self.client_address[0])
-                print "node_ip="+node_ip
+                logprint("node_ip="+node_ip)
 
                 msg="ok"
                 msg=createNewNode(node_sn,node_ip,node_fw)
 
-                print "i try to send msg: "+msg
+                logprint("i try to send msg: "+msg)
                 try:
                   self.send_response(200)
                   self.send_header('Content-Type: application/octet-stream','text/plain')
                   self.end_headers()
                   self.wfile.write(msg) 
-                except Exception as e  :
+                except Exception as e  :              
+                  message="error6 in send_header onos cmd 001"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                   pass
-                  print "error6 in send_header onos cmd 001"+" e:"+str(e.args)
-                  errorQueue.put( "error6 in send_header onos cmd 001"+" e:"+str(e.args))  
                 return
 
 
 #localhost/onos_cmd?cmd=sync&node_sn=ProminiA0002&node_fw=4.85__
 
               if string.find(url,"onos_cmd?cmd=sync&")!=-1:
-                print "received a onos_cmd?cmd=sync  query"
+                logprint("received a onos_cmd?cmd=sync  query")
                 #start_node_sn=string.find(url,'node_sn=')+8
                 #end_node_sn=string.find(url,'&',start_node_sn)
                 #node_sn=url[start_node_sn:end_node_sn]
                 node_sn=re.search('&node_sn=(.+?)&',self.path).group(1)
-                print "node_sn="+node_sn
+                logprint("node_sn="+node_sn)
 
                 #start_node_fw=string.find(url,'node_fw=')+8
                 #end_node_fw=string.find(url,'&',start_node_fw)
                 #node_fw=url[start_node_fw:end_node_fw]
                 node_fw=re.search('&node_fw=(.+?)__',self.path).group(1)
-                print "node_fw="+node_fw
+                logprint("node_fw="+node_fw)
                  
                # start_node_ip=string.find(url,'node_ip=')+8
                # end_node_ip=string.find(url,'__',start_node_ip)
                 #node_ip=url[start_node_ip:end_node_ip]
                 node_ip=str(self.client_address[0])
-                print "node_ip="+node_ip
+                logprint("node_ip="+node_ip)
 
 
                 msg=createNewNode(node_sn,node_ip,node_fw)
                 msg="ok"
-                print "i try to send msg: "+msg
+                logprint("i try to send msg: "+msg)
                 try:
                   self.send_response(200)
                   self.send_header('Content-Type: application/octet-stream','text/plain')
                   self.end_headers()
                   self.wfile.write(msg) 
                 except Exception as e  :
+                  message="error7 in send_header onos cmd 001"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   pass
-                  print "error7 in send_header onos cmd 001"+" e:"+str(e.args)
-                  errorQueue.put("error7 in send_header onos cmd 001"+" e:"+str(e.args) )  
                 return
 
 
@@ -2934,7 +2891,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=h.read()
                 h.close()
               except:
-                print "no login.html found in root directory"
+                logprint("no login.html found in root directory")
                 web_page=web_page_not_found   
 
 
@@ -2944,9 +2901,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
+
+                message="error8 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error8 in send_header "+" e:"+str(e.args)
-                errorQueue.put("error8 in send_header "+" e:"+str(e.args) )  
               return   
 
 
@@ -2969,10 +2927,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(photoFile)
                 except Exception as e  :
+                  message="error in send_header img"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                   pass
-                  print "error in send_header img"+" e:"+str(e.args)
-                  errorQueue.put( "error in send_header img"+" e:"+str(e.args))  
-                
                 return
 
 
@@ -2991,9 +2948,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.wfile.write(cssFile)
                   #print "served a css file"
                 except Exception as e  :
+                  message="error9a in send_header "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   pass
-                  print "error9a in send_header "+" e:"+str(e.args)   
-                  errorQueue.put("error9a in send_header "+" e:"+str(e.args)  )               
                 return
 
 
@@ -3011,9 +2968,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.wfile.write(askedFile)
                   #print "served a css file"
                 except Exception as e  :
+                  message="error9b in send_header "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                   pass
-                  print "error9b in send_header "+" e:"+str(e.args)   
-                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
                 return
 
 
@@ -3032,9 +2989,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.wfile.write(askedFile)
                   #print "served a css file"
                 except Exception as e  :
+                  message="error9c in send_header "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                   pass
-                  print "error9b in send_header "+" e:"+str(e.args)   
-                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
                 return
 
 
@@ -3053,9 +3010,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.wfile.write(askedFile)
                   #print "served a css file"
                 except Exception as e  :
-                  pass
-                  print "error9b in send_header "+" e:"+str(e.args)   
-                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
+                  message="error9d in send_header "  
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                  pass               
                 return
 
 
@@ -3074,9 +3031,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.wfile.write(askedFile)
                   #print "served a css file"
                 except Exception as e  :
+                  message="error9e in send_header "   
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))    
                   pass
-                  print "error9b in send_header "+" e:"+str(e.args)   
-                  errorQueue.put("error9b in send_header "+" e:"+str(e.args)  )               
                 return
 
 
@@ -3095,10 +3052,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(javaFile)
                 except Exception as e  :
-                  pass
-                  print "error10 in send_header "+" e:"+str(e.args)  
-                  errorQueue.put( "error10 in send_header "+" e:"+str(e.args) )    
-                
+                  message="error10 in send_header " 
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+                  pass               
                 return
 
 
@@ -3115,7 +3071,7 @@ class MyHandler(BaseHTTPRequestHandler):
               current_username=getUserFromIp(self.client_address[0])
 
               if (current_username==-1) : #user not logged
-                print "user not logged ,i show login page"
+                logprint("user not logged ,i show login page")
                 self.get_login()  #show login page
                 return()
 
@@ -3130,7 +3086,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if (len (self.path)<2):
-              print "main address.."
+              logprint("main address..")
                 #print stato_led1
 
               try:   
@@ -3144,7 +3100,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 #web_page=h.read()
                 #h.close()
               except:
-                print "no index.html found in root directory"
+                logprint("no index.html found in root directory")
                 web_page=web_page_not_found  
 
               try:
@@ -3152,15 +3108,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers()
                 self.wfile.write(web_page) 
-                print "percorso="
-                print self.path     
-                print "fine percorso"
+                logprint("percorso="+self.path+"end")
+
 
               except Exception as e  :
-                pass
-                print "error11 in send_header "+" e:"+str(e.args)
-                errorQueue.put( "error11 in send_header "+" e:"+str(e.args))       
-                
+                message="error11 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))      
+                pass                
               return
 
 
@@ -3198,14 +3152,11 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
                   self.wfile.write(pag) 
-                  print "percorso="
-                  print self.path     
-                  print "fine percorso"
+                  logprint("percorso="+self.path+"end")
                 except Exception as e  :
-                  pass
-                  print "error12 in send_header "+" e:"+str(e.args)   
-                  errorQueue.put("error12 in send_header "+" e:"+str(e.args)  )    
-                
+                  message="error12 in send_header "   
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+                  pass                
                 return
 
 
@@ -3234,8 +3185,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=b1.read()    
                 b1.close()
               except:
-                print "error opening the file"
-                errorQueue.put("error opening the file" )  
+                logprint("error opening the file" )  
 
 
 
@@ -3261,8 +3211,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write("ok"+strftime("%S", gmtime())+pag) 
               except Exception as e  :
                 pass
-                print "error in send_header r_onos_s  0 "+" e:"+str(e.args)     
-                errorQueue.put("error in send_header r_onos_s  0 "+" e:"+str(e.args)  )  
+                message="error in send_header r_onos_s  0 "+" e:"+str(e.args)     
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                pass
               oldpag=pag
                         
                 #else:
@@ -3309,7 +3260,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 
               html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
-              print  ("html_filename=",html_filename)
+              logprint("html_filename=",html_filename)
 
 
               try:              
@@ -3318,8 +3269,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=b1.read()    
                 b1.close()
               except Exception as e  :
-                print "error opening the htlm file"+" e:"+str(e.args)
-                errorQueue.put( "error opening the htlm file"+" e:"+str(e.args))  
+                message="error opening the htlm file"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 web_page="error no html found"
 
               pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
@@ -3331,15 +3282,14 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(pag) 
         #      print "percorso="+self.path+"fine percorso"   
               except Exception as e  :
+                message="error11 in send_header "      
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error11 in send_header "+" e:"+str(e.args)      
-                errorQueue.put("error11a in send_header "+" e:"+str(e.args) ) 
-
               return
 
 
             if (    ( string.find(self.path,"?")!=-1)&(string.find(self.path,"=")!=-1)&(string.find(self.path,"r_onos_s")==-1)):
-              print "get query found############################################################################"
+              logprint("get query found")
               end_file_name=0
               if (  (string.find(self.path,".html")!=-1) ):  #if a html file is called
              
@@ -3348,7 +3298,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 #x=(string.find(self.path,"/")) 
                 
                 html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
-                print  ("html_filename=",html_filename)
+                logprint("html_filename=",html_filename)
                 #end_file_name=string.find(self.path,".html")+5
 
                 #print "addressbar1= "+self.path
@@ -3359,8 +3309,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   web_page=b1.read()    
                   b1.close()
                 except Exception as e  :
-                  print "error opening the htlm file"+" e:"+str(e.args)
-                  errorQueue.put( "error opening the htlm file"+" e:"+str(e.args))  
+                  message="error opening the htlm file"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   web_page="error no html found"
                 #print web_page
                 
@@ -3372,17 +3322,16 @@ class MyHandler(BaseHTTPRequestHandler):
                   k=last_bar+1
               
               
-                print "local address bar ="+self.path[0:last_bar+1] 
+                logprint("local address bar ="+self.path[0:last_bar+1])
                 try:              
                   b1 = open(baseRoomPath+self.path[1:last_bar+1] +"index.html" ,'r')   
                   
                   web_page=b1.read()    
                   b1.close()
                 except Exception as e  :
-                  
-                  print "error opening the file"+" e:"+str(e.args)
-                  errorQueue.put("error opening the file local address bar ="+self.path[0:last_bar+1] +"index.html"+" e:"+str(e.args))  
-                  print "local address bar ="+self.path[0:last_bar+1] +"index.html" 
+                  message="error opening the file local address bar ="+self.path[0:last_bar+1] 
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
                   web_page=web_page_not_found
                 #print web_page
             
@@ -3400,10 +3349,10 @@ class MyHandler(BaseHTTPRequestHandler):
 
               if (next_point_position!=-1):
                 status_to_set=(  address_bar[(equal_position+1):(next_point_position)]  )
-                print "value="+(status_to_set)
+                logprint("value="+(status_to_set) )
               else:                     
                 status_to_set=(address_bar[(equal_position+1):])
-                print "value="+(status_to_set)
+                logprint("value="+(status_to_set) )
 
               if status_to_set=="!":  # to make a not of the current status
                  #print "make the opposite"
@@ -3420,10 +3369,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})  
  
 
-                print "i set"+objName+" to :"+str(status_to_set)
+                logprint("i set"+objName+" to :"+str(status_to_set) )
 
               else:
-                print "the objName :"+objName+" not in dictionary 2"
+                logprint("the objName :"+objName+" not in dictionary 2")
 
 
               address_bar=address_bar[next_point_position-2:]
@@ -3441,17 +3390,16 @@ class MyHandler(BaseHTTPRequestHandler):
                 try :
                   if (next_point_position!=-1):
                     status_to_set=(  address_bar[(equal_position+1):(next_point_position)]  )
-                    print "value="+(status_to_set)
+                    logprint("value="+(status_to_set) )
                   else:                     
                     status_to_set=(address_bar[(equal_position+1):])
-                    print "value="+(status_to_set)
+                    logprint("value="+(status_to_set) )
 
                 except Exception as e  :
                 
-                  print "error in the status_to_set_value in the address bar"+address_bar[(equal_position+2):]+" e:"+str(e.args)
-                  errorQueue.put("error in the status_to_set_value in the address bar"+address_bar[(equal_position+2):]+" e:"+str(e.args) ) 
-                  print "next:"+str(next_point_position)
-                  print  (address_bar[equal_position+2:]) 
+                  message="error in the status_to_set_value in the address bar"+address_bar[(equal_position+2):]
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
+                  #logprint("next:"+str(next_point_position)+address_bar[equal_position+2:] )
                   status_to_set=-1
 
                 if (  objName  in object_dict ):
@@ -3461,14 +3409,14 @@ class MyHandler(BaseHTTPRequestHandler):
                     #print "make the opposite"
                     status_to_set=not (object_dict[objName].getStatus())
 
-                  print "path="+address_bar
+                  logprint("path="+address_bar)
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
                   priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})    
 
-                  print ("i set"+objName+" to :"+str(status_to_set))
+                  logprint ("i set"+objName+" to :"+str(status_to_set))
 
                 else:
-                  print ("objName :"+objName+" not in dictionary 1")
+                  logprint ("objName :"+objName+" not in dictionary 1")
                 
 
                 address_bar=address_bar[(equal_position+1):] #remove the first '?'
@@ -3484,10 +3432,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(pag) 
         #      print "percorso="+self.path+"fine percorso"   
               except Exception as e  :
+                message="error11 in send_header "     
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                 pass
-                print "error11 in send_header "+" e:"+str(e.args)      
-                errorQueue.put("error11 in send_header "+" e:"+str(e.args) ) 
-
               return
 
 
@@ -3500,13 +3447,12 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_response(200)
                   self.send_header('Content-Disposition: attachment',	'filename="config_files/data.json"')
                   self.send_header('Content-Type: application/octet-stream','text/json' )
-
                   self.end_headers()
                   self.wfile.write(tmpF)
                 except Exception as e  :
+                  message="error12 in send_header "    
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   pass
-                  print "error12 in send_header "+" e:"+str(e.args)     
-                  errorQueue.put("error12 in send_header "+" e:"+str(e.args) )  
                 f.close()
                 return
                 
@@ -3524,8 +3470,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                print "error12a in send_header "+" e:"+str(e.args)
-                errorQueue.put( "error13a in send_header "+" e:"+str(e.args))  
+                message="error12a in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return
 
 
@@ -3551,7 +3497,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             scenario_to_mod=""
             if (  string.find(self.path,"/mod_scenario/")!=-1): # render the mod scenario setup menu
-              print "scenario_to_mod",self.path.split("/")[2]
+              logprint("scenario_to_mod",self.path.split("/")[2])
               try:
                 if (self.path.split("/")[2])in scenarioDict.keys():
                   namespace={"scenario_to_mod":self.path.split("/")[2]}
@@ -3563,8 +3509,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   
 
               except Exception as e  :
-                print "error, scenario name does not exist "+" e:"+str(e.args)
-                errorQueue.put("error, scenario name does not exist "+" e:"+str(e.args))   
+                message="error, scenario name does not exist "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
                 web_page="error, scenario name does not exist "
 
@@ -3575,8 +3521,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                print "error13a in send_header "+" e:"+str(e.args)
-                errorQueue.put( "error13a in send_header "+" e:"+str(e.args))  
+                message="error13a in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
               return
 
 
@@ -3594,8 +3540,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   
 
               except Exception as e  :
-                print "error, scenario name does not exist "+" e:"+str(e.args)
-                errorQueue.put("error, scenario name does not exist "+" e:"+str(e.args))   
+                message="error, scenario name does not exist "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
 
                 web_page="error, scenario name does not exist "
 
@@ -3606,8 +3552,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                print "error13ab in send_header "+" e:"+str(e.args)
-                errorQueue.put( "error13ab in send_header "+" e:"+str(e.args))  
+                message= "error13ab in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
               return
 
 
@@ -3626,8 +3572,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   
 
               except Exception as e  :
-                print "error, scenario name does not exist "+" e:"+str(e.args)
-                errorQueue.put("error, scenario name does not exist "+" e:"+str(e.args))   
+                message="error, scenario name does not exist "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
 
                 web_page="error, scenario name does not exist "
 
@@ -3638,8 +3584,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                print "error13ab in send_header "+" e:"+str(e.args)
-                errorQueue.put( "error13ab in send_header "+" e:"+str(e.args))  
+                message="error13ab in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
               return
 
 
@@ -3655,8 +3601,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=b1.read()    
                 b1.close()
               except Exception as e  :
-                print "error opening the file"+" e:"+str(e.args)
-                errorQueue.put("error opening the file"+" e:"+str(e.args) ) 
+                message="error a1 opening the file"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 web_page="ERROR LOADING SELECT CONFIG MENU"
 
               try:    
@@ -3665,15 +3611,15 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                pass
-                print "error13 in send_header "+" e:"+str(e.args) 
-                errorQueue.put("error13 in send_header "+" e:"+str(e.args)  )                  
+                message="error13 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+                pass            
               return
 
 
 
             if self.path.endswith("setup/obj_manager/"): 
-              print "enter in  obj_manager"
+              logprint("enter in  obj_manager")
               html_page=self.get_WebOjectManager(object_dict)
                   
               try:
@@ -3682,9 +3628,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(html_page) 
               except Exception as e  :
-                pass
-                print "error14 in send_header "+" e:"+str(e.args)   
-                errorQueue.put( "error14 in send_header "+" e:"+str(e.args))                 
+                message="error14 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))   
+                pass          
               return
 
 
@@ -3696,7 +3642,7 @@ class MyHandler(BaseHTTPRequestHandler):
               cgi_name=(self.path[cgi_module_name_start:])
               namespace={}
               web_page="cgi import or execute error"
-              print "cgi_name:",cgi_name
+              logprint("cgi_name:"+str(cgi_name) )
 
               if (debug>0):  # in debug mode ..
 
@@ -3710,8 +3656,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   execfile(cgi_name,globals(),namespace)
                   web_page=namespace["web_page"]
                 except Exception as e  :
-                  print "error importing a module in cgi directory, cgi name:"+cgi_name+" e:"+str(e.args)
-                  errorQueue.put( "error importing a module in cgi directory, cgi name:"+cgi_name+" e:"+str(e.args)) 
+                  message="error importing a module in cgi directory, cgi name:"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
 
               try:
                 self.send_response(200)
@@ -3719,9 +3665,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
+                message="error15 in send_header "            
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error15 in send_header "+" e:"+str(e.args)                   
-                errorQueue.put( "error15 in send_header "+" e:"+str(e.args)   ) 
               return 
 
 
@@ -3732,7 +3678,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if  ( string.find(self.path,"/zone_objects_setup/")!=-1): # 
 
-              print "enter in  obj_manager"
+              logprint("enter in  obj_manager")
               zone=''
 
               if (len(self.path)>0):
@@ -3740,10 +3686,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 if address_list[-1] in zoneDict.keys() :    #if  the path is   setup/zone_objects_setup/anyzonename....   take the room name
                   zone=address_list[-1]  
                 else: 
-                  print "no room name found" 
+                  logprint("no room name found")
                 
               else: 
-                print "no room name found"
+                logprint("no room name found")
       
 
 
@@ -3754,9 +3700,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(html_page) 
               except Exception as e  :
-                pass
-                print "error16 in send_header "+" e:"+str(e.args)   
-                errorQueue.put("error16 in send_header "+" e:"+str(e.args) )                   
+                message="error16 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))       
+                pass        
               return
 
 
@@ -3777,8 +3723,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=b1.read()    
                 b1.close()
               except Exception as e  :
-                print "error2 opening the file"+" e:"+str(e.args)
-                errorQueue.put("error2 opening the file"+" e:"+str(e.args) )  
+                message="error2 opening the file"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 web_page="ERROR LOADING SELECT CONFIG MENU"
               
               try:
@@ -3787,9 +3733,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
+                message="error in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
                 pass
-                print "error in send_header "+" e:"+str(e.args) 
-                errorQueue.put("error17 in send_header "+" e:"+str(e.args) )    
               return
 
 
@@ -3807,8 +3753,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=b1.read()    
                 b1.close()
               except Exception as e  :
-                print "error3 opening the file"+" e:"+str(e.args)
-                errorQueue.put( "error3 opening the file"+" e:"+str(e.args))  
+                message="error3 opening the file"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                 web_page="ERROR LOADING SELECT CONFIG MENU"
               
               try:
@@ -3817,9 +3763,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
+                message="error18 in send_header "   
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error18 in send_header "+" e:"+str(e.args)     
-                errorQueue.put("error18 in send_header "+" e:"+str(e.args)  ) 
               #os.execl(sys.executable, *([sys.executable]+sys.argv))
               global exit
               exit=1
@@ -3828,7 +3774,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.endswith("setup/zone_manager/"): # render the html list of room with the link to modify them   
-              print "enter in  zone_manager"
+              logprint("enter in  zone_manager")
               html_page=self.get_zone_manager(zoneDict)
                   
               try:
@@ -3837,9 +3783,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(html_page) 
               except Exception as e  :
-                pass
-                print "error19 in send_header "+" e:"+str(e.args) 
-                errorQueue.put( "error19 in send_header "+" e:"+str(e.args) )                   
+                message="error19 in send_header " 
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
+                pass             
               return
 
 
@@ -3850,13 +3796,13 @@ class MyHandler(BaseHTTPRequestHandler):
               pag="no_web_object_to_modify"
               if ((len(lista))==4):
                 if ((lista[3] in object_dict.keys())):
-                  print "edit a web object"
+                  logprint("edit a web object")
                   pag=self.get_WebObjForm(object_dict[lista[3]])
 
 
               if ((len(lista))==5):
                 if ((lista[4] in object_dict.keys())&(lista[3]=="delete_item")):
-                  print "deleted web object"+lista[4]
+                  logprint("deleted web object"+lista[4])
                   object_dict.pop(lista[4],None)   #bug
                   index=-1
                   for b in zoneDict.keys():
@@ -3880,8 +3826,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(pag) 
               except Exception as e  :
                 pass
-                print "error20 in send_header "+" e:"+str(e.args) 
-                errorQueue.put("error20 in send_header "+" e:"+str(e.args)  )                   
+                message="error20 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))    
+                pass
               return
 
 
@@ -3910,9 +3857,9 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(pag) 
                   except Exception as e  :
+                    message="error21 in send_header "
+                    logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                     pass
-                    print "error21 in send_header "+" e:"+str(e.args)  
-                    errorQueue.put( "error21 in send_header "+" e:"+str(e.args) )    
                   return
 
               pag=""   
@@ -3923,9 +3870,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 self.wfile.write(pag) 
               except Exception as e  :
-                pass
-                print "error22 in send_header "+" e:"+str(e.args)  
-                errorQueue.put( "error22 in send_header "+" e:"+str(e.args) )                  
+                message="error22 in send_header "+" e:"+str(e.args)  
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+                pass             
               return
 
             else: 
@@ -3934,9 +3881,9 @@ class MyHandler(BaseHTTPRequestHandler):
               
 
               if ( (setup_start!=-1)&(len(lista)==4)): #if path is like  /setup/Room0/body
-                print "not show room modifier but obj modifier"
+                logprint("not show room modifier but obj modifier")
                 if (lista[3] in object_dict.keys()):
-                  print "edit a web object"
+                  logprint("edit a web object")
                   pag=self.get_WebObjForm(object_dict[lista[3]])
                   try:
                     self.send_response(200)
@@ -3944,9 +3891,9 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(pag) 
                   except Exception as e  :
+                    message="error23 in send_header " 
+                    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                     pass
-                    print "error23 in send_header "+" e:"+str(e.args)     
-                    errorQueue.put("error23 in send_header "+" e:"+str(e.args)   ) 
                   return
               #else:
                 #print " '/setup' not found  or len list= "+str(len(lista))  
@@ -3958,7 +3905,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if ((string.find(self.path,"mvobj")!=-1)&(string.find(self.path,"old=")!=-1)&(string.find(self.path,"new=")!=-1)  ):
-              print("found rename object query")
+              logprint("found rename object query")
               current_obj_name=""
 
               try:              
@@ -3966,25 +3913,21 @@ class MyHandler(BaseHTTPRequestHandler):
                 new_obj_name_start=string.find(self.path,"new=")+4 
                 new_obj_name=self.path[new_obj_name_start:]
 
-                print("current_obj_name="+current_obj_name+"end")
-                print("new_obj_name="+new_obj_name+"end")
+                logprint("current_obj_name="+current_obj_name+"end")
+                logprint("new_obj_name="+new_obj_name+"end")
                 pag="ok"
 
 
               except Exception as e  :
-                error="error4.1 search"
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                print(exc_type, fname, exc_tb.tb_lineno)   
-                print(error+" e:"+str(e.args))
-                errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
-                pag=error
+                message="error4.1 search"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                pag=message
 
 
               if current_obj_name not in object_dict.keys():
                 pag="error renaming webobject not in dict"
                 #print (object_dict.keys())
-                print(pag)
+                logprint(pag)
 
               else:  
 
@@ -4000,13 +3943,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                 except Exception as e  :
-                  error="error4.2 rename obj in zone"
-                  exc_type, exc_obj, exc_tb = sys.exc_info()
-                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                  print(exc_type, fname, exc_tb.tb_lineno)   
-                  print(error+" e:"+str(e.args))
-                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
-                  pag=error
+                  message="error4.2 rename obj in zone"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                  pag=message
 
 
                 try:             
@@ -4025,13 +3964,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 #todo  save all to json
                 except Exception as e  :
-                  error="error4.3 rename obj in object_dict"
-                  exc_type, exc_obj, exc_tb = sys.exc_info()
-                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                  print(exc_type, fname, exc_tb.tb_lineno)   
-                  print(error+" e:"+str(e.args))
-                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
-                  pag=error
+                  message="error4.3 rename obj in object_dict"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                  pag=message
 
                 try:             
 
@@ -4045,13 +3980,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                 except Exception as e  :
-                  error="error4.4 rename obj in node_dict"
-                  exc_type, exc_obj, exc_tb = sys.exc_info()
-                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                  print(exc_type, fname, exc_tb.tb_lineno)   
-                  print(error+" e:"+str(e.args))
-                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
-                  pag=error
+                  message="error4.4 rename obj in node_dict"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                  pag=message
 
 
 
@@ -4075,13 +4006,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                 except Exception as e  :
-                  error="error4.5 rename obj in scenarioDict"
-                  exc_type, exc_obj, exc_tb = sys.exc_info()
-                  fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                  print(exc_type, fname, exc_tb.tb_lineno)   
-                  print(error+" e:"+str(e.args))
-                  errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
-                  pag=error
+                  message="error4.5 rename obj in scenarioDict"
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                  pag=message
 
            
               try:
@@ -4090,9 +4017,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()          
                 self.wfile.write(pag) 
               except Exception as e  :
+                message="error24 in send_header "    
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print("error24 in send_header "+" e:"+str(e.args))    
-                errorQueue.put("error24 in send_header "+" e:"+str(e.args)  )  
               return
 
 ########################################################################### end experimental code
@@ -4116,8 +4043,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 web_page=b1.read()    
                 b1.close()
               except Exception as e  :
-                print "error4 opening the file"+" e:"+str(e.args)
-                errorQueue.put( "error4 opening the file"+" e:"+str(e.args))  
+                message="error4 opening the file"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
               
               pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
               try:
@@ -4126,9 +4053,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()          
                 self.wfile.write(pag) 
               except Exception as e  :
+                message="error24 in send_header "    
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error24 in send_header "+" e:"+str(e.args)    
-                errorQueue.put("error24 in send_header "+" e:"+str(e.args)  )  
               return
 
 
@@ -4147,15 +4074,15 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(tmpF)
                 except Exception as e  :
+                  message="error25 in send_header "+" e:"+str(e.args)     
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   pass
-                  print "error25 in send_header "+" e:"+str(e.args)     
-                  errorQueue.put("error25 in send_header "+" e:"+str(e.args) ) 
                 f.close()
                 return
                 
                 
             if self.path.endswith("/"): #the address bar end with /  so by default i try open the index.html in this directory
-                print "indirizzo a pag principale.."
+                logprint("indirizzo a pag principale..")
 
 
                 try:              
@@ -4163,11 +4090,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                     web_page=b1.read()    
                     b1.close()
-                except Exception as e  :
-                  
-                    print "error5 opening the file"+" e:"+str(e.args)
-                    errorQueue.put("error5 opening the file,local address bar ="+self.path+"index.html"+" e:"+str(e.args)  ) 
-                    print "local address bar ="+self.path+"index.html" 
+                except Exception as e  :      
+                    message="error5 opening the file,local address bar ="+self.path+"index.html" 
+                    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                     web_page=web_page_not_found
                 print web_page
 
@@ -4180,10 +4105,9 @@ class MyHandler(BaseHTTPRequestHandler):
                   pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
                   self.wfile.write(pag) 
                 except Exception as e  :
+                  message="error26 in send_header "+" e:"+str(e.args)                     
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   pass
-                  print "error26 in send_header "+" e:"+str(e.args)                     
-                  errorQueue.put( "error26 in send_header "+" e:"+str(e.args) ) 
-
                 #print "percorso="
                 #print self.path     
                 #print "fine percorso"
@@ -4197,13 +4121,9 @@ class MyHandler(BaseHTTPRequestHandler):
             return
                 
         except Exception as e  :
-            error="Generic error in Get method"
+            mesage="Generic error in Get method"
             self.send_error(404,'File Not Found: %s' % self.path)
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)   
-            print(error+" e:"+str(e.args))
-            errorQueue.put(error+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+            logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
 
 
 
@@ -4214,12 +4134,12 @@ class MyHandler(BaseHTTPRequestHandler):
         try:
           ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
         except Exception as e  :
-          print "some error occurred in post connection "+" e:"+str(e.args)
-          errorQueue.put( "some error occurred in post connection "+" e:"+str(e.args))
+          message="some error occurred in post connection "+" e:"+str(e.args)
+          logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
           return
 
         if ctype == 'onos/form-data':
-          print "received arduino post data!"
+          logprint("received arduino post data!")
           length = int(self.headers.getheader('content-length'))
           postvars = cgi.urlparse.parse_qs(self.rfile.read(length), keep_blank_values=1)
           node_ip=str(self.client_address[0])
@@ -4232,28 +4152,26 @@ class MyHandler(BaseHTTPRequestHandler):
             self.wfile.write("ok")  
           except Exception as e  :
             pass
-            print "error in send_header "+" e:"+str(e.args)     
+            logprint("error in send_header "+" e:"+str(e.args))     
             errorQueue.put("error in send_header "+" e:"+str(e.args)  )
             
-          print "postvars="
-          print postvars.items()
-          print "data_received"   
-          print "len data= "+str(len(postvars.keys()[0] ))         
-          print postvars.keys()[0]  
+          logprint("postvars="+str(postvars.items())+" data_received,len data= "+str(len(postvars.keys()[0] ) ) )  
+    
+          logprint(postvars.keys()[0]) 
           if (postvars.keys()[0][0:4]=="onos"): 
             node_sn0=postvars.keys()[0][4:16]
             node_fw =postvars.keys()[0][16:20]
             input_status_register=postvars.keys()[0][21:]  #from 21 till the end
-            print "onos node input pin received from: "+node_sn0+" with ip: "+node_ip+"and fw="+node_fw     
+            logprint("onos node input pin received from: "+node_sn0+" with ip: "+node_ip+"and fw="+node_fw)    
 
 
             if node_sn0 in nodeDict.keys():
-              print "the node exist so i update the pin input status"
+              logprint("the node exist so i update the pin input status")
               updateNodeAddress(node_sn0,uart_router_sn,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
               
             else:
               msg=createNewNode(node_sn0,node_ip,node_fw)
-              print "the serial number is not in the dictionary...so i add  the new node"
+              logprint("the serial number is not in the dictionary...so i add  the new node")
 
             updateNodeInputStatusFromReg(node_sn0,input_status_register) # decode and update the data from the node
 
@@ -4271,9 +4189,9 @@ class MyHandler(BaseHTTPRequestHandler):
               self.send_response(301)
               self.end_headers()
             except Exception as e  :
+              message="error27 in send_header " 
+              logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
               pass
-              print "error27 in send_header "+" e:"+str(e.args)  
-              errorQueue.put("error27 in send_header "+" e:"+str(e.args)  )   
             upfilecontent = query.get('upfile')
             print "filecontent", upfilecontent[0]
 
@@ -4282,9 +4200,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write("<HTML>POST OK WAIT 2 SECONDS THEN GO BACK TO HOME<BR><BR>");
                 self.wfile.write(upfilecontent[0]);
               except Exception as e  :
+                message="error28 in send_header " 
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error28 in send_header "+" e:"+str(e.args)  
-                errorQueue.put("error28 in send_header "+" e:"+str(e.args)  )
               try:
                 file0 = open('config_files/data.json', "w")
                 file0.write(upfilecontent[0])
@@ -4292,25 +4210,24 @@ class MyHandler(BaseHTTPRequestHandler):
                 global exit
                 exit=1   #reboot the webserver 
               except Exception as e  :
-                print "error importing json from user"+" e:"+str(e.args)
-                errorQueue.put( "error importing json from user"+" e:"+str(e.args))
+                message="error importing json from user"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 self.wfile.write("<HTML>error importing file<BR><BR>");
             else:
               self.wfile.write("<HTML>error importing file<BR><BR>");
 
-
+############################logprint todotodo continue from here...
 
 
         elif ctype == 'application/x-www-form-urlencoded':   #post data from onos web form
             length = int(self.headers.getheader('content-length'))
             postvars = cgi.urlparse.parse_qs(self.rfile.read(length), keep_blank_values=1)
             
-            print "postvars="
-            print postvars.items()
+            logprint("postvars="+str(postvars.items()) )
             for a in postvars.keys():
               for b in range(len(postvars[a])):
-                print postvars[a][b]
-                print "..."
+                logprint(postvars[a][b])
+
                 postvars[a][b]=postvars[a][b].decode("utf8","replace")
 
                 postvars[a][b]=postvars[a][b].encode("ascii","replace")
@@ -4339,8 +4256,8 @@ class MyHandler(BaseHTTPRequestHandler):
  #the data are the value of the input 
 
             data_to_update=0
-            print "POST:"
-            print postvars.keys()  
+            logprint("POST:"+str(postvars.keys()) )
+            
 #<form action="" method="POST"><input type="hidden" name="zone_manager" value="/setup/zone_manager">
             location="zone_manager"
             if location in postvars:   #if the path is ...
@@ -4365,12 +4282,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
                        object_dict.pop(room+"_body",None)#del object_dict[room+"_body"]         #and delete the old key
                        if  room+"_body"  in zoneDict[room]["objects"] :
-                         print "i try to remove the object"+room+"_body  from zone"+room
+                         logprint("i try to remove the object"+room+"_body  from zone"+room)
                          index=zoneDict[room]["objects"].index(room+"_body")   
                          zoneDict[room]["objects"][index]=new_name+"_body"   #rename the webobj in the room
 
                        else:
-                         print "object not removed from zone beacuse not present there"
+                         logprint("object not removed from zone beacuse not present there")
 
 
                        data_to_update=1  
@@ -4389,14 +4306,15 @@ class MyHandler(BaseHTTPRequestHandler):
  
                        updateOneZone(new_name)
                        
-                       print ("mv "+room+" "+new_name) 
+                       logprint("mv "+room+" "+new_name) 
                      except Exception as e  :
-                       print "can't rename directory to"+new_name+" e:"+str(e.args)
+                       message="can't rename directory to"+new_name
+                       logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
                 # i=i+1
               
               if "new_room" in postvars: #the user wants to create a new room 
-                print postvars["new_room"][0]
+                logprint(postvars["new_room"][0])
                 new_name=self.clear_PostData(postvars["new_room"][0])
                 new_name=new_name.replace("/", "_")
                 #print new_name
@@ -4426,14 +4344,14 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   os.chmod(baseRoomPath+new_name+"/index.html", 0o777)
                   updateOneZone(new_name)       
-                  print "create a new room"+new_name 
+                  logprint("create a new room"+new_name)
                   data_to_update=1
 
-              print "search in all the zones"
+              logprint("search in all the zones")
               for a in zoneDict.keys() :  #banana very slow..
 
                 if ("delete_room_"+a) in postvars: 
-                  print "delete room:"+postvars["delete_room_"+a][0]
+                  logprint("delete room:"+postvars["delete_room_"+a][0])
                   if postvars["delete_room_"+a][0]=='on':
                     delete=a
 
@@ -4451,9 +4369,10 @@ class MyHandler(BaseHTTPRequestHandler):
                     #os.system("rmdir "+baseRoomPath+a)
                     try:
                       shutil.rmtree(baseRoomPath+a)
-                    except:
-                      print "error deleting folder:"+baseRoomPath+a 
-                      errorQueue.put("error deleting folder:"+baseRoomPath+a+" e:"+str(e.args)  )    
+                    except Exception as e  :
+                      message="error deleting folder:"+baseRoomPath+a 
+                      logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
+
                     #with lock_bash_cmd:
                     #  subprocess.check_output("rm "+baseRoomPath+a+"/*", shell=True,close_fds=True)  
                     #  subprocess.check_output("rmdir "+baseRoomPath+a, shell=True,close_fds=True)  
@@ -4472,9 +4391,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(pag)  
               except Exception as e  :
-                pass
-                print "error29 in send_header "+" e:"+str(e.args) 
-                errorQueue.put("error29 in send_header "+" e:"+str(e.args)  )      
+                message="error29 in send_header "
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+                pass    
               #updateJson()
               updateDir()     
      
@@ -4488,7 +4407,7 @@ class MyHandler(BaseHTTPRequestHandler):
               
               
               zone=self.clear_PostData(postvars["zone_objects_setup"][0])
-              print "zone_objects_setup page send a post to mode zone"+zone
+              logprint("zone_objects_setup page send a post to mode zone"+zone)
               
               obj_name_list=zoneDict[zone]["objects"]
 
@@ -4502,18 +4421,18 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                     if (postvars[a+"_sl_obj_room"][0]=='on'):
                       if a not in obj_name_list:
-                        print "add obj to zone :"+a
+                        logprint("add obj to zone :"+a)
                         zoneDict[zone]["objects"].append(a)   #add the 
                     else:# not checked , so remove the  object from the zone if it is there
                       if a in  obj_name_list: 
-                        print "i try to remove the object "+a+"from the zone"+zone
+                        logprint("i try to remove the object "+a+"from the zone"+zone)
                         index=zoneDict[zone]["objects"].index(a)
                         zoneDict[zone]["objects"].pop(index)
 
                   else: # not checked , so remove the  object from the zone if it is there
                   
                     if a in  obj_name_list:
-                      print "i try to remove the object "+a+"from the zone"+zone
+                      logprint("i try to remove the object "+a+"from the zone"+zone)
                       index=zoneDict[zone]["objects"].index(a)
                       zoneDict[zone]["objects"].pop(index)
 
@@ -4539,24 +4458,22 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(webpag)     
               except Exception as e  :
+                message="error30 in send_header "
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
                 pass
-                print "error30 in send_header "+" e:"+str(e.args)  
-                errorQueue.put("error30 in send_header "+" e:"+str(e.args)   )
-
-
 
 
             if "objs_manager" in postvars:
               objs_manager=self.clear_PostData(postvars["objs_manager"][0])
-              print "objs_manager"+objs_manager
+              logprint("objs_manager"+objs_manager)
               q="new_web_object"
               if q in postvars:   
                 new_obj=self.clear_PostData(postvars[q][0])
-                print "try to create a new webobj"+new_obj
+                logprint("try to create a new webobj"+new_obj)
                 if((new_obj!=default_new_obj_value)&(new_obj!=default_new_obj_value2)&(len(new_obj)>0)&((new_obj)!=" ")&(  new_obj not in object_dict.keys() ) ): 
                   object_dict[new_obj]=newDefaultWebObj(new_obj) #create a new web_object and insert only his name 
                  # objectList.append(object_dict[new_obj])
-                  print "created a new web object "+object_dict[new_obj].getName() 
+                  logprint("created a new web object "+object_dict[new_obj].getName() )
                   data_to_update=1  
                   
               postvars = {}
@@ -4567,9 +4484,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(pag)  
               except Exception as e  :
+                message="error31 in send_header "
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
                 pass
-                print "error31 in send_header "+" e:"+str(e.args)  
-                errorQueue.put( "error31 in send_header "+" e:"+str(e.args))
+
               #updateJson()      
 
             if "current_room" in postvars:#if the current location is /setup/AnyRoomName  because "current_room"  is a post of that page
@@ -4582,7 +4500,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   object_dict[new_obj]=newDefaultWebObj(new_obj) #create a new web_object and insert only his name 
 
                  # objectList.append(object_dict[new_obj])
-                  print "created a new web object "+object_dict[new_obj].getName() 
+                  logprint("created a new web object "+object_dict[new_obj].getName() )
                   data_to_update=1  
                   
               
@@ -4591,8 +4509,8 @@ class MyHandler(BaseHTTPRequestHandler):
               #enabledToWrite=0  #tell the system if the textarea html has to be ignored or written to the file
 
               for a in postvars.keys() :
-                print "postvars="
-                print postvars[a]
+                logprint("postvars="+str(postvars[a]))
+
                 
                 if ((string.find(a,"add_obj_to_room")!=-1)&((postvars[a][0]) in object_dict.keys())&(postvars[a][0]not in zoneDict[currentRoom]["objects"]  )):  #add a obj to the room
                   zoneDict[currentRoom]["objects"].append(postvars[a][0])
@@ -4602,21 +4520,19 @@ class MyHandler(BaseHTTPRequestHandler):
                   #file0.write(html_to_write) 
                   #file0.close()
 
-                  print "found a add_obj post"
+                  logprint("found a add_obj post")
                    
-                print "room list"
-                print zoneDict[currentRoom]["objects"] 
+                logprint("room list"+zoneDict[currentRoom]["objects"])
+
                 
                 if (string.find(a,"rm_obj_")!=-1)&((postvars[a][0]) in zoneDict[currentRoom]["objects"]  ):  #remove obj from the room
                   index=zoneDict[currentRoom]["objects"].index(postvars[a][0])
                   zoneDict[currentRoom]["objects"].pop(index)
-                  print "found a rm_obj post"
-                  print "now the room is this"
-                  print zoneDict[currentRoom]["objects"]
+                  logprint("found a rm_obj post now the room is this:"+zoneDict[currentRoom]["objects"])
                   data_to_update=1  
                 else:
-                  print "error obj to remove not found "
-                  errorQueue.put("error obj to remove not found " )
+                  logprint("error obj to remove not found ",verbose=8)
+
                 #updateOneZone(currentRoom)           
               if data_to_update==1:    #update the html removing the webobj removed by the form 
                 html_to_write=getRoomHtml(currentRoom,object_dict,"",zoneDict)
@@ -4624,7 +4540,7 @@ class MyHandler(BaseHTTPRequestHandler):
                # file0.write(html_to_write) 
                # file0.close()
                 data_to_update=0
-                print "object removed from html"
+                logprint("object removed from html")
 
               postvars = {}               
               #print "actual room: "+currentRoom
@@ -4636,9 +4552,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(pag)  
               except Exception as e  :
+                message="error32 in send_header " 
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error32 in send_header "+" e:"+str(e.args)  
-                errorQueue.put("error32 in send_header "+" e:"+str(e.args) )
               #updateJson()
               #updateOneZone(currentRoom)        
               
@@ -4647,13 +4563,13 @@ class MyHandler(BaseHTTPRequestHandler):
             if "current_room_text_area" in postvars:
               currentRoom=self.clear_PostData(postvars["current_room_text_area"][0])
               new_html_room=postvars["html_room_mod"][0]
-              print "new_html_room="+new_html_room
+              logprint("new_html_room="+new_html_room)
 
-              print "currentroom_modhtm="+currentRoom
+              logprint("currentroom_modhtml="+currentRoom)
               #updateOneZone(currentRoom)
               html_to_write=modPage(new_html_room,object_dict,currentRoom,zoneDict)
-              print "html wrote to the file "+currentRoom+"/index.html="+html_to_write
-              print "correction..not wrote because commented part"
+              logprint("html wrote to the file "+currentRoom+"/index.html="+html_to_write)
+              logprint("correction..not wrote because commented part")
               #file0 = open(baseRoomPath+currentRoom+"/index.html", "w")
               #file0.write(html_to_write) 
               #file0.close()
@@ -4665,19 +4581,18 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(pag)   
               except Exception as e  :
+                message="error33 in send_header "
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error33 in send_header "+" e:"+str(e.args)  
-                errorQueue.put("error33 in send_header "+" e:"+str(e.args)  )
               #updateJson()
 
 
 
             if "mod_object" in postvars:#if the current page is /setup/AnyRoomName/Anywebobject  because "mod_object"  is a post of that page     
-              print "found a mod_object request with path"
               path=postvars["mod_object"][0]
-              print path
+              logprint("found a mod_object request with path:"+path)
               web_object_name=string.split(path,"/")[3]  #split the path in a list of string  
-              print "modify the web object:"+web_object_name
+              logprint("modify the web object:"+web_object_name)
               for a in postvars.keys() :
                 if (postvars["obj_notes"]!=notes):
                   object_dict[web_object_name].setNotes(postvars["obj_notes"][0])
@@ -4735,9 +4650,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(pag) 
               except Exception as e  :
+                message="error34 in send_header "  
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
                 pass
-                print "error34 in send_header "+" e:"+str(e.args)  
-                errorQueue.put( "error34 in send_header "+" e:"+str(e.args))
+
               #updateJson()
               updateDir()
                 
@@ -4764,7 +4680,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
               if(postvars["delete_scenario"][0]!=" "):
 
-                print "received delete_scenario" , postvars["delete_scenario"][0]
+                logprint("received delete_scenario" , postvars["delete_scenario"][0])
 
                 del_scenario_name=self.clear_PostData(postvars["delete_scenario"][0])
                 if del_scenario_name in scenarioDict.keys(): #if scenario name doesn't exist  
@@ -4823,8 +4739,8 @@ class MyHandler(BaseHTTPRequestHandler):
                    
 
                   if "set_type_after_run" in postvars:
-                    print "select:",postvars["set_type_after_run"]
-                    print "select2:",postvars["set_type_after_run"][0]
+                    logprint("select:",postvars["set_type_after_run"])
+                    logprint("select2:",postvars["set_type_after_run"][0])
 
 
                     if self.clear_PostData(postvars["set_type_after_run"][0])=="autodelete":
@@ -4841,7 +4757,8 @@ class MyHandler(BaseHTTPRequestHandler):
                         delay=int(delay)
                         scenarioDict[scenario_name]["delayTime"]=delay
                       except Exception as e  :
-                        print "error in mod_scenario delay_time form post parse  "+" e:"+str(e.args) 
+                        message="error in mod_scenario delay_time form post parse  "
+                        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
                   if "priority" in postvars:
                       priority=self.clear_PostData(postvars["priority"][0])
@@ -4849,7 +4766,8 @@ class MyHandler(BaseHTTPRequestHandler):
                         priority=int(priority)
                         scenarioDict[scenario_name]["priority"]=priority
                       except Exception as e  :
-                        print "error in mod_scenario priority form post parse  "+" e:"+str(e.args) 
+                        message="error in mod_scenario priority form post parse  " 
+                        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
                   if "conditions" in postvars:
@@ -4880,7 +4798,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                       except Exception as e  :
-                        print "error in mod_scenario conditions form post parse  "+" e:"+str(e.args) 
+                        message="error in mod_scenario conditions form post parse  "
+                        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -4894,10 +4813,11 @@ class MyHandler(BaseHTTPRequestHandler):
                       try:
                          
                         #a=eval(replace_functions(functions,scenario_name))
-                        print "functionsToRun=",functions.split(';;;') 
+                        logprint("functionsToRun=",functions.split(';;;') )
                         scenarioDict[scenario_name]["functionsToRun"]=functions.split(';;;')  #banana no check if the functions are right
                       except Exception as e  :
-                        print "error in mod_scenario functions form post parse  "+" e:"+str(e.args) 
+                        message="error in mod_scenario functions form post parse  "
+                        logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
 
 
@@ -4970,7 +4890,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   else:
                     conditions=conditions+"&("+left_element+operator+right_element+")"
                 except:
-                  print "error get cond menu"
+                  logprint("error get cond menu",verbose=7)
 
               try:  
                 l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
@@ -4990,11 +4910,11 @@ class MyHandler(BaseHTTPRequestHandler):
                   else:
                     conditions=conditions+"&("+l+o+r+")"   
               except:  
-                print "error2 get cond menu"
+                logprint("error2 get cond menu",verbose=7)
 
               scenarioDict[scenario_name]["conditions"]=conditions
 
-              print "conditions",conditions 
+              logprint("conditions"+str(conditions) )
 
 
               for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
@@ -5050,7 +4970,7 @@ class MyHandler(BaseHTTPRequestHandler):
               else:
                 return(-1)
 
-              print "menu_number",menu_number
+              logprint("menu_number"+str(menu_number) )
               functions_list=[]
               for i in range(1,menu_number+1):
                 try:
@@ -5076,7 +4996,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   functions_list.append(left_element+operator+right_element+second_operator+third_element)
                 except:
-                  print "error get func menu"
+                  logprint("error get func menu",verbose=7)
 
               try:  
                 l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
@@ -5093,10 +5013,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 if (l!="#_select_an_element_#")&(r!="#_select_an_element_#"):
                   functions_list.append(l+o+r)   
               except:  
-                print "error2 get cond menu"
+                logprint("error2 get cond menu",verbose=7)
 
               scenarioDict[scenario_name]["functionsToRun"]=functions_list
-              print "functions",functions_list 
+              logprint("functions"+str(functions_list) ) 
 
               if "condition_add_submit" in postvars:
 
@@ -5131,10 +5051,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 if (username in usersDict.keys()):  #if the username exist
                   if usersDict[username]["pw"]==password : #if the password is correct
                     user_active_time_dict[self.client_address[0]]=[username,datetime.datetime.today().minute+(datetime.datetime.today().hour)*60 ]
-                    print "user ip is:",self.client_address[0]
+                    logprint("user ip is:"+str(self.client_address[0]) )
 
-                    print user_active_time_dict
-                    print "user :"+username+"logged succesfully"
+                    #logprint(user_active_time_dict)
+                    logprint("user :"+username+"logged succesfully")
                     #pag="successfully logged"
                     self.send_response(301)
                     self.send_header('Location','/')
@@ -5142,16 +5062,15 @@ class MyHandler(BaseHTTPRequestHandler):
                     return
 
                   else:
-                    print "error user :"+username+"cant't log because of wrong password"
-                    errorQueue.put("error user :"+username+"cant't log because of wrong password" )
+                    logprint("error user :"+username+"cant't log because of wrong password",verbose=10)
+
                     #pag="wrong password"
                     self.send_response(301)
                     self.send_header('Location','/gui/password_error.html')
                     self.end_headers()
                     return
                 else:
-                  print "error an user tried to log in with a wrong username"
-                  errorQueue.put("error an user tried to log in with a wrong username" )
+                  logprint("error an user tried to log in with a wrong username",verbose=10)
                   self.send_response(301)
                   self.send_header('Location','/gui/user_error.html')
                   self.end_headers()
@@ -5176,8 +5095,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 if (password!=repeated_password): #wrong password entered
    
                   message="error the two passwords entered are not the same, please retype"
-                  print message
-                  errorQueue.put(message )
+                  logprint(message,verbose=9)
                   cgi_name="gui/new_user.py"
 
                   namespace={} 
@@ -5194,8 +5112,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 if (internet_connection!=1):  # no internet connection
                   message="error internet connection lost while creating onos online user, please connect onos center to internet"
-                  print message
-                  errorQueue.put(message)
+                  logprint(message,verbose=9)
                   cgi_name="gui/new_user.py"
 
                   namespace={} 
@@ -5224,13 +5141,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
                     result=f.data
-                    print result
+                    logprint(result)
 
                   except Exception as e  :
 
                     message="server online query to create new user failed,please check connection and retry"+" e:"+str(e.args)
-                    print message
-                    errorQueue.put(message )
+                    logprint(message,verbose=10)
                     cgi_name="gui/new_user.py"
 
                     namespace={} 
@@ -5247,8 +5163,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   if (result.find("syntax error")!=-1)or (result.find("error_")!=-1):
    
                     message="error in the server answer while creating onos online user, please retry"
-                    print message
-                    errorQueue.put(message )
+                    logprint(message,verbose=10)
                     cgi_name="gui/new_user.py"
 
                     namespace={} 
@@ -5268,8 +5183,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   
 
                     message="username created in the online server and in the onos server"
-                    print message
-                    errorQueue.put(message )
+                    logprint(message,verbose=5)
                     cgi_name="gui/new_user.py"
 
                     namespace={} 
@@ -5285,10 +5199,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   else:  #username already used on online server  
 
                     message="error the username is already used in the online server,please choose another username and retry,result:"+result
-                    print message
-                    errorQueue.put(message )
+                    logprint(message,verbose=10)
                     cgi_name="gui/new_user.py"
-
                     namespace={} 
                     web_page=""
                     execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                 
@@ -5301,8 +5213,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 else:
                   message="error the username is already used in the onosCenter,please choose another username and retry"
-                  print message
-                  errorQueue.put(message )
+                  logprint(message,verbose=10)
                   cgi_name="gui/new_user.py"
                   namespace={} 
                   web_page=""
@@ -5320,8 +5231,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if "post0" in postvars:
-              print "received post0:"
-              print postvars["post0"][0]  #  print the first post variable
+              logprint("received post0:"+str(postvars["post0"][0]) )  #  print the first post variable
   
 
             if (data_to_update==100):
@@ -5336,7 +5246,7 @@ class MyHandler(BaseHTTPRequestHandler):
 #a timeout  
 class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):  # i don't know if usefull to close client timout connections
 
-  print "class RequestHandler executed()"  
+  logprint("class RequestHandler executed()")  
 
 
   def setup(self):# i don't know if usefull to close client timout connections
@@ -5345,7 +5255,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):  # i don't know if 
     self.request.settimeout(30)
 
   def finish_request(self, request, client_address):# i don't know if usefull to close client timout connections
-    print "finish_request() executed" 
+    logprint("finish_request() executed")
     request.settimeout(30)
     # "super" can not be used because BaseServer is not created from object
     BaseHTTPServer.HTTPServer.finish_request(self, request, client_address)
@@ -5363,7 +5273,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):  # i don't know if 
 
 
 def onlineServerSync():
-  print "onlineServerSync() excuted"
+  logprint("onlineServerSync() excuted")
   global onlineServerSyncThreadIsrunning
   global online_first_contact
   global online_usersDict
@@ -5388,8 +5298,8 @@ def onlineServerSync():
     try:
       object_tmp_dict=transform_object_to_dict(object_dict) 
     except Exception as e  :
-      print "error executing transform_object_to_dict()"+" e:"+str(e.args)
-      errorQueue.put("error executing transform_object_to_dict()"+" e:"+str(e.args) )  
+      message="error executing transform_object_to_dict()"
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))   
 
 
     if (online_first_contact==1) :
@@ -5411,14 +5321,14 @@ def onlineServerSync():
         #f = urllib2.urlopen(site_query, params,timeout = 5)
         f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
         result=f.data
-        print result
+        logprint(result)
         online_first_contact=0
         online_object_dict=object_json_dictionary
         online_zone_dict=zone_json_dictionary
         last_internet_check=time.time() #if it has connected to the server then also internet is working...
       except Exception as e  :
-        print "first online contact failed" +" e:"+str(e.args)
-        errorQueue.put("first online contact failed"+" e:"+str(e.args) )   
+        message="first online contact failed"
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))   
         continue
 
       if (result.find("syntax error")!=-1)or (result.find("error_")!=-1):
@@ -5437,7 +5347,7 @@ def onlineServerSync():
     #if (cmp(online_usersDict,online_synced_user_dict))!=0 : #the dictionaries are different banana, to get this value from the server
     if (force_online_sync_users==1):
       #create a copy of all the local users in the online db
-      print "i create the remote users"
+      logprint("i create the remote users")
       site_query=onos_online_site_url+"create_new_onos_user.php"
       for a in online_usersDict.keys():  # for each local username    
         params = {'onos_key': onos_online_key, 'onos_password':onos_online_password,"username":a,"user_pass":online_usersDict[a]["pw"]}
@@ -5445,12 +5355,12 @@ def onlineServerSync():
           #f = urllib2.urlopen(site_query, params,timeout = 5)
           f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
           result=f.data
-          print result
+          logprint(result)
           force_online_sync_users=0
           last_internet_check=time.time() #if it has connected to the server then also internet is working...
         except Exception as e  :
-          print "error creating online user "+" e:"+str(e.args)
-          errorQueue.put( "error creating online user "+" e:"+str(e.args)) 
+          message="error creating online user "
+          logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
          
 
@@ -5462,7 +5372,7 @@ def onlineServerSync():
 
     object_json_dictionary=json.dumps(object_tmp_dict)
     if (object_json_dictionary!=online_object_dict): #the dictionaries are different 
-      print "i sync the remote object dict"  
+      logprint("i sync the remote object dict")  
 
       #print "object_json_dictionary:"+object_json_dictionary
 
@@ -5478,8 +5388,8 @@ def onlineServerSync():
         last_internet_check=time.time() #if it has connected to the server then also internet is working...
         online_object_dict=object_json_dictionary
       except Exception as e  :
-        print "error in the remote object update"+" e:"+str(e.args)
-        errorQueue.put("error in the remote object update"+" e:"+str(e.args) )
+        message="error in the remote object update"
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
         online_object_dict=""
         continue
       if (result.find("syntax error")!=-1)or (result.find("error_")!=-1):
@@ -5493,7 +5403,7 @@ def onlineServerSync():
     zone_json_dictionary=json.dumps(zoneDict)
     #print "cmp  zone----------------------------------------",cmp(zone_json_dictionary,online_zone_dict)
     if (zone_json_dictionary!=online_zone_dict) : #the dictionaries are different  banana, to get this value from the server
-      print "i sync the remote zone dict"
+      logprint("i sync the remote zone dict")
  
 
       site_query=onos_online_site_url+"db_sync_with_onos.php"
@@ -5503,12 +5413,12 @@ def onlineServerSync():
         #result=f.read()
         f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
         result=f.data
-        print result
+        logprint(result)
         online_zone_dict=zone_json_dictionary  #banana, to get this value from the server
         last_internet_check=time.time() #if it has connected to the server then also internet is working...
       except Exception as e  :
-        print "error in the remote object update"+" e:"+str(e.args)
-        errorQueue.put("error in the remote object update"+" e:"+str(e.args) )
+        message="error in the remote object update"
+        logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
         online_zone_dict=""
         continue
       if (result.find("syntax error")!=-1)or (result.find("error_")!=-1):
@@ -5523,11 +5433,11 @@ def onlineServerSync():
       f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
       result=f.data
       sync_message=result
-      print sync_message
+      logprint(sync_message)
       last_internet_check=time.time() #if it has connected to the server then also internet is working...
     except Exception as e  :
-      print "error contacting the online server to get sync message"+" e:"+str(e.args)
-      errorQueue.put( "error contacting the online server to get sync message"+" e:"+str(e.args))
+      message="error contacting the online server to get sync message"
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
       onlineServerSyncThreadIsrunning=0
       return()
 
@@ -5538,20 +5448,20 @@ def onlineServerSync():
       #re.search('#_cmd_(.+?)_cmd_#',sync_message).group(1)
       #json_filtered_msg=sync_message.partition("#_cmd_")[2].partition("_cmd_#")[0]
       json_filtered_msg=re.search('#_cmd_(.+?)_cmd_#',sync_message).group(1)
-      print "filtered sync_message :"+json_filtered_msg
+      logprint("filtered sync_message :"+json_filtered_msg)
       cmd_list=json.loads(json_filtered_msg)
-      print "json_cmd_list:",cmd_list
+      logprint("json_cmd_list:"+str(cmd_list) )
       for a in cmd_list :  #iterate the list
         cmd_split=a.split("#_@")  #split    using #_@  as delimiter
-        print "cmd_split",cmd_split
+        logprint("cmd_split"+str(cmd_split) )
         username=cmd_split[1]
         if username not in usersDict.keys():
-          print "error online username not in local users Dict"
-          errorQueue.put( "error online username not in local users Dict")
+          logprint("error online username not in local users Dict",verbose=10)
+
           continue
         cmd_code=cmd_split[2]
-        print "online username:"+username
-        print "cmd code="+cmd_code
+        logprint("online username:"+username+" cmd code="+cmd_code)
+
         if cmd_code=="obj_ch":
           obj_name=cmd_split[3]
           status_to_set=cmd_split[4]
@@ -5559,8 +5469,8 @@ def onlineServerSync():
           priorityCmdQueue.put( {"cmd":"setSts","webObjectName":obj_name,"status_to_set":status_to_set,"write_to_hw":1,"priority":priority,"user":username,"mail_report_list":[] })  
 
     except Exception as e  :
-      print "sync_message decoding error,sync_message:"+sync_message+" e:"+str(e.args) 
-      errorQueue.put( "sync_message decoding error,sync_message"+sync_message+" e:"+str(e.args) )
+      message="sync_message decoding error,sync_message:"
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
     onlineServerSyncThreadIsrunning=0
     return()
 
@@ -5575,7 +5485,7 @@ def mailOutputHandler():
   global mailOutputHandler_is_running
 
   mailOutputHandler_is_running=1
-  print "mailOutputHandler thread executed"
+  logprint("mailOutputHandler thread executed")
 
 
   while not mailQueue.empty(): #until there are no more mail to send
@@ -5588,9 +5498,7 @@ def mailOutputHandler():
     mailSubject=mail_to_send["mailSubject"]
     mail_sent=sendMail(mail_address,mailText,mailSubject,onos_mail_conf,smtplib,string)
     if mail_sent!=1 : #mail error , onos was not able to send the mail and will try again
-      print "error cant send mail"
-      errorQueue.put("error cant send mail" )
-      errorQueue.put(mail_sent)
+      logprint("error cant send mail"+mail_sent,verbose=8)
      
       mailQueue.put(mail_to_send)  #read the mail to the queue for further try
       #mailQueue.put({"mail_address":mail_address,"mailText":mailText,"mailSubject":mailSubject})
@@ -5603,7 +5511,7 @@ def mailOutputHandler():
 
 
 def mailCheckThread():
-  print "mailCheckThread() excuted"
+  logprint("mailCheckThread() excuted")
   global mailCheckThreadIsrunning  
   mailCheckThreadIsrunning=1
 
@@ -5614,14 +5522,12 @@ def mailCheckThread():
     try:
       mailList=receiveMail(onos_mail_conf,imaplib,email)  #a list of list where the data are (msg_sender,msg_subject,msg_text)
     except Exception as e:
-      print "error in  mailagent"+str(e.args)
-      errorQueue.put("error in  mailagent"+str(e.args))
+      message="error in  mailagent"
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
       mailList=-1
 
     if mailList==-1:
-      print "error mailagent ,  wrong username/password or no internet connection"
-      errorQueue.put( "error mailagent ,  wrong username/password or no internet connection,i disable the incoming mail service")
-      print "i disable the mail service"
+      logprint("error mailagent ,  wrong username/password or no internet connection,i disable the incoming mail service",verbose=10)
       conf_options["enable_mail_service"]=0  
       return() 
 
@@ -5671,23 +5577,20 @@ def mailCheckThread():
 
 
             if onos_usr not in usersDict.keys() :
-              print "error mail user  not in user list" 
-              errorQueue.put( "error mail user  not in user list" ) 
+              logprint("error mail user  not in user list",verbose=9)
               mailText=mailText+compose_error_mail("wrong_username")
               continue   
 
 
             if compareText(usr_onos_mail_pw,usersDict[onos_usr]["mail_control_password"])!=1 :
-              print "error mail user password not correct"    
-              errorQueue.put( "error mail user password not correct" )
+              logprint("error mail user password not correct",verbose=9)    
               mailText=mailText+compose_error_mail("wrong_password")
               continue   
 
 
             if compareText(onos_usr,onos_usr)==1: #if the username is the default mail one.. 
               if m_sender not in conf_options["mail_whiteList"] :
-                print "error mail not in mail list"    
-                errorQueue.put("error mail not in mail list" )
+                logprint("error mail not in mail list",verbose=9)    
                 mailText=mailText+compose_error_mail("white_list")
                 continue   
 
@@ -5695,16 +5598,14 @@ def mailCheckThread():
             if conf_options["accept_only_from_white_list"]==1:
 
               if m_sender not in conf_options["mail_whiteList"] :
-                print "error mail not in mail list"  
-                errorQueue.put( "error mail not in mail list" )  
+                logprint("error mail not in mail list")
                 mailText=mailText+compose_error_mail("white_list")
                 continue   
 
             
 
           else:
-            print "mail parsing error"
-            errorQueue.put("mail parsing error" )
+            logprint("mail parsing error")
             mailText=mailText+compose_error_mail("parse")
             continue
 
@@ -5715,59 +5616,55 @@ def mailCheckThread():
           if compareText(cmd_type,u"so"):  #if the cmd type is set object..
 
             
-
-            if (len(cmd_argument)>0)&(len(status)>0):  #the arguments lenghts are ok
-              if cmd_argument in object_dict:  #the object exist
-                obj_previous_status=object_dict[cmd_argument].getStatus()
-                if (object_dict[cmd_argument].validateStatusToSetObj(status)==1 ):  #if the status is ok and type is output  
-                  print "check priority"
-                  if object_dict[cmd_argument].checkRequiredPriority(priority)==1:  #check priority 
-                    print "priority ok"
+            objName=cmd_argument
+            if (len(objName)>0)&(len(status)>0):  #the arguments lenghts are ok
+              if objName in object_dict:  #the object exist
+                obj_previous_status=object_dict[objName].getStatus()
+                if (object_dict[objName].validateStatusToSetObj(status)==1 ):  #if the status is ok and type is output  
+                  logprint("check priority")
+                  if object_dict[objName].checkRequiredPriority(priority)==1:  #check priority 
+                    logprint("priority ok")
 
                     #check permission  
-                    if object_dict[cmd_argument].checkPermissions(onos_usr,"x",priority):#check if user has execution to obj                   
-                      print "permission ok ,i write to obj"
+                    if object_dict[objName].checkPermissions(onos_usr,"x",priority):#check if user has execution to obj                   
+                      logprint("permission ok ,i write to obj")
                       mailText=mailText+"O.N.O.S. received the mail :"+l+" and is processing it ,"
-                      priorityCmdQueue.put( {"cmd":"setSts","webObjectName":cmd_argument,"status_to_set":status,"write_to_hw":1,"priority":priority,"user":"onos_usr","mail_report_list":[m_sender] })  
+                      priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status,"write_to_hw":1,"priority":priority,"user":"onos_usr","mail_report_list":[m_sender] })  
                       continue
 
                     else: #permission error
-                      mailText=mailText+compose_error_mail("so_permissions",cmd_argument)
+                      logprint("permission error"+str(objName),verbose=10) 
                       continue
                                                            
 
  
                   else:
-                    print "error mail , user priority not sufficent to change the obj status"
-                    errorQueue.put("error mail , user priority not sufficent to change the obj status" )
-                    mailText=mailText+compose_error_mail("so_priority",cmd_argument)
+                    logprint("error mail , user priority not sufficent to change the obj:"+objName+" status",verbose=10)
+                    mailText=mailText+compose_error_mail("so_priority",objName)
                     continue
 
 
               
                 else:   
-                  print "error mail ,object type not compatible with status passed "
-                  errorQueue.put("error mail ,object type not compatible with status passed " )
-                  mailText=mailText+compose_error_mail("so_value",cmd_argument)
+                  logprint("error mail ,object:"+objName+" type not compatible with status passed ",verbose=10)
+                  mailText=mailText+compose_error_mail("so_value",objName)
                   continue
 
 
               else:
-                print "error mail, can't found the argument in the dictionary " 
-                errorQueue.put("error mail, can't found the argument in the dictionary "  ) 
-                mailText=mailText+compose_error_mail("so_obj_not_exist",cmd_argument)
+                logprint("error mail, can't found the argument in the dictionary ",verbose=10)
+                mailText=mailText+compose_error_mail("so_obj_not_exist",objName)
                 continue                                         
             
             else:
-              print "error mail invalid arg len"
-              errorQueue.put("error mail invalid arg len" )
+              logprint("error mail invalid arg len",verbose=10)
               continue
                       
           else: #not a know cmdtype
-            print "unknow mail cmd"
+            logprint("unknow mail cmd:"+cmd_type,verbose=10)            
             continue                                  
 
-        print "send mail.."+mailText
+        logprint("send mail.."+mailText)
 
         mailQueue.put({"mail_address":m_sender,"mailText":mailText,"mailSubject":mailSubject})
 
@@ -5787,8 +5684,8 @@ def internetCheckConnection():
     urllib2.urlopen("http://www.google.com")  
     internet_state=1
   except Exception as e: 
-    print "no internet connection 0"+" e:"+str(e.args)
-    errorQueue.put("no internet connection 0"+" e:"+str(e.args) )
+    message="no internet connection 0"
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
     internet_state=0
   return(internet_state)
 
@@ -5803,7 +5700,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   global reconnect_serial_port_enable
   read_pin=1   #banana
   #time.sleep(5)  #wait for webserver to startup 
-  print "hardwareHandlerThread() executed"
+  logprint("hardwareHandlerThread() executed")
   #if (exit==0):   #if exit ==1  then close the webserver
   #print time.time()
   #print "last_mail_sync_time",last_mail_sync_time
@@ -5874,9 +5771,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
           nodeDict[a].setNodeActivity(0)  #set the node as inactive
-          print "the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"
-          print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())    
-          errorQueue.put( "The node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it?"+"at:" +getErrorTimeString())
+          message="the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it? difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
+          logprint(message,verbose=6)  
 
           for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
             priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
@@ -5889,18 +5785,18 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         else:#now the node is connected
           if nodeDict[a].getNodeActivity()==0: #the node was not connected but now it is
             nodeDict[a].setNodeActivity(1)  #set the node as active
-            print "node:"+a+" returned active" 
-            errorQueue.put( "The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString())
+            message="The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
+            logprint(message,verbose=5)
             #for b in object_dict.keys():
             for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
-              print "object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber())
+              logprint("object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber()) )
               #if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
-              print "webobject:"+b+"returned active"
+              logprint("webobject:"+b+"returned active",verbose=5)
               prev_s=object_dict[b].getPreviousStatus() 
               current_s=object_dict[b].getStatus()
               if ((current_s=="inactive") or (current_s=="onoswait") ): 
               #  prev_s=object_dict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
-                print "the new status will be:"+str(prev_s)
+                logprint("the new status will be:"+str(prev_s) )
                 priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
                 #set the web_object to the status before the disconnection 
           
@@ -5912,14 +5808,14 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
     if (conf_options["online_server_enable"]==1)&(internet_connection==1):
       if (onlineServerSyncThreadIsrunning==0)&((time.time()-last_server_sync_time)>online_server_delay):
         last_server_sync_time=time.time()
-        print "i started the online server sync service"
+        logprint("i started the online server sync service")
         try:
           w4 = threading.Thread(target=onlineServerSync)
           w4.daemon = True  #make the thread a daemon thread
           w4.start()
         except Exception as e :
-          print "error executing onlineServerSync()"+" e:"+str(e.args)
-          errorQueue.put( "error executing onlineServerSync()"+" e:"+str(e.args))  
+          message="error executing onlineServerSync()"
+          logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
    # time.sleep(0.3) #don't remove this or else the router became instable
 
    #the mail check will run only if the onlineServerSync is not running    
@@ -5931,8 +5827,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           w3.daemon = True  #make the thread a daemon thread
           w3.start()
         except Exception as e :
-          print "error executing mailCheckThread()"+" e:"+str(e.args)
-          errorQueue.put("error executing mailCheckThread()"+" e:"+str(e.args) ) 
+          message="error executing mailCheckThread()"
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
           #continue
          
     #time.sleep(0.2)
@@ -5945,8 +5841,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
       try:
         read_pin=read_pin+hardware.read_router_pins()  # if hardware.read_router_pins() is -1 for two times it will go to <0
       except Exception as e :
-        print "error executing hardware.read_router_pins()"+" e:"+str(e.args)
-        errorQueue.put( "error executing hardware.read_router_pins()"+" e:"+str(e.args))  
+        message="error executing hardware.read_router_pins()"
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
 
 
@@ -5960,8 +5856,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         if hardware.serialCommunicationIsWorking==1:
           #print str(hardware.serial_communication.uart)
           if len (hardware.serial_communication.uart.readed_packets_list)>0:
-            print "there is an incoming data on serial port buffer"
-            print hardware.serial_communication.uart.readed_packets_list
+            logprint("there is an incoming data on serial port buffer"+str(hardware.serial_communication.uart.readed_packets_list))
 
             if hardware.serial_communication.uart.readed_packets_list[0]=="[S_ertx1_#]":
               hardware.serial_communication.uart.readed_packets_list.pop(0)  
@@ -5978,16 +5873,13 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
         else:
           hardware.serialCommunicationIsWorking==0
-          print("serial port not working correctly")  
+          logprint("serial port not working correctly",verbose=9)  
 
     except Exception as e:
 
       if enable_usb_serial_port==1:
-        print("serial port not working correctly2")   
-        error_message="error in the analyze of serial port incoming bytes"
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb) 
-        print(error_message)
+        message="serial port not working correctly2"
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
       else:
         pass
 
@@ -6007,9 +5899,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             mailQueue.put({"mail_address":mail_where_to_send_errors,"mailText":error_text,"mailSubject":"onos_errors_report"})
 
         except Exception as e:
-          print "error in the error mail log of hardwareHandlerThread !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+" e:"+str(e.args)
-          print error_text
-          errorQueue.put("error in the error mail log of hardwareHandlerThread "+" e:"+str(e.args))
+          message="error in the error mail log of hardwareHandlerThread,error:"+error_text
+          logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -6030,8 +5921,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         send_mail.start()
 
       except Exception as e:     
-        print "error in the mail send of onosBusThread "+" e:"+str(e.args)
-        errorQueue.put("error in the  mail send  of onosBusThread "+" e:"+str(e.args)+str(threading.active_count()))
+        message="error in the mail send of onosBusThread "
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
    
       #print "mailOutputHandler_is_running=",mailOutputHandler_is_running
 
@@ -6049,8 +5940,8 @@ def executeQueueFunction(dataExchanged):
       mail_list_to_report_to=dataExchanged["mail_report_list"]
       setNodePin(node_serial_number,pin_number,pin_status,write_hw_enable)
     except Exception as e :
-      print "error in the setNodePin of onosBusThread "+" e:"+str(e.args)
-      errorQueue.put("error in the setNodePin of onosBusThread "+" e:"+str(e.args))
+      message="error in the setNodePin of onosBusThread "
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
       return(-1)
 
@@ -6075,8 +5966,8 @@ def executeQueueFunction(dataExchanged):
       changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)
 
     except Exception as e:
-      print "error in the setSts of onosBusThread "+" e:"+str(e.args)
-      errorQueue.put("error in the setSts of onosBusThread: name:"+str(objName)+",st:"+str(status_to_set)+",wr_en:"+str(write_hw_enable)+",usr:"+usr+",priority:"+str(priority)+" e:"+str(e.args)) 
+      message="error in the setSts of onosBusThread "
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
         
@@ -6085,13 +5976,13 @@ def executeQueueFunction(dataExchanged):
       scenarioName=dataExchanged["scenarioName"]
       checkwebObjectScenarios(scenarioName) 
     except Exception as e:
-      print "error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args)
-      errorQueue.put("error in the scen_check of onosBusThread ,scenario_name:"+str(scenarioName)+" e:"+str(e.args))
+      message="error in the scen_check of onosBusThread ,scenario_name:"
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
 
   if (dataExchanged["cmd"]=="updateObjFromNode"):
 
-    print "updateObjFromNode" 
+    logprint("updateObjFromNode")
 
 #hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}# 
 
@@ -6101,43 +5992,45 @@ def executeQueueFunction(dataExchanged):
 
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
-    print str(dataExchanged["objects_to_update"].keys())
-    print "end data_exanged"
+    logprint(str(dataExchanged["objects_to_update"].keys())+"end data_exanged")
+
 
     try:
       #{obj_number_to_update:obj_value}  
       for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update.. 
-        print "object address in the node="+str(a)
+        logprint("object address in the node="+str(a) )
         try:
           objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
           object_dict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
-        except: #todo place this somewhere else..
+        except Exception as e: #todo place this somewhere else..
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
+          message="error in the updateObjFromNode"
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))   
           try:
             createNewWebObjFromNode(hwType,node_serial_number)  
             objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
+            logprint("node_serial_number"+node_serial_number)
+            logprint("objName"+str(objName) )
           except Exception as e:
-            error_message="""error in dataExchanged["cmd"]=="updateObjFromNode" """
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+            message='error in dataExchanged["cmd"]=="updateObjFromNode"'
+            logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))  
 
-        print("objName to upade the value:"+objName) 
+        logprint("objName to upade the value:"+objName) 
         status_to_set=dataExchanged["objects_to_update"][a]
         write_hw_enable=0
         usr="onos_node"
         priority=0
         mail_list_to_report_to=[]
       #example of objName: socket0_Plug6way0002
-        print "I call changeWebObjectStatus() to update the obj from node update"
+        logprint("I call changeWebObjectStatus() to update the obj from node update")
         if status_to_set!=object_dict[objName].getStatus():
           #print(str((objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)))
 
           changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
 
     except Exception as e: 
-      error_message="error in the for loop of updateObjFromNode condition :node="+node_serial_number
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+      message="error in the for loop of updateObjFromNode condition :node="+node_serial_number
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -6149,8 +6042,8 @@ def executeQueueFunction(dataExchanged):
       updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
     except Exception as e:
-      print "error in the updateNodeAddress of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
-      errorQueue.put("error in the createNewNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args))
+      message="error in the updateNodeAddress of onosBusThread ,Node:"+str(node_serial_number)
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -6164,8 +6057,8 @@ def executeQueueFunction(dataExchanged):
       msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
 
     except Exception as e:
-      print "error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)+" e:"+str(e.args)
-      errorQueue.put("error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)+" e:"+str(e.args))
+      message="error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
     
   if (dataExchanged["cmd"]=="sendNewAddressToNode"):
@@ -6185,46 +6078,45 @@ def executeQueueFunction(dataExchanged):
       #  print "i save the new address in the config memory"
 
     except Exception as e:
-      print "error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args)
-      errorQueue.put("error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+" e:"+str(e.args))
+      message="error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
+      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
      
   if (dataExchanged["cmd"]=="set_serialCommunicationIsWorking=0"): #todo check if it works
     try:
       hardware.serialCommunicationIsWorking=0
     except Exception as e  :
-      error_message="error in set_serialCommunicationIsWorking=0"
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
-
+      message="error in set_serialCommunicationIsWorking=0"
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
+       
 
 
   if (dataExchanged["cmd"]=="reconnectSerialPort"): #todo check if it works
     hardware.serialCommunicationIsWorking=0
-    print "I try to reconnectg serial port from webserver.py"
+    logprint("I try to reconnect serial port from webserver.py")
     try:
         tryToReconnect=1
         try:
           if hardware.serial_communication.uart.ser.isOpen() == False:
-            print ("hardware.serial_communication.uart.ser.isOpen() == False ") 
+            logprint("hardware.serial_communication.uart.ser.isOpen() == False ") 
           else:
-            print ("hardware.serial_communication.uart.ser.isOpen() = "+str(hardware.serial_communication.uart.ser.isOpen()))  
+            logprint("hardware.serial_communication.uart.ser.isOpen() = "+str(hardware.serial_communication.uart.ser.isOpen()))  
             #hardware.serial_communication.uart.ser.close()  
             #tryToReconnect=0
 
         except:
-          print ("can't do hardware.serial_communication.uart.ser.isOpen() ") 
+          logprint("error can't do hardware.serial_communication.uart.ser.isOpen() ",verbose=8) 
           tryToReconnect=1
 
         if tryToReconnect==1:
           result=hardware.connectSerialPort() 
           if result==1:
             #hardware.serial_communication.working=1
-            print "serial port successfully reconnected from webserver.py"
-            errorQueue.put("serial port successfully reconected from webserver.py")
+            logprint("serial port successfully reconnected from webserver.py",verbose=8)
+
           else:
             hardware.serial_communication.working=0
-            print "serial port can't be reconnected from webserver.py"
-            errorQueue.put("serial port can't be reconnected  from webserver.py")
+            logprint("error serial port can't be reconnected from webserver.py",verbose=8)
             print "serial port is already connected"
 
     except Exception as e: 
@@ -6235,7 +6127,7 @@ def executeQueueFunction(dataExchanged):
       print("error in serial port reconnection")  
 
 
-  print "dataExchanged = : ", dataExchanged
+  logprint("dataExchanged = : "+str(dataExchanged) )
 
   return()
 
@@ -6294,8 +6186,8 @@ def onosBusThread():
       try:
         old_minutes=object_dict["minutes"].getStatus()
       except Exception as e:  
-        print "error in the minutes update of onosBusThread "+" e:"+str(e.args)
-        errorQueue.put("error in the  minutes update of onosBusThread "+" e:"+str(e.args))  
+        logprint("error in the minutes update of onosBusThread ")
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
         old_minutes=0
 
     #time_objects_handler
@@ -6321,8 +6213,8 @@ def onosBusThread():
               with lock_bash_cmd:
                 subprocess.check_output('''ntpd -q -p 0.openwrt.pool.ntp.org''', shell=True,close_fds=True)
             except:
-              print "error executing ntpd, maybe ntpd is not installed.." 
-              errorQueue.put("error executing ntpd, maybe ntpd is not installed.." ) 
+              logprint("error executing ntpd, maybe ntpd is not installed..",verbose=8) 
+
 
             changeWebObjectStatus("hours",datetime.datetime.today().hour,0)
 
@@ -6336,14 +6228,8 @@ def onosBusThread():
             changeWebObjectStatus("year",datetime.datetime.today().year,0)
 
         except Exception as e: 
-
-          exc_type, exc_obj, exc_tb = sys.exc_info()
-          fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-          print(exc_type, fname, exc_tb.tb_lineno)   
-          print str(e.args)
-          print "error in the time_objects_handler of onosBusThread "+" e:"+str(e.args)
-          errorQueue.put("error in the time_objects_handler of onosBusThread"+" e:"+str(e.args)+str(exc_type)+str(fname) +str(exc_tb.tb_lineno))    
-
+          message="error in the time_objects_handler of onosBusThread "
+          logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -6356,11 +6242,11 @@ def onosBusThread():
  #    for u in user_active_time_dict.keys(): #check the user login timout
 
             check_log_len_time=old_dayTime
-            print "check_log_len_time "
+            logprint("check_log_len_time ")
             error_phrase="error"
 
             if os.path.getsize(log_name)>1000000: #if log size > 1 megabyte then save the errors and delete it
-              print "i clear the onos log" 
+              logprint("i clear the onos log") 
               #os.system('''grep -B5 -A5 -P '^'''+error_phrase+'''$' '''+log_name+'''>>'''+error_log_name)  #save the 5 line prev and after the line with an error 
               with lock_bash_cmd:
                 subprocess.check_output('''grep -B5 -A5 -P '^'''+error_phrase+'''$' '''+log_name+'''>>'''+error_log_name, shell=True,close_fds=True)
@@ -6370,11 +6256,8 @@ def onosBusThread():
                 subprocess.check_output('''echo " " >'''+log_name, shell=True,close_fds=True) 
 
     except Exception as e: 
-      print "main error in onosBusThread() "+" e:"+str(e.args)
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)   
-      errorQueue.put("main error in onosBusThread()"+" e:"+str(e.args)+str(exc_type)+str(fname) +str(exc_tb.tb_lineno))    
+      message="main error in onosBusThread() "
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
 
@@ -6416,16 +6299,17 @@ def nodeTcpServer():
         try:
           connection, client_address = sock.accept()  
           node_ip=client_address[0]
-          print "nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",node_ip
+          logprint("nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+str(node_ip) )
         except Exception as e  :
-          print "timeout in receiving!!!",e
+          message="error timeout in receiving!!!"
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
           try:
             connection.close()
-            print "connection  closed"    
+            logprint("connection  closed")   
           except:
-            print "connection alredy closed"  
-          print "error connection, client_address = sock.accept()  in nodeTcpServer()"+str(e.args) 
-          errorQueue.put("error connection, client_address = sock.accept()  in nodeTcpServer()"+"at:"+getErrorTimeString())   
+            logprint("connection alredy closed") 
+          logprint("error connection, client_address = sock.accept()  in nodeTcpServer()",verbose=7)
+
 
 
 
@@ -6456,8 +6340,8 @@ def nodeTcpServer():
                 
                 msg=received_message
                 if ( (data.find("[S_")!=-1)&(data.find("_#]")!=-1))  :   # if the message is completed close the connection
-                  print "end line received!!!! ----------------------------------------------------jjuyjytrty"
-                  print "received_message:"+received_message  
+                  logprint("end line received!!!! ----------------------------------------------------")
+                  logprint("received_message:"+received_message)
 #example:  "pinsetup?node_sn=ProminiA0001&fw=4.85_#]"
 
                   if received_message.startswith("[S_001sy?") :  
@@ -6466,9 +6350,7 @@ def nodeTcpServer():
                     cmd=buf[cmd_start:cmd_end+3]     
                     node_sn=cmd[12:24]   
                     node_fw=cmd[8:12]
-                    print "node_sn"+node_sn
-                    print "node_fw"+node_fw
-                    print "nodeipfffffffffffffffffffffffffffffffffddddddd",node_ip  
+                    logprint("node_sn"+node_sn+"node_fw"+node_fw+"nodeip"+str(node_ip ))
                     msg=createNewNode(node_sn,node_ip,node_fw)+"_#]"
                     connection.sendall("[S_ok...[S_")  
                     connection.close()   
@@ -6478,10 +6360,8 @@ def nodeTcpServer():
 
                   if received_message.startswith("n_sync?") :                  
                     node_sn=re.search('sn=(.+?)&',received_message).group(1) 
-                    node_fw=re.search('&fw=(.+?)_#',received_message).group(1)
-                    print "node_sn"+node_sn
-                    print "node_fw"+node_fw
-                    print "nodeipfffffffffffffffffffffffffffffffffddddddd",node_ip  
+                    node_fw=re.search('&fw=(.+?)_#',received_message).group(1) 
+                    logprint("node_sn"+node_sn+"node_fw"+node_fw+"nodeip"+str(node_ip ))
                     connection.sendall('ok')  
                     connection.close()   
                     msg=createNewNode(node_sn,node_ip,node_fw)+"_#]" #i call createNewNode just to update the node ip ...
@@ -6501,8 +6381,8 @@ def nodeTcpServer():
     
           
           except Exception as e  :
-            print "error tcp connection",e
-             
+            message="error tcp connection"
+            logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
 
           finally:
@@ -6510,7 +6390,7 @@ def nodeTcpServer():
             try:
               connection.close()
             except:
-              print "connection not created2" 
+              logprint("connection not created2")
 
 
 
@@ -6519,19 +6399,19 @@ def nodeTcpServer():
         # Clean up the connection, close() is always called, even in the event of an error.
           connection.close()
         except:
-          print "connection not created3" 
+          logprint("connection not created3") 
 
 
     except Exception as e  :
-      print "error tcp server thread",e
-      errorQueue.put("error tcp server thread"+" e:"+str(e.args)  ) 
+      message="error tcp server thread"
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
     finally:
 
       try:
         connection.close()
       except:
-        print "connection not created 4" 
+        logprint("connection not created 4")
 
 
 def run_while_true(server_class=BaseHTTPServer.HTTPServer,
@@ -6552,15 +6432,15 @@ def run_while_true(server_class=BaseHTTPServer.HTTPServer,
       try:
         httpd.handle_request() 
       except Exception as e:
-        print "something went wrong on main Webserver handler "+" e:"+str(e.args)       
-        errorQueue.put("something went wrong on main Webserver handler "+" e:"+str(e.args)  )      
+        message="something went wrong on main Webserver handler "   
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))     
 
 def main():
     global exit
     try:
         
         #server = HTTPServer(('', 80), MyHandler)
-        print 'started httpserver...'
+        logprint('started httpserver...')
 
 
 
@@ -6586,7 +6466,7 @@ def main():
 
     except KeyboardInterrupt:
          #updateJson()
-        print '^C received, shutting down server'
+        logprint('^C received, shutting down server',verbose=7)
 
         hardware.close()
         exit=1

@@ -26,6 +26,7 @@ from time import gmtime, strftime
 import json
 import unicodedata
 import os
+import syslog
 import codecs
 #import urllib2,urllib 
 import urllib2
@@ -740,7 +741,7 @@ def getErrorTimeString():
   Called when an error occours ,return the current time and a progressive number of the error, incrementing the error_count.
   Used to send the error time and error_count to debug the software.
  
-"""
+  """
 
   global error_count
   error_count=error_count+1 
@@ -748,22 +749,42 @@ def getErrorTimeString():
 
 
 
-def printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb,error_gravity=0):
-  if debug>0 or error_gravity>1:
+def logprint(message,verbose=0,error_tuple=None):
+    
+  """
+  Print the message passed  and if the system is in debug mode or if the error is important send a mail
+
+  """
+# used like this:
+#   except Exception as e:
+#    message="""error in dataExchanged["cmd"]=="updateObjFromNode" """
+#    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
+ 
+
+  message=str(message)
+
+  #if "error" in message:  #the message is an error...
+
+  if error_tuple!=None: 
+ 
+    e=error_tuple[0]
+    exc_type, exc_obj, exc_tb=error_tuple[1]
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    print (error_message+", e:"+str(e.args)+str(exc_type)+str(fname)+" at line:"+str(exc_tb.tb_lineno))
-    if debug>1 or error_gravity>1:
-      errorQueue.put(error_message+", e:"+str(e.args)+str(exc_type)+str(fname)+" at line:"+str(exc_tb.tb_lineno))  
+
+    #to print the message in the system log (to read system log in openwrt type:logread )
+    message=message+", e:"+str(e.args)+str(exc_type)+str(fname)+" at line:"+str(exc_tb.tb_lineno)
 
 
-# error handler example:
-#try:
-#  a=0+"aa"
-#except Exception as e  :
-#  error_message="error in prototype error"
-#  exc_type, exc_obj, exc_tb = sys.exc_info()
-#  error_gravity=0
-#  printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb ,error_gravity)  
+  syslog.syslog(message)  
+  debug=2
+
+  if debug>0 or verbose>8:
+    print (message)
+    if debug>1 or verbose>1:
+      errorQueue.put(message)  
+
+
 
 
 

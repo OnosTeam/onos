@@ -71,9 +71,8 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
           i=i-1 
 
         except Exception as e  :
-          error_message="make_query_to_radio_node"
-          exc_type, exc_obj, exc_tb = sys.exc_info()
-          printAndSendErrorMessage(error_message,e,exc_type, exc_obj, exc_tb)  
+          message="make_query_to_radio_node"
+          logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
           return(-1)
 
       time.sleep(0.4) 
