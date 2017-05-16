@@ -55,7 +55,7 @@ except Exception as e  :
 
 
 
-print "router hardware selected is"+router_hardware_type
+logprint("router hardware selected is"+router_hardware_type)
 
 
 def newDefaultWebObj(name):

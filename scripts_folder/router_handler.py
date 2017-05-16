@@ -194,7 +194,7 @@ class RouterHandler:
 
           else:
             self.pins_mode[pin]=1  # set the pin as output
-            print "i try to set the pin as output"
+            #print "i try to set the pin as output"
             try:
               #with lock_bash_cmd:
               with open('/sys/class/gpio/gpio'+str(pin)+'/direction', 'w') as f:   #read the pin status

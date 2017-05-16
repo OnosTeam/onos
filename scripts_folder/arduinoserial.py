@@ -158,7 +158,7 @@ class SerialPort:
       global waitTowriteUntilIReceive
       global write_enable
       global msgWasWritten
-      print "read_data thread executed"
+      logprint("read_data thread executed")
  
 
       ignore = ''   #'\r'
@@ -170,23 +170,20 @@ class SerialPort:
       try: 
         self.ser.flushInput() #flush input buffer, discarding all its contents
       except Exception, e :
-        print "can't flush input"+str(e.args) 
-        errorQueue.put( "can't flush input"+str(e.args) )
+        message="error can't flush input"
+        logprint(message,verbose=5,error_tuple=(e,sys.exc_info())) 
 
 
       while (self.exit==0):
           time.sleep(0.03)#0.03 
           
           if self.ser.isOpen() == False :
-            print "error serial port disconnected in arduinoserial.py"
-            errorQueue.put("error serial port disconnected in arduinoserial.py")
+            logprint("error serial port disconnected in arduinoserial.py",verbose=8)
             try:
               self.ser.open()
-              print "I tried to reconnect serial port from arduinoserial and I have been succesfull" 
-              errorQueue.put("I tried to reconnect serial port from arduinoserial and I have been succesfull")
+              logprint("I tried to reconnect serial port from arduinoserial and I have been succesfull") 
             except:
-              print "I tried to reconnect serial port from arduinoserial module but I failed" 
-              errorQueue.put("I tried to reconnect serial port from arduinoserial module but I failed")
+              logprint("I tried to reconnect serial port from arduinoserial module but I failed")
               #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"})
               self.exit=1
               return()
@@ -246,14 +243,14 @@ class SerialPort:
                 buf =buf+ self.ser.read(self.ser.inWaiting())   #  self.usbR.read(1)
                 #print byte
               except:
-                print ("error in self.ser.read(self.ser.inWaiting()) ")
+                logprint("error in self.ser.read(self.ser.inWaiting()) ")
                 continue
  
 
               if len(buf)>5:
                 #waitTowriteUntilIReceive=1 
                 if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
-                  print "end of serial packet:_#] "
+                  logprint("end of serial packet:_#] ")
                   break 
 
 
@@ -261,7 +258,7 @@ class SerialPort:
               #  print ("end of line received but no onoscmd found")
               #  break
 
-              print(buf) 
+              logprint(buf) 
 
 
 ##################################################################
@@ -290,14 +287,14 @@ class SerialPort:
               next_buf=buf[cmd_end+3:]
               buf=''              
 
-              print "AAAAAAAAAAAAAAAAAAAAAAAApacket 232 cmd input :"+cmd
+              logprint("AAAAAAAAAAAAAAAAAAAAAAAApacket 232 cmd input :"+cmd)
 
 
               if msgWasWritten==1:
                 last_received_packet=cmd
                 msgWasWritten=0 
                 incomingByteAfterWriteAvaible=1 
-                print "packet received after the write is :"+last_received_packet
+                logprint("packet received after the write is :"+last_received_packet)
 
 
 
@@ -316,7 +313,7 @@ class SerialPort:
               if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
               # [S_001syProminiS0001_#]   or [S_123ulWPlugAvx000810000_#]
 
-                print "serial rx cmd="+cmd
+                logprint("serial rx cmd="+cmd)
                 try:
                   serial_number=cmd[8:20]   
                   node_address=cmd[3:6]
@@ -337,8 +334,8 @@ class SerialPort:
                     continue
 
                 except Exception, e  :               
-                  print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
-                  errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
+                  message="error receiving serial sync message cmd was :"+cmd
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
                 priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
                 #waitTowriteUntilIReceive=0
@@ -347,7 +344,7 @@ class SerialPort:
 
 
               if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
-                print "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd
+                logprint("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd)
                 try:
 
 
@@ -366,8 +363,8 @@ class SerialPort:
 
 
                 except Exception, e  :               
-                  print "error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)  
-                  errorQueue.put("error receiving serial sync message cmd was :"+cmd+ "e:"+str(e.args)   )
+                  message="error receiving serial sync message cmd was :" 
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
                 continue 
 
@@ -384,13 +381,13 @@ class SerialPort:
 
               self.dataAvaible=1 
 
-              print "incoming buffer="+serial_incomingBuffer
+              logprint("incoming buffer="+serial_incomingBuffer)
             else: #cmd not found
-              print "incoming buffer="+buf
+              logprint("incoming buffer="+buf)
               self.dataAvaible=0
 
 
-      print "serial port closed"               
+      logprint("serial port closed")               
       return()
 
 
@@ -407,21 +404,7 @@ class SerialPort:
       time.sleep(0.001) 
     return(1) 
     
-
-
-
-
-  def write0(self, str):#deprecated
-    print "i write"+str
-    os.system("echo "+str+" >> "+self.port)
-
-
-    print "write_to_serial_packet_ready==1"
-
-    return()  
-
   
-
 
   def removeFromPackets_list(self,packet):
     if packet in self.readed_packets_list:
@@ -463,10 +446,10 @@ class SerialPort:
     rx_after_tx_timeout=time.time()+3  #0.7
     while incomingByteAfterWriteAvaible==0:
       if rx_after_tx_timeout<time.time():
-        print ("i exit the loop because of timeout")
+        logprint("i exit the loop because of timeout")
         return("void") 
 
-    print ("i exit the loop because i received a message after I have write one")
+    logprint ("i exit the loop because i received a message after I have write one")
     answer=last_received_packet
     last_received_packet=''
     return(answer)
@@ -492,14 +475,14 @@ class SerialPort:
     #self.ser.write(data_to_write)
 
     incomingByteAfterWriteAvaible=0
-    print "data_to_write:"+data_to_write  
+    logprint("data_to_write:"+data_to_write)
  
     start_time=time.time()
     while incomingByteAfterWriteAvaible==1:
       time.sleep(0.01) 
 
       if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
-        print "rx after write timeout0"
+        logprint("rx after write timeout0")
         incomingByteAfterWriteAvaible=0
         return("error_reception")
     
@@ -525,7 +508,7 @@ class SerialPort:
 
 
   def __del__(self):
-    print ("class arduinoserial destroyed")
+    logprint("class arduinoserial destroyed")
     self.exit=1
     #layerExchangeDataQueue.put( {"cmd":"set_serialCommunicationIsWorking=0"}) 
     if self.port_was_opened==1:
@@ -544,7 +527,7 @@ class SerialPort:
 
   def close(self):
     self.exit=1
-    print "class arduinoserial destroyed by close()"
+    logprint("class arduinoserial destroyed by close()")
 #    try:
  #     os.close(self.ser)     
   #  except:

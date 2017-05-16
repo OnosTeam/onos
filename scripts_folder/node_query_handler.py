@@ -27,7 +27,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
 
   """
-  print ("make_query_to_radio_node executed with number_of_retry_already_done:"+str(number_of_retry_already_done))
+  logprint("make_query_to_radio_node executed with number_of_retry_already_done:"+str(number_of_retry_already_done))
   max_retry=1 
   for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
     
@@ -54,11 +54,11 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
         try:
           a=serialCom.uart.readed_packets_list[i]
                 
-          print ("check of all received answers000000000 current one was:"+str(a))
+          logprint("check of all received answers000000000 current one was:"+str(a))
 
           if a.find(expected_confirm)!=-1 :  #found the answer
             serialCom.uart.readed_packets_list.remove(a)
-            print ("I have found the answer I was looking for")
+            logprint("I have found the answer I was looking for")
             return (a)
 
           if a=="[S_ertx1_#]":
@@ -90,11 +90,8 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
       #data=pyserial_port.writeToSerial(query)
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)   
-      print str(e.args)
-      errorQueue.put("error writing to serial port, data to send:"+query+", at:"+getErrorTimeString()+"e:"+str(e.args)+str(exc_type)+str(fname)+str(exc_tb.tb_lineno))  
+      message="error writing to serial port, data to send:"+query+", at:"+getErrorTimeString()
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
     #time.sleep(0.1*m) 
      # time.sleep(2)  
 
@@ -125,10 +122,10 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     for a in copy_of_readed_packets_list:  #iterate the list from the last element to the first
       #a=serialCom.uart.readed_packets_list[i]
 
-      print ("check of all received answers current was:"+str(a))
+      logprint("check of all received answers current was:"+str(a))
       if a.find(expected_confirm)!=-1 :  #found the answer
         serialCom.uart.readed_packets_list.remove(a)
-        print ("I have found the answer I was looiking for")
+        logprint("I have found the answer I was looiking for")
         return (a)
 
       try:
@@ -139,7 +136,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
           serialCom.uart.readed_packets_list.remove(a)
 
       except:
-        print ("error serialCom.uart.readed_packets_list.remove(a) ")
+        logprint("error serialCom.uart.readed_packets_list.remove(a) ")
     #print "uart rx list after:"
     #print serialCom.uart.readed_packets_list
  
@@ -150,9 +147,8 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     #time.sleep(0.2*m) 
 
 
-  print("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
+  logprint("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
              
-  errorQueue.put("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
   return(-1) 
 
 
@@ -172,8 +168,8 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
   """
 
     #time.sleep(0.1) 
-  print "make_query_to_network_node() thread executed"
-  print "i try this query:"+query
+  logprint("make_query_to_network_node() thread executed")
+  logprint( "i try this query:"+query)
   timeout=0.1
   html_response="local_error_in_router_handler_cant_connect_to_node"    
   
@@ -182,12 +178,12 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
   for m in range(0,8):   #retry n times to get the answer from node
    
     node_address=nodeDict[node_serial_number].getNodeAddress()  #update the node address ..maybe has changed..
-    print "connection try number:"+str(m)+"to ip number"+str(node_address)
+    logprint("connection try number:"+str(m)+"to ip number"+str(node_address) )
     html_response="local_error_in_router_handler_cant_connect_to_node"  
     received_answer=""
     flag=0
     while (wait_because_node_is_talking==1):  #the node is talking to onos...wait ...banana to make it for each node..
-      print "i rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" 
+      logprint("i wait_because_node_is_talking ..............") 
       time.sleep(0.1) 
       flag=1
     if flag==1:
@@ -203,16 +199,16 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
       s.sendall(query)
 
       while (exit==0):
-        print "s.recv(1024aaaa)"
+        logprint("s.recv(1024aaaa)")
         resp=""
         try:
           resp = s.recv(1024) 
         except Exception as e  :
-          print "error_qqqq retry",e
-          errorQueue.put("error0 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)+"error:"+str(e.args)+"at:" +getErrorTimeString() )
+          message="error0 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
           break
 
-        print "after s.recv(1024)"
+        logprint("after s.recv(1024)")
         received_answer=received_answer+resp 
         #if (time.time()> (time_start+wait_timeout) ):
         #  print "timeout waiting for answer from node....................................................................."
@@ -221,7 +217,7 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
 
         if received_answer.find("_#]")!=-1:
           break
-          print resp
+          logprint(resp)
 
 
         if received_answer.find("ok")!=-1:
@@ -232,12 +228,11 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
 
       # Close the connection when completed
       s.close()
-      print "\ndone"
+      logprint("\ndone")
 
     except Exception as e  :
-      print "error_i retry",e
-      errorQueue.put("error2 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m) +str(e.args)+"at:" +getErrorTimeString() )    
-      print"the query was"+query+"number of try  "+str(m)  
+      message="error2 in make_query_to_network_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)+"at:"+getErrorTimeString() 
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
 
       s.close()
 
@@ -253,20 +248,20 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
 
     
       if received_answer.find("ok_#]")!=-1:
-        print "msg sent correctly"
+        logprint("msg sent correctly")
         html_response=received_answer
         priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
         return()
         #break
       else:
         html_response=received_answer
-        print "answer received is wrong:"+received_answer
+        logprint("answer received is wrong:"+received_answer)
         time.sleep(timeout)
         continue
 
 
-  print "great error the node did not answer also if tried :"+str(m)+"times, the node will not be setted anymore(probably is not connected)"   
-  errorQueue.put("great error the node did not answer also if tried :"+str(m)+"times, the node will not be setted anymore(probably is not connected)"    ) 
+  logprint("great error the node did not answer also if tried :"+str(m)+"times, the node will not be setted anymore(probably is not connected)")   
+
   return()
 
 
@@ -286,7 +281,7 @@ def handle_new_query_to_radio_node_thread(serialCom):
   """
 
 
-  print "executed handle_new_query_to_radio_node_thread() "
+  logprint("executed handle_new_query_to_radio_node_thread() ")
 
   global node_query_radio_threads_executing
   global next_node_free_address_list
@@ -311,7 +306,7 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
 
     if (time.time()-time_waiting_for_incoming_msg-threshold_of_time_query)>(time_of_write-old_time_of_write):
-      print("wait to allow rx from radio nodes")
+      logprint("wait to allow rx from radio nodes")
       time.sleep(0.7)   #need this to allow the serial node to pick up the messages from the radio nodes..
       old_time_of_write=time.time() 
       time_waiting_for_incoming_msg=time.time() 
@@ -344,7 +339,7 @@ def handle_new_query_to_radio_node_thread(serialCom):
     #else:
     #  query_order=query_time-currentRadioQueryPacket[0]  # i used time_when_the_query_was_created - priority..
 
-    print ("current query_order:"+str(query_order)+"for query:"+query)
+    logprint("current query_order:"+str(query_order)+"for query:"+query)
 
 
     node_address=nodeDict[node_serial_number].getNodeAddress()
@@ -352,24 +347,23 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
     query_answer=make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_done)
     if query_answer==-1 : #invalid answer received
-      print ("error query_answer wrong UUUUUUUUuuuuuuuuuuuuuuUUUUUUUUUUUUuuuuuuuuuuuUUUUUUUUUUUUUUuuuuuuuuUUUUUUUUUUUuuuuuuuUUU")
+      logprint("error query_answer wrong UUUUUUUUuuuuuuuuuuuuuuUUUUUUUUUUUUuuuuuuuuuuu",verbose=4)
       number_of_retry_done=number_of_retry_done+1
       if priority==99: #if the priority is 99 then the query will be always retrayed infinites times.
         query_order=time.time()+1 #make the query less important..to allow other queries to run
         if number_of_retry_done>35:  #if greater that n wait a bit
-          print("sleep a bit because number_of_retry_done>35")
+          logprint("sleep a bit because number_of_retry_done>35")
           time.sleep(0.2)   #need this to allow the serial node to pick up the messages from the radio nodes..
       else:
         query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
         if number_of_retry_done>25:  #if greater that n don't repeat the query.
-          print ("i retried the query:"+query+"more than 15 times , I giveup")
-          errorQueue.put("i retried the query:"+query+"more than 15 times , I giveup")
+          logprint("i retried the query:"+query+"more than 15 times , I giveup",verbose=10)
           continue
 
         if (time.time()-query_time )>500:
           #if more than n seconds has passed since the query was made the first time..don't repeat the query.
-          print ("i retried the query "+query+"more than 100 seconds , I giveup")
-          errorQueue.put("i retried the query:"+query+"more than 100 seconds  , I giveup")
+          logprint("i retried the query "+query+"more than 100 seconds , I giveup",verbose=10)
+
           continue
 
      
@@ -394,7 +388,7 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
   
   node_query_radio_threads_executing=0
-  print "handle_new_query_to_radio_node_thread closed"
+  logprint("handle_new_query_to_radio_node_thread closed")
   return()
 
 
@@ -411,7 +405,7 @@ def handle_new_query_to_network_node_thread():
   """
 
 
-  print "executed handle_new_query_to_network_node_thread() "
+  logprint("executed handle_new_query_to_network_node_thread() ")
 
 
   global node_query_threads_executing
@@ -424,19 +418,19 @@ def handle_new_query_to_network_node_thread():
       #queryToNetworkNodeQueue.task_done() #banana maybe to remove because not usefull
       node_serial_number=current_query["node_serial_number"]
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
-        print "the node"+node_serial_number+"is inactive ,so I delete its query"
+        logprint("the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
         errorQueue.put("the node"+node_serial_number+"is inactive ,so I delete its query")
         continue ##skip to the next query ..
 
       with lock1_current_node_handler_list:
         if ((node_serial_number not in current_node_handler_list)): #or (node_query_threads_executing==1)):
           current_node_handler_list.append(node_serial_number)
-          print "handle_new_query_to_network_node_thread excuted with "+node_serial_number
+          logprint("handle_new_query_to_network_node_thread excuted with "+node_serial_number)
         else:
-          print "node is already being contacted:q->",current_query
+          logprint("node is already being contacted:q->"+current_query)
           queryToNetworkNodeQueue.put(current_query)
           continue
-      print "node_query_threads_executing:",node_query_threads_executing
+      logprint("node_query_threads_executing:"+node_query_threads_executing)
       #address=current_query["address"]
       query=current_query["query"]
       objName=current_query["objName"]
@@ -445,7 +439,7 @@ def handle_new_query_to_network_node_thread():
       priority=current_query["priority"]
       mail_report_list=current_query["mail_report_list"]
       while (wait_because_node_is_talking==1):  #the node is talking to onos...wait ...todo to make it for each node..
-        print "i waiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiit"
+        logprint("the node is talking to onos...wait iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiit")
         time.sleep(0.1)  
         #print "wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"  
 
@@ -453,7 +447,7 @@ def handle_new_query_to_network_node_thread():
 
     
       with lock1_current_node_handler_list:
-        print "lock2b from handle_new_query_to_network_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number
+        logprint("lock2b from handle_new_query_to_network_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number)
         current_node_handler_list.remove(node_serial_number)
 
 
@@ -470,18 +464,18 @@ def handle_new_query_to_network_node_thread():
 
 
   except Exception as e :
-    print ("main error in handle_new_query_to_network_node_thread"+str(e.args)+"current query:"+str(current_query)) 
-    errorQueue.put("main error in handle_new_query_to_network_node_thread:"+str(e.args)+"current query:"+str(current_query)) 
+    message="main error in handle_new_query_to_network_node_thread, current query:"+str(current_query)
+    logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
 
 
     with lock1_current_node_handler_list:
       try:
-        print "lock2c from handle_new_query_to_network_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number
+        logprint("lock2c from handle_new_query_to_network_node_thread_remove,query_to_node_dict)[node_serial_number]"+node_serial_number)
         current_node_handler_list.remove(node_serial_number)
         query_threads_number=query_threads_number-1
       except:
-        print "error in current_node_handler_list.remove after main error" 
+        logprint("error in current_node_handler_list.remove after main error") 
 
   if node_query_threads_executing>0:
     node_query_threads_executing=node_query_threads_executing-1

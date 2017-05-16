@@ -144,8 +144,8 @@ class HwNode:
       if (pin in self.pins_status):
         return(1) #pin is in the range for the hardware
       else:
-        print "error ,the pin is not in the range hardware"
-        errorQueue.put("error ,the pin is not in the range hardware" )
+        logprint("error ,the pin is not in the range hardware",verbose=7)
+
         return(0) #pin is NOT in the range for the hardware
 
 
@@ -161,8 +161,8 @@ class HwNode:
             - "AINPUT"  : analog  input
       """
       if type(mode) is not str :
-        print "error in setNodePinMode , passed a non string type as mode"
-        errorQueue.put("error in setNodePinMode , passed a non string type as mode" )
+        loprint("error in setNodePinMode , passed a non string type as mode",verbose=8)
+
         return(-1)
 
       if self.isPinOk(pin):
@@ -185,14 +185,12 @@ class HwNode:
             self.pins_io_mode[pin]=0
           return(1)
 
-        except Exception, e :
-          print "hw_node() pin setting error in  node:"+self.NodeSerialNumber+"pin:"+str(pin)+" mode:"+str(mode)
-          print (e.args)
-          errorQueue.put("hw_node() pin setting error in  node:"+self.NodeSerialNumber+"pin:"+str(pin)+" mode:"+str(mode) ) 
-          errorQueue.put(e.args)  
+        except Exception as e :
+          message="hw_node() pin setting error in  node:"+self.NodeSerialNumber+"pin:"+str(pin)+" mode:"+str(mode)
+          logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
           return(-1)
       else:
-        print "pin out of range , cannot set the digital input pin status in  node:"+self.NodeSerialNumber
+        logprint("error,pin out of range , cannot set the digital input pin status in  node:"+self.NodeSerialNumber)
         return(-1)
 
 
@@ -208,10 +206,10 @@ class HwNode:
           self.pins_status[pin]="DINPUT="+str(status)
           return(1)
         except:
-          print "pin not setted as digital input in this in node:"+self.NodeSerialNumber
+          logprint("error, pin not setted as digital input in this in node:"+self.NodeSerialNumber)
           return(-1)
       else:
-        print "pin out of range , cannot set the digital input pin status "  
+        logprint("error, pin out of range , cannot set the digital input pin status ")  
         return(-1)
 
 
@@ -228,10 +226,10 @@ class HwNode:
           self.pins_status[pin]="AINPUT="+str(status)  #status are from: "AINPUT=0"   to "AINPUT=255"
           return(1)
         except:
-          print "pin not setted as digital input in node:"+self.NodeSerialNumber
+          logprint("pin not setted as digital input in node:"+self.NodeSerialNumber)
           return(-1)
       else:
-        print "pin out of range , cannot set the digital input pin status "  
+        logprint("error,pin out of range , cannot set the digital input pin status ",verbose=8)  
         return(-1)
 
 
@@ -245,10 +243,10 @@ class HwNode:
           self.pins_status[pin]="DOUTPUT"+str(status)  #status are from: "AINPUT=0"   to "AINPUT=255"
           return(1)
         except:
-          print "pin not setted as digital input in node:"+self.NodeSerialNumber
+          logprint("error, pin not setted as digital input in node:"+self.NodeSerialNumber)
           return(-1)
       else:
-        print "pin out of range , cannot set the digital input pin status "  
+        logprint("error, pin out of range , cannot set the digital input pin status ") 
         return(-1)
 
 
@@ -277,10 +275,10 @@ class HwNode:
           self.pins_status[pin]
           return(self.pins_status[pin])
         except:
-          print "pin read problem in node:"+self.NodeSerialNumber
+          logprint("error, pin read problem in node:"+self.NodeSerialNumber)
           return(-1)
       else:
-        print "read pin out of range in node:"+self.NodeSerialNumber
+        logprint("error, read pin out of range in node:"+self.NodeSerialNumber)
         return(-1)
 
 
@@ -296,10 +294,10 @@ class HwNode:
           s1=self.pins_status[pin][0:s]
           return(s1)
         except:
-          print "pin mode problem in node:"+self.NodeSerialNumber
+          logprint("error,pin mode problem in node:"+self.NodeSerialNumber)
           return(-1)
       else:
-        print " mode pin out of range in node:"+self.NodeSerialNumber
+        logprint("error, mode pin out of range in node:"+self.NodeSerialNumber)
         return(-1) 
    
 
@@ -450,13 +448,13 @@ class HwNode:
           return(analog_value) 
                 
         else: # pin not used as analog input           
-          print "warning: the pin is not setted as analog input"
+          logprint("warning: the pin is not setted as analog input")
           return("9999")
 
 
 
       else:
-        print "pin out of range , cannot set the digital input pin status "  
+        logprint("pin out of range , cannot set the digital input pin status ") 
         return("9999")
 
 
@@ -477,17 +475,16 @@ class HwNode:
       pin_to_update={}  
       for i in range(0, 8):  # from 0 to 7  ,for all the pins in the section  
         pin=((section_number*8)+i)        
-        print "self.pins_status="
-        print self.pins_status[pin]
-        print "pin="+str(pin)
+        logprint("self.pins_status="+str(self.pins_status[pin])+"pin="+str(pin) )
+
         if self.pins_status[pin][0:6]=="DINPUT":    #check if the pin is a digital input
      
            # print self.pins_io_status
           current_state=status_byte & binary_mask[i]  #  make an & in order to get the status of each bit of the byte
           if (current_state>0) :  # to make it boolean ,0 or 1
             current_state=1
-          print "pin_status="+str(current_state)  
-          print "binary_mask[i]="+str(binary_mask[i])            
+          logprint("pin_status="+str(current_state)+"binary_mask[i]="+str(binary_mask[i]) )    
+
           self.pins_io_status[pin]==current_state
           self.pins_status[pin]="DINPUT="+str(current_state)  
           if (self.pins_status[pin]!=self.pins_status_old[pin]):   #if something change from the previous update..    
@@ -495,7 +492,7 @@ class HwNode:
             pin_to_update[pin]=str(current_state)
    
 
-            print "pin number"+str(pin)+"of_node:"+self.NodeSerialNumber+"changed status to:"+self.pins_status[pin]
+            logprint("pin number"+str(pin)+"of_node:"+self.NodeSerialNumber+"changed status to:"+self.pins_status[pin] )
    
 
       return(pin_to_update)
@@ -569,7 +566,7 @@ class HwNode:
           s1=a[0:s]
           b.append(s1)
         except:
-          print "pin mode problem in node:"+self.NodeSerialNumber
+          logprint("pin mode problem in node:"+self.NodeSerialNumber)
           return(-1)
 
       return(b)         
@@ -591,8 +588,8 @@ class HwNode:
       |  (the section6 is relative to the pins from 48 to 55 )
 
       """
-      print "used pins by node="
-      print self.used_pin
+      logprint("used pins by node="+str(self.used_pin) )
+
 
       section=0
       d_conf_string=""
@@ -719,7 +716,7 @@ class HwNode:
            total 48 byte 
      """
 
-      print "getSetupMsg executed"
+      logprint("getSetupMsg executed")
       tmp_dict=self.getNodeSectionMode()
       msg="s="
       #msg=msg+"pu"
@@ -732,8 +729,8 @@ class HwNode:
       msg=msg+tmp_dict["analog_output_conf"]
       #msg=msg+"sm"
       msg=msg+tmp_dict["servo_conf"]+"#"
-      print "msg="+msg
-      print "len msg="+str(len(msg))
+      #logprint("msg="+msg+" len msg="+str(len(msg)) )
+
       return (msg)
 
 
@@ -774,7 +771,7 @@ class HwNode:
 
     def close(self):
       self.exit=1
-      print "class hw_node destroyed"
+      logprint("class hw_node destroyed")
 
 
 

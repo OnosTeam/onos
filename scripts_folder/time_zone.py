@@ -19,11 +19,11 @@ try:
    #print profile
   if (string.find(profile,conf_options["timezone"])== -1) :
     os.system('echo "export TZ='+conf_options["timezone"]+'">> /etc/profile') ##export TZ="CET-1CEST,M3.5.0,M10.5.0/3"
-    print " onos set the timezone to:"+conf_options["timezone"]
+    logprint(" onos set the timezone to:"+conf_options["timezone"])
     os.system("source /etc/profile") #reload the profile to update time
   else:
-    print "timezone ok"
+    logprint("timezone ok")
   #banana to add the change of the line to change the timezone
 except:
-  print "error onos can't set the timezone!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  errorQueue.put( "error onos can't set the timezone!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+  logprint("error, onos can't set the timezone!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+

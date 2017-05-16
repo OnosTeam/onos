@@ -342,7 +342,7 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
   | Used only for the radio nodes since the ethernet nodes 
   """
 
-  logprint("getNextFreeAddress executed with"+str(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary))
+  logprint("getNextFreeAddress executed with node_sn:"+str(node_sn0) )
 
   #logprint(next_node_free_address_list) 
   if node_sn0 in nodeDict:  #if the node has already an address..reuse it

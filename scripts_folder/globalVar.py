@@ -808,8 +808,7 @@ def getListUsedPinsByHardwareModel(hwName):
   print "executed getListUsedPinsByHardwareModel"
 
   if hwName not in hardwareModelDict.keys(): #if the hardware model doesn't exist
-    print "the hardware model "+hwName+" doesn't exist"
-    errorQueue.put("the hardware model "+hwName+" doesn't exist" )
+    logprint("error the hardware model "+hwName+" doesn't exist",verbose=8)
     return(-1)
   pin_list=[]
   for a in hardwareModelDict[hwName]["pin_mode"].keys():
@@ -826,8 +825,8 @@ def getListUsedPinsByHardwareModel(hwName):
           pin_list.append(c)
 
 
-  print "pin used:"
-  print pin_list
+  logprint("pin used:"+str(pin_list) )
+
   return (pin_list)
 
 
@@ -870,10 +869,10 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
 
 
 
-  print "executed getListPinsConfigByHardwareModel ()"
+  logprint("executed getListPinsConfigByHardwareModel ()")
   if hwName not in hardwareModelDict.keys(): #if the hardware model doesn't exist
-    print "the hardware model "+hwName+" doesn't exist"
-    errorQueue.put( "the hardware model "+hwName+" doesn't exist" )
+    logprint("error the hardware model "+hwName+" doesn't exist")
+
     return([])
   if pin_mode not in hardwareModelDict[hwName]["pin_mode"].keys(): #if the type  doesn't exist in the hardware model 
     #print "the hardware type "+pin_mode+" doesn't exist in this hardware model"+hwName
@@ -890,7 +889,7 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
       if type(b) in (tuple, list):
         for c in b:
         #an example of b value is d_sensor
-          print c
+          logprint(c)
           pin_list.append(c)
       else:
         pin_list.append(b)

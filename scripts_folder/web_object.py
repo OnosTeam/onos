@@ -158,8 +158,8 @@ class WebObject(object):   # inherit from object python class
       #os.system(self.init_function+'> logs/cmd_init.log 2>&1 &')
       with lock_bash_cmd: 
         subprocess.call(self.init_function+'> logs/cmd_init.log 2>&1 &', shell=True,close_fds=True)
-      print self.init_function
-      print ""
+      logprint(self.init_function)
+
 
       if self.status in self.cmdDict.keys():
         #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &')
@@ -405,7 +405,7 @@ class WebObject(object):   # inherit from object python class
 
 
     def attachScenario(self,scenario):             #attaches a scenario to this webobject 
-      print "scenario attached"
+      logprint("scenario:"+scenario+" attached to webobject")
       if scenario not in self.attachedScenarios:
         self.attachedScenarios.append(scenario)
       return(1)
@@ -463,9 +463,7 @@ class WebObject(object):   # inherit from object python class
         status=float(status)
         is_number=1 
       except:
-        print "the status value passed is not a number is:"+str(status)+"end"
-        errorQueue.put("the status value passed is not a number is:"+str(status)+"end" )
-        print "is"+str(status)
+        logprint("the status value passed is not a number is:"+str(status)+"end",verbose=10)
         is_number=0
 
       if (self.__object_type in self.general_out_group ):
@@ -594,14 +592,14 @@ class WebObject(object):   # inherit from object python class
 
 
     def getMailReport(self):
-      print "report mail list:",self.mail_report_list 
+      #print "report mail list:",self.mail_report_list 
       return(self.mail_report_list)
 
 
     def setMailReport(self,mail_to_add_to_list): #add a list of mails to witch onos will send notes about this objec
       self.mail_report_list=self.mail_report_list+mail_to_add_to_list
       self.mail_report_list=list(set(self.mail_report_list))
-      print "set mail report",self.mail_report_list
+      #print "set mail report",self.mail_report_list
       return(self.mail_report_list)
 
     def getGroup(self):

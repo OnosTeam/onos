@@ -31,20 +31,20 @@ class Serial_connection_Handler():
 
 
   def connectSerialPortOrRetry(self):
-    print("connectSerialPortOrRetry() executed")
+    logprint("connectSerialPortOrRetry() executed")
     self.exluded_port_list=[]
     self.uart=self.connectToPort()
     self.working=1
     i=0
     while (self.uart ==0) :  #while port is not connected retry to connect   banana to make it clever..
-      print ("retry serial connection number:"+str(i))
+      logprint("retry serial connection number:"+str(i))
       self.uart=self.connectToPort()
       if self.uart==1:
         break
       time.sleep(1)
       if i >1:
         if (self.searchForSerialCable(self.exluded_port_list )=="null"):
-          print ("error serial connection, no serial ports found")
+          logprint("error serial connection, no serial ports found")
           self.uart==-1
           self.working=0
           return(-1)
@@ -55,21 +55,17 @@ class Serial_connection_Handler():
 
   
   def connectToPort(self):
-    print("connectToPort() executed")
+    logprint("connectToPort() executed")
     port=self.searchForSerialCable(self.exluded_port_list ) 
     if port!="null":   # if i found the port then use it
       try:
         #old_port=port       #  [0:len(port)-1] 
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, baud_rate)     
-        print ("arduino connected correctly to onos system on port:"+port) 
-        print ("arduino connected correctly to onos system on port:"+port) 
-        print ("arduino connected correctly to onos system on port:"+port) 
-        print ("arduino connected correctly to onos system on port:"+port) 
-        print ("arduino connected correctly to onos system on port:"+port) 
+        logprint ("arduino connected correctly to onos system on port:"+port) 
         return(self.ser)
       except:  #some error occured while using the port i found 
-        print "port error with port:"+port+" i will retry with another port" 
+        logprint("port error with port:"+port+" i will retry with another port")
         if port not in self.exluded_port_list:
           self.exluded_port_list.append(port)
         port=self.searchForSerialCable(self.exluded_port_list )  
@@ -78,23 +74,23 @@ class Serial_connection_Handler():
             #old_port=port[0:len(port)-1] 
             port='/dev/'+port    #[0:len(port)-1]   #remove /n of ls
             self.ser =arduinoserial.SerialPort(port, baud_rate)     
-            print "arduino connected correctly to onos system" 
+            logprint("arduino connected correctly to onos system")
             return(self.ser)
           except:
-            print "port problem onos will be only a webserver and will not controll the hardware nodes , please reconnect arduino to the usb port!"
+            logprint("error,port problem onos will be only a webserver and will not controll the hardware nodes , please reconnect arduino to the usb port!")
             return(0)
         else:#no port found after the error 
-          print "port not found onos will be only a webserver and will not controll the hardware nodes , please connect an arduino to the usb port!" 
+          logprint("error, port not found onos will be only a webserver and will not controll the hardware nodes , please connect an arduino to the usb port!")
           return(0)
 
     else:# port not found the first time
-      print "port not found onos will be only a webserver and will not controll the hardware nodes , please connect an arduino to the usb port!"
+      logprint("port not found onos will be only a webserver and will not controll the hardware nodes , please connect an arduino to the usb port!")
       return(0)
 
 
 
   def searchForSerialCable(self,list_of_port_to_not_use):
-    print ("searchForSerialCable() executed with self.exluded_port_list= "+str(list_of_port_to_not_use))
+    logprint("searchForSerialCable() executed with self.exluded_port_list= "+str(list_of_port_to_not_use))
     list_of_dev=os.listdir("/dev")
 
     if ("ttyUSB0" in list_of_dev)and('/dev/ttyUSB0' not in list_of_port_to_not_use):
@@ -135,7 +131,7 @@ class Serial_connection_Handler():
 
     
   def __del__(self):
-    print ("class Serial_connection_Handler destroyed")
+    logprint("class Serial_connection_Handler destroyed")
     #try:
     #  self.ser.close()
     #except:

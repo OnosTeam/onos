@@ -13,6 +13,8 @@
   |   Because otherwise the mail will be donwloaded elsewhere and onos will not be able to read it since it reads only the unreaded mails.
 """
 
+from globalVar import logprint
+
 #onos_mail_account="electronicflame@gmail.com"
 #onos_mail_pw='password'
 #mail_imap='imap.gmail.com'
@@ -53,7 +55,7 @@ def sendMail(receiver_user_mail,mailtext,mailSubject,mail_conf,smtplib,string):
 
   """
 
-  print "sendMail executed "
+  logprint("sendMail executed ")
   onos_mail_pw=mail_conf["pw"]
   smtp_port=mail_conf["smtp_port"]
   smtp_server=mail_conf["smtp_server"]
@@ -88,9 +90,9 @@ def sendMail(receiver_user_mail,mailtext,mailSubject,mail_conf,smtplib,string):
     server.sendmail(onos_mail_account, receiver_user_mail, msg)
     
 
-  except Exception, e :
-    print "error in mail sending mail_agend"
-    print (e.args) 
+  except Exception as e :
+    message="error in mail sending mail_agend"
+    logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
     sent=e.args
   return(sent)
   
@@ -106,7 +108,7 @@ def get_text(msg):
         for part in msg.get_payload():
             if part.get_content_charset() is None:
                 charset ='ascii'# chardet.detect(str(part))['encoding']
-                print "error charset forced to ashii"
+                logprint("error charset forced to ashii")
             else:
                 charset = part.get_content_charset()
             if part.get_content_type() == 'text/plain':
@@ -117,7 +119,7 @@ def get_text(msg):
                 for subpart in part.get_payload():
                     if subpart.get_content_charset() is None:
                         charset ='ascii'# chardet.detect(str(subpart))['encoding']
-                        print "error charset forced to ashii"
+                        logprint("error charset forced to ashii")
                     else:
                         charset = subpart.get_content_charset()
                     if subpart.get_content_type() == 'text/plain':
@@ -154,7 +156,7 @@ def receiveMail(mail_conf,imaplib,email):
     The email library imported in globalVar.py 
 
   """
-  print "receiveMail() executed"
+  logprint("receiveMail() executed")
   onos_received_mails=[]  #a list of list where the data are (msg_sender,msg_subject,msg_text)
   mail_imap=mail_conf["mail_imap"]
   onos_mail_account=mail_conf["mail_account"]
@@ -204,22 +206,20 @@ def receiveMail(mail_conf,imaplib,email):
                start=msg_content_text.find(u"onos=")
                start2=msg_content_text.find("onos=")
                if (start!=-1)|(start2!=-1):
-                 print "sender:"+msg['From']
-                 print "msg_text=",msg_content_text
+                 logprint("sender:"+msg['From']+",msg_text="+str(msg_content_text)+"onos= found in the mail" )
                  msg_content_text=msg_content_text[start:]
-                 print "onos= found in the mail"
                  typ, data = mail.store(num,'+FLAGS','\\Seen')  #cmd received...set as mail readed
                  #mailtext="onoscmd received i set the webobject to"
                  onos_received_mails.append((msg_sender,msg_subject,msg_content_text))
                else:
                  typ, data = mail.store(num,'-FLAGS','\\Seen')  #not a mail containing onos cmd .. set it as not readed
-                 print "mail without onos cmd"
+                 logprint("mail without onos cmd")
                 #the -FLAGS set it as unreaded ---the +FLAGS set it as readed
 
          #print "i=",i
          #i=i+1       
 
-  print "received mails:",len(onos_received_mails)
+  logprint("received mails:"+str(len(onos_received_mails)) ) 
   return (onos_received_mails) # return a list of received mail that have "onos=" inside the text
 
 
