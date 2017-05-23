@@ -426,7 +426,7 @@ class RouterHandler:
       | Compose the correct query to change an output pin status on a remote node.
       | The examples are:
       |
-      | WARNING old documentation...  
+      | WARNING old documentation... todo update it 
       | "onos_r"+pin0+pin1+"v"+status_to_set+"s"+node_serial_number+"_#]" to set a sr_relay to  status_to_set (0 or 1)
       |   onos_r0607v1sProminiS0001f000_#]  pin6 and 7 used to control a s/r relay and turn it to set 
       |
@@ -502,6 +502,12 @@ class RouterHandler:
           query_placeholder=query_placeholder.replace("#_objnumber_#","0"+str(obj_selected))
         else:
           query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected))      
+
+        #query_placeholder=query_placeholder.replace("#_objnumber00_#","0"+str(obj_selected))
+        #query_placeholder=query_placeholder.replace("#_objnumber0_#",str(obj_selected))
+
+
+
           
 
       #  print "query_placeholder2:"+query_placeholder

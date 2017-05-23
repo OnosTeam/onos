@@ -59,7 +59,7 @@ for a in obj_name_list :      # for every web_obj in the zone make a row...
 
 '''
 
-if len(obj_name_list)<2: #only the body
+if len(obj_name_list)<1:
   web_page=web_page_old+"No objects present in this zone" 
         
 

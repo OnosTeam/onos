@@ -1676,7 +1676,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
   
 
   if (len(readed_html)>10)&(string.find(readed_html,'<!--onos_automatic_page-->')==-1):  #if the file exist and is not automatic then serve it as it is 
-
+    logprint("readed_htmlis mod from user",verbose=5)
     #roomHtml=readed_html
     return(readed_html)
     #print "html parsed "
@@ -1688,7 +1688,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     #  return(roomHtml)
 
   else:  #modify or update the page 
-    logprint("readed_html is:not <!--onos_automatic_page-->",verbose=5)
+    logprint("readed_html is: <!--onos_automatic_page-->",verbose=5)
 
   #if the file does not exist
   #roomHtml=play_zone_start_html+ '''<div id="header">'''+room.upper()+'''</div>'''
@@ -1713,7 +1713,7 @@ def updateOneZone(zone):
   retval = os.getcwd()
   html_file_location=retval+"/"+baseRoomPath+zone+"/index.html"
   logprint("updateOneZone()  executed  with zone:"+zone+";")
-  if os.path.isfile(html_file_location):   #if the directory exist don't create it
+  if os.path.isfile(html_file_location):   #if the file in the directory exist don't create it
     logprint(zone+" exist so i don't create it")
     fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
     file0 = open(baseRoomPath+zone+"/index.html", "w")
@@ -1726,21 +1726,21 @@ def updateOneZone(zone):
 
 
   else:
-    logprint("I make the directory"+zone)
+    logprint("I make the directory:"+zone)
     #os.system("mkdir "+baseRoomPath+zone) 
     #with lock_bash_cmd:
     #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True) 
 
-
     try:
-      os.stat(baseRoomPath+zone)
-    except:
-      os.mkdir(baseRoomPath+zone)  
+      if os.path.isdir(baseRoomPath+zone)!=1:         #if the directory doesn't exist create it
+        os.mkdir(baseRoomPath+zone)  
+    except Exception as e: 
+      message="error executing os.mkdir(baseRoomPath+zone)"
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
     fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
     file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
-
     file0.close()
     #os.system("chmod 777 "+html_file_location)
     #with lock_bash_cmd:
@@ -2834,20 +2834,21 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
 
 
-#localhost/onos_cmd?cmd=sync&node_sn=ProminiA0002&node_fw=4.85__
 
-              if string.find(url,"onos_cmd?cmd=sync&")!=-1:
+#  // http://192.168.1.102/_____onos_cmd=sy&sn=ProminiA0002&fw=5.28&
+
+              if string.find(url,"onos_cmd=sy&")!=-1:
                 logprint("received a onos_cmd?cmd=sync  query")
                 #start_node_sn=string.find(url,'node_sn=')+8
                 #end_node_sn=string.find(url,'&',start_node_sn)
                 #node_sn=url[start_node_sn:end_node_sn]
-                node_sn=re.search('&node_sn=(.+?)&',self.path).group(1)
+                node_sn=re.search('&sn=(.+?)&',self.path).group(1)
                 logprint("node_sn="+node_sn)
 
                 #start_node_fw=string.find(url,'node_fw=')+8
                 #end_node_fw=string.find(url,'&',start_node_fw)
                 #node_fw=url[start_node_fw:end_node_fw]
-                node_fw=re.search('&node_fw=(.+?)__',self.path).group(1)
+                node_fw=re.search('&fw=(.+?)&',self.path).group(1)
                 logprint("node_fw="+node_fw)
                  
                # start_node_ip=string.find(url,'node_ip=')+8
@@ -2858,6 +2859,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                 msg=createNewNode(node_sn,node_ip,node_fw)
+
+
                 msg="ok"
                 logprint("i try to send msg: "+msg)
                 try:
@@ -4121,7 +4124,7 @@ class MyHandler(BaseHTTPRequestHandler):
             return
                 
         except Exception as e  :
-            mesage="Generic error in Get method"
+            message="Generic error in Get method"
             self.send_error(404,'File Not Found: %s' % self.path)
             logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
 
@@ -6449,9 +6452,9 @@ def main():
         bus.daemon = True  #make the thread a daemon thread
         bus.start()
 
-        w2 = threading.Thread(target=nodeTcpServer)
-        w2.daemon = True  #make the thread a daemon thread
-        w2.start()
+        #w2 = threading.Thread(target=nodeTcpServer)
+        #w2.daemon = True  #make the thread a daemon thread
+        #w2.start()
 
 
 

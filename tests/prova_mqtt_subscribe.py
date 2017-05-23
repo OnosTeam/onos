@@ -1,4 +1,6 @@
 import paho.mqtt.client as mqtt
+#pip install paho-mqtt
+
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, rc):
@@ -25,7 +27,7 @@ client.on_message = on_message
 
 
 
-client.connect("192.168.1.2", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
+client.connect("192.168.1.3", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
 
 topic="prova"
 

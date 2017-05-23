@@ -99,7 +99,7 @@ baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
-enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+enable_usb_serial_port=0 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
 router_sn="RouterGA0000"
 uart_router_sn="" #the sn of the node connected to the usb of the pc where onos is run..
@@ -644,10 +644,19 @@ hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]={
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["object_numbers"]=[5]
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["query"]="ac#_objnumber_##_valuelen:3_#"
 
-
  #define the base query for this node digital_obj..so onos will write for example: [S_001do001x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
+hardwareModelDict["Sonoff1P"]={"hwName":"Sonoff1P","max_pin":13,"hardware_type":"sonoff_single_plug","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[0]#see arduino code at :"define object numbers to use in the pin configuration"
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query"]="cm?cmnd=Power%20#_objnumber_##_valuelen:1_#"  #http://192.168.1.6/cm?cmnd=Power%2000   and http://192.168.1.6/cm?cmnd=Power%2001
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_answer_ok"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_answer_ok"]["0"]="""RESULT = {"POWER":"ON"}"""
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_answer_ok"]["1"]="""RESULT = {"POWER":"OFF"}"""
 
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+hardwareModelDict["Sonoff1P"]["object_list"]["cfg_obj"]={}
 
 
 
@@ -752,7 +761,9 @@ def getErrorTimeString():
 def logprint(message,verbose=0,error_tuple=None):
     
   """
-  Print the message passed  and if the system is in debug mode or if the error is important send a mail
+  |Print the message passed  and if the system is in debug mode or if the error is important send a mail
+  |Remember, to clear syslog you could use :  > /var/log/syslog
+  |To read system log in openwrt type:logread 
 
   """
 # used like this:
