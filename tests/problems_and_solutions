@@ -1122,8 +1122,8 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
     Partial solution A), every time we sell a new node we will ask the customer for they onosUsername and from the online server we will extract the key password for that onoscenter.
     To implement a variable password set from the onoscenter to the radio transciver ...and the web interface to get the password from local and from remote webpage.
 
-    Solution B)  for every new node to add the user will be asked to press a button on the onos center,or in a webpage...onoscenter will then change for a moment the password of the radio message to decode correctly the new node message , and will tell then the new password for the node that will therefore start using the new radio encryption password.
-    at every new boot a radio node will try to talk with the default key encryption..and after 20 seconds will start using the eprom stored key 
+    Solution B)  for every new node to add the user will be asked to press a button on the onos center,or in a webpage and a button on the node (form more than 20 seconds)...onoscenter will then change for a moment the encrypt_key of the radio message to a default in order to decode correctly the new node message (that will be using the default encrypt_key , and will tell then the new encrypt_key for the node that will therefore start using it .
+    at every new boot a radio node will try to talk with the default key encryption..and after 20 seconds will start using the eprom stored key the lamps node will insted started using the eprom encrypt_key directly..
 
 
 49) How can a lamp node tell onos how much time has been turned on in a day?to solve later... todo

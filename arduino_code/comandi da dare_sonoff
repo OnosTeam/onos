@@ -1,0 +1,24 @@
+
+
+
+
+
+http://192.168.1.6/cm?cmnd=Power%200
+answer:
+RESULT = {"POWER":"OFF"}
+POWER = OFF
+
+
+http://192.168.1.6/cm?cmnd=LedState%201
+answer: RESULT = {"LedState":1}
+
+
+
+
+http://192.168.1.6/cm?cmnd=ButtonRestrict%201
+
+answer: RESULT = {"ButtonRestrict":"ON"}
+
+
+https://github.com/arendst/Sonoff-Tasmota/wiki/Commands
+

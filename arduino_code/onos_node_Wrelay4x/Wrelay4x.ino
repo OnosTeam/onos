@@ -81,7 +81,7 @@
 //#define FREQUENCY     RF69_433MHZ
 //#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY      RF69_433MHZ
-#define ENCRYPTKEY     "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
+#define INITENCRYPTKEY     "onosEncryptKey00" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
@@ -108,6 +108,7 @@ unsigned long sync_time=0;
 
 char serial_number[13]="Wrelay4x0007";
 char node_fw[]="5.27";
+char encript_key[17]=INITENCRYPTKEY;  //todo read it from eeprom
 
 int this_node_address=254; //i start with 254
 
@@ -661,8 +662,6 @@ void decodeOnosCmd( char *received_message){
 
 
 
-
-
 /*
       Serial.print("decode time05=") ;
       Serial.println(millis()-get_decode_time) ;
@@ -699,7 +698,6 @@ void decodeOnosCmd( char *received_message){
 
 */
         
-
       if (time_continuos_on!=0){
         time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
       }
@@ -714,6 +712,40 @@ void decodeOnosCmd( char *received_message){
       strcpy(received_message_answer,"ok"); 
       return;
     }
+
+
+
+    //[S_00ccsampleEncryptKey_#]
+    else if( received_message_type_of_onos_cmd[0]=='c' && received_message_type_of_onos_cmd[1]=='c' ){
+ 
+      encript_key[0]=received_message[8];
+      encript_key[1]=received_message[9];
+      encript_key[2]=received_message[10];
+      encript_key[3]=received_message[11];
+      encript_key[4]=received_message[12];
+      encript_key[5]=received_message[13];
+      encript_key[6]=received_message[14];
+      encript_key[7]=received_message[15];
+      encript_key[8]=received_message[16];
+      encript_key[9]=received_message[17];
+      encript_key[10]=received_message[18];
+      encript_key[11]=received_message[19];
+      encript_key[12]=received_message[20];
+      encript_key[13]=received_message[21];
+      encript_key[14]=received_message[22];
+      encript_key[15]=received_message[23];
+
+
+      old_address=254;//reset the node address
+      beginRadio();  //restart radio with the encript_key  
+      checkCurrentRadioAddress();  
+
+      return;
+    } 
+
+
+
+
 
       
     //[S_254sa123Wrelay4x0007_#]  
@@ -936,9 +968,25 @@ void handleButton(){
   int obj_button_pin=node_obj_pinout[button];
   if (digitalRead(obj_button_pin)==0) {
     Serial.print("obj_button pressed");
-
+    unsigned long timeout=millis()+60000;
     while (digitalRead(obj_button_pin)==0){ //wait for button release
       delay(280);//todo change it smaller
+
+      if ( millis()>20000){  //button pressed for more than 20 seconds
+        Serial.println(F("[S_button check initiate ---------------------------------_#]"));
+        encript_key=INITENCRYPTKEY; //reset the encript_key to default to made the first sync with onoscenter 
+        old_address=254;//reset the node address
+        beginRadio();  //restart radio with the default encript_key  
+        checkCurrentRadioAddress();  
+        break;
+      }
+
+
+      if ( millis()>timeout){
+        Serial.println(F("[S_button check_timeout---------------------------------_#]"));
+        break;
+      }
+
     }
 
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
@@ -1004,6 +1052,33 @@ void checkCurrentRadioAddress(){
 
 }
 
+
+void beginRadio(){
+
+  interrupts(); // Enable interrupts
+
+  // Initialize radio
+  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
+  if (IS_RFM69HCW) {
+    radio.setHighPower();    // Only for RFM69HCW & HW!
+  }
+  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
+
+  radio.encrypt(encript_key);
+  
+
+
+  radio.enableAutoPower(targetRSSI);
+ 
+  Serial.print("\nListening at ");
+  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+  Serial.println(" MHz");
+
+
+
+
+}
+
  
 void setup() {
 
@@ -1056,25 +1131,7 @@ void setup() {
   digitalWrite(RFM69_RST, LOW);
   delay(120);
   */
-
-  interrupts(); // Enable interrupts
-
-  // Initialize radio
-  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
-  if (IS_RFM69HCW) {
-    radio.setHighPower();    // Only for RFM69HCW & HW!
-  }
-  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-
-  radio.encrypt(ENCRYPTKEY);
-  
-
-
-  radio.enableAutoPower(targetRSSI);
- 
-  Serial.print("\nListening at ");
-  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(" MHz");
+  beginRadio();
 
   changeObjStatus(0,1);
   delay(300);
@@ -1082,14 +1139,13 @@ void setup() {
 
   Blink(node_obj_pinout[led],100,3); 
 
+  composeSyncMessage();
 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
   // different seed numbers each time the sketch runs.
   // randomSeed() will then shuffle the random function.
-  randomSeed(analogRead(1));
-
-  composeSyncMessage();
+  //randomSeed(analogRead(1));
 
 
 }
