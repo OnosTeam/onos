@@ -864,7 +864,31 @@ void forwardRadioMsgToSerialPort(){
 
 
 
+void beginRadio(){
 
+  interrupts(); // Enable interrupts
+
+  // Initialize radio
+  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
+  if (IS_RFM69HCW) {
+    radio.setHighPower();    // Only for RFM69HCW & HW!
+  }
+  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
+
+  radio.encrypt(encript_key);
+  
+
+
+  radio.enableAutoPower(targetRSSI);
+ 
+  Serial.print("\nListening at ");
+  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+  Serial.println(" MHz");
+
+
+
+
+}
 
 
 void setup() {
@@ -892,14 +916,7 @@ void setup() {
   delay(120);
   */
 
-  // Initialize radio
-  radio.initialize(FREQUENCY,this_node_address,NETWORKID);
-  if (IS_RFM69HCW) {
-    radio.setHighPower();    // Only for RFM69HCW & HW!
-  }
-  radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-  
-  radio.encrypt(ENCRYPTKEY);
+  beginRadio();
   
 
 

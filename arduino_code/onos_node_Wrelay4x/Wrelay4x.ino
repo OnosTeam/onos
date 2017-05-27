@@ -715,7 +715,7 @@ void decodeOnosCmd( char *received_message){
 
 
 
-    //[S_00ccsampleEncryptKey_#]
+    //[S_123ccsampleEncryptKey_#]
     else if( received_message_type_of_onos_cmd[0]=='c' && received_message_type_of_onos_cmd[1]=='c' ){
  
       encript_key[0]=received_message[8];

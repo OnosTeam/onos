@@ -1,0 +1,12 @@
+{
+  "name": "OnosMsg",
+  "keywords": "rf, radio, wireless, onos, home automation",
+  "description": "Onos radio message library for RFM69W, RFM69HW",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/OnosTeam/onos.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "atmelavr"
+}
