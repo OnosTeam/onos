@@ -651,6 +651,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 implemented the logprint() function in globalVar.py to handle all the prints...and write them on /var/log/syslog
                 replaced all the print call in the webserver.py to logprint() , will have to do the same for the other scrips..
                 started implementing OnosMsg arduino library to uniform the decode message method in all the nodes.
+                continued working on OnosMsg arduino library and started the part to make the encript_key reset if button pressed..
 
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;

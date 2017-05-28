@@ -13,6 +13,17 @@
 extern int this_node_address;
 extern boolean first_sync;
 
+extern volatile char str_this_node_address[4];
+extern uint8_t main_obj_selected;
+extern uint8_t rx_obj_selected;
+extern volatile char progressive_msg_id;  //48 is 0 in ascii   //a progressive id to make each message unique
+extern const uint8_t number_of_total_objects;
+extern volatile char received_serial_number[13];
+extern char serial_number[13];
+extern volatile char decoded_radio_answer[];
+extern int received_message_address;
+extern uint8_t main_obj_selected;
+
 class OnosMsg {
   public:
     OnosMsg();
@@ -21,17 +32,15 @@ class OnosMsg {
 
     void decodeOnosCmd(char *received_message,char *received_message_answer);
 
-
   private:
 
     volatile char received_message_type_of_onos_cmd[3];
-    int received_message_address; //must be int..
     volatile int received_message_value;
     volatile int received_message_first_pin_used;
     volatile int received_message_second_pin_used;
-    volatile uint8_t main_obj_selected;
+
     volatile uint8_t rx_obj_selected;
-    volatile char progressive_msg_id;  //48 is 0 in ascii   //a progressive id to make each message unique
+
 
 };
 
