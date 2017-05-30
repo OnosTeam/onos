@@ -108,7 +108,7 @@ unsigned long sync_time=0;
 
 char serial_number[13]="Wrelay4x0007";
 char node_fw[]="5.27";
-char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
+volatile char encript_key[17]="onosEncryptKey00";  //todo read it from eeprom
 char init_encript_key[17]=INITENCRYPTKEY;
 int this_node_address=254; //i start with 254
 
@@ -818,13 +818,10 @@ void setup() {
   */
   beginRadio();
 
-  changeObjStatus(0,1);
-  delay(300);
-  changeObjStatus(0,0);
 
-  Blink(node_obj_pinout[led],100,3); 
+  Blink(node_obj_pinout[3],100,3); 
 
-  composeSyncMessage();
+
 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
@@ -838,32 +835,31 @@ void setup() {
 void loop() {
 
 
+  strcpy(syncMessage,"[S_001dw04000_#]");
 
-
-
-  handleButton();
-
-
-  if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
-    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
-    Serial.println("I skip the rxradio part once");
-    goto radioTx;
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),radioRetry,radioTxTimeout)) {
+    // note that the max delay time is 255..because is uint8_t
+    //target node Id, message as string or byte array, message length,retries, milliseconds before retry
+    //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
+    Serial.println("sent_sync_message1");
 
 
   }
+  memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
 
+  delay(300);
 
+  strcpy(syncMessage,"[S_001dw04001_#]");
 
-  radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+  if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),radioRetry,radioTxTimeout)) {
+    // note that the max delay time is 255..because is uint8_t
+    //target node Id, message as string or byte array, message length,retries, milliseconds before retry
+    //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
+    Serial.println("sent_sync_message1");
 
+  }
 
-radioTx:
- 
-  radio.receiveDone(); //put radio in RX mode
-  Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
-
-  checkCurrentRadioAddress();
-
+  delay(300);
 
 }//END OF LOOP()
 

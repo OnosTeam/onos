@@ -252,6 +252,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       strcpy(decoded_radio_answer,"ok");
       Serial.print("i will change radio address to:");
       Serial.println(this_node_address);
+      beginRadio();
       interrupts();
       first_sync=0;
         
@@ -259,7 +260,66 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     }
 
 
+   // [S_001ceProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
 
+   // [S_254ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
+
+    else if( received_message_type_of_onos_cmd[0]=='c' && received_message_type_of_onos_cmd[1]=='e' ){
+
+
+      //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
+      received_serial_number[0]= received_message[8];
+      received_serial_number[1]= received_message[9];
+      received_serial_number[2]= received_message[10];
+      received_serial_number[3]= received_message[11];
+      received_serial_number[4]= received_message[12];
+      received_serial_number[5]= received_message[13]; 
+      received_serial_number[6]= received_message[14];
+      received_serial_number[7]= received_message[15];
+      received_serial_number[8]= received_message[16];
+      received_serial_number[9]= received_message[17];
+      received_serial_number[10]= received_message[18]; 
+      received_serial_number[11]= received_message[19];
+
+
+
+   //    todo implement it!
+      if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
+        strcpy(decoded_radio_answer,"er2_sn_#]"); 
+        return;
+      } 
+
+
+
+      encript_key[0]= received_message[20];
+      encript_key[1]= received_message[21];
+      encript_key[2]= received_message[22];
+      encript_key[3]= received_message[23]; 
+      encript_key[4]= received_message[24];
+      encript_key[5]= received_message[25];
+      encript_key[6]= received_message[26];
+      encript_key[7]= received_message[27];
+      encript_key[8]= received_message[28]; 
+      encript_key[9]= received_message[29];
+      encript_key[10]= received_message[30];
+      encript_key[11]= received_message[31];
+      encript_key[12]= received_message[32];
+      encript_key[13]= received_message[33]; 
+      encript_key[14]= received_message[34];
+      encript_key[15]= received_message[35];
+      encript_key[16]= received_message[36];
+
+
+      noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
+      strcpy(decoded_radio_answer,"ok");
+      Serial.print("i will change radio address to:");
+      Serial.println(this_node_address);
+      beginRadio();
+      interrupts();
+      first_sync=0;
+        
+      return;
+    }
 
 
 

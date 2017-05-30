@@ -9,6 +9,9 @@
   #include "WConstants.h"
 #endif
 
+
+
+
 // Your class header here...
 extern int this_node_address;
 extern boolean first_sync;
@@ -23,6 +26,8 @@ extern char serial_number[13];
 extern volatile char decoded_radio_answer[];
 extern int received_message_address;
 extern uint8_t main_obj_selected;
+extern char encript_key[17];
+void beginRadio(void);  //prototype of the function used in the node..
 
 class OnosMsg {
   public:

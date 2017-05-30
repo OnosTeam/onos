@@ -111,7 +111,7 @@ unsigned long sync_time=0;
 char serial_number[13]="ProminiS0001";
 
 char node_fw[]="5.26";
-char encript_key[17]=INITENCRYPTKEY;  //todo read it from eeprom
+char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 
 int this_node_address=1; //must be int..
 

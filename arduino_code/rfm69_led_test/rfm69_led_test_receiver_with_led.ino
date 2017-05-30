@@ -66,6 +66,7 @@
 #include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <SPI.h>
 #include <RFM69_ATC.h> 
+#include <OnosMsg.h>
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/ONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
@@ -73,9 +74,9 @@
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
-//#define FREQUENCY     RF69_868MHZ
-#define FREQUENCY     RF69_433MHZ
-#define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
+#define FREQUENCY     RF69_868MHZ
+//#define FREQUENCY     RF69_433MHZ
+#define INITENCRYPTKEY     "onosEncryptKey00" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HCW   true // set to 'true' if you are using an RFM69HCW module
  
 //*********************************************************************************************
@@ -88,11 +89,18 @@
  
  
 #define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
+#define targetRSSI    -40
  
+//#define remote_node   //tell the compiler that this is a remote node
+#define local_node      //tell the compiler that this is a local node
+
+
+
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  
 RFM69_ATC radio;
  
+
 
 
 
@@ -103,9 +111,13 @@ unsigned long sync_time=0;
 char serial_number[13]="ProminiS0001";
 
 char node_fw[]="5.26";
+char encript_key[17]=INITENCRYPTKEY;  //todo read it from eeprom
 
 int this_node_address=1; //must be int..
 
+volatile int old_address=254; 
+
+unsigned long get_address_timeout=0;
 
 unsigned long timeout;
 
@@ -121,13 +133,35 @@ uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 char decoded_uart_answer[24]="er00_#]";
-char decoded_radio_answer[24]="er00_#]";
+volatile char decoded_radio_answer[24]="er00_#]";
 int received_message_address=0; //must be int..
-char filtered_uart_message[rx_msg_lenght+3];
-char filtered_radio_message[rx_msg_lenght+3];
-char syncMessage[28];
-char str_this_node_address[4];
+volatile char filtered_uart_message[rx_msg_lenght+3];
+volatile char filtered_radio_message[rx_msg_lenght+3];
+volatile char syncMessage[28];
+volatile char str_this_node_address[4];
+uint8_t main_obj_selected=0;
+uint8_t rx_obj_selected=0;
+volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
+volatile char received_serial_number[13];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
+// node object pinuot//
+
+// define object numbers to use in the pin configuration
+#define relay1  0
+#define relay2  1
+#define relay3  2
+#define relay4  3
+#define button  4
+#define led     5
+const uint8_t number_of_total_objects=7;      // 7 because there are 6 elements + a null 
+
+uint8_t node_obj_pinout[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as void for array in c..
+uint8_t node_obj_status[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as
+
+//end node object pinuot, continue in setup() // 
+
+OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
+
 
 uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=70;  //todo: make this changable from serialport
@@ -135,12 +169,18 @@ uint8_t uartPriority=0;
 uint8_t radioPriority=0;
 
 
-uint8_t counter=0;
+volatile int tmp_number;
+volatile uint8_t counter;
+volatile uint8_t pointer;
+
+
+
 char data_from_serial[rx_msg_lenght+5];
 boolean enable_answer_back=0;
 boolean message_to_decode_avaible=0;
 boolean serial_msg_to_decode_is_avaible=0;
 boolean radio_msg_to_decode_is_avaible=0;
+
 
 uint8_t skipUartRxMsg=0;
 
@@ -158,7 +198,7 @@ void composeSyncMessage(){
 
   //[S_001sy3.05ProminiS0001_#] 
 
-  int tmp_number=0;
+  tmp_number=0;
   //strcpy(str_this_node_address,"");
   memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
   str_this_node_address[0]='0';
@@ -222,7 +262,7 @@ void makeSyncMessage(){
   //[S_001sy3.05ProminiS0001_#] 
   
 
-  for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+  for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
     Serial.print(syncMessage[pointer]);
     if (pointer<2){
       continue;
@@ -251,264 +291,6 @@ void Blink(byte PIN, byte DELAY_MS, byte loops)
     delay(DELAY_MS);
   }
 }
-
-
-
-void decodeOnosCmd(char *received_message,char *decoded_result){
- 
-/*
-  Serial.println(F("decodeOnosCmd executed"));
-
-  Serial.println(received_message[0]);
-  Serial.println(received_message[1]);
-  Serial.println(received_message[2]);
-  Serial.println(received_message[3]);
-  Serial.println(received_message[4]);
-  Serial.println(received_message[5]);
-  Serial.println(received_message[6]);
-
-*/
-
-  strcpy(decoded_result,"[S_err01_#]");
-
-
-
-  if ((received_message[0]=='[')&&(received_message[1]=='S')&&(received_message[2]=='_') ) {
- // the onos cmd was found           [S_001dw06001_#]
-
-
-    strcpy(decoded_result,"[S_cmdRx_#]");               
-
-
-    received_message_type_of_onos_cmd[0]=received_message[6];
-    received_message_type_of_onos_cmd[1]=received_message[7];
-
-    received_message_address=(received_message[3]-48)*100+(received_message[4]-48)*10+(received_message[5]-48)*1;
-
-
-         
-
-    if (received_message_address!=this_node_address) {//onos command for a remote arduino node
-      strcpy(decoded_result,"[S_remote_#]");
-
-/*
-
-
-      Serial.print(F("serial_number222:")); 
-      Serial.print(serial_number);
-      Serial.println(F("end")); 
-*/
-      return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
-    }
-
-
-    //[S_123ga5.24WPlugAvx000810000x_#]
-
-       
-    if ( received_message_type_of_onos_cmd[0]=='g' && received_message_type_of_onos_cmd[1]=='a' ){
-
-      strcpy(decoded_result,"ok");
-      return; 
-    }
-
-    else if ( received_message_type_of_onos_cmd[0]=='u' && received_message_type_of_onos_cmd[1]=='l' ){
-
-      strcpy(decoded_result,"ok");
-      return;
-    }
-
-    else if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
-
-      received_message_value=received_message[12]-48;
-      if (received_message_value>1){ 
-        strcpy(decoded_result,"[S_er0_status_#]"); 
-        return;
-      }
-
-      received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
-
-      pinMode(received_message_first_pin_used, OUTPUT); 
-      digitalWrite(received_message_first_pin_used, received_message_value); 
-      strcpy(decoded_result,"ok");
-      return;
-    }
-    
-    //[S_001aw06125_#]
-    else if( received_message_type_of_onos_cmd[0]=='a' && received_message_type_of_onos_cmd[1]=='w' ){
- 
-      received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
-
-      if ((received_message_value<0)||(received_message_value>255)){ //status check
-        received_message_value=0;
-      //Serial.println(F("onos_cmd_value_error"));  
-        strcpy(decoded_result,"[S_er0_status_#]"); 
-        return;
-      }
-
-      received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
-      analogWrite(received_message_first_pin_used, received_message_value); 
-      strcpy(decoded_result,"ok");
-      return;
-    } 
-
- 
-    //[S_001sr04051_#] 
-    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='r' ){
-
-      received_message_value=received_message[12]-48;      
-
-      if (received_message_value>1){ 
-        strcpy(decoded_result,"[S_er0_status_#]"); 
-        return;
-      }
-
-      received_message_first_pin_used= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
-      received_message_second_pin_used=((received_message[10])-48)*10+(  (received_message[11])-48)*1;
-
-      pinMode(received_message_first_pin_used, OUTPUT); 
-      pinMode(received_message_second_pin_used, OUTPUT); 
-      //note to se a relay you have to transmit before the set pin and after the reset pin , the lessere first
-      //  so for example received_message_first_pin_used =14   received_message_second_pin_used=15
-      digitalWrite(received_message_first_pin_used, !received_message_value); 
-      digitalWrite(received_message_second_pin_used,received_message_value); 
-      //attention with this only one relay per message can be setted!!!
-      //pins_to_reset1=pin_number_used;
-      //pins_to_reset2=second_pin_number_used;
-      delay(150);
-      digitalWrite(received_message_first_pin_used,0); 
-      digitalWrite(received_message_second_pin_used,0);  
-
-      strcpy(decoded_result,"ok");
-      return;
-    }
-
-    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
-      first_sync=0; //this node has made the first sync with the onoscenter
-      strcpy(decoded_result,"ok");
-      return;
-    }
-
-/*
-
-
-    switch (received_message_type_of_onos_cmd) {
-                                         //onos_d05v001sProminiS0002f002_#] to remote..
-      case 'd':{     //digital write       onos_d05v001sProminiS0001f001_#]  where the last'a' will be a char from 0 to 255 indicating the address of the node
-        if (received_message_value>1){ 
-          strcpy(received_message_answer,"er0_status_#]"); 
-          break;
-        }
-      
-        pinMode(received_message_first_pin_used, OUTPUT); 
-        digitalWrite(received_message_first_pin_used, received_message_value); 
-        strcpy(received_message_answer,"ok");
-        break;
-      }
-
-      case 'a':{     //pwm write           onos_a07v100sProminiS0001f001_#]
-        analogWrite(received_message_first_pin_used, received_message_value); 
-        strcpy(received_message_answer,"ok");
-        break;
-      }
-
-      case 's':{     //servo controll      onos_s07v180sProminiS0001f001_#]
-        //servo are not supported yet
-        //myservo.attach(received_message_first_pin_used);  // attaches the servo on pin 2 to the servo object 
-        //myservo.write(received_message_value);              // tell servo to go to position in variable 'pos'
-        strcpy(received_message_answer,"ok");
-        break;
-      }  
-
-      case 'g':{     //get digital status  onos_g0403v0sProminiS0001f001_#]
-        pinMode(received_message_first_pin_used, INPUT); 
-        pinMode(received_message_second_pin_used, INPUT);
-        digitalWrite(received_message_first_pin_used,1); //enable internal pullup resistors
-        digitalWrite(received_message_second_pin_used,1);//enable internal pullup resistors
-        delayMicroseconds(20);  //wait a bit
-        char val_first_pin=digitalRead(received_message_first_pin_used)+48;
-        char val_second_pin=digitalRead(received_message_second_pin_used)+48;
-        strcpy(received_message_answer,""); 
-        strcpy(received_message_answer,"ok_s="); 
-        received_message_answer[5]=val_first_pin;
-        received_message_answer[6]=val_second_pin;
-        received_message_answer[7]='_';
-        received_message_answer[8]='#';
-        received_message_answer[9]=']';
-
-        //strcat(received_message_answer,"_#]");
-        // answer will be like:   ok_s=00_#] 
-        
-        
-        break;
-      }  
-                                           
-      case 'r':{     //relay               onos_r1415v1sProminiS0001f001_#]
-        received_message_value=(received_message[11]-'0');
-
-
-        strcpy(received_message_answer,"ok");
-        received_message_second_pin_used=((received_message[8])-48)*10+(  (received_message[9])-48)*1;
-
-        pinMode(received_message_first_pin_used, OUTPUT); 
-        pinMode(received_message_second_pin_used, OUTPUT); 
-        //note to se a relay you have to transmit before the set pin and after the reset pin , the lessere first
-        //  so for example received_message_first_pin_used =14   received_message_second_pin_used=15
-        digitalWrite(received_message_first_pin_used, !received_message_value); 
-        digitalWrite(received_message_second_pin_used,received_message_value); 
-                     //attention with this only one relay per message can be setted!!!
-                     //pins_to_reset1=pin_number_used;
-                     //pins_to_reset2=second_pin_number_used;
-        delay(150);
-        digitalWrite(received_message_first_pin_used,0); 
-        digitalWrite(received_message_second_pin_used,0);  
-
-        break;
-      } 
-
-      default:{
-        strcpy(received_message_answer,"type_err");
-        Serial.println(F("onos_cmd_type_error"));  
-      }
-  
-
-   }//end of the switch case
-
-*/
-    
-/*
-    Serial.print(F("onos_cmd:"));
-    Serial.println(received_message_type_of_onos_cmd);
-
-
-
-
-    Serial.println(F("pin_used:"));
-    Serial.println(received_message_first_pin_used);
-    Serial.println(F("pin_used2:"));
-    Serial.println(received_message_second_pin_used);
-
-    Serial.print(F("message_value:"));
-    Serial.println(received_message_value);
-
-
-    
-*/
-
-
-
-
-
-
-
-
- } // end of if message start with onos_   
-
-
-
-
-
-
-}// end of decodeOnosCmd()
 
 
 
@@ -580,7 +362,7 @@ boolean checkAndReceiveSerialMsg(){
       Serial.println(F("end"));
       counter=0;
       Serial.println("start:");
-      for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+      for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
         Serial.print(data_from_serial[pointer]); 
       }
       Serial.println(":end");
@@ -609,7 +391,7 @@ boolean checkAndReceiveSerialMsg(){
 
       memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
 
-      for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+      for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
         filtered_uart_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
           //Serial.println(filtered_uart_message[pointer]);
         if ((filtered_uart_message[pointer-1]=='#')&&(filtered_uart_message[pointer]==']')  ) {//  
@@ -619,7 +401,8 @@ boolean checkAndReceiveSerialMsg(){
       }
 
 
-      decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
+      //decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
+      OnosMsgHandler.decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
       if ( strcmp(decoded_uart_answer,"[S_remote_#]")==0){
         ForwardSerialMessageToRadio(filtered_uart_message,received_message_address);
       }
@@ -699,7 +482,7 @@ void sendSerialAnswerFromSerialMsg(){
     memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array
     strcat(decoded_uart_answer,filtered_uart_message);
     Serial.print(F("[S_ok"));
-    for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+    for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
       if (pointer<3){//to skip the "[S_"  because I have just sent it..
         continue;
@@ -798,7 +581,8 @@ boolean checkAndHandleIncomingRadioMsg(){
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
     //    Serial.println("onos cmd  found-------------------------------");
-      decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
+      //decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
+      OnosMsgHandler.decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
 
       if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')||(strcmp(decoded_radio_answer,"[S_remote_#]")==0)){//if the message was ok...
       //check if sender wanted an ACK
@@ -835,7 +619,7 @@ void forwardRadioMsgToSerialPort(){
     if(strcmp(decoded_radio_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
 
       memset(decoded_radio_answer,0,sizeof(decoded_radio_answer)); //to clear the array
-      for (uint8_t pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+      for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
         Serial.print(filtered_radio_message[pointer]);
           
 
@@ -863,7 +647,59 @@ void forwardRadioMsgToSerialPort(){
 }
 
 
+void checkCurrentRadioAddress(){
 
+#if defined(remote_node)   // only if this is a remote node..
+
+  if (old_address==254){// i have not the proper address yet..
+
+
+
+    if (old_address!=this_node_address){//the address has changed and I restart radio to use it
+ 
+
+      //radio.setAddress(this_node_address);
+      beginRadio();
+      old_address=this_node_address;
+      get_address_timeout=millis();
+      Serial.print("radio address changed to:");
+      Serial.println(this_node_address);
+      sendSyncMessage(radioRetry,radioTxTimeout);
+
+
+    }
+
+    random_time=4000;//random(4000,5000);
+    
+
+
+    if ((millis()-get_address_timeout)>random_time){ //every 4000/5000 ms
+   
+      get_address_timeout=millis();
+
+      getAddressFromGateway();  //ask the gateway for a proper address
+
+
+    }
+
+
+  }
+  else{
+    random_time=1500;//random(1500,2500);
+    if ((millis()-sync_time)>random_time){ //every 1500/2500 ms
+   
+      sync_time=millis();
+
+      sendSyncMessage(radioRetry,radioTxTimeout);
+
+
+    }
+
+  }
+
+#endif
+
+}
 void beginRadio(){
 
   interrupts(); // Enable interrupts
@@ -881,12 +717,6 @@ void beginRadio(){
 
   radio.enableAutoPower(targetRSSI);
  
-  Serial.print("\nListening at ");
-  Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(" MHz");
-
-
-
 
 }
 
@@ -947,7 +777,7 @@ void setup() {
   // range 14 to 20 like this:
   // driver.setTxPower(14);
 
-
+/*
   while (1){
     delayMicroseconds(20);
     if (Serial.available() > 2) {
@@ -962,6 +792,8 @@ void setup() {
 
 
   } // end of   while (1){
+
+*/
 
   Serial.println(F("[S_arduino_ready_#]"));
   Serial.flush(); //make sure all serial data is clocked out ,waiting until is done

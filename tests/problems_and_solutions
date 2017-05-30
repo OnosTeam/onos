@@ -238,7 +238,7 @@ I will use post instead of get message
 
 
 
-  The message to change the status of the onos_plug_node_WPlugavx contact status will be:  
+  The message to change the status of the onos_plug_node_WPlugavx contact status will be:  deprecated
 
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
@@ -251,7 +251,7 @@ I will use post instead of get message
              [S_001wp00x_#]    to set the first object of the node to 0
 
 
-  The message to change the status of the onos_lamp_node_WLightSA lamp status will be:   
+  The message to change the status of the onos_lamp_node_WLightSA lamp status will be:    deprecated 
 
   3 bytes with "[S_" for the start of the message
   3 bytes for the address of the node
@@ -355,6 +355,26 @@ I will use post instead of get message
   example:   [S_001ulProminiS00010167123x_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
 
 
+
+  If onosCenter needs to change a node encrypt key it will send:
+
+  3  bytes with "[S_" for the start of the message
+  3  bytes for the address of the node ("001" for the arduino gateway)
+  2  bytes containing "ce" for the type of msg (change encrypt key)
+  12 bytes to tell the node serial number
+  16 bytes to tell the new encrypt key
+  1  byte for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001ceProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key
+
+
+
+
+  
+
+
+
+
 ////////////////////////////////////OLD... TO UPDATE/////////////////////////////////////////////////////////
 
   if a node needs to communicate a input status pin to onos it will write:
@@ -375,7 +395,7 @@ I will use post instead of get message
              
 
 
-  if OnosCenter needs to tell a node to set its address to a the designed one it will write:
+  if OnosCenter needs to tell a node to set its address to a designed one it will write:
     
   1 byte with 'g' for the modes (set address )
   2 byte with 'ad' to indicate the start of the address
