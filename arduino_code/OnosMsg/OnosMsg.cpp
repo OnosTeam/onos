@@ -83,8 +83,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       return;
     }
 
-    // [S_123dw06001_#]
-    // [S_001dw06001_#]
+    // [S_123dw04001_#]
+    // [S_001dw04001_#]
     // [S_001dw04000_#]
     // [S_254dw04000_#]
     else if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
@@ -262,6 +262,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
    // [S_001ceProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
 
+   // [S_123ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
    // [S_254ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
 
     else if( received_message_type_of_onos_cmd[0]=='c' && received_message_type_of_onos_cmd[1]=='e' ){

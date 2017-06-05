@@ -344,7 +344,7 @@ boolean checkAndReceiveSerialMsg(){
    //Serial.println(counter);
    // read the incoming byte:
     //if (counter==0){
-    delayMicroseconds(210);//210 the serial doesnt work without this delay... to change if you change baud rate (increase with lower baud rate)
+    delayMicroseconds(210);//210 the serial doesn't work without this delay... to change if you change baud rate (increase with lower baud rate)
     //}  
     data_from_serial[counter] =(char) Serial.read();
 

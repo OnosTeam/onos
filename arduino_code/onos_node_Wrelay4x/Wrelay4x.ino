@@ -116,6 +116,9 @@ volatile int old_address=254;
 
 unsigned long get_address_timeout=0;
 
+volatile unsigned long button_time_same_status=0;
+
+volatile boolean button_still_same_status=1; 
 
 /*
 WPlugAvx node parameter:
@@ -154,7 +157,7 @@ volatile char received_serial_number[13];
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 
-// define object numbers to use in the pin configuration
+// define object numbers to use in the pin configuration warning this is not the pinout numbers
 #define relay1  0
 #define relay2  1
 #define relay3  2
@@ -196,9 +199,9 @@ volatile char main_obj_state=0;
 //int old_main_obj_state=5;
 
 
-unsigned long button_timeout;
-unsigned long time_to_reset_encryption;
-unsigned long time_to_change_status;
+
+unsigned long time_to_reset_encryption=3000; //this must be greater than time_to_change_status 
+unsigned long time_to_change_status=30;
 
 
 int tmp_number;
@@ -403,7 +406,6 @@ void composeSyncMessage(){
 
 
 }
-
 
 
 
@@ -716,18 +718,43 @@ void beginRadio(){
 
 }
 
+void buttonStateChanged(){
+
+  button_time_same_status=millis();
+  button_still_same_status=0;
+
+}
  
 void handleButton(){
-  //Serial.print(F("handleButton() executed"));
+/*
+  Serial.println(F("handleButton() executed "));
+  Serial.print("button_still_same_status:");
+  Serial.print(button_still_same_status);
+  Serial.print("button_time_same_status:");
+  Serial.println(millis()-button_time_same_status);
+*/
+
+
+
+
+/*  if (button_still_same_status==1){ //filter 
+    //button_time_same_status=millis();
+    return;
+  }
+*/
+
+  if ((millis()-button_time_same_status)<time_to_change_status){ //filter 
+    return;
+  }
+
+
+
+
+
   obj_button_pin=node_obj_pinout[button];
   if (digitalRead(obj_button_pin)==0) {
     Serial.print(F("obj_button pressed"));
-    button_timeout=millis()+60000;
-    time_to_reset_encryption=millis()+3000;
-    time_to_change_status=millis()+80;
-    while (digitalRead(obj_button_pin)==0){ //wait for button release
-      Serial.println(millis());
-      if ( millis()>time_to_reset_encryption){  //button pressed for more than 20 seconds
+    if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than 20 seconds
         Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
         noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
         memset(encript_key,0,sizeof(encript_key)); //to clear the array
@@ -739,23 +766,18 @@ void handleButton(){
 
         //checkCurrentRadioAddress();  
         interrupts(); // Enable interrupts 
-        break;
+        button_time_same_status=millis();
       }
 
-
-      if ( millis()>button_timeout){
-        Serial.println(F("[S_button check_timeout---------------------------------_#]"));
-        break;
-      }
-
-    }
-
-    if ( millis()>time_to_change_status){
+    if (((millis()-button_time_same_status)>time_to_change_status)&&(button_still_same_status==0)){
+      Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
       changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
       sendSyncMessage(radioRetry+2,radioTxTimeout); 
+      button_still_same_status=1;
+      button_time_same_status=millis();
       delay(100);//todo change it smaller
-    }
 
+    }
 
   }
 
@@ -787,6 +809,8 @@ void setup() {
   pinMode(node_obj_pinout[relay4], OUTPUT);
   pinMode(node_obj_pinout[led], OUTPUT);
   pinMode(node_obj_pinout[button], INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, CHANGE);
 
   digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
@@ -860,7 +884,7 @@ void loop() {
 radioTx:
  
   radio.receiveDone(); //put radio in RX mode
-  Serial.flush(); //make sure all serial data is clocked out before sleeping the MCU
+  Serial.flush(); //make sure all serial data is clocked
 
   checkCurrentRadioAddress();
 
