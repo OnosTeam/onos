@@ -18,7 +18,7 @@
 *          SCK pin D13----------SCK   (SPI clock in)
 *         MOSI pin D11----------MOSI  (SPI Data in)
 *         MISO pin D12----------MISO  (SPI Data out)
-                   D3 ----------switch	
+                   D3 ----------switch  
                    D5 ----------led
                    D6 ----------1 simple relay
                    D7 ----------1 simple relay
@@ -109,12 +109,14 @@ unsigned long sync_time=0;
 char serial_number[13]="Wrelay4x0007";
 char node_fw[]="5.27";
 char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
-char init_encript_key[17]=INITENCRYPTKEY;
+//char init_encript_key[17]=INITENCRYPTKEY;
 int this_node_address=254; //i start with 254
 
-volatile int old_address=254; 
 
 unsigned long get_address_timeout=0;
+
+unsigned long *get_address_timeout_pointer=&get_address_timeout;
+
 
 volatile unsigned long button_time_same_status=0;
 
@@ -137,6 +139,7 @@ WPlugAvx node parameter:
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
 #define rx_msg_lenght 61
+//#define DEVMODE 1
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
 char received_message_type_of_onos_cmd[3];
@@ -146,14 +149,15 @@ int received_message_value;
 //volatile char decoded_uart_answer[24]="er00_#]";
 volatile char decoded_radio_answer[24]="er00_#]";
 int received_message_address=0; //must be int..
-volatile char filtered_uart_message[rx_msg_lenght+3];
+//volatile char filtered_uart_message[rx_msg_lenght+3];
 volatile char filtered_radio_message[rx_msg_lenght+3];
 volatile char syncMessage[28];
 volatile char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
 volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
-volatile char received_serial_number[13];
+volatile char received_serial_number[13]; //used in OnosMsg
+volatile boolean reInitializeRadio=0;
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 
@@ -230,7 +234,7 @@ int freeRam ()
 
 boolean changeObjStatus(char obj_number,int status_to_set){
 
-   Serial.print("changeObjStatus executed with  status:");
+   Serial.print(F("changeObjStatus executed with  status:"));
    Serial.println(status_to_set);
 
   if (obj_number!=button){ //will not change the status to the button...
@@ -260,7 +264,7 @@ return(0);
 
 void composeSyncMessage(){
 
-  Serial.println("composeSyncMessage executed");
+  Serial.println(F("composeSyncMessage executed"));
   //[S_123ul5.24WPlugAvx000810000x_#]
 
   if (progressive_msg_id<122){  //122 is z in ascii
@@ -391,7 +395,7 @@ void composeSyncMessage(){
   syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
 
-  Serial.print("composeSyncMessage executed with  status:");
+  Serial.print(F("composeSyncMessage executed with  status:"));
   Serial.println(main_obj_state);
 
 
@@ -422,12 +426,12 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
 
 
 
-  Serial.println(" sendWithRetry sendSyncMessage executed");
+  Serial.println(F(" sendWithRetry sendSyncMessage executed"));
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,tx_timeout)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
-    Serial.println("sent_sync_message1");
+    Serial.println(F("sent_sync_message1"));
 //    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
   }
@@ -439,7 +443,7 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
 
 
 void getAddressFromGateway(){
-   Serial.println("getAddressFromGateway executed");
+   Serial.println(F("getAddressFromGateway executed"));
 
   //[S_123ga5.24WPlugAvx000810000x_#]
 
@@ -447,10 +451,10 @@ void getAddressFromGateway(){
   syncMessage[6]='g'; //modify the message to get a address instead of just sync.
   syncMessage[7]='a'; //modify the message to get a address instead of just sync.
 
-  Serial.println(" sendWithRetry getAddressFromGateway executed");
+  Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
 
 
-  Serial.print("msg send:"); 
+  Serial.print(F("msg send:")); 
 
   for (pointer = 0; pointer <= 35; pointer++) {
     Serial.print(syncMessage[pointer]); 
@@ -459,7 +463,7 @@ void getAddressFromGateway(){
     }
 
   }
-  Serial.println("msg end:"); 
+  Serial.println(F("msg end:")); 
 
   tryed_times=0;
   while (tryed_times < radioRetry ){
@@ -470,7 +474,7 @@ void getAddressFromGateway(){
       //target node Id, message as string or byte array, message length,retries, milliseconds before retry
       //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 
-      Serial.println("sent_get_address");
+      Serial.println(F("sent_get_address"));
     /*
     for (char a=0;a<(35);a=a+1){
       Serial.print(syncMessage[a]);
@@ -512,10 +516,10 @@ boolean checkAndHandleIncomingRadioMsg(){
 
 
     //print message received to serial
-    Serial.print(" id:");
+    Serial.print(F(" id:"));
     Serial.println(radio.SENDERID);
     Serial.print((char*)radio.DATA);
-    Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+    Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
 
  
     //check if received message contains Hello World
@@ -531,7 +535,7 @@ boolean checkAndHandleIncomingRadioMsg(){
       return(0); // todo: implement a forward of the message? 
     }
 
-    Serial.print("msg_start:");
+    Serial.print(F("msg_start:"));
 
     onos_cmd_start_position=-99;  
     onos_cmd_end_position=-99;  
@@ -573,12 +577,12 @@ boolean checkAndHandleIncomingRadioMsg(){
     }
 
 
-    Serial.println(":msg_stop");
+    Serial.println(F(":msg_stop"));
 
 
     if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
 
-      Serial.println("onos cmd  found-------------------------------");
+      Serial.println(F("onos cmd  found-------------------------------"));
       //noInterrupts(); // Disable interrupts    //important for lamp node 
       //decodeOnosCmd(filtered_radio_message);
       OnosMsgHandler.decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
@@ -590,7 +594,7 @@ boolean checkAndHandleIncomingRadioMsg(){
       //check if sender wanted an ACK
         if (radio.ACKRequested()){
           radio.sendACK();
-          Serial.println(" - ACK sent");
+          Serial.println(F(" - ACK sent"));
           sync_time=millis();
         }
         //interrupts(); // Enable interrupts
@@ -598,7 +602,7 @@ boolean checkAndHandleIncomingRadioMsg(){
 
       }
       else{
-        Serial.print("error in message decode i will not send the ACK,i found:");
+        Serial.print(F("error in message decode i will not send the ACK,i found:"));
         Serial.print(decoded_radio_answer[0]);
         Serial.print(decoded_radio_answer[1]);
         Serial.print(decoded_radio_answer[2]);
@@ -616,7 +620,7 @@ boolean checkAndHandleIncomingRadioMsg(){
     }
     else{
       strcpy(decoded_radio_answer,"nocmd0_#]");
-      Serial.print("error in message nocmd0_#]");
+      Serial.print(F("error in message nocmd0_#]"));
       Serial.print(onos_cmd_start_position);
       Serial.println(onos_cmd_end_position);
       return(0); 
@@ -638,40 +642,32 @@ boolean checkAndHandleIncomingRadioMsg(){
 
 
 void checkCurrentRadioAddress(){
+  if(reInitializeRadio==1){
+    beginRadio();
+    reInitializeRadio=0;
+  }
+
 
 #if defined(remote_node)   // only if this is a remote node..
 
-  if (old_address==254){// i have not the proper address yet..
-
-
-
-    if (old_address!=this_node_address){//the address has changed and I restart radio to use it
- 
-
-      //radio.setAddress(this_node_address);
-      beginRadio();
-      old_address=this_node_address;
-      get_address_timeout=millis();
-      Serial.print("radio address changed to:");
-      Serial.println(this_node_address);
-      sendSyncMessage(radioRetry,radioTxTimeout);
-
-
-    }
+  if (this_node_address==254){// i have not the proper address yet..
 
     random_time=4000;//random(4000,5000);
-    
+ 
+    if ((millis()-*get_address_timeout_pointer)>random_time){ //every 4000/5000 ms
+
+#if defined(DEVMODE)
+      Serial.print(F("get_address_timeout>time:"));
+      Serial.println((millis()-*get_address_timeout_pointer));
+#endif
+
+      *get_address_timeout_pointer=millis();
 
 
-    if ((millis()-get_address_timeout)>random_time){ //every 4000/5000 ms
-   
-      get_address_timeout=millis();
 
       getAddressFromGateway();  //ask the gateway for a proper address
 
-
     }
-
 
   }
   else{
@@ -696,6 +692,8 @@ void beginRadio(){
 
   interrupts(); // Enable interrupts
 
+  *get_address_timeout_pointer=millis();
+
   // Initialize radio
   radio.initialize(FREQUENCY,this_node_address,NETWORKID);
   if (IS_RFM69HCW) {
@@ -709,10 +707,11 @@ void beginRadio(){
 
   radio.enableAutoPower(targetRSSI);
  
-  Serial.print("\nListening at ");
+  Serial.print(F("\nListening at "));
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(" MHz");
-
+  Serial.println(F(" MHz"));
+  Serial.print(F("radio address changed to:"));
+  Serial.println(this_node_address);
 
 
 
@@ -758,8 +757,8 @@ void handleButton(){
         Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
         noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
         memset(encript_key,0,sizeof(encript_key)); //to clear the array
-        strcpy(encript_key,init_encript_key);//reset the encript_key to default to made the first sync with onoscenter 
-        old_address=254;//reset the node address
+        strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
+        this_node_address=254;//reset the node address
         first_sync=1;
         setup();
         //beginRadio();  //restart radio with the default encript_key  
@@ -862,15 +861,12 @@ void setup() {
 void loop() {
 
 
-
-
-
   handleButton();
 
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
     skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
-    Serial.println("I skip the rxradio part once");
+    Serial.println(F("I skip the rxradio part once"));
     goto radioTx;
 
 

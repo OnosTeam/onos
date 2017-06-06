@@ -142,7 +142,8 @@ volatile char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
 volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
-volatile char received_serial_number[13];
+volatile char received_serial_number[13]; //used in OnosMsg
+volatile boolean reInitializeRadio=0;
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 
@@ -361,11 +362,11 @@ boolean checkAndReceiveSerialMsg(){
       Serial.println(counter);
       Serial.println(F("end"));
       counter=0;
-      Serial.println("start:");
+      Serial.println(F("start:"));
       for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
         Serial.print(data_from_serial[pointer]); 
       }
-      Serial.println(":end");
+      Serial.println(F(":end"));
       continue;     
     }
 
@@ -649,6 +650,11 @@ void forwardRadioMsgToSerialPort(){
 
 void checkCurrentRadioAddress(){
 
+  if(reInitializeRadio==1){
+    beginRadio();
+    reInitializeRadio=0;
+  }
+
 #if defined(remote_node)   // only if this is a remote node..
 
   if (old_address==254){// i have not the proper address yet..
@@ -662,7 +668,7 @@ void checkCurrentRadioAddress(){
       beginRadio();
       old_address=this_node_address;
       get_address_timeout=millis();
-      Serial.print("radio address changed to:");
+      Serial.print(F("radio address changed to:"));
       Serial.println(this_node_address);
       sendSyncMessage(radioRetry,radioTxTimeout);
 

@@ -27,6 +27,7 @@ extern volatile char decoded_radio_answer[];
 extern int received_message_address;
 extern uint8_t main_obj_selected;
 extern char encript_key[17];
+extern volatile boolean reInitializeRadio;
 void beginRadio(void);  //prototype of the function used in the node..
 
 class OnosMsg {

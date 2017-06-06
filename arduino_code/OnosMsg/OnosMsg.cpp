@@ -91,7 +91,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
       received_message_value=received_message[12]-48;
       if (received_message_value>1){ 
-        strcpy(decoded_result,"[S_er0_status_#]"); 
+        strcpy(decoded_result,"[S_er0_status_#]");
         return;
       }
 
@@ -166,17 +166,17 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       if ((received_message_value<0)||(received_message_value>255)){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
-        strcpy(received_message_answer,"er_ac_status_#]"); 
+        strcpy(decoded_result,"er_ac_status_#]"); 
         return;
       }
 
       rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
          
-      strcpy(received_message_answer,"ok");
+      strcpy(decoded_result,"ok");
 
       if (rx_obj_selected>number_of_total_objects){ //object out of the range
         Serial.println(F("er_ac_obj_number_#]"));  
-        strcpy(received_message_answer,"er_ac_obj_number_#]"); 
+        strcpy(decoded_result,"er_ac_obj_number_#]"); 
         return; 
       }
 
@@ -192,17 +192,17 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       if ((received_message_value<0)||(received_message_value>255)){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
-        strcpy(received_message_answer,"er_dc_status_#]"); 
+        strcpy(decoded_result,"er_dc_status_#]"); 
         return;
       }
 
       rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
          
-      strcpy(received_message_answer,"ok");
+      strcpy(decoded_result,"ok");
 
       if (rx_obj_selected>number_of_total_objects){ //object out of the range
         Serial.println(F("er_dc_obj_number_#]"));  
-        strcpy(received_message_answer,"er_dc_obj_number_#]"); 
+        strcpy(decoded_result,"er_dc_obj_number_#]"); 
         return; 
       }
 
@@ -235,7 +235,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
    //    todo implement it!
       if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
-        strcpy(decoded_radio_answer,"er1_sn_#]"); 
+        strcpy(decoded_result,"er1_sn_#]"); 
         return;
       } 
 
@@ -243,16 +243,16 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       if ((received_message_value<0)||(received_message_value>254)){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
-        strcpy(decoded_radio_answer,"er0_status_#]"); 
+        strcpy(decoded_result,"er0_status_#]"); 
         return;
       }
 
       noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
       this_node_address=received_message_value;
-      strcpy(decoded_radio_answer,"ok");
-      Serial.print("i will change radio address to:");
+      strcpy(decoded_result,"ok");
+      Serial.print(F("i will change radio address to:"));
       Serial.println(this_node_address);
-      beginRadio();
+      reInitializeRadio=1;  //to execute beginRadio()
       interrupts();
       first_sync=0;
         
@@ -264,6 +264,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
    // [S_123ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
    // [S_254ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
+
+
 
     else if( received_message_type_of_onos_cmd[0]=='c' && received_message_type_of_onos_cmd[1]=='e' ){
 
@@ -286,7 +288,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
    //    todo implement it!
       if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
-        strcpy(decoded_radio_answer,"er2_sn_#]"); 
+        strcpy(decoded_result,"er2_sn_#]"); 
         return;
       } 
 
@@ -312,11 +314,17 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
       noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
-      strcpy(decoded_radio_answer,"ok");
-      Serial.print("i will change radio address to:");
+      strcpy(decoded_result,"ok");
+#if defined(DEVMODE)
+      Serial.print(F("[S_i will change radio address to:_#]"));
+#endif
       Serial.println(this_node_address);
-      beginRadio();
-      interrupts();
+      reInitializeRadio=1;  //to execute beginRadio()
+
+#if defined(remote_node)   // only if this is a remote node.. 
+      this_node_address=254;
+#endif
+
       first_sync=0;
         
       return;
