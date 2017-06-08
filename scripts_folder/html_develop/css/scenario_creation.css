@@ -4,7 +4,7 @@
 	position:relative;
 	width:100%;
 	height:60px;
-	display:none;
+	display:inherit;
 }
 
 .testo{
@@ -13,7 +13,6 @@
 	position:absolute;
 	width:100%;
 	height:30px;
-	line-height:60px;
 	text-align:center;
 	color:white;
 	font-size:15px;
@@ -33,144 +32,10 @@
 }
 
 
-.inn_common{
-		position:absolute;
-		width:30%;
-		height:60px;
-		text-align:center;
-		line-height:60px;
-		font-size:30px;	
-    	background-color:white;
-		border-left: 1px solid black;
-		border-top: 1px solid black;
-		border-right: 1px solid black;
-	
-}
-
-.inn_text{
-	
-		position:absolute;
-		width:30%;
-		text-align:center;
-		font-size:12px;	
-		color:black;
-		font-weight:bold;
-		font-style: oblique;
-		background-color:white;
-		border-left: 1px solid black;
-		border-bottom: 1px solid black;
-		border-right: 1px solid black;		
-}
-
-
-.innesco_oggetto{
-	left:1.66%;
-}
-
-.innesco_sensore{
-	left:34.99%;
-}
-
-.innesco_variabile{
-	left:68.26%;
-	
-}
-
-
-
-/*ghost part */
-
-.attuatore_ghost{
-	
-	position:relative;
-	width:90%;
-	height:400px;
-	left:5%;
-	display:inherit;
-	border: 1px solid white;	
-	border-radius: 5px;
-	background-color:#b4caff;;
-	overflow-y:scroll;
-	overflow-x:none;
-	
-}
-
-#attuatore_infotext{
-	
-	position:relative;
-	width:100%;
-	top:0px;
-	left:0px;
-	padding:10px;
-	text-align:center;
-	font-size:15px;	
-	font-weight:bold;
-	margin-bottom:20px;
-	border-bottom: 1px solid white;	
-	border-radius:5px 5px 0px 0px;
-	background-color:#56aff9;
-	color:white;
-
-	
-}
-
-.attuatore_boxes{
-	
-	position:relative;
-	width:70%;
-	left:2%;
-	text-align:left;
-	font-size:20px;
-	margin-top:10px;
-	padding-left:5px;
-	border-bottom: 1px solid black;	
-	border-left: 1px solid black;	
-	border-radius:0px 0px 0px 10px;
-	
-}
-.attuatore_boxes_selected{
-	
-	position:relative;
-	width:70%;
-	left:20%;
-	text-align:left;
-	font-size:20px;
-	margin-top:10px;
-	border-bottom: 1px solid black;	
-	border-left: 1px solid black;	
-	padding-left:5px;
-	border-bottom: 2px solid lime;	
-	border-left: 2px solid lime;	
-	border-radius:0px 0px 0px 10px;
-	
-	
-}
-
-
-
-
-
-.sensore_ghost{
-	
-	position:relative;
-	width:100%;
-	height:60px;
-	display:none;
-	
-}
-
-.variabile_ghost{
-	
-	position:relative;
-	width:100%;
-	height:60px;
-	display:none;
-	
-}
-
-/*end ghost part*/
 
 #avanti_button{
+	
+	
 	
 	
 	position:relative;
