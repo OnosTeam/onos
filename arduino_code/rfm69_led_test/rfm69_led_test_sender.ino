@@ -18,12 +18,7 @@
 *          SCK pin D13----------SCK   (SPI clock in)
 *         MOSI pin D11----------MOSI  (SPI Data in)
 *         MISO pin D12----------MISO  (SPI Data out)
-                   D3 ----------switch	
-                   D5 ----------led
-                   D6 ----------1 simple relay
-                   D7 ----------1 simple relay
-                   D8 ----------1 simple relay
-                   D9 ----------1 simple relay
+
                     
 
 */
@@ -76,8 +71,8 @@
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
-#define FREQUENCY     RF69_868MHZ
-//define FREQUENCY      RF69_433MHZ
+//#define FREQUENCY     RF69_868MHZ
+#define FREQUENCY      RF69_433MHZ
 #define INITENCRYPTKEY     "onosEncryptKey00" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
  
@@ -108,7 +103,7 @@ unsigned long sync_time=0;
 
 char serial_number[13]="Wrelay4x0007";
 char node_fw[]="5.27";
-volatile char encript_key[17]="onosEncryptKey00";  //todo read it from eeprom
+char encript_key[17]="onosEncryptKey00";  //todo read it from eeprom
 char init_encript_key[17]=INITENCRYPTKEY;
 int this_node_address=254; //i start with 254
 
@@ -151,6 +146,7 @@ uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
 volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
 volatile char received_serial_number[13];
+volatile boolean reInitializeRadio=0;
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 

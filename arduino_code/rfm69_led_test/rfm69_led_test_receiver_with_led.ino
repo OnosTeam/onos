@@ -74,8 +74,8 @@
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
-#define FREQUENCY     RF69_868MHZ
-//#define FREQUENCY     RF69_433MHZ
+//define FREQUENCY     RF69_868MHZ
+#define FREQUENCY     RF69_433MHZ
 #define INITENCRYPTKEY     "onosEncryptKey00" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HCW   true // set to 'true' if you are using an RFM69HCW module
  
@@ -143,6 +143,7 @@ uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
 volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
 volatile char received_serial_number[13];
+volatile boolean reInitializeRadio=0;
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 
@@ -526,11 +527,11 @@ boolean checkAndHandleIncomingRadioMsg(){
   if (radio.receiveDone()){
     //print message received to serial
 
-/*
+
       Serial.print('[');Serial.print(radio.SENDERID);Serial.print("] ");
       Serial.print((char*)radio.DATA);
-      Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
-*/
+      Serial.println("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+
  
     //check if received message contains Hello World
 
