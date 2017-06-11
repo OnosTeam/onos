@@ -652,6 +652,10 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 replaced all the print call in the webserver.py to logprint() , will have to do the same for the other scrips..
                 started implementing OnosMsg arduino library to uniform the decode message method in all the nodes.
                 continued working on OnosMsg arduino library and started the part to make the encript_key reset if button pressed..
+                Now onos is able to controll the status of a sonoff-basic ,implemented the make_query_to_http_node() function..
+
+
+
 
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;

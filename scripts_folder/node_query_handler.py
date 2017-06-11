@@ -155,7 +155,94 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
 
 
-def make_query_to_network_node(node_serial_number,query,objName,status_to_set,user,priority,mail_report_list):
+
+
+def make_query_to_http_node(node_serial_number,query,query_expected_answer,objName,status_to_set,user,priority,mail_report_list):
+  """
+  | This function make a http query to a ethernet/wifi/powerline node and wait the answer from the node.
+  | If the answer is positive 
+  |   it will add to the priorityCmdQueue the command to change the web_object status
+  |   from pending to succesfully changed .
+  | If the answer from the node is an error or the node is not responding
+  |   the query will be repeated x times before giving up.
+  |
+
+  """
+
+    #time.sleep(0.1) 
+
+  logprint("make_query_to_http_node() thread executed")
+  logprint( "i try this query:"+query)
+  timeout=0.1
+  html_response="local_error_in_router_handler_cant_connect_to_node"    
+  
+  #wait_timeout=1000
+
+  for m in range(0,10):   #retry n times to get the answer from node
+   
+    node_address=nodeDict[node_serial_number].getNodeAddress()  #update the node address ..maybe has changed..
+    logprint("connection try number:"+str(m)+"to ip number"+str(node_address) )
+    html_response="local_error_in_router_handler_cant_connect_to_node"  
+    received_answer=""
+    flag=0
+    while (wait_because_node_is_talking==1):  #the node is talking to onos...wait ...banana to make it for each node..
+      logprint("i wait_because_node_is_talking ..............") 
+      time.sleep(0.1) 
+
+ 
+    try:
+      if m<5:
+            
+        response = url_request_manager.request('GET',query,timeout=Timeout(total=1.0))
+
+            #response=urllib2.urlopen(req, timeout=10) 
+      else:
+            #response=urllib2.urlopen(req, timeout=1)
+        response = url_request_manager.request('GET',query,timeout=Timeout(total=5.0))
+
+      http_response = response.data
+
+
+      if (http_response.find(query_expected_answer)!=-1):   #if the server response is ok  then break the loop
+
+        priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
+     
+        return()
+      else:
+        message="error the node answer with:"+http_response+"i will retry,try number:"+str(m)+"the query was"+query+"the expected_answer was"+query_expected_answer
+        logprint(message,verbose=4) 
+
+        m=m+1       
+        t=t+m
+
+
+
+      if m>5:
+
+        timeout=2
+        time.sleep(timeout)
+        continue
+
+
+
+
+    except Exception as e  :
+      message="error2 in make_query_to_http_node() router_handler class trying to query a node the query was"+query+"the number of try is "+str(m)+"at:"+getErrorTimeString() 
+      logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
+
+
+
+  return()
+
+
+
+
+
+
+
+
+
+def make_query_to_tcp_node(node_serial_number,query,query_expected_answer,objName,status_to_set,user,priority,mail_report_list):
   """
   | This function make a query to a powerline/ethernet node and wait the answer from the node.
   | If the answer is positive 
@@ -168,7 +255,8 @@ def make_query_to_network_node(node_serial_number,query,objName,status_to_set,us
   """
 
     #time.sleep(0.1) 
-  logprint("make_query_to_network_node() thread executed")
+
+  logprint("make_query_to_tcp_node() thread executed")
   logprint( "i try this query:"+query)
   timeout=0.1
   html_response="local_error_in_router_handler_cant_connect_to_node"    
@@ -399,19 +487,20 @@ def handle_new_query_to_network_node_thread():
   | It will get each query from queryToNetworkNodeQueue and call make_query_to_network_node() 
   | While the query is running the current_node_handler_list will contain the node serialnumber being queried
   | In this way onos will avoid to make multiple simultaneos query to the same node.
-  
+  | Todo: implement the same safe strategy to queue the not succesfull query to retry them later...like done in handle_new_query_to_radio_node_thread
+
  
 
   """
 
 
   logprint("executed handle_new_query_to_network_node_thread() ")
+  query_type="http"   #if query_type== tcp it will send a tcp 
 
-
-  global node_query_threads_executing
+  global node_query_network_threads_executing
   try:
     #with lock2_query_threads:
-    node_query_threads_executing=node_query_threads_executing+1
+    node_query_network_threads_executing=node_query_network_threads_executing+1
 
     while not queryToNetworkNodeQueue.empty():   #banana maybe to implement Queue.PriorityQueue() to give priority to certain queries
       current_query=queryToNetworkNodeQueue.get()
@@ -423,16 +512,17 @@ def handle_new_query_to_network_node_thread():
         continue ##skip to the next query ..
 
       with lock1_current_node_handler_list:
-        if ((node_serial_number not in current_node_handler_list)): #or (node_query_threads_executing==1)):
+        if ((node_serial_number not in current_node_handler_list)): #or (node_query_network_threads_executing==1)):
           current_node_handler_list.append(node_serial_number)
           logprint("handle_new_query_to_network_node_thread excuted with "+node_serial_number)
         else:
           logprint("node is already being contacted:q->"+current_query)
           queryToNetworkNodeQueue.put(current_query)
           continue
-      logprint("node_query_threads_executing:"+node_query_threads_executing)
+      logprint("node_query_network_threads_executing:"+str(node_query_network_threads_executing))
       #address=current_query["address"]
       query=current_query["query"]
+      query_expected_answer=current_query["query_expected_answer"]
       objName=current_query["objName"]
       status_to_set=current_query["status_to_set"]
       user=current_query["user"]
@@ -443,8 +533,11 @@ def handle_new_query_to_network_node_thread():
         time.sleep(0.1)  
         #print "wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"  
 
-      make_query_to_network_node(node_serial_number,query,objName,status_to_set,user,priority,mail_report_list)
 
+      if query_type=="http":  
+        make_query_to_http_node(node_serial_number,query,query_expected_answer,objName,status_to_set,user,priority,mail_report_list)
+      else:
+        make_query_to_tcp_node(node_serial_number,query,query_expected_answer,objName,status_to_set,user,priority,mail_report_list)
     
       with lock1_current_node_handler_list:
         logprint("lock2b from handle_new_query_to_network_node_thread_remove,query_to_node_dict[node_serial_number]"+node_serial_number)
@@ -473,12 +566,14 @@ def handle_new_query_to_network_node_thread():
       try:
         logprint("lock2c from handle_new_query_to_network_node_thread_remove,query_to_node_dict)[node_serial_number]"+node_serial_number)
         current_node_handler_list.remove(node_serial_number)
-        query_threads_number=query_threads_number-1
-      except:
-        logprint("error in current_node_handler_list.remove after main error") 
+        if node_query_network_threads_executing>0:
+          node_query_network_threads_executing=node_query_network_threads_executing-1
+      except Exception as e :
+        message="error in current_node_handler_list.remove after main error"
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
-  if node_query_threads_executing>0:
-    node_query_threads_executing=node_query_threads_executing-1
+  if node_query_network_threads_executing>0:
+    node_query_network_threads_executing=node_query_network_threads_executing-1
   return()
 
 

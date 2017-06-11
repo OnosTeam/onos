@@ -486,9 +486,28 @@ class RouterHandler:
         logprint ("generic_object_name:"+generic_object_name)
    
         query_placeholder=""
+        query_expected_answer=""
 
         try:
           query_placeholder=base_query+hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name]["query"]
+          #now query_placeholder contains the query string got from globalVar.py in the hardwareModelDict{}
+          if "query_expected_answer" in hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name].keys() :
+
+
+
+#example: 
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]["0"]="""RESULT = {"POWER":"ON"}"""
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]["1"]="""RESULT = {"POWER":"OFF"}"""
+#
+#get    """RESULT = {"POWER":"ON"}""" from the dictionary when status_to_set is "0"..
+ 
+            if status_to_set in hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name]["query_expected_answer"].keys():
+
+              query_expected_answer=hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name]["query_expected_answer"][status_to_set]
+
+
+
+
 
 
         except Exception as e  :
@@ -496,12 +515,16 @@ class RouterHandler:
           logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
 
  
-     #   print "query_placeholder:"+query_placeholder
+    #   print "query_placeholder:"+query_placeholder
+
+
 
         if obj_selected<10:
           query_placeholder=query_placeholder.replace("#_objnumber_#","0"+str(obj_selected))
         else:
-          query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected))      
+          query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected)) 
+
+
 
         #query_placeholder=query_placeholder.replace("#_objnumber00_#","0"+str(obj_selected))
         #query_placeholder=query_placeholder.replace("#_objnumber0_#",str(obj_selected))
@@ -534,12 +557,16 @@ class RouterHandler:
           #query example:  [S_123wp01x_#]
 
 
-
-          query='''[S_'''+node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
-         # print "query:::::"+query
-          #valuelen_pos=query_placeholder.find("valuelen")
-          #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
-          #query=query_placeholder.replace(string_to_replace_with_value,value)
+          if (len(node_address)==3): #radio node
+            query='''[S_'''+node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
+            # print "query:::::"+query
+            #valuelen_pos=query_placeholder.find("valuelen")
+            #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
+            #query=query_placeholder.replace(string_to_replace_with_value,value)
+          else:#network node
+            query_placeholder=query_placeholder.replace("#_node_address_#",str(node_address)) 
+            query=query_placeholder
+          
            
 
           logprint("composed query was:"+query)
@@ -620,7 +647,7 @@ class RouterHandler:
 
 
      
-      queryToNetworkNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
+      queryToNetworkNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"query_expected_answer":query_expected_answer,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
 
       with lock1_current_node_handler_list:
         logprint("lock1a from router_handler"+node_serial_number)
@@ -628,19 +655,19 @@ class RouterHandler:
         node_not_being_contacted=(node_serial_number not in current_node_handler_list)
 
       #with lock2_query_threads:
-      #query_threads_number=node_query_threads_executing
+      #query_threads_number=node_query_network_threads_executing
 
       if (node_not_being_contacted) : #there is not a query thread running for this node  thread executing 
         logprint("no handler running for this node")
 
         #handle_new_query_to_remote_node(node_serial_number,address,query,objName,status_to_set,user,priority,mail_report_list)
 
-        if (node_query_threads_executing<max_number_of_node_query_threads_executing): # there are less than x node query thread running
+        if (node_query_network_threads_executing<max_number_of_node_query_network_threads_executing): # there are less than x node query thread running
           tr_handle_new_query_to_remote_node = threading.Thread(target=handle_new_query_to_network_node_thread)
           tr_handle_new_query_to_remote_node.daemon = True  #make the thread a daemon thread
           tr_handle_new_query_to_remote_node.start()   
         else:
-          logprint("too many node_query_threads_executing: "+str(query_threads_number))
+          logprint("too many node_query_network_threads_executing: "+str(query_threads_number))
 
 
       else:#there is already a query thread running for this node  
@@ -854,7 +881,7 @@ class RouterHandler:
 
 
       else: #str(node_address))!="1" and !=0 --->    remote network node selected
-        logprint("I write to/from a remote node with address:"+str(node_address) )
+        logprint("I write to/from a remote  network node with address:"+str(node_address) )
 
         
         logprint("len address="+str(len(node_address)) )
@@ -868,20 +895,25 @@ class RouterHandler:
           else:
             logprint("error number of pins !=2",verbose=8)
             return(-1)
-        i=0
-        while i <len(pinList) : 
-          pinNumber=pinList[i]
-          tmp_status_to_set=statusList[i]
-          if (pinNumber not in node_obj.getUsedPins()):
-            message="error the  pin value:"+str(tmp_status_to_set)+" is out of range of node :"+remoteNodeHwModelName+"pin_number="+str(pinNumber)
-            logprint(message,verbose=8)
-
-            return(-1)
 
 
-          self.composeChangeNodeOutputPinStatusQuery(pinNumber,node_obj,objName,tmp_status_to_set,node_serial_number,node_address,output_type,user,priority,mail_report_list)
-          i=i+1
-        #start a thread query to the node
+        query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+        logprint("I WRITE THIS QUERY TO SERIAL NODE:"+query+"end")  
+        query_time=time.time()
+        query_order=priority
+        number_of_retry_done=0
+        cmd=""
+        queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,statusToSetWebObject,user,priority,mail_report_list,cmd))
+
+        if node_query_network_threads_executing==0:
+          tr_handle_new_query_to_network_node_thread = threading.Thread(target=handle_new_query_to_network_node_thread)
+          tr_handle_new_query_to_network_node_thread.daemon = True  #make the thread a daemon thread
+          tr_handle_new_query_to_network_node_thread.start()   
+
+
+
+        return()
+    
 
                         
 

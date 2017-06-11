@@ -172,11 +172,12 @@ queryToNetworkNodeQueue=Queue.Queue()
 queryToRadioNodeQueue=Queue.PriorityQueue()
 
 
-node_query_threads_executing=0# 
+
+node_query_network_threads_executing=0
 
 node_query_radio_threads_executing=0
 
-max_number_of_node_query_threads_executing=2 #tells onos the maximun number of thread it can executes to handle network node queries
+max_number_of_node_query_network_threads_executing=2 #tells onos the maximun number of thread it can executes to handle network node queries
 
 layerExchangeDataQueue = Queue.Queue()  # this queue will contain all the dictionaries to pass data from the hardware layer to the webserver layer   router_handler.py will pass trought this queue all the change of hardware status to the webserver.py
 
@@ -646,14 +647,15 @@ hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["timeout_to_turn_off"]["
 
  #define the base query for this node digital_obj..so onos will write for example: [S_001do001x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
-hardwareModelDict["Sonoff1P"]={"hwName":"Sonoff1P","max_pin":13,"hardware_type":"sonoff_single_plug","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["Sonoff1P"]={"hwName":"Sonoff1P","max_pin":13,"hardware_type":"sonoff_single_plug","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":"never"}
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]={}
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]={}
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[0]#see arduino code at :"define object numbers to use in the pin configuration"
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query"]="cm?cmnd=Power%20#_objnumber_##_valuelen:1_#"  #http://192.168.1.6/cm?cmnd=Power%2000   and http://192.168.1.6/cm?cmnd=Power%2001
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_answer_ok"]={}
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_answer_ok"]["0"]="""RESULT = {"POWER":"ON"}"""
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_answer_ok"]["1"]="""RESULT = {"POWER":"OFF"}"""
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["begin_connection_query"]="""http://#_node_address_#/cm?cmnd=LedState%201""" #todo to implement it..this query will be sent the first time a this object is connected..
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query"]="http://#_node_address_#/cm?cmnd=Power%20#_objnumber_##_valuelen:1_#"  #http://192.168.1.6/cm?cmnd=Power%2000   and http://192.168.1.6/cm?cmnd=Power%2001
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]["0"]="""RESULT = {"POWER":"ON"}"""
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]["1"]="""RESULT = {"POWER":"OFF"}"""
 
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
 hardwareModelDict["Sonoff1P"]["object_list"]["cfg_obj"]={}
