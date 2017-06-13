@@ -1,296 +1,272 @@
 @font-face {
-   font-family: 'recharge';
-   src: url('../fonts/recharge.ttf') format('truetype');
+   font-family: 'rapier';
+   src: url('../fonts/rapier-zero.ttf') format('truetype');
 }
 
 @font-face {
-   font-family: 'digital';
-   src: url('../fonts/digital.ttf') format('truetype');
+   font-family: 'adventure';
+   src: url('../fonts/adventure-subtitles.ttf') format('truetype');
 }
 
 
-a, a:visited  {text-decoration:none;}
+* {
+    box-sizing: border-box;
+}
 
-@media screen  and (max-width:320px) /*Iphone4 320x480*/ {
+
+
+a, a:visited  {text-decoration:none; color:inherit;}
+
+
+
 
 
 
 body{
-    	background: black;
-	margin:0;
-	padding:0;
-  }
-
-.flex {max-width: 100%}
-
-
-
-#upper-bar-image{
-width:150px;
-height:50px;
-position:absolute;
-top:0px;
-background-color:#0072ca;
-
-}
-
-#upper-bar-testo{
-width:170px;
-height:50px;
-position:absolute;
-top:0px;
-left:150px;
-background-color:#0072ca;
-text-align:center;
-line-height: 50px;
-
-}
-
-
-
-#container-menu{
-
-width:320px;
-height:50px;
-position:relative;
-top:50px;
-background-color:#0072ca;
-}
-
-.menu-button{
-height:30px;
-width:30px;
-}
-
-
-
-#home-button{
-position:absolute;
-top:10px;
-left:25px;
-}
-
-#play-button{
-position:absolute;
-top:10px;
-left:105px;
-}
-
-#scenario-button{
-position:absolute;
-top:10px;
-left:185px;
-}
-
-#settings-button{
-position:absolute;
-top:10px;
-left:265px;
-}
-}/*chiusura media iphone4*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media screen  and (max-width:360px) /*Note3neo 360*640*/ {
-  
-
-body{
-    	background: black;
-	margin:0;
-	padding:0;
-  }
-
-.flex {max-width: 100%}
-
-
-#upper-bar-image{
-width:150px;
-height:50px;
-position:absolute;
-top:0px;
-background-color:#0072ca;
-
-}
-
-#upper-bar-testo{
-width:210px;
-height:50px;
-position:absolute;
-top:0px;
-left:150px;
-background-color:#0072ca;
-text-align:center;
-line-height: 50px;
-
-}
-
-
-
-#container-menu{
-
-width:360px;
-height:50px;
-position:relative;
-top:50px;
-background-color:#0072ca;
-}
-
-.menu-button{
-height:30px;
-width:30px;
-}
-
-#home-button{
-position:absolute;
-top:10px;
-left:25px;
-}
-
-#play-button{
-position:absolute;
-top:10px;
-left:105px;
-}
-
-#scenario-button{
-position:absolute;
-top:10px;
-left:185px;
-}
-
-#settings-button{
-position:absolute;
-top:10px;
-left:265px;
-}
 	
+	background-color:#4acce0;
+	margin: 0px;
+	padding-top:0px;
 
-}/*chiusura media 360px*/
+}
+
+/*menù in alto*/
+
+#invisible_top_banner{
+
+	z-index:1;
+	
+	position:relative;
+	width:100%;
+	height:50px;
+	margin-bottom:50px;
+
+
+}
+.banner-color{
+
+	z-index:1;
+	color:white;
+	border-bottom: 1px solid white;
+	background-color:#4acce0;
+	overflow:hidden;
+}
+
+.banner-col1{left:0%; color:black;}
+
+.banner-col2{left:15%;}
+
+.banner-col3{left:55%}
+
+.banner-col4{left:85%; color:black;}
+
+#menu_top_button{
+
+	cursor:pointer;
+	position:fixed;
+	top:0px;
+	width:15%;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+
+}
+
+#date{
+	
+	position:fixed;
+	top:0px;
+	width:40%;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+
+}
+
+#time{
+
+	position:fixed;
+	top:0px;
+	width:30%;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+
+
+}
+
+
+#right_menu_button{
+	position:fixed;
+	top:0px;	
+	width:15%;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+}
+
+/*fine menù in alto*/
+
+/*menu a sinistra*/
+
+#menu_sx{
+
+    z-index:2;
+	position:fixed;
+	top:0px;
+	left:0%;
+	height:100%;
+	width:50%;
+	padding-top:70px;
+	padding-left:8px;
+	padding-right:8px;
+	margin-left:-100%;/*transizione modifica javascript */
+	background-color: #0072ca;
+
+
+	-webkit-transition: margin-left 0.5s; /* Safari */
+	transition: margin-left 0.5s;
+
+
+}
+
+#closebutton_sx{
+
+	cursor:pointer;
+	position:relative;
+	margin-top:70px;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+	color:black;
+}
+
+.vocemenu_sx {
+	
+	position:relative;
+	color:white;
+	cursor:pointer;
+	margin:0px;
+	margin-top:20px;
+	padding:0px;
+	font-size:20px;
+
+}
+
+.vocemenu_sx:hover{
+
+	color:black;
+	-webkit-transition: color 0.3s; /* Safari */
+	transition: color 0.3s;
 
 
 
-@media screen  and (min-width:1000px) /*laptop*/ {
+}
+
+.vocemenu_sx i{
+
+margin-right:10px;
+
+}
+
+/*fine menù a sinistra*/
+
+/*menù a destra */
+
+#menu_rx{
+
+    z-index:2;
+	position:fixed;
+	top:0px;
+	right:0%;
+	height:100%;
+	width:50%;
+	padding-top:70px;
+	padding-left:8px;
+	padding-right:8px;
+	margin-right:-100%;/*transizione modifica javascript */
+	background-color:#a366ff;
 
 
+	-webkit-transition: margin-right 0.5s; /* Safari */
+	transition: margin-right 0.5s;
+
+
+}
+
+
+.side-col1{right:35%;}
+
+.side-col2{right:15%;}
+
+.menu_rx_riga{	
+	
+	position:relative;
+	width:100%;
+	height:50px;
+	margin-top:10px;
+}
+
+
+.voce-menu-R{
+	
+	position:absolute;
+	width:50%;
+	height:50px;
+	top:0px;
+	text-align:center;
+	line-height:50px;
+	font-size:15px;
+	color:white;
+	
+}
+
+.icona-menu-R{
+	
+	position:absolute;
+	width:15%;
+	height:50px;
+	top:0px;
+	text-align:center;
+	line-height:50px;
+	
+}
+
+.new{color:white;}
+
+.delete{color:#e60000;}
+
+.sub{color:#40ff00;}
+
+#closebutton_rx{
+
+	cursor:pointer;
+	position:relative;
+	margin-top:70px;
+	height:50px;
+	text-align:center;
+	line-height:50px;
+	color:black;
+}
+/*fine menu a destra*/
+
+@media screen and (min-width: 600px) /*laptops-desktop*/{
 
 
 body{
-    	background: black;
-	margin:0;
-	padding:0;
-  }
-
-
-#big-container{
-
-
-width:1000px;
-height:3000px;
-background-color:white;
-margin-left:auto;
-margin-right:auto;
-position:relative;
-
-
-}
-
-.flex {max-width: 100%}
-
-
-#upper-bar-image{
-width:375px;
-height:125px;
-position:absolute;
-left:0px;
-top:0px;
-background-color:#0072ca;
-
-}
-
-
-
-#upper-bar-testo{
-width:625px;
-height:125px;
-position:absolute;
-top:0px;
-left:375px;
-background-color:#0072ca;
-text-align:center;
-line-height: 120px;
-font-size:30px;
-
-}
-
-
-
-#container-menu{
-
-width:1000px;
-height:100px;
-position:relative;
-top:125px;
-background-color:#0072ca;
-border-bottom:3px solid black;
-border-top:3px solid black;
-}
-
-.menu-button{
-height:50px;
-width:50px;
-}
-
-.menu-button:hover {
-
-
-height:55px;
-width:55px;
-
-}
-
-#play-button{
-position:absolute;
-top:25px;
-left:100px;
-}
-
-#settings-button{
-position:absolute;
-top:25px;
-left:350px;
-}
-
-#scenario-button{
-position:absolute;
-top:25px;
-left:600px;
-}
-
-#exit-button{
-position:absolute;
-top:25px;
-left:850px;
-
-}
 	
+	position:relative;
+	width:600px;
+	margin-left:auto;
+	margin-right:auto;
+	padding:0px;
+    }
+
+#menu_sx{width:20%;}
+
+#menu_rx{width:20%}
 
 
 
-
-
-
-
-
+}
 
