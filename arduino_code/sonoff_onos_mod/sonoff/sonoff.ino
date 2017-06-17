@@ -35,7 +35,24 @@ enum swtch_t {TOGGLE, FOLLOW, FOLLOW_INV, PUSHBUTTON, PUSHBUTTON_INV, MAX_SWITCH
 enum led_t   {LED_OFF, LED_POWER, LED_MQTTSUB, LED_POWER_MQTTSUB, LED_MQTTPUB, LED_POWER_MQTTPUB, LED_MQTT, LED_POWER_MQTT, MAX_LED_OPTION};
 enum emul_t  {EMUL_NONE, EMUL_WEMO, EMUL_HUE, EMUL_MAX};
 
-boolean ip_sent_to_onosCenter=0;  //onosmod
+
+//onosmod
+boolean first_sync=1;
+unsigned long sync_time=0;
+unsigned long send_address_timeout=100;
+//unsigned long *send_address_timeout_pointer=&send_address_timeout;
+char url0[80]= "http://192.168.1.102/";
+char node_fw[]="5.28";
+char syncMessage[71];
+char progressive_msg_id=48;
+char main_obj_state=0;
+char serial_number[13]="Sonoff1P0001";  // todo read it from sysCfg.friendlyname[0]  in order to be able to change it from setup..
+char onosCenterIp[27]="http://192.168.1.102/_____";
+//char url[80]="http://192.168.1.102/_____cmd=sa&sn=Sonoff1P0001&f=5.28__";
+
+
+//
+
 
 #include "sonoff_template.h"
 
@@ -1620,6 +1637,10 @@ void do_cmnd_power(byte device, byte state)
       power ^= mask;
     }
     setRelay(power);
+//onosmod
+    composeOnosSyncMessage();
+    sendOnosSyncMessage();
+//onosmod
 #ifdef USE_DOMOTICZ
     domoticz_updatePowerState(device);
 #endif  // USE_DOMOTICZ
@@ -2523,7 +2544,7 @@ extern struct rst_info resetInfo;
 
 boolean sendCurrentIp(){// send the current ip to OnosCenter   onosmod
 
-  boolean returnStatus=0;
+  boolean returnStatus=1;
 
 
   // http://192.168.1.102/_____onos_cmd=sy&sn=ProminiA0002&fw=5.28&ip=192.168.0.6__
@@ -2534,20 +2555,21 @@ boolean sendCurrentIp(){// send the current ip to OnosCenter   onosmod
 
     HTTPClient http;
   // We now create a URI for the request
-    String url = "http://192.168.1.102/___onos_cmd=sy&sn=";
-    String fw_version="5.28";
-    url += sysCfg.friendlyname[0];
+
+/*
+    url = "http://192.168.1.102/___onos_cmd=sy&sn=";
+    //url += sysCfg.friendlyname[0];
     url += "&fw=";
     url += fw_version;
     url += "&";
-    //url += "&ip=";
-    //url += WiFi.localIP().toString().c_str();
-
+    url += "&ip=";
+    url += WiFi.localIP().toString().c_str();
+*/
 
     Serial.print("[HTTP] begin...\n");
         // configure traged server and url
         //http.begin("https://192.168.1.12/test.html", "7a 9c f4 db 40 d3 62 5a 6e 21 bc 5c cc 66 c8 3e a1 45 59 38"); //HTTPS
-    http.begin(url); //HTTP
+    http.begin(syncMessage); //HTTP
 
     Serial.print("[HTTP] GET...\n");
         // start connection and send HTTP header
@@ -2562,13 +2584,16 @@ boolean sendCurrentIp(){// send the current ip to OnosCenter   onosmod
       if(httpCode == HTTP_CODE_OK) {
         String payload = http.getString();
         Serial.println(payload);
-        returnStatus=1;
+
+        if (payload=="[S_ok_#]"){  // if i get "ok" from onos center then the new node was registered
+          returnStatus=0;
+        }
       }
     }
     else {
       Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
       delay(10);
-      returnStatus=0;
+      returnStatus=1;
     }
     http.end();
   }
@@ -2584,6 +2609,135 @@ boolean sendCurrentIp(){// send the current ip to OnosCenter   onosmod
 
 }
 
+ //onosmod
+void composeOnosSyncMessage(){
+
+  Serial.println(F("composeOnosSyncMessage executed"));
+  //localhost/cmd=uo&sn=RouterGL0001&f=5.28&obj=0&s=1__x
+  //localhost/cmd=sa&sn=RouterGL0001&f=5.28&obj=0&s=1__x
+
+  if (progressive_msg_id<122){  //122 is z in ascii
+    progressive_msg_id=progressive_msg_id+1;
+  }
+  else{
+    progressive_msg_id=48;  //48 is 0 in ascii
+  }
+
+
+  //strcpy(syncMessage, "");
+  memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
+
+  strcat(syncMessage,onosCenterIp);
+
+  if (first_sync==1 ){
+    strcat(syncMessage, "cmd=sa");
+
+  }
+  else{
+    strcat(syncMessage, "cmd=ou");
+
+  }
+
+  strcat(syncMessage, "&sn=");
+
+  strcat(syncMessage, serial_number);
+
+  strcat(syncMessage, "&f=");
+
+  strcat(syncMessage, node_fw);
+
+ //onosmod
+  if (strcmp(my_module.name,"Sonoff Basic")==0){
+    Serial.println("my_module.name"); // onosmod
+
+    Serial.println(my_module.name); // onosmod
+
+    Serial.println("state:"); // onosmod
+
+    Serial.println(getStateText(bitRead(power,0)) ); // 1 is the first device ..so the plug
+
+    strcat(syncMessage, "&obj=0");
+
+    if (strcmp(getStateText(bitRead(power,0)) ,"ON")==0){
+      main_obj_state=1;
+    }
+    else{
+      main_obj_state=0;
+    }
+
+
+    strcat(syncMessage,"&s=");
+
+    syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
+
+
+  }
+
+  strcat(syncMessage,"__");
+
+  Serial.print(F("composeSyncMessage executed with  status:"));
+  Serial.println(main_obj_state);
+
+
+  syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
+
+
+  Serial.println(syncMessage);
+  Serial.println(strlen(syncMessage));
+
+  
+
+
+
+
+}
+
+ //onosmod
+void sendOnosSyncMessage(){
+
+  if(WiFi.status() == WL_CONNECTED) {
+
+
+    HTTPClient http;
+  // We now create a URI for the request
+  // strcat(url0,syncMessage);
+
+
+    //url += "&ip=";
+    //url += WiFi.localIP().toString().c_str();
+
+
+    Serial.print("[HTTP] begin...\n");
+        // configure traged server and url
+        //http.begin("https://192.168.1.12/test.html", "7a 9c f4 db 40 d3 62 5a 6e 21 bc 5c cc 66 c8 3e a1 45 59 38"); //HTTPS
+    http.begin(syncMessage); //HTTP
+
+    Serial.print("[HTTP] GET...\n");
+        // start connection and send HTTP header
+    int httpCode = http.GET();
+
+        // httpCode will be negative on error
+    if(httpCode > 0) {
+            // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+            // file found at server
+      if(httpCode == HTTP_CODE_OK) {
+        String payload = http.getString();
+        Serial.println(payload);
+
+      }
+    }
+    else {
+      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+      delay(10);
+
+    }
+    http.end();
+  }
+
+}
+ //onosmod
 
 
 
@@ -2705,11 +2859,31 @@ void setup()
 void loop()
 {
 
-  //if (ip_sent_to_onosCenter==0){    //onosmod
 
-    ip_sent_to_onosCenter=sendCurrentIp();
 
-  //}
+
+ 
+ //onosmod
+
+
+
+  if ( (millis()-sync_time)>send_address_timeout){   //each n sec time contact the onosCenter and update
+
+      
+    if (first_sync==1){    //onosmod
+      send_address_timeout=1000;
+      composeOnosSyncMessage();
+      first_sync=sendCurrentIp();
+
+    }
+    else{
+      send_address_timeout=30000; //300 seconds of timeout..
+      composeOnosSyncMessage();
+      sendOnosSyncMessage();
+    }
+    sync_time=millis();
+
+  }
 
   osw_loop();
   
@@ -2733,11 +2907,20 @@ void loop()
     serial();
 
 
-    Serial.println("hello"); // onosmod
+//onosmod
+  //  Serial.println("hello"); // onosmod
 
-    Serial.println(WiFi.localIP().toString().c_str() );  // onosmod
+  // Serial.println(WiFi.localIP().toString().c_str() );  // onosmod
 
-    Serial.println(sysCfg.friendlyname[0]);  // onosmod
+  //   Serial.println(sysCfg.friendlyname[0]);  // onosmod
+
+   // Serial.println("state:"); // onosmod
+
+
+
+
+
+//onosmod
 
   }
 

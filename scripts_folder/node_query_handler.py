@@ -487,7 +487,7 @@ def handle_new_query_to_network_node_thread():
   | It will get each query from queryToNetworkNodeQueue and call make_query_to_network_node() 
   | While the query is running the current_node_handler_list will contain the node serialnumber being queried
   | In this way onos will avoid to make multiple simultaneos query to the same node.
-  | Todo: implement the same safe strategy to queue the not succesfull query to retry them later...like done in handle_new_query_to_radio_node_thread
+  | Todo: implement the same safe strategy to queue the not successful query to retry them later...like done in handle_new_query_to_radio_node_thread
 
  
 

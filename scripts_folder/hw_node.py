@@ -307,6 +307,8 @@ class HwNode:
         |  Set the objectname to an address in the node
         |   
       """
+      message="object:"+objectName+"assigned to address:"+str(objectAddress)+" of the node"
+      logprint(message,verbose=1)
       self.nodeObjectsDict[objectAddress]=objectName
    
       return(1)
@@ -333,8 +335,12 @@ class HwNode:
         |  Get the objectname in the node address
         |   
       """
-      return(self.nodeObjectsDict[objectAddress])
-
+      if objectAddress in self.nodeObjectsDict:
+        return(self.nodeObjectsDict[objectAddress])
+      else:
+        message="error , no object with address:"+str(objectAddress)+" found in this node"
+        logprint(message,verbose=9)   
+        return(-1)
 
 
     def getnodeObjectsDict(self):

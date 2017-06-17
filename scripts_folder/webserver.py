@@ -196,7 +196,7 @@ def compareText(a,b): #return true if a==b
 def sortZonesByOrderNumber():
   logprint ("sortZonesByOrderNumber() executed")
   zone_list=[]
-  logprint("zoneDict:"+str(zoneDict))
+  logprint("zoneDict:"+str(zoneDict),verbose=1)
  
 
   for a in range (0,len(zoneDict.keys())):
@@ -1286,7 +1286,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
   logprint(hardwareModelDict.keys())
   if hwType0 in hardwareModelDict.keys():  #if the type exist in the hardwareModelDict
 #hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"][0]
-    logprint("I will create a new "+hwType0+"node ")
+    logprint("I will create a new "+hwType0+" node ")
 
 #hardwareModelDict["onosPlug6way"]={"max_pin":12,"hardware_type":"arduino_2009","pin_mode":{"sr_relay":{"socket":[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)]}  }    }
 
@@ -1829,7 +1829,7 @@ def createNewNode(node_sn,node_address,node_fw):
      #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
 
     if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
-      logprint("added node_hw from url :"+hwType)
+      logprint("added node_hw from query :"+hwType)
 
 
       if((len(node_sn)>0)&((node_sn)!=" ")): 
@@ -2342,40 +2342,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-
-
-
-
-
-
-    def get_RoomList(self):#return the html modifier for the web list of room
-      i=0
-#<script type="text/javascript" src="/javascript/zone_modifier.js"></script>
-
-      html_tmp='''<html><head><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/css/mod-rooms-list.css" type="text/css" media="all" /> <script type="text/javascript" language="javascript">function SelectAll(id){    document.getElementById(id).focus();   document.getElementById(id).select();}</script>  <meta charset="utf-8"> <title>ZONE CONFIGURATIONS</title><style> </style></head><body><form action="" method="POST"> <div class="tabella"><div class="riga"><div class="colonna">ZONE NAME</div><div class="colonna">CHANGE ZONE NAME</div></div>'''
-
-      l=[]
-      l=sortZonesByOrderNumber()  #get the zone list sorted by order number
-
-      i=0
-      for room in l:  #for every object  in the dictionary
-        logprint("room[hidden]:",room["hidden"])
-        #if (zoneDict[room]["hidden"]!=0):  #skip the hidden elements
-        #  continue
-                
-        delete_room_check_box='''Delete Room<input type="checkbox" name="delete_room_'''+room+'''" value="'''+room+'''"/>'''        
-        ##print roomList[i]
-        html_tmp=html_tmp+''' <div class="riga"><div class="colonna"><a href="'''+self.path+room+'''">'''+room+'''</a></div><div class="colonna"><input type="text" id="text_name'''+room+'''" onClick="SelectAll('text_name'''+room+'''');"  name='''+room+''' value="'''+room+'''"> </div><div class="colonna" >'''+delete_room_check_box+'''</div> </div>'''
-        i=i+1
-
-
-      new_room='''<div id="last_row" class="riga"><div id="last_row" class="colonna">CREATE NEW ZONE</div><div id="last_row"class="colonna"><input type="text" id="last_row_text" onClick="SelectAll('last_row_text')";  name="new_room" value="'''+default_new_zone_value+'''"></div></div><input type="submit" id="submit_button" value="Submit" ></form>'''
-      pag=html_tmp+new_room+'''</body></html>'''   
-    #  print "pagina mostrata"+pag
-      return(pag)
-
-
-
     def get_RoomObjectList(self,room,objectDictionary):#return the html for the web_objects form present in a room
 
       #room_index=roomList.index(room)
@@ -2609,7 +2575,7 @@ class MyHandler(BaseHTTPRequestHandler):
               return
 
 
-            if (     (string.find(self.path,"onos_cmd")!=-1)):  # if the url contain onos_cmd then parse it 
+            if ((string.find(self.path,"onos_cmd")!=-1)|(string.find(self.path,"cmd=")!=-1)   ):  # if the url contain onos_cmd then parse it 
 
 #example1:
 #localhost/onos_cmd?cmd=setSts&obj=sensor1&status=1&hw=0__  this change only the webobject,use it to change sensor value..
@@ -2686,54 +2652,36 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-#  localhost/onos_cmd?cmd=setNodePin&nodeSn=Plug6way0001&pin=8&status=0&hw=0__ 
-#to set only the status of webobjects that are enclosed in this node and use this pin (without writing to the hardware)
+              # localhost/cmd=ou&sn=Sonoff1P0001&f=5.28&obj=0&s=1__
+              # set a object status from a node 
 
-#  localhost/onos_cmd?cmd=setNodePin&nodeSn=Plug6way0001&pin=8&status=0&hw=1__ 
-#to set only the status of webobjects that are enclosed in this node and use this pin (writing to the hardware)
-#the webobject status will change only if the write to hardware is succesfull
+              if string.find(self.path,"cmd=ou&")!=-1:
+                logprint("received a onos_cmd?cmd=ou  query")
 
+                serial_number=re.search('&sn=(.+?)&',self.path).group(1)
+                logprint("node_sn="+serial_number)    
 
-#  localhost/onos_cmd?cmd=setNodePin&node_sn=RouterGL0001&pin=22&status=1&hw=0__
+                node_fw=re.search('&f=(.+?)&',self.path).group(1)
+                logprint("node_fw="+node_fw)        
 
-               # webobjName=re.search('setSts&obj=(.+?)&',self.path).group(1)
-              if string.find(self.path,"onos_cmd?cmd=setNodePin&")!=-1:
-                logprint("received a onos_cmd?cmd=setNodePin  query")
-                #start_node_sn=string.find(url,'node_sn=')+8
-                #end_node_sn=string.find(url,'&',start_node_sn)
-                #node_sn=url[start_node_sn:end_node_sn]
-                node_sn=re.search('&node_sn=(.+?)&',self.path).group(1)
+                obj_address_to_update=re.search('&obj=(.+?)&',self.path).group(1)
+                logprint("obj_number="+obj_address_to_update)
 
-                logprint("node_sn="+node_sn)            
-                #pin_number_start=string.find(url,'&pin=')+5
-                #pin_number_end=string.find(url,'&',pin_number_start)
-                #pin_number=url[pin_number_start:pin_number_end]
-                pin_number=re.search('&pin=(.+?)&',self.path).group(1)
-                logprint("pin_number="+pin_number)
-                #pin_status_start=string.find(url,'&status=')+8
-                #pin_status_end=string.find(url,'&',pin_status_start)
-                #pin_status=url[pin_status_start:pin_status_end]
-                pin_status=re.search('&status=(.+?)&',self.path).group(1)
-                logprint( "pin_status="+pin_status)
-                #start_hw_flag=string.find(url,'&hw=')+4
-                #end_hw_flag=string.find(url,'__')
-                #hw_flag=url[start_hw_flag:end_hw_flag]
-                hw_flag=re.search('&hw=(.+?)__',self.path).group(1)
+                obj_value=re.search('&s=(.+?)__',self.path).group(1)
+                logprint( "obj_status="+obj_value)
 
-                logprint("hw_flag="+hw_flag)
-                try:
-                  write_hw_enable=int(hw_flag)
-                except Exception as e  :
-                  message="error in write_hw_enable  on onos_cmd url  "
-                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                node_address=str(self.client_address[0])
+                logprint("node_ip="+node_address)
 
 
-                  write_hw_enable=1                
-#now i have to check in all the web obj which one is connected to the pin of this node
+                #now i have to check in all the web obj which one is connected to the pin of this node
 
 
-                answer=setNodePin(node_sn,pin_number,pin_status,write_hw_enable)
-                
+                #answer=setNodePin(node_sn,pin_number,pin_status,write_hw_enable)
+                priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_address_to_update:obj_value} })  
+
+
+                answer="[S_ok_#]"
 
                 try:
                   self.send_response(200)
@@ -2749,42 +2697,41 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-#  localhost//onos_cmd?cmd=setNodeDReg&node_sn=RouterGL0001&reg=xxxxxxxxxxxxxx__
 
-#banana to implement ?
+              #localhost/cmd=sa&sn=Sonoff1P0001&f=5.28__
 
-              if string.find(url,"onos_cmd?cmd=setNodeDReg&")!=-1:
-                logprint("received a onos_cmd?cmd=setNodeDReg  query")
-                start_node_sn=string.find(url,'node_sn=')+8
-                end_node_sn=string.find(url,'&',start_node_sn)
-                node_sn=url[start_node_sn:end_node_sn]
-                logprint("node_sn="+node_sn)             
-                data_reg_start=string.find(url,'&pin=')+5
-                data_reg_end=string.find(url,'__',data_reg_start)
-                data_reg=url[data_reg_start:data_reg_end]
-                logprint("data reg received="+data_reg)
-                logprint("len data recived="+str(len(data_reg)) )
-          
-#now i have to check in all the web obj which one is connected to the pin of this node
-#banana not working here?
-                for a in object_dict.keys():
-                  logprint(object_dict[a].getHwNodeSerialNumber() )
-                  if (object_dict[a].getHwNodeSerialNumber()==node_sn):
+              #set address of the new node, first time connection..
+              if string.find(self.path,"cmd=sa&")!=-1:
+                logprint("received a onos_cmd?cmd=chObj  query")
 
-                    logprint("node exist")
-                    #banana to implement a decoding mode to get all pin status from the data received
+                serial_number=re.search('&sn=(.+?)&',self.path).group(1)
+                logprint("node_sn="+serial_number)    
 
+                node_fw=re.search('&f=(.+?)__',self.path).group(1)
+                logprint("node_fw="+node_fw)        
+
+                node_address=str(self.client_address[0])
+                logprint("node_ip="+node_address)
+
+
+                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })     
+
+
+                
+
+                answer="[S_ok_#]"
 
                 try:
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
-                  self.wfile.write("ok") 
+                  self.wfile.write(answer) 
                 except Exception as e  :
-                  pass
-                  logprint("error5 in send_header "+" e:"+str(e.args) )
-                  errorQueue.put( "error5 in send_header "+" e:"+str(e.args))  
+                  message= "error4 in send_header "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                 return
+
+
 
 
 
@@ -2796,7 +2743,6 @@ class MyHandler(BaseHTTPRequestHandler):
 #localhost/onos_cmd?cmd=pinsetup&node_sn=ProminiA0002&node_fw=4.85__
 
 
-              #OBSOLETE I use pure tcp message now!!! 
 
               if string.find(url,"onos_cmd?cmd=pinsetup&")!=-1:
                 logprint("received a onos_cmd?cmd=pinsetup  query")
@@ -2835,7 +2781,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-#  // http://192.168.1.102/_____onos_cmd=sy&sn=ProminiA0002&fw=5.28&
+#  // http://192.168.1.102/onos_cmd=sy&sn=ProminiA0002&fw=5.28&
 
               if string.find(url,"onos_cmd=sy&")!=-1:
                 logprint("received a onos_cmd?cmd=sync  query")
@@ -3133,6 +3079,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 end_html='''</div></body></html>''' 
 
                 l=[]
+                logprint ("string.find(self.path zone_list")
                 l=sortZonesByOrderNumber()
                 for a in l :             
 
@@ -5764,12 +5711,17 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
         #print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
 
+        message="nodecheck:"+a+" last_sync:"+str(nodeDict[a].getLastNodeSync())+" time_now:"+str(time.time())+"timeout at:"+str(nodeDict[a].getNodeTimeout())+"will timeout in:"+str( nodeDict[a].getNodeTimeout() -(time.time()-nodeDict[a].getLastNodeSync() ) )
+        logprint(message,verbose=1)   
+
 
         if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore       
-
-
+          message="the node:"+a+"is now disconnected for timeout" 
+          logprint(message,verbose=2) 
           if nodeDict[a].getNodeActivity()==0: #if the node was already inactive
             nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
+            message="the node:"+a+"is now disconnected for timeout but was alredy so.." 
+            logprint(message,verbose=2) 
             continue #skip
 
 
@@ -5992,6 +5944,9 @@ def executeQueueFunction(dataExchanged):
     node_serial_number=dataExchanged["nodeSn"]
     node_address=dataExchanged["nodeAddress"]
     node_fw=dataExchanged["nodeFw"]
+    if node_serial_number not in nodeDict.keys():
+      priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
+      return
 
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
     node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
@@ -6003,7 +5958,7 @@ def executeQueueFunction(dataExchanged):
       for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update.. 
         logprint("object address in the node="+str(a) )
         try:
-          objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
+          objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a))
           object_dict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
         except Exception as e: #todo place this somewhere else..
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
@@ -6039,9 +5994,14 @@ def executeQueueFunction(dataExchanged):
 
   if (dataExchanged["cmd"]=="updateNodeAddress"):
 
+
     try:
       node_serial_number=dataExchanged["nodeSn"]
       node_address=dataExchanged["nodeAddress"]
+
+      if node_serial_number not in nodeDict.keys():
+        priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
+        return
       updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
     except Exception as e:

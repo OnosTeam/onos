@@ -654,7 +654,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 continued working on OnosMsg arduino library and started the part to make the encript_key reset if button pressed..
                 Now onos is able to controll the status of a sonoff-basic ,implemented the make_query_to_http_node() function..
 
-
+5.29            Now when you press the hardware button on the sonoff-basic the relay status will be send to OnosCenter web interface
 
 
 (110, 'Connection timed out');;;
