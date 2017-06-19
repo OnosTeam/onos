@@ -109,35 +109,25 @@ function menudxfunction(menu_rx,funzionedx) {
 
 
 		<div class="infotext">
-				<div class="testo">Imposta ora le condizioni che ATTIVERANNO lo scenario</div>
+				<div class="testo">Imposta ora le AZIONI che lo scenario eseguirà automaticamente</div>
 		</div>
 
 
 		<div class="riga_container">
-				<div id="oggetto1" class="nometesto">Oggetto_1</div>
-					<select id="compara">
-  						<option value="minore">&lt;</option>
-  						<option value="uguale">=</option>
-  						<option value="maggiore">&gt;</option>
-  			  </select>
-          <select id="listaoggetti">
+
+      <select id="lista_oggetti_variabili">
+          <option value="luce_soggiorno">luce soggiorno</option>
+          <option value="luce_giardino">luce giardino</option>
+          <option value="pompa_irrigazione">pompa irrigazione</option>
+      </select>
+        <div class="centertesto">=</div>
+          <select id="lista_azioni">
               <option value="on">ON</option>
               <option value="off">OFF</option>
-              <option value="temp_int">temperatura interna</option>
-              <option value="temp_est">temperatura esterna</option>
-              <option value="luce_garage">luce_garage</option>
           </select>
 		</div>
 
-    <div class="riga_container">
-          <div id="var1" class="nometesto">persone in soggioro</div>
-					<select id="compara">
-  						<option value="minore">&lt;</option>
-  						<option value="uguale">=</option>
-  						<option value="maggiore">&gt;</option>
-  			  </select>
-          <input id="numeric_box" type="tel">
-		</div>
+
 
 		<div id="avanti_button">AVANTI</div>
 
