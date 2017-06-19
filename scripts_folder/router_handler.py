@@ -420,7 +420,7 @@ class RouterHandler:
 
 
 
-    def composeChangeNodeOutputPinStatusQuery(self,pinNumbers,node_obj,objName,status_to_set,node_serial_number,node_address,out_type,user,priority,mail_report_list) :
+    def composeChangeNodeOutputPinStatusQuery(self,pinNumbers,node_obj,objName,status_to_set,node_serial_number,node_address,out_type,user,priority,mail_report_list,node_password_dict={}) :
 
       """
       | Compose the correct query to change an output pin status on a remote node.
@@ -493,11 +493,9 @@ class RouterHandler:
           #now query_placeholder contains the query string got from globalVar.py in the hardwareModelDict{}
           if "query_expected_answer" in hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name].keys() :
 
-
-
 #example: 
-#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]["0"]="""RESULT = {"POWER":"ON"}"""
-#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]["1"]="""RESULT = {"POWER":"OFF"}"""
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"][0]="""RESULT = {"POWER":"ON"}"""
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"][1]="""RESULT = {"POWER":"OFF"}"""
 #
 #get    """RESULT = {"POWER":"ON"}""" from the dictionary when status_to_set is "0"..
  
@@ -565,6 +563,13 @@ class RouterHandler:
             #query=query_placeholder.replace(string_to_replace_with_value,value)
           else:#network node
             query_placeholder=query_placeholder.replace("#_node_address_#",str(node_address)) 
+
+            message="node_password_dict:"+str(node_password_dict)
+            logprint(message,verbose=4) 
+ 
+            if node_serial_number in node_password_dict:  # to use the node password..
+              node_password=node_password_dict[node_serial_number]
+              query_placeholder=query_placeholder.replace("#_node_password_#",node_password) 
             query=query_placeholder
           
            
@@ -649,10 +654,10 @@ class RouterHandler:
      
       queryToNetworkNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"query_expected_answer":query_expected_answer,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
 
-      with lock1_current_node_handler_list:
+      with lock1_current_node_handler_dict:
         logprint("lock1a from router_handler"+node_serial_number)
-        logprint("current_node_handler_list:"+str(current_node_handler_list))
-        node_not_being_contacted=(node_serial_number not in current_node_handler_list)
+        logprint("current_node_handler_dict:"+str(current_node_handler_dict))
+        node_not_being_contacted=(node_serial_number not in current_node_handler_dict)
 
       #with lock2_query_threads:
       #query_threads_number=node_query_network_threads_executing
@@ -733,7 +738,7 @@ class RouterHandler:
 
     
 
-    def outputWrite(self,node_serial_number,pinList,statusList,node_obj,objName,previous_status,statusToSetWebObject,output_type,user,priority,mail_report_list):
+    def outputWrite(self,node_serial_number,pinList,statusList,node_obj,objName,previous_status,statusToSetWebObject,output_type,user,priority,mail_report_list,node_password_dict={}):
       #called from changeWebObjectStatus() in  webserver.py 
       
       logprint("executed router_handler digitalwrite()")
@@ -854,7 +859,7 @@ class RouterHandler:
               return(-1)
 
 
-          query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+          query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
           logprint("I WRITE THIS QUERY TO SERIAL NODE:"+query+"end")  
           query_time=time.time()
           query_order=priority
@@ -890,14 +895,14 @@ class RouterHandler:
 
         if (output_type=="sr_relay"):
           if (len(pinList)==2):
-            self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+            self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
             return(1)
           else:
             logprint("error number of pins !=2",verbose=8)
             return(-1)
 
 
-        query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list)
+        query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
         logprint("I WRITE THIS QUERY TO SERIAL NODE:"+query+"end")  
         query_time=time.time()
         query_order=priority

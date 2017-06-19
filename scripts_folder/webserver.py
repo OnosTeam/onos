@@ -44,6 +44,10 @@ global online_usersDict
 global timezone
 global enable_onos_auto_update
 global conf_options
+global node_password_dict
+
+
+
 
 
 exit=0
@@ -264,7 +268,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
 
   #print object_dictionary
   #print roomDictionary
-  dictionary_group={u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}  #combined dictionary
+  dictionary_group={"dictionaries":{u"objectDictionary":obj_tmp_dict,u"zoneDictionary":zoneDictionary,u"nodeDictionary":node_tmp_Dict,u"scenarioDictionary":scenarioDictionary}} #combined dictionary
   #to add a new dictionary just add it in dictionary_group
 
   #print dictionary_group
@@ -278,8 +282,8 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
     file_to_save.close()
     os.chmod(base_cfg_path+"config_files/data.json", 0o777)
 
-
-    conf_options_json=json.dumps(conf_options_dictionary, indent=2,sort_keys=True) #make the json structure
+    json_conf_options_dict={"conf_options_dictionary":conf_options_dictionary}
+    conf_options_json=json.dumps(json_conf_options_dict, indent=2,sort_keys=True) #make the json structure
     file_to_save2 =codecs.open(base_cfg_path+"config_files/cfg.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
     file_to_save2.write(conf_options_json)
     file_to_save2.close()
@@ -1090,13 +1094,13 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     if (obj_type=="analog_output"):
       logprint("analog output still to develop")  #banana to implement
-      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
       return(1)
 
 
     if (obj_type=="servo_output"):
       logprint("servo_output still to develop")  #banana to implement
-      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
 
       return(1)
 
@@ -1109,13 +1113,13 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       logprint("len pins_to_set="+str(len(pins_to_set)) )
       logprint("statusToSet_digital_obj:"+str(statusToSet) )
       logprint("nodeSerialNumber_digital_obj:"+str(nodeSerialNumber) ) 
-      logprint("nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber]) )
+      #logprint("nodeDict[nodeSerialNumber]:"+str(nodeDict[nodeSerialNumber]) )
       logprint("obj_type_digital_obj:"+str(obj_type) )
     
       logprint (str((nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)))
 
 
-      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
       return(1)   
 
     if ((obj_type=="b")|(obj_type=="sb")|(obj_type=="digital_output")): #banana to check and leave only digital_output
@@ -1124,7 +1128,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         return(-1)      
       #nodeDict[nodeSerialNumber].setDigitalPinOutputStatus(pins_to_set[0],statusToSet)
         #if (write_to_hardware==1): #only if you tell to write to hardware
-      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
       return(1)
 
 
@@ -1134,7 +1138,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         return(-1)  
       #nodeDict[nodeSerialNumber].setDigitalPinInputStatus(pins_to_set[0],statusToSet)
       #if (write_to_hardware==1): #only if you tell to write to hardware
-      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)
+      hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
 
       return(1)    
 
@@ -1804,12 +1808,14 @@ def updateDir():
 def createNewNode(node_sn,node_address,node_fw):
   logprint("0createNewNode() executed with :"+node_sn)
   global uart_router_sn
+  global node_password_dict
+  global conf_options
   msg=""
   if node_address=="001":  #uart_node
     uart_router_sn=node_sn
 
+  hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
 
-  #hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
   #createNewWebObjFromNode(hwType,node_sn)
 
   if (node_sn in nodeDict.keys()): #&(force_recreate==0):
@@ -1825,60 +1831,65 @@ def createNewNode(node_sn,node_address,node_fw):
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #create a new node
     logprint("requested setup for a node not existing yet ")                 
-    hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
+
      #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
 
     if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
       logprint("added node_hw from query :"+hwType)
 
 
-      if((len(node_sn)>0)&((node_sn)!=" ")): 
-        hardware_node_model=hardwareModelDict[hwType]  
-        nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
+      #if((len(node_sn)>0)&((node_sn)!=" ")): 
+      hardware_node_model=hardwareModelDict[hwType]  
+      nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
+
+      if node_sn not in node_password_dict:
+ 
+        if ("password" in hardwareModelDict[hwType]["parameters"] ):  # to use the standard node password..
+          node_password=hardwareModelDict[hwType]["parameters"]["password"]         
+          node_password_dict[node_sn]=node_password
+          conf_options["node_password_dict"]=node_password_dict  # todo delete the password when the node is deleted..
+          updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options) 
+
+
         #nodeDict[node_sn].updateLastNodeSync(time.time())
-
-
+    else:
+      logprint("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict ",verbose=10)
+      return(-1)
       
 
         #if the room doesn't exist yet ...then:
-        if (node_sn in zoneDict.keys()):
-          logprint("the node:"+node_sn+" already exist in the zoneDict") 
-        else:
-         # if (node_sn+"_body" in object_dict.keys()):
-         #   print "the node body already exist in the web_object_dict" 
-         # else:
-         #   object_dict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
-         #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
-          zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+  if (node_sn in zoneDict.keys()):
+    logprint("the node:"+node_sn+" already exist in the zoneDict") 
+  else:
+    # if (node_sn+"_body" in object_dict.keys()):
+    #   print "the node body already exist in the web_object_dict" 
+    # else:
+    #   object_dict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
+    #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
+    zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
 
-          updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
-          createNewWebObjFromNode(hwType,node_sn)
-          msg=nodeDict[node_sn].getSetupMsg() 
+    updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
+    createNewWebObjFromNode(hwType,node_sn)
+    msg=nodeDict[node_sn].getSetupMsg() 
+    updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
 
-          updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
+    try:
+      os.stat(baseRoomPath+node_sn)
+    except:
+      os.mkdir(baseRoomPath+node_sn)  
 
-          try:
-            os.stat(baseRoomPath+node_sn)
-          except:
-            os.mkdir(baseRoomPath+node_sn)  
+    try:
+      text_file = open(baseRoomPath+node_sn+"/index.html", "w")
+      text_file.write(getRoomHtml(node_sn,object_dict,"",zoneDict))
+      text_file.close()
+    except Exception as e: 
+      message= "error creating new node index file  "+node_sn+" e:"+str(e.args)
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+      os.chmod(baseRoomPath+node_sn, 0o777)
+      logprint("create a new zone"+node_sn)
+      #print zoneDict
+      updateOneZone(node_sn) 
 
-          try:
-            text_file = open(baseRoomPath+node_sn+"/index.html", "w")
-            text_file.write(getRoomHtml(node_sn,object_dict,"",zoneDict))
-            text_file.close()
-          except Exception as e: 
-            message= "error creating new node index file  "+node_sn+" e:"+str(e.args)
-            logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-
-          os.chmod(baseRoomPath+node_sn, 0o777)
-          logprint("create a new zone"+node_sn)
-          #print zoneDict
-          updateOneZone(node_sn) 
-
-
-    else:
-
-      logprint("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict ",verbose=10)
 
   return(msg)
 
@@ -2573,6 +2584,30 @@ class MyHandler(BaseHTTPRequestHandler):
             if (     (string.find(self.path,"info_hash=")!=-1)):  # if the address contain info_hash= then discard it 
               logprint("address discarded ")
               return
+
+
+
+
+            if (string.find(self.path,"sonoffOTA")!=-1):  # if the url contain onos_cmd
+              #localhost/sonoffOTA/Sonoff1P0001.ino.bin
+              logprint("requested a firmware upgrade:"+self.path,verbose=5)
+              #filepath="sonoffOTA/Sonoff1P0001.ino.bin
+              #f = open(self.path[1:],'rb')
+              #binFile=f.read()
+              #f.close()
+              #self.send_response(200)
+              #self.send_header('Content-type',	'application/octet-stream')
+              #self.send_header("Content-Disposition", 'attachment; filename="Sonoff1P0001.ino.bin"')
+              #self.wfile.write(binFile) 
+              #self.end_headers()
+              FILEPATH=self.path[1:]
+              with open(FILEPATH, 'rb') as f:
+                self.send_response(200)
+                self.send_header("Content-Disposition", 'attachment; filename="Sonoff1P0001.ino.bin"')
+                fs = os.fstat(f.fileno())
+                self.send_header("Content-Length", str(fs.st_size))
+                self.end_headers()
+                shutil.copyfileobj(f, self.wfile)
 
 
             if ((string.find(self.path,"onos_cmd")!=-1)|(string.find(self.path,"cmd=")!=-1)   ):  # if the url contain onos_cmd then parse it 
@@ -5964,14 +5999,8 @@ def executeQueueFunction(dataExchanged):
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
           message="error in the updateObjFromNode"
           logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))   
-          try:
-            createNewWebObjFromNode(hwType,node_serial_number)  
-            objName=nodeDict[node_serial_number].getNodeObjectFromAddress(a)
-            logprint("node_serial_number"+node_serial_number)
-            logprint("objName"+str(objName) )
-          except Exception as e:
-            message='error in dataExchanged["cmd"]=="updateObjFromNode"'
-            logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))  
+          priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw })
+          return()
 
         logprint("objName to upade the value:"+objName) 
         status_to_set=dataExchanged["objects_to_update"][a]
@@ -6233,7 +6262,7 @@ def nodeTcpServer():
 
 
   while (exit==0):   #if exit ==1  then close the webserver
-    wait_because_node_is_talking=0  
+    #wait_because_node_is_talking=0  
     time.sleep(0.3)# was 0.2
 
     time.sleep(0.5) #for openwrt node
@@ -6255,7 +6284,7 @@ def nodeTcpServer():
       node_ip=""
       while (exit==0):
         time.sleep(0.1)
-        wait_because_node_is_talking=0  
+        #wait_because_node_is_talking=0  
         # Wait for a connection
         sock.settimeout(480) 
        # print >>sys.stderr, 'waiting for a connection'
@@ -6285,7 +6314,7 @@ def nodeTcpServer():
             #print >>sys.stderr, 'connection from', client_address
 
           # Receive the data in small chunks and retransmit it
-            wait_because_node_is_talking=1
+            #wait_because_node_is_talking=1
             while (exit==0):
 
               data = connection.recv(1024) #accept data till 1024 bytes
@@ -6317,7 +6346,7 @@ def nodeTcpServer():
                     msg=createNewNode(node_sn,node_ip,node_fw)+"_#]"
                     connection.sendall("[S_ok...[S_")  
                     connection.close()   
-                    wait_because_node_is_talking=0        
+                    #wait_because_node_is_talking=0        
                     break
 
 
@@ -6328,18 +6357,18 @@ def nodeTcpServer():
                     connection.sendall('ok')  
                     connection.close()   
                     msg=createNewNode(node_sn,node_ip,node_fw)+"_#]" #i call createNewNode just to update the node ip ...
-                    wait_because_node_is_talking=0
+                    #wait_because_node_is_talking=0
                     break
 
                   connection.sendall(data) 
                   connection.close()
-                  wait_because_node_is_talking=0
+                  #wait_because_node_is_talking=0
                   break
 
               else:
                 print >>sys.stderr, 'no more data from', client_address
                 connection.close()
-                wait_because_node_is_talking=0
+                #wait_because_node_is_talking=0
                 break
     
           

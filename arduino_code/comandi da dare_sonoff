@@ -20,6 +20,24 @@ http://192.168.1.6/cm?cmnd=ButtonRestrict%201
 answer: RESULT = {"ButtonRestrict":"ON"}
 
 
+
+
+http://192.168.1.4/cm?cmnd=WifiConfig4
+
+answer: RESULT = {"WifiConfig":"4 (Retry)"}
+Disable wifi config but retry other AP without restart
+
+
+
+
+http://192.168.1.4/cm?cmnd=WebPassword onos1234
+
+
+
+
+
+
+
 https://github.com/arendst/Sonoff-Tasmota/wiki/Commands
 
 

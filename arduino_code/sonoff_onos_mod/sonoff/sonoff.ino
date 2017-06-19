@@ -37,9 +37,11 @@ enum emul_t  {EMUL_NONE, EMUL_WEMO, EMUL_HUE, EMUL_MAX};
 
 
 //onosmod
+#define ONOS_OTA_URL                "http://192.168.1.102/sonoffOTA1/"   // [OtaUrl]
+//#define ONOS_DEFAULT_PASSWORD  "onosBestHome9999"  changed in user_config.h
 boolean first_sync=1;
 unsigned long sync_time=0;
-unsigned long send_address_timeout=100;
+unsigned long send_address_timeout=1000; //milliseconds 
 //unsigned long *send_address_timeout_pointer=&send_address_timeout;
 char url0[80]= "http://192.168.1.102/";
 char node_fw[]="5.28";
@@ -2648,11 +2650,11 @@ void composeOnosSyncMessage(){
 
  //onosmod
   if (strcmp(my_module.name,"Sonoff Basic")==0){
-    Serial.println("my_module.name"); // onosmod
+    Serial.println(F("my_module.name")); // onosmod
 
     Serial.println(my_module.name); // onosmod
 
-    Serial.println("state:"); // onosmod
+    Serial.println(F("state:")); // onosmod
 
     Serial.println(getStateText(bitRead(power,0)) ); // 1 is the first device ..so the plug
 
@@ -2675,8 +2677,8 @@ void composeOnosSyncMessage(){
 
   strcat(syncMessage,"__");
 
-  Serial.print(F("composeSyncMessage executed with  status:"));
-  Serial.println(main_obj_state);
+  //Serial.print(F("composeSyncMessage executed with  status:"));
+  //Serial.println(main_obj_state);
 
 
   syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
@@ -2743,6 +2745,8 @@ void sendOnosSyncMessage(){
 
 void setup()
 {
+
+
   char log[LOGSZ];
   byte idx;
 
@@ -2847,11 +2851,24 @@ void setup()
   addLog(LOG_LEVEL_INFO, log);
 
 
-  Serial.println("hello");
+  //Serial.println(F("hello"));
 
   Serial.println(WiFi.localIP().toString().c_str() );
   
 
+ //onosmod
+  memset(sysCfg.otaUrl,0,sizeof(sysCfg.otaUrl)); //to clear the array
+  strcat(sysCfg.otaUrl, ONOS_OTA_URL); // sysCfg.otaUr must be shorter than 100 byte see sysCfg.otaUrl[] in settings.h  
+  strcat(sysCfg.otaUrl, serial_number); // sysCfg.otaUr must be shorter than 100 byte see sysCfg.otaUrl[] in settings.h  
+  strcat(sysCfg.otaUrl,".ino.bin"); // sysCfg.otaUr must be shorter than 100 byte see sysCfg.otaUrl[] in settings.h  
+
+  sysCfg.sta_config = 4;  // set wificonfig to 4 --> retry to connect to wify router every time..
+  sysCfg.flag.button_restrict=1;  //onosmod set ButtonRestrict to 1 , the user can only toggle the status and reset holding..
+  sysCfg.ledstate=1; //  set the led to follow the relay status
+  //memset(sysCfg.web_password,0,sizeof(sysCfg.web_password)); //to clear the array
+  //strlcpy(sysCfg.web_password,ONOS_DEFAULT_PASSWORD, sizeof(sysCfg.web_password));
+
+ //onosmod
 
 
 }
@@ -2864,26 +2881,28 @@ void loop()
 
  
  //onosmod
+  if(WiFi.status() == WL_CONNECTED) {
 
-
-
-  if ( (millis()-sync_time)>send_address_timeout){   //each n sec time contact the onosCenter and update
+    if ( (millis()-sync_time)>send_address_timeout){   //each n sec time contact the onosCenter and update
 
       
-    if (first_sync==1){    //onosmod
-      send_address_timeout=1000;
-      composeOnosSyncMessage();
-      first_sync=sendCurrentIp();
+      if (first_sync==1){    //onosmod
+        send_address_timeout=1000;
+        composeOnosSyncMessage();
+        first_sync=sendCurrentIp();
+
+      }
+      else{
+        send_address_timeout=30000; //30000 seconds of timeout..
+        composeOnosSyncMessage();
+        sendOnosSyncMessage();
+      }
+      sync_time=millis();
 
     }
-    else{
-      send_address_timeout=30000; //300 seconds of timeout..
-      composeOnosSyncMessage();
-      sendOnosSyncMessage();
-    }
-    sync_time=millis();
 
   }
+ //onosmod
 
   osw_loop();
   
@@ -2905,22 +2924,6 @@ void loop()
   }
   if (Serial.available()){
     serial();
-
-
-//onosmod
-  //  Serial.println("hello"); // onosmod
-
-  // Serial.println(WiFi.localIP().toString().c_str() );  // onosmod
-
-  //   Serial.println(sysCfg.friendlyname[0]);  // onosmod
-
-   // Serial.println("state:"); // onosmod
-
-
-
-
-
-//onosmod
 
   }
 
