@@ -15,10 +15,8 @@
       }, 
       "Sonoff1P0001": {
         "hwModelName": "Sonoff1P", 
-        "nodeAddress": "192.168.1.4", 
-        "nodeObjectsDict": {
-          "0": "relay_Sonoff1P0001"
-        }, 
+        "nodeAddress": "192.168.1.17", 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "Sonoff1P0001"
       }, 
       "Wrelay4x0007": {
@@ -193,7 +191,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 18, 
+        "status": 21, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -229,7 +227,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1294, 
+        "status": 13, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -265,7 +263,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 21, 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -334,7 +332,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 34, 
+        "status": 13, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 

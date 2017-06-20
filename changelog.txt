@@ -656,6 +656,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
 
 5.29            Now when you press the hardware button on the sonoff-basic the relay status will be send to OnosCenter web interface
                 Working of sonoff node..now it will reconnect to wifi
+                Bugfix in router_handler.py, moved queryToNetworkNodeQueue.put()  outside composeChangeNodeOutputPinStatusQuery()  
+
 
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;

@@ -16,12 +16,21 @@ web_page=''
 
 
 
-def getTopMenu(text_to_insert_in_head="",slashes="../"):
+def getTopMenu(text_to_insert_in_head="",slashes="../",right_menu={}):
   '''
   | Get a standard html for the menu , the variable slashes contain a string with 
   | how many "../" as needed to return to the onos main directory-
   | it will make the correct relative path for the immages and css.
   |
+  |
+  |
+  | todo: use the dictionary right_menu to pass the html to use for the right menu , still to implement..
+  | right_menu={"visible":1,"links":({"nuova":html},{"elimina":html},{"applica":html})}
+  | right_menu["links"][0]["nuova"]="html_nuova"
+  | right_menu["links"][1]["elimina"]="html_elimina"
+  | right_menu["links"][2]["applica"]="html_applica"
+  |
+
   '''
 
   global web_page 

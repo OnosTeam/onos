@@ -648,37 +648,11 @@ class RouterHandler:
         logprint("query to remote node:"+query)
         return(query)
 
-      logprint("query to remote node:"+query)
 
+      else:
 
-     
-      queryToNetworkNodeQueue.put({"node_serial_number":node_serial_number,"address":address,"query":query,"query_expected_answer":query_expected_answer,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list})
-
-      with lock1_current_node_handler_dict:
-        logprint("lock1a from router_handler"+node_serial_number)
-        logprint("current_node_handler_dict:"+str(current_node_handler_dict))
-        node_not_being_contacted=(node_serial_number not in current_node_handler_dict)
-
-      #with lock2_query_threads:
-      #query_threads_number=node_query_network_threads_executing
-
-      if (node_not_being_contacted) : #there is not a query thread running for this node  thread executing 
-        logprint("no handler running for this node")
-
-        #handle_new_query_to_remote_node(node_serial_number,address,query,objName,status_to_set,user,priority,mail_report_list)
-
-        if (node_query_network_threads_executing<max_number_of_node_query_network_threads_executing): # there are less than x node query thread running
-          tr_handle_new_query_to_remote_node = threading.Thread(target=handle_new_query_to_network_node_thread)
-          tr_handle_new_query_to_remote_node.daemon = True  #make the thread a daemon thread
-          tr_handle_new_query_to_remote_node.start()   
-        else:
-          logprint("too many node_query_network_threads_executing: "+str(query_threads_number))
-
-
-      else:#there is already a query thread running for this node  
-        print "there is already a query thread running for this node :"+node_serial_number 
-
-      return(query) 
+        logprint("query to network node:"+query)
+        return(query,query_expected_answer) 
 
 
 
@@ -744,18 +718,18 @@ class RouterHandler:
       logprint("executed router_handler digitalwrite()")
       node_address=nodeDict[node_serial_number].getNodeAddress()
       remoteNodeHwModelName=nodeDict[node_serial_number].getNodeHwModel()
-      if len(pinList)<1:
-        logprint("error len pinList<1 ,len="+str(len(pinList)),verbose=10)
+      #if len(pinList)<1:
+      #  logprint("error len pinList<1 ,len="+str(len(pinList)),verbose=10)
 
-      if len(pinList)!=len(statusList):
+      #if len(pinList)!=len(statusList):
 
-        logprint("warning error in the router handler, len pinlist!=statusList",verbose=8)
+      #  logprint("warning error in the router handler, len pinlist!=statusList",verbose=8)
 
-        try: 
-          print "len pinlist="+str(len(pinList))+ " len statusList="+str(len(statusList))
-        except Exception as e :
-          message="can't print len of statusList or pinlist"
-          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
+      #  try: 
+      #    print "len pinlist="+str(len(pinList))+ " len statusList="+str(len(statusList))
+      #  except Exception as e :
+      #    message="can't print len of statusList or pinlist"
+      #    logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
         #return(-1) 
 
    #   if (previous_status==statusToSet): #if nothing needs to be changed...i will return
@@ -837,7 +811,7 @@ class RouterHandler:
         
 
       #(len(node_address)==len("001"))
-      if (len(node_address)==3): #a local arduino selected or a node with radio ,that uses the serial gateway
+      elif (len(node_address)==3): #a local arduino selected or a node with radio ,that uses the serial gateway
         logprint("I write to serial arduino node")
         #self.makeChangeWebObjectStatusQuery(objName,statusToSet)   #banana to remove
 
@@ -893,35 +867,44 @@ class RouterHandler:
         logprint( "len pinlist="+str(len(pinList)) )
         
 
-        if (output_type=="sr_relay"):
-          if (len(pinList)==2):
-            self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
-            return(1)
+        query_composed=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
+
+
+        query_expected_answer=query_composed[1]  #get  query_expected_answer from  return(query,query_expected_answer) 
+
+        query=query_composed[0]  # get query from  return(query,query_expected_answer) 
+
+
+        queryToNetworkNodeQueue.put({"node_serial_number":node_serial_number,"address":node_address,"query":query,"query_expected_answer":query_expected_answer,"objName":objName,"status_to_set":statusToSetWebObject,"user":user,"priority":priority,"mail_report_list":mail_report_list})
+
+        with lock1_current_node_handler_dict:
+          logprint("lock1a from router_handler"+node_serial_number)
+          logprint("current_node_handler_dict:"+str(current_node_handler_dict))
+          node_not_being_contacted=(node_serial_number not in current_node_handler_dict)
+
+        #with lock2_query_threads:
+        #query_threads_number=node_query_network_threads_executing
+
+        if (node_not_being_contacted) : #there is not a query thread running for this node  thread executing 
+          logprint("no handler running for this node")
+
+
+
+          if (node_query_network_threads_executing<max_number_of_node_query_network_threads_executing): # there are less than x node query thread running
+            tr_handle_new_query_to_remote_node = threading.Thread(target=handle_new_query_to_network_node_thread)
+            tr_handle_new_query_to_remote_node.daemon = True  #make the thread a daemon thread
+            tr_handle_new_query_to_remote_node.start()   
           else:
-            logprint("error number of pins !=2",verbose=8)
-            return(-1)
+            logprint("too many node_query_network_threads_executing: "+str(query_threads_number))
 
 
-        query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
-        logprint("I WRITE THIS QUERY TO SERIAL NODE:"+query+"end")  
-        query_time=time.time()
-        query_order=priority
-        number_of_retry_done=0
-        cmd=""
-        queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,statusToSetWebObject,user,priority,mail_report_list,cmd))
+        else:#there is already a query thread running for this node  
+          print "there is already a query thread running for this node :"+node_serial_number 
+          return
 
-        if node_query_network_threads_executing==0:
-          tr_handle_new_query_to_network_node_thread = threading.Thread(target=handle_new_query_to_network_node_thread)
-          tr_handle_new_query_to_network_node_thread.daemon = True  #make the thread a daemon thread
-          tr_handle_new_query_to_network_node_thread.start()   
-
-
-
-        return()
     
 
-                        
-
+                       
       return(1) 
 
 

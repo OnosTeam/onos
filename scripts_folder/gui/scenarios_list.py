@@ -18,16 +18,6 @@ part_to_insert_in_head='''
 <link rel="stylesheet" href="../css/scenarios_list.css">
 
 <script type="text/javascript">
-function checkvalue() { 
-    var mystring = document.getElementById('new_scenario_name').value; 
-    if('''+scenarios_name_comparison+''') {
-        alert ('This is not allowed because already used or not valid');
-        return false;
-    } else {
-        //alert("correct input");
-        return true;
-    }
-}
 
 function delete_dialog(name) { 
 

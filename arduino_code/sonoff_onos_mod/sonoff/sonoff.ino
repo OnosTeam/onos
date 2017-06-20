@@ -37,7 +37,7 @@ enum emul_t  {EMUL_NONE, EMUL_WEMO, EMUL_HUE, EMUL_MAX};
 
 
 //onosmod
-#define ONOS_OTA_URL                "http://192.168.1.102/sonoffOTA1/"   // [OtaUrl]
+#define ONOS_OTA_URL                "http://http://94.177.171.250/elettronicaopensource.com/sonoffOTA/"   // [OtaUrl]
 //#define ONOS_DEFAULT_PASSWORD  "onosBestHome9999"  changed in user_config.h
 boolean first_sync=1;
 unsigned long sync_time=0;

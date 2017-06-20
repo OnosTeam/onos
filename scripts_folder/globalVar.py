@@ -171,8 +171,6 @@ queryToNetworkNodeQueue=Queue.Queue()
 
 queryToRadioNodeQueue=Queue.PriorityQueue()
 
-
-
 node_query_network_threads_executing=0
 
 node_query_radio_threads_executing=0

@@ -1533,7 +1533,7 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
   onos_automatic_css_style=''
 
 
-  logprint("modPage()  executed")
+  logprint("modPage()  executed with zone:"+str(zone))
   if zone in zoneDictionary:
     zoneObjList=zoneDictionary[zone]["objects"]
   else:
@@ -5746,8 +5746,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
         #print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
 
-        message="nodecheck:"+a+" last_sync:"+str(nodeDict[a].getLastNodeSync())+" time_now:"+str(time.time())+"timeout at:"+str(nodeDict[a].getNodeTimeout())+"will timeout in:"+str( nodeDict[a].getNodeTimeout() -(time.time()-nodeDict[a].getLastNodeSync() ) )
-        logprint(message,verbose=1)   
+        #message="nodecheck:"+a+" last_sync:"+str(nodeDict[a].getLastNodeSync())+" time_now:"+str(time.time())+"timeout at:"+str(nodeDict[a].getNodeTimeout())+"will timeout in:"+str( nodeDict[a].getNodeTimeout() -(time.time()-nodeDict[a].getLastNodeSync() ) )
+        #logprint(message,verbose=1)   
 
 
         if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore       
@@ -5837,7 +5837,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 
-    #analyze incoming serial message from serial port
+    # remove serial packets not useful
 
     try: 
 
