@@ -93,7 +93,30 @@
 	position:absolute;
 }
 
+
+#textarea{
+
+	width:20%;
+	height:30px;
+	left:60%;
+	top:5px;
+	position:absolute;
+
+}
+
 #listaoggetti{
+
+	width:15%;
+	height:30px;
+	left:80%;
+	top:5px;
+	position:absolute;
+
+
+}
+
+
+#select_data{
 
 	width:35%;
 	height:30px;
@@ -103,7 +126,6 @@
 
 
 }
-
 
 
 
