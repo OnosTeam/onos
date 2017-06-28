@@ -51,7 +51,7 @@ if (r == true) {
 
 menu=getTopMenu(part_to_insert_in_head)
 
-menu=menu.replace("right_menu_add_link_to_replace","/scenario_creation")  # replace the link in the + of the right menu
+menu=menu.replace("right_menu_add_link_to_replace","/scenario_creation/")  # replace the link in the + of the right menu
 
 
 html=menu

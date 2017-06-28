@@ -2552,6 +2552,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self.current_username="nobody"
+        logprint("current_url:"+self.path+":end_url")
 
         try:
 
@@ -3488,7 +3489,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.endswith("scenario_creation/"): # render the scenario list 
-              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2]}
+              namespace={"current_username":self.current_username}
               cgi_name="gui/scenario_creation.py" 
               #execfile(cgi_name,globals(),namespace)
               exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -3509,6 +3510,7 @@ class MyHandler(BaseHTTPRequestHandler):
             scenario_to_mod=""
             if (  string.find(self.path,"/mod_scenario/")!=-1): # render the mod scenario setup menu
               logprint("scenario_to_mod",self.path.split("/")[2])
+              web_page="error, scenario name does not exist "
               try:
                 if (self.path.split("/")[2])in scenarioDict.keys():
                   namespace={"scenario_to_mod":self.path.split("/")[2]}
@@ -3516,14 +3518,11 @@ class MyHandler(BaseHTTPRequestHandler):
                   cgi_name="gui/mod_scenario.py"       
                   #execfile(cgi_name,globals(),namespace)
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
-                  web_page=namespace["web_page"]
-
-                  
+                  web_page=namespace["web_page"]                  
 
               except Exception as e  :
                 message="error, scenario name does not exist "
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-
                 web_page="error, scenario name does not exist "
 
 
@@ -3892,10 +3891,8 @@ class MyHandler(BaseHTTPRequestHandler):
               return
 
             else: 
-              
-              logprint(self.path[setup_start+6:])
-              
-
+             
+           
               if ( (setup_start!=-1)&(len(lista)==4)): #if path is like  /setup/Room0/body
                 logprint("not show room modifier but obj modifier")
                 if (lista[3] in object_dict.keys()):
@@ -4079,7 +4076,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if self.path.endswith(".html"):
+            elif self.path.endswith(".html"):
                 f = open(curdir + sep + self.path) #self.path has /test.html
                 tmpF=f.read()
                 f.close()
@@ -4097,7 +4094,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
                 
                 
-            if self.path.endswith("/"): #the address bar end with /  so by default i try open the index.html in this directory
+            elif self.path.endswith("/"): #the address bar end with /  so by default i try open the index.html in this directory
                 logprint("indirizzo a pag principale..")
 
 
@@ -4419,7 +4416,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if "zone_objects_setup" in postvars:   #   to add or remove objects to a zone 
+            elif "zone_objects_setup" in postvars:   #   to add or remove objects to a zone 
               
               
               zone=self.clear_PostData(postvars["zone_objects_setup"][0])
@@ -4479,7 +4476,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 pass
 
 
-            if "objs_manager" in postvars:
+            elif "objs_manager" in postvars:
               objs_manager=self.clear_PostData(postvars["objs_manager"][0])
               logprint("objs_manager"+objs_manager)
               q="new_web_object"
@@ -4506,7 +4503,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
               #updateJson()      
 
-            if "current_room" in postvars:#if the current location is /setup/AnyRoomName  because "current_room"  is a post of that page
+            elif "current_room" in postvars:#if the current location is /setup/AnyRoomName  because "current_room"  is a post of that page
               currentRoom=self.clear_PostData(postvars["current_room"][0])
               q="new_web_object"
               if q in postvars:   
@@ -4576,7 +4573,7 @@ class MyHandler(BaseHTTPRequestHandler):
               
 
      
-            if "current_room_text_area" in postvars:
+            elif "current_room_text_area" in postvars:
               currentRoom=self.clear_PostData(postvars["current_room_text_area"][0])
               new_html_room=postvars["html_room_mod"][0]
               logprint("new_html_room="+new_html_room)
@@ -4604,7 +4601,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if "mod_object" in postvars:#if the current page is /setup/AnyRoomName/Anywebobject  because "mod_object"  is a post of that page     
+            elif "mod_object" in postvars:#if the current page is /setup/AnyRoomName/Anywebobject  because "mod_object"  is a post of that page     
               path=postvars["mod_object"][0]
               logprint("found a mod_object request with path:"+path)
               web_object_name=string.split(path,"/")[3]  #split the path in a list of string  
@@ -4672,11 +4669,54 @@ class MyHandler(BaseHTTPRequestHandler):
 
               #updateJson()
               updateDir()
+
+
+##############start of scenario form data receiver ################################
                 
 
+            elif "scenario_creation" in postvars:#if the current page is /scenario_creation/  because "scenario_creation"  is the hidden form name
+            # <input type="hidden" name="scenario_creation" value="/scenario_creation/">
 
 
-            if "new_scenario" in postvars:#if the current page is /scenarios_list/  because "new_scenario"  is the hidden form name
+              pag=""
+              if (postvars["new_scenario_name"]!=" "):
+                new_scenario_name=self.clear_PostData(postvars["new_scenario_name"][0])
+                if new_scenario_name not in scenarioDict.keys(): #if scenario name doesn't exist already
+                  scenarioDict[new_scenario_name]={"enabled":0,"type_after_run":"0","conditions":"0","functionsToRun":[],"delayTime":0,"priority":0}
+                  self.send_response(301)
+                  self.send_header('Location','/mod_scenario/'+new_scenario_name+'/')
+                  self.end_headers()
+                  conditions=""
+                  for a in postvars.keys() :
+                    if (postvars[a][0].endswith("_checkbox")):  #every checkbox name ends with _checkbox..
+                      logprint("found a checkbox:"+a)
+                      web_object_name=a
+                      if len(conditions) >0:
+                        conditions=conditions+"&"      
+                      conditions=conditions+'''(#_'''+web_object_name+'''_#==-9999)'''
+
+                  if len (scenarioDict[new_scenario_name]["conditions"]) >0:
+                    if len(conditions) >0:
+                      scenarioDict[new_scenario_name]["conditions"]=conditions
+                    else:
+                      logprint("error_scenario_creation0 no objects passed",verbose=8)
+                  else:
+                    logprint("error_scenario_creation1 the scenario has already conditions",verbose=8)
+
+
+                  return
+
+
+
+
+
+##############end of scenario form data receiver ################################
+
+
+
+#######################################start of old scenario forms implementation still used for advanced config...####
+
+            elif "new_scenario" in postvars:#old implementation..if the current page is /scenarios_list/  because "new_scenario"  is the hidden form name
             #<input type="hidden" name="new_scenario" value="/scenarios_list/">
 
               pag=""
@@ -4692,7 +4732,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if "delete_scenario" in postvars:#
+            elif "delete_scenario" in postvars:# old implementation
 
               if(postvars["delete_scenario"][0]!=" "):
 
@@ -4721,7 +4761,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if "mod_scenario" in postvars:#if the current page is /mod_scenario/scenario name  because "mod_scenario"  is the hidden form name
+            elif "mod_scenario" in postvars:# old implementation if the current page is /mod_scenario/scenario name  because "mod_scenario"  is the hidden form name
             #<input type="hidden" name="mod_scenario" value="/scenarios_list/mod_scenario/">
 
               pag=""
@@ -4872,7 +4912,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if "mod_conditions" in postvars:#if the current page is /mod_conditions/scenario name  because "mod_scenario"  is the hidden form name
+            elif "mod_conditions" in postvars:#old implemenatation if the current page is /mod_conditions/scenario name  because "mod_scenario"  is the hidden form name
             #<input type="hidden" name="mod_conditions" value="">
 
 
@@ -4972,7 +5012,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if "function_to_run_1" in postvars:#if the current page is /function_to_run/scenario name  because "function_to_run_1"  is the hidden form name
+            elif "function_to_run_1" in postvars:# old implementation if the current page is /function_to_run/scenario name  because "function_to_run_1"  is the hidden form name
             #<input type="hidden" name="mod_functions1a" value="">
 
 
@@ -5049,14 +5089,14 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
+#######################################end of old scenario forms implementation still used for advanced config...####
 
 
 
 
 
 
-
-            if "login_form" in postvars:#if the current page is /login.html  because "login_form"  is the hidden form name
+            elif "login_form" in postvars:#if the current page is /login.html  because "login_form"  is the hidden form name
             #<form action="" method="POST"><input type="hidden" name="login_form" value="/login">
 
               pag=""
@@ -5094,7 +5134,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   #pag="wrong username"
 
 
-            if "new_user_form" in postvars:#if the current page is /create_user.html  because "new_user_form"  is the hidden form name
+            elif "new_user_form" in postvars:#if the current page is /create_user.html  because "new_user_form"  is the hidden form name
             #  <form action="" method="POST"><input type="hidden" name="new_user_form" value="">
 
               pag=""
@@ -5253,7 +5293,7 @@ class MyHandler(BaseHTTPRequestHandler):
       
 
 
-            if "post0" in postvars:
+            elif "post0" in postvars:
               logprint("received post0:"+str(postvars["post0"][0]) )  #  print the first post variable
   
 

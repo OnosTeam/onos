@@ -11,84 +11,44 @@ if current_username!="nobody":
 
 
 
-scenarios_name_comparison='(mystring=="")'
+scenarios_name_comparison='(mystring=="TYPE NEW SCENARIO NAME")||(mystring=="")'
 for scenario in scenarioDict :
-  if scenario!=scenario_to_mod: #dont add the current scenario name 
-    scenarios_name_comparison=scenarios_name_comparison+'||(mystring=="'+scenario+'")'
+  scenarios_name_comparison=scenarios_name_comparison+'||(mystring=="'+scenario+'")'
 
 
 
-functionsToRun_html=""
-c=0
-for a in scenarioDict[scenario_to_mod]["functionsToRun"]:
-  if c==0:
-    functionsToRun_html=a
-    c=1
-  else:
-    functionsToRun_html=functionsToRun_html+';;;'+a
+default_phrase_new_scenario="Scrivi il nome dello scenario"
+scenarios_name_comparison=scenarios_name_comparison+'||(mystring.search("'+default_phrase_new_scenario+'" )!=-1)'  # add the default phrase to the black list
 
 
+javascript_scenario_name_check='''
 
-sel0=''
-if scenarioDict[scenario_to_mod]["enabled"]==0:
-  sel0="unchecked"
-else:
-  sel0="checked"
-
-
-sel1=''
-
-if scenarioDict[scenario_to_mod]["type_after_run"]=="0":
-  sel1='''<option value="0">0</option>
-  		  <option value="autodelete">autodelete</option>
-  		  <option value="one_time_shot">one time shot</option>'''
-
-
-elif scenarioDict[scenario_to_mod]["type_after_run"]=="autodelete":
-  sel1='''<option value="autodelete">autodelete</option>
-          <option value="0">0</option>
-  		  <option value="one time shot">one time shot</option>'''
-
-elif scenarioDict[scenario_to_mod]["type_after_run"]=="one_time_shot":
-  sel1='''<option value="one time shot">one time shot</option>
-          <option value="0">0</option>
-          <option value="autodelete">autodelete</option>
-          '''
-  		  
+<script type="text/javascript">
+function checkvalue() { 
+    var mystring = document.getElementById('new_scenario_name').value; 
+    if('''+scenarios_name_comparison+''') {
+        alert ('This is not allowed because already used or not valid');
+        return false;
+    } else {
+        //alert("correct input");
+        return true;
+    }
+}
 
 
+</script>
 
-sel2='''        <option value="0">0</option>
-  				<option value="1">1</option>
-  				<option value="2">2</option>
-  				<option value="3">3</option>
-  				<option value="4">4</option>
-  				<option value="5">5</option>
-  				<option value="6">6</option>
-  				<option value="7">7</option>
-  				<option value="8">8</option>
-  				<option value="9">9</option>
-  				<option value="10">10</option>'''
-
-#remove the current priority and add it to the top
-sel2=sel2.replace('''<option value="'''+str(scenarioDict[scenario_to_mod]["priority"])+'''">'''+str(scenarioDict[scenario_to_mod]["priority"])+'''</option>''',"")
-
-sel2='''<option value="'''+str(scenarioDict[scenario_to_mod]["priority"])+'''">'''+str(scenarioDict[scenario_to_mod]["priority"])+'''</option>'''+sel2
+'''
 
 
 
 
 
-sel3="0"
 
 
-try:
-  sel3=str(scenarioDict[scenario_to_mod]["delayTime"])
-except:
-  sel3="0"
 
 part_to_insert_in_head='''
-	<link rel="stylesheet" href="css/scenario_creation.css">
+	<link rel="stylesheet" href="../css/scenario_creation.css">
 	<meta charset="utf-8">
    	<title>Creazione Scenario</title>
 
@@ -99,15 +59,36 @@ slashes="../../"
 menu=getTopMenu(part_to_insert_in_head,slashes)
 
 
-
+menu=menu.replace("<!--Javascript_to_replace-->",javascript_scenario_name_check) # replace <!--Javascript_to_replace--> with javascript code
 
 html=menu
 
 
+html_object_list=""
+
+
+
+system_object_list=[""]
+for object_name in object_dict.keys():# for every object in the dictionary make the html
+  if (object_dict[object_name].getType()=="cfg_obj") : #don't display cfg objects in the scenarios
+    continue
+
+  html_object_list=html_object_list+'''<li>
+                    <input type="checkbox" name="'''+object_name+"_checkbox"+'''" value="'''+object_name+"_checkbox"+'''" />'''+object_name+'''</li>'''
+
+
+
+
 
 html=html+'''
+
+       
+        <form action="" method="POST" onsubmit="return checkvalue(this)">
+
+        <input type="hidden" name="scenario_creation" value="/scenario_creation/">
+
 		<div class="riga" >
-			<input class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome dello scenario') { this.value = ''; }" value="Scrivi il nome dello scenario"/>
+			<input class="name_text" name="new_scenario_name" id="new_scenario_name" type="text" onclick="if(this.value == '	'''+default_phrase_new_scenario+''' '){ this.value = ''; }" value=' '''+default_phrase_new_scenario+''' '/>
 		</div>
 	
 
@@ -122,36 +103,15 @@ html=html+'''
 
 		<div class="multiselect">
             <ul>
-                <li>
-                    <input type="checkbox" value="luce_1" />luce_1</li>
-                <li>
-                    <input type="checkbox" value="sensore_1" />sensore_1</li>
-                <li>
-                    <input type="checkbox" value="luce_2" />luce_2</li>
-                <li>
-                    <input type="checkbox" value="luce_3" />luce_3</li>
-                <li>
-                    <input type="checkbox" value="pompa" />pompa</li>
-                <li>
-                    <input type="checkbox" value="Nokia" />contatore persone (variabile)</li>
-                <li>
-                    <input type="checkbox" value="luce_1" />luce_1</li>
-                <li>
-                    <input type="checkbox" value="sensore_1" />sensore_1</li>
-                <li>
-                    <input type="checkbox" value="luce_2" />luce_2</li>
-                <li>
-                    <input type="checkbox" value="luce_3" />luce_3</li>
-                <li>
-                    <input type="checkbox" value="pompa" />pompa</li>
-                <li>
-                    <input type="checkbox" value="Nokia" />contatore persone (variabile)</li>
+            '''+html_object_list+'''  
             </ul>
         </div>
 
 
 
-		<div id="avanti_button">AVANTI</div>
+		 <div id="avanti_button"><input type="submit" value="Submit"> </div>
+
+         </form>
  '''
 
 
@@ -160,7 +120,7 @@ html=html+'''
 
 
 
-end_html='''<div id="footer"></div>	</div> </body></html> '''
+end_html='''<div id="footer"></div> </body></html> '''
 
 
 web_page=html+end_html
