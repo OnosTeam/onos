@@ -119,7 +119,7 @@ def readDictionaryFromSavedFile(key):
     json_file.close() 
     readed_dict=json.loads(readed_data)
     value=readed_dict[key]
-  except Exception, e: 
+  except Exception as e: 
     message="error in readDictionaryFromSavedFile with key:"+str(key)+", can't import data.json, I will load the recovery"
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
     readed_data=recoverydata_json  # is in globalVar.py
@@ -146,7 +146,7 @@ def readConfigurationsFromSavedFile(key):
     cfg_json_file.close() 
     data=json.loads(cfg_readed_data)
     value=data[key] 
-  except Exception, e: 
+  except Exception as e: 
     message="error in readConfigurationsFromSavedFile with key:"+str(key)+", can't import cfg.json , I will load the recovery one "
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
     cfg_readed_data=recoverycfg_json # is in globalVar.py
@@ -190,8 +190,11 @@ def importConfig():
   tmp_obj_dict=dictionaries["objectDictionary"]
   conf_options=readConfigurationsFromSavedFile(u"conf_options_dictionary")
   node_password_dict=conf_options["node_password_dict"]
-  message="node_password_dict at start="+str(node_password_dict)
-  logprint(message,verbose=3) 
+  online_usersDict=conf_options["online_usersDict"]
+  usersDict.update(online_usersDict) #insert the online users in the local dictionary
+  
+  #message="node_password_dict at start="+str(node_password_dict)
+  #logprint(message,verbose=3) 
  
   for a in tmp_obj_dict.keys():  #for each object in the file
     object_html_name=a

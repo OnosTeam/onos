@@ -582,7 +582,129 @@
         "type": "b"
       }
     }, 
-    "scenarioDictionary": {}, 
+    "scenarioDictionary": {"scenario10": {
+      "conditions": "(#_hours_#==23)&(#_minutes_#==30)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "Caldaia=0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario2": {
+      "conditions": "(#_hours_#==8)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "Wifi_netgear==1", 
+        "Caldaia=0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario21": {
+      "conditions": "(#_minutes_#>-1)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "socket0_WLightSS0004=!#_socket0_WLightSS0004_#", 
+        "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario3": {
+      "conditions": "(#_hours_#==8)&(#_minutes_#==25)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=0", 
+        "Wifi_netgear==0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario4": {
+      "conditions": "(#_hours_#==12)&(#_minutes_#==30)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "Wifi_netgear==1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario5": {
+      "conditions": "(#_hours_#==14)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=0", 
+        "Wifi_netgear==0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario6": {
+      "conditions": "(#_hours_#==18)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "Wifi_netgear==1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario7": {
+      "conditions": "(#_hours_#==0)&(#_minutes_#==0)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=0", 
+        "Wifi_netgear==0", 
+        "counter1=0"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario8": {
+      "conditions": "(#_minutes_#>-1)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#", 
+        "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenario9": {
+      "conditions": "1", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "counter1=#_counter1_#+1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }, 
+    "scenarioA": {
+      "conditions": "(#_year_#==2016)", 
+      "enabled": 1, 
+      "functionsToRun": [
+        "button0_RouterGL0000=1", 
+        "aaaaaaaaaaaaaaaaaaaaaaaaa=2016", 
+        "counter1=1", 
+        "socket3_Plug6way0001=1"
+      ], 
+      "one_time_shot": 0, 
+      "priority": 0, 
+      "type_after_run": "0"
+    }}, 
     "zoneDictionary": {
       "RouterGA0000": {
         "group": [], 

@@ -76,7 +76,7 @@ os.environ['TZ']=timezone
 try:
   time.tzset()
 except:
-  print "tzset not present , timezone will work anyway"
+  print("tzset not present , timezone will work anyway")
 #time_gap=120    #minutes of difference between utc and local time 
 #export TZ="CET-1CEST,M3.5.0,M10.5.0/3"
 
@@ -924,19 +924,42 @@ usersDict["web_interface"]={"pw":"onos","mail_control_password":"onosm","priorit
 usersDict["scenario"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["onos_node"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["onos_node_reconnect"]={"pw":"onos","mail_control_password":"onosm","priority":99,"user_mail":"elettronicaopensource@gmail.com"}
-usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
-usersDict["casa"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
+usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com","advanced_settings":1}
+usersDict["casa"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com","advanced_settings":1}
 #usersDict["mauro"]={"pw":"12345678","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 
 
+usersDict
+
+
 online_usersDict["marco"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
+
 online_usersDict["casa"]={"pw":"1234","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
+
 
 usersDict.update(online_usersDict) #insert the online users in the local dictionary
 
 node_password_dict={} # dictionary where the key is the node_serial_number and the value is the node password
 
 onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta1234","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
+
+
+
+#gmail problem solving:
+
+
+#This worked for me.
+
+#1) Login to your gmail account.
+
+#2) Go to https://www.google.com/settings/security/lesssecureapps and Turn On this feature.
+
+#3) Go to https://accounts.google.com/DisplayUnlockCaptcha and click Continue.
+
+#Then you can authenticate your Additional Email Address from your Gmail Account.
+
+
+
 
 
 conf_options={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"node_password_dict":node_password_dict,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
@@ -1186,7 +1209,7 @@ def getListUsedPinsByHardwareModel(hwName):
       - Any other hardware type added as hardwareModelDict key in globalVar.py 
 
   """
-  print "executed getListUsedPinsByHardwareModel"
+  logprint("executed getListUsedPinsByHardwareModel")
 
   if hwName not in hardwareModelDict.keys(): #if the hardware model doesn't exist
     logprint("error the hardware model "+hwName+" doesn't exist",verbose=8)

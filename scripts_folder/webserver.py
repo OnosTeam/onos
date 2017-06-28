@@ -80,7 +80,7 @@ except Exception as e :
 web_page_not_found='<html><head><style type="text/css"></style></head><body>error  no index.html found in the  directory </body></html>' 
 
 
-print "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+print ("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 
 
 
@@ -737,7 +737,8 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     statusToSet="void"
     try: 
       for op in executionList:
-        print "operation to execute: ",op
+        message="operation to execute: "+op
+        logprint(message,verbose=3)
         obj_to_change="void"
         str_status="void"
 
@@ -1704,7 +1705,8 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     web_page=""
     roomHtml="error executing /gui/display_zone_objects.py"
     try:
-      execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py
+      #execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py
+      exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)   
       roomHtml=namespace["web_page"]  
     except Exception as e: 
       message="error executing /gui/display_zone_objects.py e:"
@@ -1970,14 +1972,14 @@ def getUserFromIp(ipUserAddress):
         logprint("user:"+username+"logged out for timeout")
         del user_active_time_dict[ipUserAddress] #remove the ip from the dict   
         logprint("deleted ip from user_active_time_dict ")
-        return (-1)
+        return ("nobody")
       else:
         logprint("user:" +username+"is still active")
         user_active_time_dict[ipUserAddress][1]=current_time
         return(username)
   else:
     logprint("ipaddress not in list")
-    return(-1)
+    return("nobody")
 
 
 
@@ -1986,6 +1988,7 @@ def getUserFromIp(ipUserAddress):
 class MyHandler(BaseHTTPRequestHandler):
     #global object_dict  
     #global roomDict
+    
 
     def log_message(self, format, *args):  #remove the print of each request..comment this method to make it print..
       return
@@ -2548,6 +2551,7 @@ class MyHandler(BaseHTTPRequestHandler):
  
 
     def do_GET(self):
+        self.current_username="nobody"
 
         try:
 
@@ -2556,7 +2560,8 @@ class MyHandler(BaseHTTPRequestHandler):
               #print "rrrrrrrrrrrrrrrrrrrrrooooooooooooooooooooooot"
               namespace={}
               cgi_name="gui/home.py"       
-              execfile(cgi_name,globals(),namespace)
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
               web_page=namespace["web_page"]
 
 
@@ -3050,11 +3055,11 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             #from here to the end the login is required , the above part is for the onos node use.
-            current_username="nobody"
+            self.current_username="nobody"
             if (conf_options["login_required"]==1):
-              current_username=getUserFromIp(self.client_address[0])
+              self.current_username=getUserFromIp(self.client_address[0])
 
-              if (current_username==-1) : #user not logged
+              if (self.current_username=="nobody") : #user not logged
                 logprint("user not logged ,i show login page")
                 self.get_login()  #show login page
                 return()
@@ -3077,7 +3082,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 namespace={}   
                 cgi_name="/gui/home.py"       
-                execfile(cgi_name,globals(),namespace)
+                #execfile(cgi_name,globals(),namespace)
+                exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                 web_page=namespace["web_page"]
 
                 #h = open("index.html",'r')  
@@ -3446,7 +3452,8 @@ class MyHandler(BaseHTTPRequestHandler):
               namespace={}
               message=""
               cgi_name="gui/new_user.py"       
-              execfile(cgi_name,globals(),namespace)
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
               web_page=namespace["web_page"]
 
               try:
@@ -3462,9 +3469,11 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.endswith("scenarios_list/"): # render the scenario list 
-              namespace={}
-              cgi_name="gui/scenarios_list.py"       
-              execfile(cgi_name,globals(),namespace)
+              namespace={"current_username":self.current_username}
+              cgi_name="gui/scenarios_list.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
               web_page=namespace["web_page"]
 
               try:
@@ -3473,11 +3482,28 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                print "error13a in send_header "+" e:"+str(e.args)
-                errorQueue.put( "error13a in send_header "+" e:"+str(e.args))  
+                message="error13a in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return
 
 
+            if self.path.endswith("scenario_creation/"): # render the scenario list 
+              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2]}
+              cgi_name="gui/scenario_creation.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13a0 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return
 
 
             scenario_to_mod=""
@@ -3488,7 +3514,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   namespace={"scenario_to_mod":self.path.split("/")[2]}
                   scenario_to_mod=(self.path.split("/"))[2]
                   cgi_name="gui/mod_scenario.py"       
-                  execfile(cgi_name,globals(),namespace)
+                  #execfile(cgi_name,globals(),namespace)
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
 
                   
@@ -3519,7 +3546,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   scenario_to_mod=(self.path.split("/"))[2]
                   cgi_name="gui/scenario_conditions.py"       
                   
-                  execfile(cgi_name,globals(),namespace)
+                  #execfile(cgi_name,globals(),namespace)
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
 
                   
@@ -3551,7 +3579,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   scenario_to_mod=(self.path.split("/"))[2]
                   cgi_name="gui/scenario_f_to_run.py"       
                   
-                  execfile(cgi_name,globals(),namespace)
+                  #execfile(cgi_name,globals(),namespace)
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
 
                   
@@ -3631,14 +3660,16 @@ class MyHandler(BaseHTTPRequestHandler):
 
               if (debug>0):  # in debug mode ..
 
-                execfile(cgi_name,globals(),namespace)
+                #execfile(cgi_name,globals(),namespace)
+                exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                 web_page=namespace["web_page"]
 
               else:
 
                 try:
                 
-                  execfile(cgi_name,globals(),namespace)
+                  #execfile(cgi_name,globals(),namespace)
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
                 except Exception as e  :
                   message="error importing a module in cgi directory, cgi name:"
@@ -3700,7 +3731,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.endswith("setup/save_configuration/"): #     
-              print "json saved"
+              logprint("json saved",verbose=1)
               updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
                   
               try:              
@@ -3727,7 +3758,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.endswith("setup/restore_default_conf/"): #     
-              print "JSON RESTORED TO DEFAULT"
+              logprint("JSON RESTORED TO DEFAULT")
               #os.system('cp -f config_files/default.json config_files/data.json')
              # with lock_bash_cmd:               
              #   subprocess.check_output('cp -f config_files/default.json config_files/data.json', shell=True,close_fds=True)    
@@ -3833,7 +3864,7 @@ class MyHandler(BaseHTTPRequestHandler):
               
               for a in zoneDict.keys() :
                 if (self.path[(setup_start+6):]==a):  #found a room in the address bar
-                  print "found a room in the address bar"
+                  logprint("found a room in the address bar")
                   
                   pag=self.get_RoomObjectList(a,object_dict) 
                   try:
@@ -3862,7 +3893,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             else: 
               
-              print self.path[setup_start+6:]
+              logprint(self.path[setup_start+6:])
               
 
               if ( (setup_start!=-1)&(len(lista)==4)): #if path is like  /setup/Room0/body
@@ -4079,7 +4110,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     message="error5 opening the file,local address bar ="+self.path+"index.html" 
                     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                     web_page=web_page_not_found
-                print web_page
+                logprint(web_page)
 
 
 
@@ -4178,7 +4209,7 @@ class MyHandler(BaseHTTPRequestHandler):
               logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
               pass
             upfilecontent = query.get('upfile')
-            print "filecontent", upfilecontent[0]
+            logprint("filecontent"+str(upfilecontent[0]))
 
             if len (upfilecontent[0])>10:
               try:
@@ -4852,7 +4883,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
               if (postvars["menu_number"]!=" "):
                 menu_number=int(self.clear_PostData(postvars["menu_number"][0]))
-                print "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",menu_number
+                logprint("gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"+str(menu_number))
               else:
                 return(-1)
 
@@ -5085,7 +5116,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                  #execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py  
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)                 
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
@@ -5102,7 +5134,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py                  
+                  #execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py 
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
@@ -5136,7 +5169,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
+                    #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
+                    exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5153,7 +5187,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                 
+                    #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py   
+                    exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)              
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5173,7 +5208,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
+                    #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
+                    exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5188,7 +5224,8 @@ class MyHandler(BaseHTTPRequestHandler):
                     cgi_name="gui/new_user.py"
                     namespace={} 
                     web_page=""
-                    execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                 
+                    #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py  
+                    exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)                
                     web_page=namespace["web_page"]
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -5202,7 +5239,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   cgi_name="gui/new_user.py"
                   namespace={} 
                   web_page=""
-                  execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py                
+                  #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py   
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)             
                   web_page=namespace["web_page"]
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
@@ -6108,15 +6146,13 @@ def executeQueueFunction(dataExchanged):
 
           else:
             hardware.serial_communication.working=0
-            logprint("error serial port can't be reconnected from webserver.py",verbose=8)
-            print "serial port is already connected"
+            logprint("error serial port can't be reconnected from webserver.py,serial port is already connected",verbose=8)
+
 
     except Exception as e: 
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)   
-      print str(e.args)
-      print("error in serial port reconnection")  
+
+      message="error in serial port reconnection"
+      logprint(message,verbose=6,error_tuple=(e,sys.exc_info()) )  
 
 
   logprint("dataExchanged = : "+str(dataExchanged) )
@@ -6273,7 +6309,7 @@ def nodeTcpServer():
   #    sock.setsockopt(socket.IPPROTO_TCP,socket.TCP_NODELAY, True) #disable_nagle_algorithm'):   #http://pydoc.net/Python/mrs-mapreduce/0.9/mrs.http/  https://aboutsimon.com/index.html%3Fp=85.html
 
       server_address = (get_ip_address(), service_webserver_port) #stored in globalVar.py
-      print >>sys.stderr, 'starting up on %s port %s' % server_address
+      #print >>sys.stderr, 'starting up on %s port %s' % server_address
 
 
       sock.bind(server_address)
@@ -6366,7 +6402,7 @@ def nodeTcpServer():
                   break
 
               else:
-                print >>sys.stderr, 'no more data from', client_address
+                print('no more data from',client_address)
                 connection.close()
                 #wait_because_node_is_talking=0
                 break

@@ -2,6 +2,14 @@
 
 from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 
+advanced_settings=0
+if current_username!="nobody":
+  #print(usersDict[current_username])
+  print("current_username="+current_username)
+  if "advanced_settings" in usersDict[current_username].keys():  
+    advanced_settings= usersDict[current_username]["advanced_settings"] # get data from dict passed from webserbver.py
+
+
 scenarios_name_comparison='(mystring=="TYPE NEW SCENARIO NAME")||(mystring=="")'
 #for scenario in scenarioDict:
 #  scenarios_name_comparison=scenarios_name_comparison+'||(mystring=="'+scenario+'")'
@@ -13,9 +21,9 @@ for scenario in scenarioDict :
 
 
 
-part_to_insert_in_head='''
 
-<link rel="stylesheet" href="../css/scenarios_list.css">
+part_to_insert_in_head='''
+<link rel="stylesheet" href="../css/scenario_list.css">
 
 <script type="text/javascript">
 
@@ -41,61 +49,33 @@ if (r == true) {
 
 
 
-html=getTopMenu(part_to_insert_in_head)
+menu=getTopMenu(part_to_insert_in_head)
+
+menu=menu.replace("right_menu_add_link_to_replace","/scenario_creation")  # replace the link in the + of the right menu
 
 
-
-
-html=html+'''
-
-		<div class="divisorio">LISTA SCENARI</div>
-
-
-	<div id="body2">
-<!--fine pezzo standard per header menu e nome pagina -->
-
-<form action="" method="POST" onsubmit="return checkvalue(this)">
-
-<input type="hidden" name="new_scenario" value="/scenarios_list/">
-
-
-
-		<div class="nuovo-container">
-
-            <div class="nuovo-testo" >
-            <input type="text" class="textbox" id="new_scenario_name" onclick="this.select();"    name="new_scenario_name"   value="TYPE NEW SCENARIO NAME">
-            </div>
-            
-			<div  >
-            <input id="nuovo-image" type="image" src="../img/croce.png" alt="Submit" >
-
-</div>
-
-
-		</a>
-		</div>
-</form> 
-
-
-<form name="delete_form" action="" method="POST" id="delete_form" onsubmit="">
-<input type="hidden" name="delete_scenario" id="delete_scenario" value="x"> 
-</form>
- '''
-
-
+html=menu
 
 
 
 
 scenario_list.sort()
 
+if advanced_settings==1:
+  html=html+"advanced_settings=1"
+
 for scenario in scenario_list :
 
-  html=html+'''<div class="scenario-container">
-			<div class="scenario"><a href="/mod_scenario/'''+scenario+'''/">'''+scenario+'''</a></div>
-			<div class="setup-scenario"><a href="/mod_scenario/'''+scenario+'''/"><img class="flex" src="../img/wrench.png" class="image" /></a></div>
-            <button class="delete-button"   value="'''+scenario+'''" onclick='delete_dialog("'''+scenario+'''");'  >DELETE</button> 
-		</div>'''
+  html=html+'''
+		<div class="riga" >
+			<a href="/scenario_toggle/'''+scenario+'''/"><div class="scenario_name col1">'''+scenario+'''</div></a>
+			<a href="/mod_scenario/'''+scenario+'''/"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+		</div>
+'''
+
+if len(scenario_list)==0:
+  html=html+'''<div id="no_scenarios">No scenario present</div> '''
+
 
 
 

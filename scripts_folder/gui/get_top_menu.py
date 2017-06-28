@@ -43,8 +43,10 @@ def getTopMenu(text_to_insert_in_head="",slashes="../",right_menu={}):
 <!DOCTYPE html>
 
 <html>
-
+    
+    <!--Start_of_html--> 
     <head>
+    <!--Start_of_head--> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -90,7 +92,7 @@ function menudxfunction(menu_rx,funzionedx) {
 </script>
 
 
-
+    <!--End_of_head--> 
     </head>
    <body>
 
@@ -103,7 +105,7 @@ function menudxfunction(menu_rx,funzionedx) {
 		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
 
 
-
+    <!--Start_of_menu_sx--> 
 
 	<div id="menu_sx">
 
@@ -120,9 +122,13 @@ function menudxfunction(menu_rx,funzionedx) {
 
 	</div>
 
+    <!--End_of_menu_sx-->
+
+    <!--Start_of_menu_rx-->   
+
 	<div id="menu_rx">
 
-		<a href="/zone-creation.html"><div class="menu_rx_riga" >
+		<a href="right_menu_add_link_to_replace"><div class="menu_rx_riga" >
 			<div id="newzone" class="voce-menu-R side-col1" >Nuova</div>
 			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
 		</div></a>
@@ -140,6 +146,7 @@ function menudxfunction(menu_rx,funzionedx) {
 		<div id="closebutton_rx" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-cross"></i></div>
 
 	</div>
+    <!--End_of_menu_rx-->
 	
 
  '''.encode('ascii','ignore')
