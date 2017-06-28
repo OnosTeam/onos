@@ -12,7 +12,7 @@
 	<meta charset="utf-8">
    	<title>Creazione Scenario</title>
 
-
+ 
 <script>
 var x = 0; //la metto prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
 var y = 0;
@@ -20,29 +20,29 @@ var y = 0;
 
 function menusxfunction(menu_sx,funzionesx) {
 		if (funzionesx=="open_close_sx"){
-	  		if(x === 0){ 
+	  		if(x === 0){
 	      	x=1;
 	      	y=0;
 	      	document.getElementById('menu_sx').style.marginLeft = "0%";
-	    	} 
+	    	}
 	  		else {
 	      	x=0;
-	      	document.getElementById('menu_sx').style.marginLeft = "-100%"; 
-	    	}  
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%";
+	    	}
 	  	}
 }
 
 function menudxfunction(menu_rx,funzionedx) {
 	if (funzionedx=="open_close_dx"){
-  		if(y === 0){ 
+  		if(y === 0){
       	y=1;
       	X=0;
       	document.getElementById('menu_rx').style.marginRight = "0%";
-    	} 
+    	}
   		else {
       	y=0;
-      	document.getElementById('menu_rx').style.marginRight = "-100%"; 
-    	}  
+      	document.getElementById('menu_rx').style.marginRight = "-100%";
+    	}
   	}
 }
 
@@ -85,12 +85,12 @@ function menudxfunction(menu_rx,funzionedx) {
 			<div id="newscenario" class="voce-menu-R side-col1" >Nuovo Scenario</div>
 			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
 		</div></a>
-			
+
 		<div class="menu_rx_riga" >
 			<div id="deletezone" class="voce-menu-R side-col1" >Elimina</div>
 			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
 		</div>
-		
+
 		<div class="menu_rx_riga" >
 			<div id="submit" class="voce-menu-R side-col1" >Applica</div>
 			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
@@ -99,22 +99,22 @@ function menudxfunction(menu_rx,funzionedx) {
 		<div id="closebutton_rx" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-cross"></i></div>
 
 	</div>
-	
-	
-	
+
+
+
 		<div class="riga" >
 			<input class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome dello scenario') { this.value = ''; }" value="Scrivi il nome dello scenario"/>
 		</div>
-	
 
-		
+
+
 		<div class="infotext">
 				<div class="testo">Seleziona UNO o PIU' oggetti o variabili</div>
 		</div>
 
 
 		<div class="multiselect_button">Libreria <i class="icon-book"></i></div>
-		
+
 
 		<div class="multiselect">
             <ul>
@@ -152,7 +152,7 @@ function menudxfunction(menu_rx,funzionedx) {
 
 
 
-		
+
 
    </body>
 </html>
