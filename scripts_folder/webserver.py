@@ -3524,6 +3524,31 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return
 
+
+
+            if self.path.find("scenario_operations/")!=-1: # render the scenario list 
+              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2]}
+              cgi_name="gui/scenario_operations.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13a0 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return
+
+
+
+
+
+
 ############################## old scenario mod part used for advanced settings
 
             scenario_to_mod=""
@@ -5031,7 +5056,12 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 return 
 
+              elif "finish_conditions_goto_operations" in postvars:
 
+                self.send_response(301)
+                self.send_header('Location','/scenario_operations/'+scenario_name)
+                self.end_headers()
+                return 
 
 
 
@@ -5103,13 +5133,19 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Location','/function_to_run/'+scenario_name)
                 self.end_headers()
                 return 
-              elif "finish_conditions_setup" in postvars:
+              elif "function_add_submit" in postvars:
 
                 self.send_response(301)
                 self.send_header('Location','/mod_scenario/'+scenario_name)
                 self.end_headers()
                 return 
 
+              elif "scenario_operations_add_submit" in postvars:
+
+                self.send_response(301)
+                self.send_header('Location','/mod_scenario/'+scenario_name)
+                self.end_headers()
+                return 
 
 
 #######################################end of old scenario forms implementation still used for advanced config...####

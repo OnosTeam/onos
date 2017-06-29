@@ -224,7 +224,7 @@ html=html+'''
 
          <div id="add_button"><input type="submit" name="condition_add_submit" value="Aggiungi condizione"></div>
 
-		 <div id="avanti_button"><input type="submit" value="Submit"> </div>
+		 <div id="avanti_button"><input type="submit" value="Submit" name="finish_conditions_goto_operations"> </div>
 
          </form>
 

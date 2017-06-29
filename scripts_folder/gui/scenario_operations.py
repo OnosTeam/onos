@@ -1,7 +1,21 @@
 # -*- coding: UTF-8 -*-
+
 from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 
-html=scenario_to_mod
+advanced_settings=0
+if current_username!="nobody":
+  #print(usersDict[current_username])
+  print("current_username="+current_username)
+  if "advanced_settings" in usersDict[current_username].keys():  
+    advanced_settings= usersDict[current_username]["advanced_settings"] # get data from dict passed from webserbver.py
+
+
+
+
+
+
+
+
 
 obj_name_comparison='(mystring=="select_an_element")||(mystring2=="select_an_element")'
 
@@ -221,8 +235,8 @@ default_obj_sel_dx2='''<option> </option>'''+obj_sel_number+obj_sel
 
 part_to_insert_in_head='''
 
-	<link rel="stylesheet" href="../../../css/scenario_f_to_run.css">
-
+<link rel="stylesheet" href="/css/scenario_f_to_run.css">
+<title>Creazione Scenario</title>
 
 <script type="text/javascript">
 function checkvalue() { 
@@ -248,25 +262,35 @@ function checkvalue() {
 
 
 
-slashes="../../../"
+slashes="../../"
 html=getTopMenu(part_to_insert_in_head,slashes)
 
 
 
+
+
+
+
+
+
+
 html=html+'''
-        <br><br><br>
-		<div class="divisorio">FUNCTIONS TO RUN</div>
+		<div id="nomescenario">
+				<div class="testo">'''+scenario_to_mod+'''</div>
+		</div>
 
-<div id="body2"><!--serve per dare un riferimento diverso dal body per il potion:relative ovvero dal menu in giù semplifica la costruzione della pagina -->
 
 
-<!--fine pezzo standard per header menu e nome pagina -->
+		<div class="infotext">
+				<div class="testo">Imposta ora le AZIONI che lo scenario eseguirà automaticamente</div>
+		</div>
 
 
 
 
 <form action="" method="POST" >
 <input type="hidden" name="function_to_run_1" value="'''+scenario_to_mod+'''">
+<input type="hidden" name="scenario_operations" value="'''+scenario_to_mod+'''">
 <input type="hidden" name="menu_number" value="'''+menu_number+'''">
 
 
@@ -326,7 +350,7 @@ html=html+'''
 
 <div id="container_c" class="container1">
 
-        <button class="submit-button" type="submit" name="function_add_submit" value="add_condition_submit" onclick="checkvalue()">Add function</button>
+        <button class="submit-button" type="submit" name="condition_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
         
 	
 </div>

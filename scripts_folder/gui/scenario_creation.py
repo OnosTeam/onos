@@ -48,7 +48,7 @@ function checkvalue() {
 
 
 part_to_insert_in_head='''
-	<link rel="stylesheet" href="../css/scenario_creation.css">
+	<link rel="stylesheet" href="/css/scenario_creation.css">
 	<meta charset="utf-8">
    	<title>Creazione Scenario</title>
 
