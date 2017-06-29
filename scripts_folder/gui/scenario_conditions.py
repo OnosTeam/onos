@@ -117,7 +117,7 @@ default_obj_sel_dx='''<option>select_an_element</option>'''+obj_sel
 
 
 
-part_to_insert_in_head='''	<link rel="stylesheet" href="../../../css/scenario_conditions.css">
+part_to_insert_in_head='''	<link rel="stylesheet" href="/css/scenario_conditions.css">
 
 
 <script type="text/javascript">
@@ -146,7 +146,7 @@ html=html+'''
         <br><br><br>
 		<div class="divisorio">CONDITIONS</div>
 
-<div id="body2"><!--serve per dare un riferimento diverso dal body per il potion:relative ovvero dal menu in giù semplifica la costruzione della pagina -->
+<div id="body2"><!--serve per dare un riferimento diverso dal body per il postion:relative ovvero dal menu in giù semplifica la costruzione della pagina -->
 
 
 <!--fine pezzo standard per header menu e nome pagina -->

@@ -499,14 +499,14 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
     try:
       objname=re.search(r"#_.+?_#",scenario_conditions).group(0)[2:-2]
       
-    except Exception as e : #ended the simple objects status
+    except : #ended the simple objects status
 
       #errorQueue.put("no objects found in the scenario_conditions or scenario_conditions fully analyzed "+" e:"+str(e.args)) 
       try:
         objname_prev=re.search(r"#p_.+?_#",scenario_conditions).group(0)[3:-2]
-      except:         #no previus object status found , serch terminated
+      except Exception as e :         #no previus object status found , serch terminated
         objname_prev=""
-        message="no objects found in the scenario_conditions or scenario_conditions fully analyzed"
+        message="no objects found in the scenario_conditions or scenario_conditions fully analyzed,conditions:"+scenario_conditions
         logprint(message,verbose=2,error_tuple=(e,sys.exc_info()) )
         break
         #errorQueue.put("error00 in the scenario operation search ,scenario_conditions: "+scenario_conditions)
@@ -3506,6 +3506,25 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return
 
+            if self.path.find("scenario_creation_conditions/")!=-1: # render the scenario list 
+              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2]}
+              cgi_name="gui/scenario_creation_conditions.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13a0 in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return
+
+############################## old scenario mod part used for advanced settings
 
             scenario_to_mod=""
             if (  string.find(self.path,"/mod_scenario/")!=-1): # render the mod scenario setup menu
@@ -3603,7 +3622,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-
+##############################end old scenario mod part used for advanced settings
 
 
 
@@ -4684,13 +4703,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 if new_scenario_name not in scenarioDict.keys(): #if scenario name doesn't exist already
                   scenarioDict[new_scenario_name]={"enabled":0,"type_after_run":"0","conditions":"0","functionsToRun":[],"delayTime":0,"priority":0}
                   self.send_response(301)
-                  self.send_header('Location','/mod_scenario/'+new_scenario_name+'/')
+                  self.send_header('Location','/scenario_creation_conditions/'+new_scenario_name+'/')
                   self.end_headers()
                   conditions=""
                   for a in postvars.keys() :
                     if (postvars[a][0].endswith("_checkbox")):  #every checkbox name ends with _checkbox..
                       logprint("found a checkbox:"+a)
-                      web_object_name=a
+                      web_object_name=a.replace("_checkbox","")
                       if len(conditions) >0:
                         conditions=conditions+"&"      
                       conditions=conditions+'''(#_'''+web_object_name+'''_#==-9999)'''
@@ -4915,7 +4934,7 @@ class MyHandler(BaseHTTPRequestHandler):
             elif "mod_conditions" in postvars:#old implemenatation if the current page is /mod_conditions/scenario name  because "mod_scenario"  is the hidden form name
             #<input type="hidden" name="mod_conditions" value="">
 
-
+              logprint("found a form mod_conditions ")
               scenario_name=self.clear_PostData(postvars["mod_conditions"][0])#get the current scenario name 
 
               if scenario_name not in scenarioDict:
@@ -4929,6 +4948,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
               #print "menu_number",menu_number
               conditions=""
+              #if "scenario_creation_conditions" in postvars:  # scenario_creation_conditions ha one row less..
+              #  menu_number=menu_number-1
               for i in range(1,menu_number+1):
                 try:
                   left_element="#_"+self.clear_PostData(postvars["select_l"+str(i)][0])+"_#"
@@ -4945,8 +4966,9 @@ class MyHandler(BaseHTTPRequestHandler):
                     conditions="("+left_element+operator+right_element+")"
                   else:
                     conditions=conditions+"&("+left_element+operator+right_element+")"
-                except:
-                  logprint("error get cond menu",verbose=7)
+                except Exception as e  :
+                  message="error get cond menu"
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
               try:  
                 l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
@@ -4965,8 +4987,9 @@ class MyHandler(BaseHTTPRequestHandler):
                     conditions=conditions+"("+l+o+r+")"   
                   else:
                     conditions=conditions+"&("+l+o+r+")"   
-              except:  
-                logprint("error2 get cond menu",verbose=7)
+              except Exception as e  :  
+                message="error2 get cond menu"
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
               scenarioDict[scenario_name]["conditions"]=conditions
 
