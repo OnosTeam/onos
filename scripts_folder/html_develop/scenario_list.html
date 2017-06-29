@@ -20,29 +20,29 @@ var y = 0;
 
 function menusxfunction(menu_sx,funzionesx) {
 		if (funzionesx=="open_close_sx"){
-	  		if(x === 0){ 
+	  		if(x === 0){
 	      	x=1;
 	      	y=0;
 	      	document.getElementById('menu_sx').style.marginLeft = "0%";
-	    	} 
+	    	}
 	  		else {
 	      	x=0;
-	      	document.getElementById('menu_sx').style.marginLeft = "-100%"; 
-	    	}  
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%";
+	    	}
 	  	}
 }
 
 function menudxfunction(menu_rx,funzionedx) {
 	if (funzionedx=="open_close_dx"){
-  		if(y === 0){ 
+  		if(y === 0){
       	y=1;
       	X=0;
       	document.getElementById('menu_rx').style.marginRight = "0%";
-    	} 
+    	}
   		else {
       	y=0;
-      	document.getElementById('menu_rx').style.marginRight = "-100%"; 
-    	}  
+      	document.getElementById('menu_rx').style.marginRight = "-100%";
+    	}
   	}
 }
 
@@ -82,15 +82,15 @@ function menudxfunction(menu_rx,funzionedx) {
 	<div id="menu_rx">
 
 		<a href="#"><div class="menu_rx_riga" >
-			<div id="newscenario" class="voce-menu-R side-col1" >Nuovo Scenario</div>
+			<div id="newscenario" class="voce-menu-R side-col1" >Nuovo</div>
 			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
 		</div></a>
-			
+
 		<div class="menu_rx_riga" >
 			<div id="deletezone" class="voce-menu-R side-col1" >Elimina</div>
 			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
 		</div>
-		
+
 		<div class="menu_rx_riga" >
 			<div id="submit" class="voce-menu-R side-col1" >Applica</div>
 			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
@@ -99,11 +99,11 @@ function menudxfunction(menu_rx,funzionedx) {
 		<div id="closebutton_rx" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-cross"></i></div>
 
 	</div>
-	
-	
-	
-	
-	
+
+
+
+
+
 
 		<div class="riga" >
 			<a href="#"><div class="scenario_name col1">pioggia</div></a>
@@ -114,17 +114,17 @@ function menudxfunction(menu_rx,funzionedx) {
 			<a href="#"><div class="scenario_name col1">sole</div></a>
 			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
 		</div>
-		
+
 		<div class="riga" >
 			<a href="#"><div class="scenario_name col1">allarme garage</div></a>
 			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
 		</div>
-		
+
 		<div class="riga" >
 			<a href="#"><div class="scenario_name col1">giornata nuovolosa</div></a>
 			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
 		</div>
-		
+
 		<div class="riga" >
 			<a href="#"><div class="scenario_name col1">riscaldamento mattino</div></a>
 			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>

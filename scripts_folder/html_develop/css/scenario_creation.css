@@ -13,7 +13,7 @@
 	text-align:center;
 
 }
- 
+
 .infotext{
 
 	margin-top:20px;
@@ -94,7 +94,25 @@ ul {list-style-type:none;}
 
 }
 
+#add_button{
 
+	display:inherit;
+
+
+
+	position:relative;
+	width:50%;
+	left:25%;
+	height:30px;
+	line-height:30px;
+	text-align:center;
+	font-size:12px;
+	margin-top:5px;
+	border: 1px solid white;
+	border-radius:5px 5px 5px 5px;
+	color:white;
+
+}
 
 /*scenario 2*/
 
