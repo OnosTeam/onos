@@ -149,7 +149,7 @@ try:
 					<select id="compara" name="select_op'''+str(i)+'''" >
                     '''+operator_sel+'''
   			  </select>
-          <input id="textarea" type="text" name="numeric_value_field">
+          <input id="textarea" type="text" name="numeric_value_field'''+str(i)+'''">
           <select id="listaoggetti" name="select_r'''+str(i)+'''">
           '''+obj_sel_dx+'''
           </select>

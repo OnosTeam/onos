@@ -1,0 +1,44 @@
+
+<head>
+   <script src="plotly-latest.min.js"></script>
+
+
+
+</head>
+
+<body>
+<div id="myDiv" style="width:600px;height:250px;"></div>
+
+<script>
+// see  https://plot.ly/javascript/pie-charts/
+
+var data = [{
+  values: [19, 26, 55],
+  labels: ['Residential', 'Non-Residential', 'Utility'],
+  type: 'pie'
+}];
+
+var layout = {
+  height: 400,
+  width: 500
+};
+
+Plotly.newPlot('myDiv', data, layout);
+
+</script>
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+

@@ -4737,7 +4737,7 @@ class MyHandler(BaseHTTPRequestHandler):
                       web_object_name=a.replace("_checkbox","")
                       if len(conditions) >0:
                         conditions=conditions+"&"      
-                      conditions=conditions+'''(#_'''+web_object_name+'''_#==-9999)'''
+                      conditions=conditions+'''(#_'''+web_object_name+'''_#==select_an_object)'''
 
                   if len (scenarioDict[new_scenario_name]["conditions"]) >0:
                     if len(conditions) >0:
@@ -4981,11 +4981,29 @@ class MyHandler(BaseHTTPRequestHandler):
                   operator=self.clear_PostData(postvars["select_op"+str(i)][0])
                   if operator=="=":
                     operator="=="
-                  right_element=self.clear_PostData(postvars["select_r"+str(i)][0])
+                  #right_element=self.clear_PostData(postvars["select_r"+str(i)][0])
+
+                  if "numeric_value_field"+str(i) in postvars:   #if there is a text field with value i will read it
+                    right_element_text_value=self.clear_PostData(postvars["numeric_value_field"+str(i)][0])
+                    try:  #test if the value is a number         
+                      right_element=str(float(self.clear_PostData(postvars["numeric_value_field"+str(i)][0]) ) )     
+                    except:
+                      right_element=self.clear_PostData(postvars["select_r"+str(i)][0])    
+
+       
+
                   try:#detect if is a number
                     a=float(right_element)
                   except:
                     right_element="#_"+right_element+"_#"
+
+                  if  right_element=="":
+                    right_element="-99999"   
+
+
+                  if  left_element=="":
+                    left_element="error_object"   
+
 
                   if i==1: #first time don't add "&"
                     conditions="("+left_element+operator+right_element+")"
@@ -4993,7 +5011,10 @@ class MyHandler(BaseHTTPRequestHandler):
                     conditions=conditions+"&("+left_element+operator+right_element+")"
                 except Exception as e  :
                   message="error get cond menu"
-                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
+                  left_element="error_object" 
+                  right_element="-99999"
+                  conditions=conditions+"&("+left_element+operator+right_element+")" 
 
               try:  
                 l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
@@ -5140,15 +5161,17 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 return 
 
+
+
               elif "scenario_operations_add_submit" in postvars:
 
                 self.send_response(301)
-                self.send_header('Location','/mod_scenario/'+scenario_name)
+                self.send_header('Location','/scenario_operations/'+scenario_name)
                 self.end_headers()
                 return 
 
 
-#######################################end of old scenario forms implementation still used for advanced config...####
+####################################### scenario forms implementation still used for advanced config...####
 
 
 

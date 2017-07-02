@@ -236,7 +236,7 @@ default_obj_sel_dx2='''<option> </option>'''+obj_sel_number+obj_sel
 part_to_insert_in_head='''
 
 <link rel="stylesheet" href="/css/scenario_f_to_run.css">
-<title>Creazione Scenario</title>
+<title>Scenario Operations</title>
 
 <script type="text/javascript">
 function checkvalue() { 
@@ -350,14 +350,14 @@ html=html+'''
 
 <div id="container_c" class="container1">
 
-        <button class="submit-button" type="submit" name="condition_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
+        <button class="submit-button" type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
         
 	
 </div>
 
 <div id="container_d" class="container1">
 
-        <button id="sbutton" class="submit-button" type="submit" name="finish_function_setup" value="finish_submit">Finish</button>
+        <button id="sbutton" class="submit-button" type="submit" name="finish_operation_setup" value="finish_submit">Finish</button>
 
 </div>
 
