@@ -76,8 +76,8 @@
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
-#define FREQUENCY     RF69_868MHZ
-//define FREQUENCY      RF69_433MHZ
+//define FREQUENCY     RF69_868MHZ
+#define FREQUENCY      RF69_433MHZ
 #define INITENCRYPTKEY     "onosEncryptKey00" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HCW    true // set to 'true' if you are using an RFM69HCW module
  
@@ -139,6 +139,9 @@ WPlugAvx node parameter:
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
 #define rx_msg_lenght 61
+#define decoded_radio_answer_lenght 32
+#define syncMessage_lenght 28
+
 //#define DEVMODE 1
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
@@ -147,11 +150,11 @@ uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 //volatile char decoded_uart_answer[24]="er00_#]";
-volatile char decoded_radio_answer[24]="er00_#]";
+volatile char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
 //volatile char filtered_uart_message[rx_msg_lenght+3];
 volatile char filtered_radio_message[rx_msg_lenght+3];
-volatile char syncMessage[28];
+volatile char syncMessage[syncMessage_lenght];
 volatile char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
@@ -603,11 +606,16 @@ boolean checkAndHandleIncomingRadioMsg(){
       }
       else{
         Serial.print(F("error in message decode i will not send the ACK,i found:"));
-        Serial.print(decoded_radio_answer[0]);
-        Serial.print(decoded_radio_answer[1]);
-        Serial.print(decoded_radio_answer[2]);
-        Serial.print(decoded_radio_answer[3]);
-        Serial.println(decoded_radio_answer[4]);
+        uint8_t k=0;
+        while (k<decoded_radio_answer_lenght){
+          if (decoded_radio_answer[k]==0){
+            break;
+          } 
+          Serial.print(decoded_radio_answer[k]);
+          k=k+1;
+        } 
+
+        Serial.println();
         return(0); 
 
        // checkCurrentRadioAddress(); //if the mesage received is wrong i will check and send a address request if needed becausethe onos gateway will wait a moment after the tranmission failure.
@@ -788,7 +796,7 @@ void handleButton(){
 
 void setup() {
 
-  node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
   node_obj_pinout[relay2]=8;  // the second object is the relay 1 connected on pin 8  
   node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
   node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 

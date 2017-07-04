@@ -178,43 +178,39 @@ for c in functionsToRun: # for each function
                    
     html_functionsToRun=html_functionsToRun+'''
 
-<div class="riga_container">
+<div id="container_'''+str(i)+'''" class="container1 border">
 
 				
 			<!--select1 -->
-   				<select id ="select_1" class ="select"  name="select_l'''+str(i)+'''" >
+   				<select class="left_select"  name="select_l'''+str(i)+'''" >
                '''+obj_sel_sx+'''
    				</select>
 			<!--fine select 1 -->
 
 			<!--select2 -->
-   				<select id ="select_2" class ="select"  name="select_op'''+str(i)+'''">
+   				<select class="operator_select"  name="select_op'''+str(i)+'''">
 '''+operator_sel+'''
    				</select>
 			<!--fine select 2 -->
 
 			<!--select3 -->
-   				<select id ="select_3" class ="select"  name="select_r'''+str(i)+'''">
+   				<select class="right_select"  name="select_r'''+str(i)+'''">
                 '''+obj_sel_dx+'''
    				</select>
 			<!--fine select 3 -->
 
-            <input id="text_area1" class ="textarea" type="tel"> 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
-
 
 			<!--select4 -->
-   				<select id ="select_4" class ="select"  name="second_op'''+str(i)+'''">
+   				<select class="operator2_select"  name="second_op'''+str(i)+'''">
                 '''+operator2_sel+'''
    				</select>
 			<!--fine select 4 -->
 
 			<!--select5 -->
-   				<select id ="select_5" class ="select"  name="third_element'''+str(i)+'''">
+   				<select class="right2_select"  name="third_element'''+str(i)+'''">
                 '''+obj_sel_third+'''
    				</select>
 			<!--fine select 5 -->
-            
-            <input id="text_area2" class ="textarea" type="tel"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 
@@ -240,7 +236,7 @@ default_obj_sel_dx2='''<option> </option>'''+obj_sel_number+obj_sel
 
 part_to_insert_in_head='''
 
-<link rel="stylesheet" href="/css/scenario_operations.css">
+<link rel="stylesheet" href="/css/scenario_f_to_run.css">
 <title>Scenario Operations</title>
 
 <script type="text/javascript">
@@ -286,7 +282,7 @@ html=html+'''
 
 
 
-		<div id="infotext">
+		<div class="infotext">
 				<div class="testo">Imposta ora le AZIONI che lo scenario eseguirà automaticamente</div>
 		</div>
 
@@ -307,41 +303,38 @@ html=html+'''
 
 
 
-<div class="riga_container">
+<div id="container_a" class="container1 border">
 
 			<!--select1 -->
-                <select id ="select_1" class ="select" name="select_new_l">
+   				<select class="left_select" id="select_new_sx" name="select_new_l" >
                '''+default_obj_sel_sx+'''
    				</select>
 			<!--fine select 1 -->
 
 			<!--select2 -->
-                <select id ="select_2" class ="select" name="select_new_o">
+   				<select class="operator_select" id="select_new_c" name="select_new_o">
       					<option>=</option>
-                        <option>!=</option>
    				</select>
 			<!--fine select 2 -->
 
 			<!--select3 -->
-                <select id ="select_3" class ="select" name="select_new_r"> 
+   				<select class="right_select" id="select_new_dx" name="select_new_r">
                 '''+default_obj_sel_dx+'''
    				</select>
 			<!--fine select 3 -->
 
-      <input id="text_area1" class ="textarea" type="tel"> 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
-
 			<!--select4 -->
-   				<select id ="select_4" class ="select"  name="second_operator'''+str(i)+'''">
+   				<select class="operator2_select"  name="second_operator'''+str(i)+'''">
                 '''+operator2_sel_default+'''
    				</select>
 			<!--fine select 4 -->
 
 			<!--select5 -->
-                <select id ="select_5" class ="select" name="select_new_third_element">
+   				<select class="right2_select" id="select_new_dx2" name="select_new_third_element">
                 '''+default_obj_sel_dx2+'''
    				</select>
 			<!--fine select 5 -->
-            <input id="text_area2" class ="textarea" type="tel"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+
 
 
 
@@ -350,13 +343,27 @@ html=html+'''
 
 
 
-        <button class="submit_button" type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
+
+
+
+
+
+
+<div id="container_c" class="container1">
+
+        <button class="submit-button" type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
         
+	
+</div>
 
+<div id="container_d" class="container1">
 
+        <button id="sbutton" class="submit-button" type="submit" name="finish_operation_setup" value="finish_submit">Finish</button>
 
-        <button class="submit_button"  type="submit" name="finish_operation_setup" value="finish_submit">Finish</button>
+</div>
 
+	
+</div>			<!--chiusura body2 -->
 	
 
 <div id="footer"></div>

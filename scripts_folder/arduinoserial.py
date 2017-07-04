@@ -168,7 +168,9 @@ class SerialPort:
    
 
       try: 
-        self.ser.flushInput() #flush input buffer, discarding all its contents
+
+        if self.ser.isOpen() == True :  
+          self.ser.flushInput() #flush input buffer, discarding all its contents
       except Exception, e :
         message="error can't flush input"
         logprint(message,verbose=5,error_tuple=(e,sys.exc_info())) 
@@ -257,8 +259,8 @@ class SerialPort:
               #if (buf.find("\n")!=-1):
               #  print ("end of line received but no onoscmd found")
               #  break
-
-              logprint(buf) 
+              if len(buf)>0:  
+                logprint(buf) 
 
 
 ##################################################################

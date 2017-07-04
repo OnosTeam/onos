@@ -222,9 +222,9 @@ html=html+'''
 
         '''+conditions_rows+'''
 
-         <div id="add_button"><input type="submit" name="condition_add_submit" value="Aggiungi condizione"></div>
+         <button  class="submit_button"><input type="submit" name="condition_add_submit" value="Aggiungi condizione"></button>
 
-		 <div id="avanti_button"><input type="submit" value="Submit" name="finish_conditions_goto_operations"> </div>
+		 <button  class="submit_button"><input type="submit" value="Submit" name="finish_conditions_goto_operations"> </button>
 
          </form>
 

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 import codecs
 from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
-obj_name_list=zone["objects"]   
+obj_name_list=zoneDict[zone]["objects"]   
 
 
 #with codecs.open("css/play-zone.css",'r',encoding='utf8') as g:
@@ -23,7 +23,7 @@ play_zone_html=html+'''
  '''
 
 
-web_page=play_zone_html+ '''<title>'''+room.upper()+'''</title>'''
+web_page=play_zone_html+ '''<title>'''+zone.upper()+'''</title>'''
 
 
 

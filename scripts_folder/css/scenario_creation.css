@@ -243,3 +243,20 @@ ul {list-style-type:none;}
 	position:absolute;
 
 }
+
+.submit_button{
+
+	position:relative;
+	width:50%;
+	left:25%;
+	height:30px;
+	line-height:30px;
+	text-align:center;
+	font-size:12px;
+	margin-top:10px;
+	border: 1px solid white;
+	border-radius:5px 5px 5px 5px;
+	background-color:#56aff9;
+	color:white;
+
+}

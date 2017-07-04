@@ -34,7 +34,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
   Serial.println(received_message[6]);
 
 */
-
+  memset(decoded_result,0,sizeof(decoded_result)); //to clear the array
   strcpy(decoded_result,"[S_err01_#]");
 
  
@@ -43,7 +43,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
  // the onos cmd was found           [S_001dw06001_#]
 
 
-    strcpy(decoded_result,"[S_cmdRx_#]");               
+    strcpy(decoded_result,"[S_cmdRx_cmd_not_found_#]");               
 
 
     received_message_type_of_onos_cmd[0]=received_message[6];
@@ -82,7 +82,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       strcpy(decoded_result,"ok");
       return;
     }
-
+  
     // [S_123dw04001_#]
     // [S_001dw04001_#]
     // [S_001dw04000_#]
@@ -166,6 +166,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       if ((received_message_value<0)||(received_message_value>255)){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
+        memset(decoded_result,0,sizeof(decoded_result)); //to clear the array
         strcpy(decoded_result,"er_ac_status_#]"); 
         return;
       }
@@ -175,7 +176,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       strcpy(decoded_result,"ok");
 
       if (rx_obj_selected>number_of_total_objects){ //object out of the range
-        Serial.println(F("er_ac_obj_number_#]"));  
+        Serial.println(F("er_ac_obj_number_#]"));
+        memset(decoded_result,0,sizeof(decoded_result)); //to clear the array  
         strcpy(decoded_result,"er_ac_obj_number_#]"); 
         return; 
       }
@@ -187,9 +189,9 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     //[S_001dc001x_#]    #configuration digital object
     else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='c' ){
  
-      received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
+      received_message_value=int(received_message[10]-48);
 
-      if ((received_message_value<0)||(received_message_value>255)){ //status check
+      if (received_message_value>1){ //status check
         received_message_value=0;
       //Serial.println(F("onos_cmd_value_error"));  
         strcpy(decoded_result,"er_dc_status_#]"); 
@@ -205,6 +207,41 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
         strcpy(decoded_result,"er_dc_obj_number_#]"); 
         return; 
       }
+      else{
+        changeObjStatus(rx_obj_selected,received_message_value);
+      }
+
+
+      return;
+    } 
+
+
+
+    //[S_123do001x_#]    # digital object controll
+    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='o' ){
+ 
+      received_message_value=(received_message[10]-48);
+
+      if (received_message_value>1){ //status check
+        received_message_value=0;
+      //Serial.println(F("onos_cmd_value_error"));  
+        strcpy(decoded_result,"er_do_status_#]"); 
+        return;
+      }
+
+      rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+         
+      strcpy(decoded_result,"ok");
+
+      if (rx_obj_selected>number_of_total_objects){ //object out of the range
+        //Serial.println(F("er_do_obj_number_#]"));  
+        strcpy(decoded_result,"er_do_obj_number_#]"); 
+        return; 
+      }
+      else{
+        changeObjStatus(rx_obj_selected,received_message_value);
+      }
+
 
       return;
     } 
@@ -218,6 +255,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
       //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
+      memset(received_serial_number,0,sizeof(received_serial_number)); //to clear the array 
+
       received_serial_number[0]= received_message[11];
       received_serial_number[1]= received_message[12];
       received_serial_number[2]= received_message[13];
@@ -235,7 +274,10 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
    //    todo implement it!
       if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
-        strcpy(decoded_result,"er1_sn_#]"); 
+        strcpy(decoded_result,"er1_sn:"); 
+       // strcat(decoded_result,"rx_sn:");
+       // strcat(decoded_result,received_serial_number);
+        //strcat(decoded_result,"_#]");
         return;
       } 
 
@@ -271,6 +313,9 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
       //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
+
+      memset(received_serial_number,0,sizeof(received_serial_number)); //to clear the array 
+
       received_serial_number[0]= received_message[8];
       received_serial_number[1]= received_message[9];
       received_serial_number[2]= received_message[10];
@@ -292,7 +337,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
         return;
       } 
 
-
+      memset(encript_key,0,sizeof(encript_key)); //to clear the array 
 
       encript_key[0]= received_message[20];
       encript_key[1]= received_message[21];

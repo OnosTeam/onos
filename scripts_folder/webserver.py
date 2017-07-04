@@ -304,53 +304,55 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
 
 
 
-def updateNodeAddress(node_sn0,uart_router_sn,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
+def updateNodeAddress(node_sn,uart_router_sn,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
   """,
   Given a node serialnumber and an address, updates the node in the nodeDict with the current address. 
 
   """
 
-  try: #if (node_sn0 in nodeDict.keys()):
+  try: #if (node_sn in nodeDict.keys()):
 
+
+    nodeDict[node_sn].updateLastNodeSync(time.time())
     if len(address)==3:  #if is a radio node
       if address not in next_node_free_address_list: 
         next_node_free_address_list.append(address)   
 
-    if address !="254": #if the node have already an address
-      nodeDict[node_sn0].updateLastNodeSync(time.time())
+      #if address !="254": #if the node have already an address
+
 
       if uart_router_sn in nodeDict.keys():
         nodeDict[uart_router_sn].updateLastNodeSync(time.time())  #I update also the uart_router last time sync since it is him that sent the remote node message
 
-    if (nodeDict[node_sn0].getNodeAddress())!=address:
-      logprint("node "+node_sn0+" address changed to "+address)
-      nodeDict[node_sn0].setNodeAddress(address)
+    if (nodeDict[node_sn].getNodeAddress())!=address:
+      logprint("node "+node_sn+" address changed to "+address)
+      nodeDict[node_sn].setNodeAddress(address)
       updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
 
       
     else:
-      logprint("the node has still the same ip")
+      logprint("the node has still the same address")
 
   except Exception as e  :
-    message="error in updateNodeAddress() node_sn0 was:"+node_sn0+" address was:"+address
+    message="error in updateNodeAddress() node_sn was:"+node_sn+" address was:"+address
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
   return()
 
 
-def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
+def getNextFreeAddress(node_sn,uart_router_sn,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
   """
   | Given a node serialnumber this function will return the first free address to assign to the node. 
   | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
   | Used only for the radio nodes since the ethernet nodes 
   """
 
-  logprint("getNextFreeAddress executed with node_sn:"+str(node_sn0) )
+  logprint("getNextFreeAddress executed with node_sn:"+str(node_sn) )
 
   #logprint(next_node_free_address_list) 
-  if node_sn0 in nodeDict:  #if the node has already an address..reuse it
-    address=nodeDict[node_sn0].getNodeAddress()
+  if node_sn in nodeDict:  #if the node has already an address..reuse it
+    address=nodeDict[node_sn].getNodeAddress()
     if (address!="254" ): 
       return (address)
 
@@ -358,9 +360,9 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
   for number in range(2,254):
     if number not in next_node_free_address_list:# if the address is not used then assign it
      # next_node_free_address_list.append(number)
-     # updateNodeAddress(node_sn0,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
-      logprint("I found a free address "+str(number)+"for the node with sn:"+node_sn0)
-      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn0)
+     # updateNodeAddress(node_sn,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      logprint("I found a free address "+str(number)+"for the node with sn:"+node_sn)
+      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn)
       str_address=str(number)
       while (len(str_address)<3):
         str_address="0"+str_address
@@ -369,7 +371,7 @@ def getNextFreeAddress(node_sn0,uart_router_sn,object_dictionary,nodeDictionary,
   for node in nodeDict.keys():
     address=nodeDict[node].getNodeAddress()
     if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
-        #updateNodeAddress(node_sn0,address) 
+        #updateNodeAddress(node_sn,address) 
       updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
       logprint( "I had finished all the free addresses so I recycled a not used one",verbose=5) 
       return(address)
@@ -1216,21 +1218,21 @@ def setWebObjectAnalogStatusFromReg(node_sn_tmp,analog_pin,analog_byte0):
   return()
 
 
-def updateNodeInputStatusFromReg(node_sn0,register):  # deprecated
+def updateNodeInputStatusFromReg(node_sn,register):  # deprecated
 #decode the data register and then change the web objects status 
 # and update the node status values 
   logprint("updateNodeInputStatusFromReg excuted with data="+register)
   logprint("first byte= "+str(ord(register[0])) )
   logprint("len reg="+str(len(register)) )
-  setWebObjectDigitalStatusFromReg(node_sn0,0,register[0])  
-  setWebObjectDigitalStatusFromReg(node_sn0,1,register[1])  
-  setWebObjectDigitalStatusFromReg(node_sn0,2,register[2])  
-  setWebObjectDigitalStatusFromReg(node_sn0,3,register[3])  
-  setWebObjectDigitalStatusFromReg(node_sn0,4,register[4])  
-  setWebObjectDigitalStatusFromReg(node_sn0,5,register[5])  
-  setWebObjectDigitalStatusFromReg(node_sn0,6,register[6])  
-  setWebObjectDigitalStatusFromReg(node_sn0,7,register[7])  
-  setWebObjectDigitalStatusFromReg(node_sn0,8,register[8]) 
+  setWebObjectDigitalStatusFromReg(node_sn,0,register[0])  
+  setWebObjectDigitalStatusFromReg(node_sn,1,register[1])  
+  setWebObjectDigitalStatusFromReg(node_sn,2,register[2])  
+  setWebObjectDigitalStatusFromReg(node_sn,3,register[3])  
+  setWebObjectDigitalStatusFromReg(node_sn,4,register[4])  
+  setWebObjectDigitalStatusFromReg(node_sn,5,register[5])  
+  setWebObjectDigitalStatusFromReg(node_sn,6,register[6])  
+  setWebObjectDigitalStatusFromReg(node_sn,7,register[7])  
+  setWebObjectDigitalStatusFromReg(node_sn,8,register[8]) 
   msgr=" "
   for b in range (0,len(register)):
     msgr=msgr+str(ord(register[b]))+","
@@ -1240,7 +1242,7 @@ def updateNodeInputStatusFromReg(node_sn0,register):  # deprecated
 
   first_analog_pin=14
   last_analog_pin=19
-  node_hw_type=nodeDict[node_sn0].getHwType()
+  node_hw_type=nodeDict[node_sn].getHwType()
   if ( (node_hw_type=="arduino2009")or(node_hw_type=="arduino_promini")or(node_hw_type=="arduino_uno")):
     first_analog_pin=14
     last_analog_pin=19
@@ -1257,8 +1259,8 @@ def updateNodeInputStatusFromReg(node_sn0,register):  # deprecated
         if a_pin in (hardwareModelDict["ProminiA"]["pin_mode"]["analog_input"]["a_sensor"]):
         #if the pin is used as analog input then read its value and set it in the node
           try:
-           # setWebObjectAnalogStatusFromReg(node_sn0,a_pin,register[k+1],register[k])
-            setWebObjectAnalogStatusFromReg(node_sn0,a_pin,register[k])
+           # setWebObjectAnalogStatusFromReg(node_sn,a_pin,register[k+1],register[k])
+            setWebObjectAnalogStatusFromReg(node_sn,a_pin,register[k])
             #print "analog register=first:"+str(ord(register[k]))+" second:"+str(ord(register[k+1]))
             logprint("analog register=first:"+str(ord(register[k])) )
             logprint("analog real value="+str((ord(register[k]))) )
@@ -1698,10 +1700,10 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
   #if the file does not exist
   #roomHtml=play_zone_start_html+ '''<div id="header">'''+room.upper()+'''</div>'''
   
-  if room in roomDictionary.keys():  
+  if room in zoneDict.keys():  
     cgi_name="gui/display_zone_objects.py"
-    zone=zoneDict[room]
-    namespace={} 
+    #zone=zoneDict[room]
+    namespace={"zone":room} 
     web_page=""
     roomHtml="error executing /gui/display_zone_objects.py"
     try:
@@ -1839,7 +1841,7 @@ def createNewNode(node_sn,node_address,node_fw):
     if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
       logprint("added node_hw from query :"+hwType)
 
-
+      createNewWebObjFromNode(hwType,node_sn)
       #if((len(node_sn)>0)&((node_sn)!=" ")): 
       hardware_node_model=hardwareModelDict[hwType]  
       nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
@@ -1870,8 +1872,8 @@ def createNewNode(node_sn,node_address,node_fw):
     #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
     zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
 
-    updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
     createNewWebObjFromNode(hwType,node_sn)
+    updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
     msg=nodeDict[node_sn].getSetupMsg() 
     updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
 
@@ -3358,7 +3360,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   status_to_set=not (object_dict[objName].getStatus())
 
 
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})  
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":self.current_username,"mail_report_list":[]})  
  
 
                 logprint("i set"+objName+" to :"+str(status_to_set) )
@@ -3403,7 +3405,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   logprint("path="+address_bar)
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})    
+                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":self.current_username,"mail_report_list":[]})    
 
                   logprint ("i set"+objName+" to :"+str(status_to_set))
 
@@ -3422,7 +3424,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type',	'text/html')
                 self.end_headers() 
                 self.wfile.write(pag) 
-        #      print "percorso="+self.path+"fine percorso"   
+         #      print "percorso="+self.path+"fine percorso"   
               except Exception as e  :
                 message="error11 in send_header "     
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
@@ -4216,21 +4218,21 @@ class MyHandler(BaseHTTPRequestHandler):
     
           logprint(postvars.keys()[0]) 
           if (postvars.keys()[0][0:4]=="onos"): 
-            node_sn0=postvars.keys()[0][4:16]
+            node_sn=postvars.keys()[0][4:16]
             node_fw =postvars.keys()[0][16:20]
             input_status_register=postvars.keys()[0][21:]  #from 21 till the end
-            logprint("onos node input pin received from: "+node_sn0+" with ip: "+node_ip+"and fw="+node_fw)    
+            logprint("onos node input pin received from: "+node_sn+" with ip: "+node_ip+"and fw="+node_fw)    
 
 
-            if node_sn0 in nodeDict.keys():
+            if node_sn in nodeDict.keys():
               logprint("the node exist so i update the pin input status")
-              updateNodeAddress(node_sn0,uart_router_sn,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
+              updateNodeAddress(node_sn,uart_router_sn,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
               
             else:
-              msg=createNewNode(node_sn0,node_ip,node_fw)
+              msg=createNewNode(node_sn,node_ip,node_fw)
               logprint("the serial number is not in the dictionary...so i add  the new node")
 
-            updateNodeInputStatusFromReg(node_sn0,input_status_register) # decode and update the data from the node
+            updateNodeInputStatusFromReg(node_sn,input_status_register) # decode and update the data from the node
 
 
 
@@ -4754,11 +4756,11 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-##############end of scenario form data receiver ################################
 
 
 
-#######################################start of old scenario forms implementation still used for advanced config...####
+
+
 
             elif "new_scenario" in postvars:#old implementation..if the current page is /scenarios_list/  because "new_scenario"  is the hidden form name
             #<input type="hidden" name="new_scenario" value="/scenarios_list/">
@@ -5012,9 +5014,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 except Exception as e  :
                   message="error get cond menu"
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
-                  left_element="error_object" 
-                  right_element="-99999"
-                  conditions=conditions+"&("+left_element+operator+right_element+")" 
+                  #left_element="error_object" 
+                  #right_element="-99999"
+                  #conditions=conditions+"&("+left_element+operator+right_element+")" 
 
               try:  
                 l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
@@ -5067,15 +5069,20 @@ class MyHandler(BaseHTTPRequestHandler):
               if "condition_add_submit" in postvars:
 
                 self.send_response(301)
-                self.send_header('Location','/scenario_conditions/'+scenario_name)
+                self.send_header('Location','/scenario_creation_conditions/'+scenario_name)
                 self.end_headers()
                 return 
+
+
               elif "finish_conditions_setup" in postvars:
 
                 self.send_response(301)
                 self.send_header('Location','/mod_scenario/'+scenario_name)
                 self.end_headers()
                 return 
+
+
+
 
               elif "finish_conditions_goto_operations" in postvars:
 
@@ -5170,8 +5177,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 return 
 
+              elif "finish_operation_setup" in postvars:
 
-####################################### scenario forms implementation still used for advanced config...####
+                self.send_response(301)
+                self.send_header('Location','/mod_scenario/'+scenario_name)
+                self.end_headers()
+                return 
+##############end of scenario form data receiver ################################
 
 
 
@@ -5911,11 +5923,10 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
         if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore       
-          message="the node:"+a+"is now disconnected for timeout" 
-          logprint(message,verbose=2) 
-          if nodeDict[a].getNodeActivity()==0: #if the node was already inactive
+
+          if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #if the node was already inactive or preactive
             nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
-            message="the node:"+a+"is now disconnected for timeout but was alredy so.." 
+            message="the node:"+a+"is disconnected for timeout but was alredy so.." 
             logprint(message,verbose=2) 
             continue #skip
 
@@ -5933,7 +5944,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           #    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
         else:#now the node is connected
-          if nodeDict[a].getNodeActivity()==0: #the node was not connected but now it is
+          if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #the node was not connected but now it is
             nodeDict[a].setNodeActivity(1)  #set the node as active
             message="The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
             logprint(message,verbose=5)
@@ -6157,9 +6168,11 @@ def executeQueueFunction(dataExchanged):
           object_dict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
         except Exception as e: #todo place this somewhere else..
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
-          message="error in the updateObjFromNode"
-          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))   
-          priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw })
+          message="warning in the updateObjFromNode"
+          logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
+          msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
+          createNewWebObjFromNode(hwType,node_serial_number) 
+
           return()
 
         logprint("objName to upade the value:"+objName) 
@@ -6191,6 +6204,10 @@ def executeQueueFunction(dataExchanged):
       if node_serial_number not in nodeDict.keys():
         priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
         return
+
+      if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node was inactive
+        nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
+
       updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
     except Exception as e:
@@ -6202,10 +6219,16 @@ def executeQueueFunction(dataExchanged):
 
   if (dataExchanged["cmd"]=="createNewNode"):
 
+
+
     try:
       node_serial_number=dataExchanged["nodeSn"]
       node_address=dataExchanged["nodeAddress"]
       node_fw=dataExchanged["nodeFw"]
+
+      if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node was inactive
+        nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
+
       msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
 
     except Exception as e:

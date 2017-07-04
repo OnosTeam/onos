@@ -74,8 +74,8 @@
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
-#define FREQUENCY     RF69_868MHZ
-//#define FREQUENCY     RF69_433MHZ
+//#define FREQUENCY     RF69_868MHZ
+#define FREQUENCY     RF69_433MHZ
 #define INITENCRYPTKEY     "onosEncryptKey00" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HCW   true // set to 'true' if you are using an RFM69HCW module
  
@@ -126,6 +126,9 @@ boolean first_sync=0; //tell the node if the first sync was made ,not used here
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
 #define rx_msg_lenght 61
+#define decoded_radio_answer_lenght 32
+#define syncMessage_lenght 28
+
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
 char received_message_type_of_onos_cmd[3];
@@ -133,11 +136,11 @@ uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 char decoded_uart_answer[24]="er00_#]";
-volatile char decoded_radio_answer[24]="er00_#]";
+volatile char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
 volatile char filtered_uart_message[rx_msg_lenght+3];
 volatile char filtered_radio_message[rx_msg_lenght+3];
-volatile char syncMessage[28];
+volatile char syncMessage[syncMessage_lenght];
 volatile char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;

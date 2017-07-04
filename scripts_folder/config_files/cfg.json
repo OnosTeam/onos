@@ -25,11 +25,11 @@
         "user_mail": "elettronicaopensource@gmail.com"
       }, 
       "marco": {
+        "advanced_settings": 1, 
         "mail_control_password": "onosm", 
         "priority": 0, 
         "pw": "1234", 
-        "user_mail": "elettronicaopensource@gmail.com",
-        "advanced_settings":1 
+        "user_mail": "elettronicaopensource@gmail.com"
       }, 
       "mauro": {
         "mail_control_password": "onosm", 
@@ -38,7 +38,7 @@
         "user_mail": "elettronicaopensource@gmail.com"
       }
     }, 
-    "scenarios_enable": 0, 
+    "scenarios_enable": 1, 
     "timezone": "CET-1CEST,M3.5.0,M10.5.0/3"
   }
 }

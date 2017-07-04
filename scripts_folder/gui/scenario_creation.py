@@ -59,7 +59,7 @@ slashes="../../"
 menu=getTopMenu(part_to_insert_in_head,slashes)
 
 
-#menu=menu.replace("<!--Javascript_to_replace-->",javascript_scenario_name_check) # replace <!--Javascript_to_replace--> with javascript code
+menu=menu.replace("<!--Javascript_to_replace-->",javascript_scenario_name_check) # replace <!--Javascript_to_replace--> with javascript code
 
 html=menu
 

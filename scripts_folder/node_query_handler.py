@@ -33,6 +33,10 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     
     # [S_001dw06001_#]
 
+    if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
+      logprint("error01_radio_query,the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
+      return()
+
  
     node_address=nodeDict[node_serial_number].getNodeAddress()
 
@@ -61,11 +65,11 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
             logprint("I have found the answer I was looking for")
             return (a)
 
-          if a=="[S_ertx1_#]":
+          if a=="[S_ertx1_#]" and a in serialCom.uart.readed_packets_list :
             serialCom.uart.readed_packets_list.remove(a)
           
 
-          if a=="[S_nocmd0_#]":
+          if a=="[S_nocmd0_#]" and a in serialCom.uart.readed_packets_list:
             serialCom.uart.readed_packets_list.remove(a)
    
           i=i-1 
@@ -179,6 +183,12 @@ def make_query_to_http_node(node_serial_number,query,query_expected_answer,objNa
   #wait_timeout=1000
 
   for m in range(0,12):   #retry n times to get the answer from node
+ 
+
+    if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
+      logprint("error01_http_query,the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
+      return()
+
    
     node_address=nodeDict[node_serial_number].getNodeAddress()  #update the node address ..maybe has changed..
     logprint("connection try number:"+str(m)+"to ip number"+str(node_address) )
@@ -270,6 +280,9 @@ def make_query_to_tcp_node(node_serial_number,query,query_expected_answer,objNam
 
   for m in range(0,8):   #retry n times to get the answer from node
    
+    if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
+      logprint("error01_tcp_query_the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
+      return()
     node_address=nodeDict[node_serial_number].getNodeAddress()  #update the node address ..maybe has changed..
     logprint("connection try number:"+str(m)+"to ip number"+str(node_address) )
     html_response="local_error_in_router_handler_cant_connect_to_node"  
@@ -422,6 +435,11 @@ def handle_new_query_to_radio_node_thread(serialCom):
     mail_report_list=currentRadioQueryPacket[9]
     cmd=currentRadioQueryPacket[10]
 
+    if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
+      logprint("error00_radio_handler, the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
+      continue         ##skip to the next query ..
+
+
     node_address=nodeDict[node_serial_number].getNodeAddress()
 
     query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
@@ -432,9 +450,6 @@ def handle_new_query_to_radio_node_thread(serialCom):
     #  query_order=query_time-currentRadioQueryPacket[0]  # i used time_when_the_query_was_created - priority..
 
     logprint("current query_order:"+str(query_order)+"for query:"+query)
-
-
-    node_address=nodeDict[node_serial_number].getNodeAddress()
 
 
     query_answer=make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_done)
@@ -510,13 +525,15 @@ def handle_new_query_to_network_node_thread():
       current_query=queryToNetworkNodeQueue.get()
       #queryToNetworkNodeQueue.task_done() #banana maybe to remove because not usefull
       node_serial_number=current_query["node_serial_number"]
+
+      logprint("node_query_network_threads_executing:"+str(node_query_network_threads_executing))
+
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
-        logprint("the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
-        errorQueue.put("the node"+node_serial_number+"is inactive ,so I delete its query")
+        logprint("error00_network_handler, the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
         continue ##skip to the next query ..
 
 
-      logprint("node_query_network_threads_executing:"+str(node_query_network_threads_executing))
+
       #address=current_query["address"]
       query=current_query["query"]
       query_expected_answer=current_query["query_expected_answer"]
