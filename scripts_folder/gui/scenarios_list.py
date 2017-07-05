@@ -27,7 +27,41 @@ part_to_insert_in_head='''
 
 <script type="text/javascript">
 
-function delete_dialog(name) { 
+var scenarioArray = [[#_array_part_to_replace_#]];
+
+
+function delete_check_box_show(){
+
+  var cols = document.getElementsByClassName('delete_box');
+  for(i=0; i<cols.length; i++) {
+    cols[i].style.display = 'inherit';
+
+  }
+
+}
+
+function delete_check_box_hide(){
+
+  var cols = document.getElementsByClassName('delete_box');
+  for(i=0; i<cols.length; i++) {
+    cols[i].style.display = 'none';
+
+  }
+
+}
+
+
+function delete_dialog() { 
+
+var arrayLength = scenarioArray.length;
+for (var i = 0; i < arrayLength; i++) {
+    if (document.getElementById(scenarioArray[i]).checked){  // if this checkbox is checked
+      alert(scenarioArray[i]);
+    }
+
+}
+
+delete_check_box_hide();
 
 //alert ('are you sure to delete the Scenario? :'+name);
 
@@ -37,11 +71,8 @@ if (r == true) {
   document.getElementById("delete_form").submit();
 }
 
-
-
-
-
 }
+
 
 </script>
 
@@ -57,6 +88,9 @@ menu=menu.replace("right_menu_add_link_to_replace","/scenario_creation/")  # rep
 html=menu
 
 
+javascript_array_part=''
+
+
 
 
 scenario_list.sort()
@@ -66,10 +100,14 @@ if advanced_settings==1:
 
 for scenario in scenario_list :
 
+  javascript_array_part=javascript_array_part+'''"delete_check_'''+scenario+'''",''' #create the contents of the array with all the scenario names
+
+
   html=html+'''
 		<div class="riga" >
 			<a href="/scenario_toggle/'''+scenario+'''/"><div class="scenario_name col1">'''+scenario+'''</div></a>
 			<a href="/mod_scenario/'''+scenario+'''/"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+            <input class ="delete_box col2" type="checkbox" id="delete_check_'''+scenario+'''"  name="delete_check_'''+scenario+'''">
 		</div>
 '''
 
@@ -80,6 +118,11 @@ if len(scenario_list)==0:
 
 
 end_html=''' <div id="footer"></div>	</div> </body></html> '''
+
+
+javascript_array_part=javascript_array_part[0:-1]  #delete the final ","  from the data
+
+html=html.replace("[#_array_part_to_replace_#]",javascript_array_part)  # inject the array data inside the html
 
 
 web_page=html+end_html

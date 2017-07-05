@@ -81,10 +81,12 @@ function menudxfunction(menu_rx,funzionedx) {
       	y=1;
       	X=0;
       	document.getElementById('menu_rx').style.marginRight = "0%";
+
     	} 
   		else {
       	y=0;
       	document.getElementById('menu_rx').style.marginRight = "-100%"; 
+        delete_check_box_hide();
     	}  
   	}
 }
@@ -134,12 +136,12 @@ function menudxfunction(menu_rx,funzionedx) {
 		</div></a>
 			
 		<div class="menu_rx_riga" >
-			<div id="deletezone" class="voce-menu-R side-col1" >Elimina</div>
+			<div id="deletezone" class="voce-menu-R side-col1" onclick="delete_check_box_show();">Elimina</div>
 			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
 		</div>
 		
 		<div class="menu_rx_riga" >
-			<div id="submit" class="voce-menu-R side-col1" >Applica</div>
+			<div id="submit" class="voce-menu-R side-col1" onclick="delete_dialog()" >Applica</div>
 			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
 		</div>
 

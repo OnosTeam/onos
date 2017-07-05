@@ -21,8 +21,15 @@
       }, 
       "Wrelay4x0007": {
         "hwModelName": "Wrelay4x", 
-        "nodeAddress": "123", 
-        "nodeObjectsDict": {}, 
+        "nodeAddress": "003", 
+        "nodeObjectsDict": {
+          "0": "caldaia_Wrelay4x0007", 
+          "1": "router_Wrelay4x0007", 
+          "2": "relay0_Wrelay4x0007", 
+          "3": "relay1_Wrelay4x0007", 
+          "4": "lux_threshold_Wrelay4x0007", 
+          "5": "timeout_to_turn_off_Wrelay4x0007"
+        }, 
         "node_serial_number": "Wrelay4x0007"
       }
     }, 
@@ -191,7 +198,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 4, 
+        "status": 5, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -227,7 +234,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 37, 
+        "status": 96, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -271,7 +278,7 @@
           "scenario5", 
           "scenario4"
         ], 
-        "status": 0, 
+        "status": 1, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -350,7 +357,7 @@
           "scenario4", 
           "scenario8"
         ], 
-        "status": 37, 
+        "status": 36, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 

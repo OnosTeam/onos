@@ -1,5 +1,5 @@
 .flex {max-width: 100%}
-	
+
 .riga{
 	position:relative;
 	width:100%;
@@ -22,7 +22,7 @@
 
 
 .scenario_name{
-	
+
 	position:absolute;
 	top:0px;
 	width:85%;
@@ -32,14 +32,16 @@
 	font-size:15px;
 
 	color:black;
-	
-	
+
+
 }
 
 
 
 
 .impostazioni-link{
+  display:inherit;  /* diplay:inherit per visualizzare la chiave inglese al posto della checkbox*/
+
 	position:absolute;
 	top:0px;
 	width:15%;
@@ -49,14 +51,18 @@
 	font-size:15px;
 
 	border-left: 3px solid white;
-	border-top-left-radius:25px; 
-	border-bottom-left-radius:25px; 
-	
-	
+	border-top-left-radius:25px;
+	border-bottom-left-radius:25px;
+
+
 }
 
+.delete_box{
 
+	position:absolute;
+	display:none;  /*display:none per visualizzare la checkbox al posto della chiave inglese  */
+	width:15%;
+	height:30px;
+	top:5px;
 
-
-
-
+}
