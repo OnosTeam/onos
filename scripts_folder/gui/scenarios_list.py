@@ -56,20 +56,25 @@ function delete_dialog() {
 var arrayLength = scenarioArray.length;
 for (var i = 0; i < arrayLength; i++) {
     if (document.getElementById(scenarioArray[i]).checked){  // if this checkbox is checked
-      alert(scenarioArray[i]);
+   //   alert(scenarioArray[i]);
+
+
+      delete_check_box_hide();
+
+      var r = confirm("are you sure to delete the Scenario?"+scenarioArray[i]);
+      if (r == true) {
+        document.getElementById("delete_scenario").value= scenarioArray[i];
+
+      }
+      else{
+        document.getElementById(scenarioArray[i]).checked=false;
+      }
+
     }
 
 }
+document.getElementById("delete_form").submit();
 
-delete_check_box_hide();
-
-//alert ('are you sure to delete the Scenario? :'+name);
-
-var r = confirm("are you sure to delete the Scenario?"+name);
-if (r == true) {
-  document.getElementById("delete_scenario").value= name;
-  document.getElementById("delete_form").submit();
-}
 
 }
 
@@ -91,6 +96,15 @@ html=menu
 javascript_array_part=''
 
 
+
+
+html=html+'''
+
+ 
+<form name="delete_form" action="" method="POST" id="delete_form" onsubmit="">
+<input type="hidden" name="delete_scenario" id="delete_scenario" value="x"> 
+
+'''
 
 
 scenario_list.sort()
@@ -117,7 +131,7 @@ if len(scenario_list)==0:
 
 
 
-end_html=''' <div id="footer"></div>	</div> </body></html> '''
+end_html='''</form> <div id="footer"></div>	</div> </body></html> '''
 
 
 javascript_array_part=javascript_array_part[0:-1]  #delete the final ","  from the data

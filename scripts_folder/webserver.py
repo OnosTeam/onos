@@ -4785,13 +4785,20 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint("received delete_scenario" , postvars["delete_scenario"][0])
 
                 del_scenario_name=self.clear_PostData(postvars["delete_scenario"][0])
-                if del_scenario_name in scenarioDict.keys(): #if scenario name doesn't exist  
+
+                for post in postvars.keys() :
+                  if (post.find("delete_check_")!=-1):  #every checkbox name starts with delete_check_
+                    del_scenario_name=post.replace("delete_check_","")
+                    logprint("I have found a scenario to delete:"+del_scenario_name)
+
+
+                    if del_scenario_name in scenarioDict.keys(): #if scenario name doesn't exist  
                 
-                  for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
-                    tmp_list_scenarios=object_dict[a].getListAttachedScenarios()
-                    if del_scenario_name in tmp_list_scenarios: 
-                      object_dict[a].removeAttachedScenario(del_scenario_name)
-                  del scenarioDict[del_scenario_name]  
+                      for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
+                        tmp_list_scenarios=object_dict[a].getListAttachedScenarios()
+                        if del_scenario_name in tmp_list_scenarios: 
+                          object_dict[a].removeAttachedScenario(del_scenario_name)
+                      del scenarioDict[del_scenario_name]  
 
 
                 self.send_response(301)
