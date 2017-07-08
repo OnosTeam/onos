@@ -30,13 +30,22 @@ part_to_insert_in_head='''
 var scenarioArray = [[#_array_part_to_replace_#]];
 
 
-function delete_check_box_show(){
+
+function delete_check_box_show1(){
+
+alert("ok");
 
   var cols = document.getElementsByClassName('delete_box');
   for(i=0; i<cols.length; i++) {
     cols[i].style.display = 'inherit';
-
   }
+
+  var cols = document.getElementsByClassName('impostazioni-link');
+  for(i=0; i<cols.length; i++) {
+    cols[i].style.display = 'none';
+  }
+
+
 
 }
 
@@ -46,6 +55,12 @@ function delete_check_box_hide(){
   for(i=0; i<cols.length; i++) {
     cols[i].style.display = 'none';
 
+  }
+
+
+  var cols = document.getElementsByClassName('impostazioni-link');
+  for(i=0; i<cols.length; i++) {
+    cols[i].style.display = 'inherit';
   }
 
 }

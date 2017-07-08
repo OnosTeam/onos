@@ -108,137 +108,84 @@ html=getTopMenu(part_to_insert_in_head,slashes)
 
 html=html+'''
 
-        <br><br><br>  
-		<div class="divisorio">MOD SCENARIO "'''+scenario_to_mod+'''"</div>
-
-
-		
-		<div id="body2">
-<!--fine pezzo standard per header menu e nome pagina -->
+<div id="nomescenario">
+	<div class="testo">'''+scenario_to_mod+'''</div>
+</div>
+<div class="infotext">
+	<div class="testo">Qui puoi modificare le impostazioni relative allo scenario</div>
+</div>
 
 
 <form action="" method="POST" onsubmit="return checkvalue(this)" >
 <input type="hidden" name="mod_scenario" value="'''+scenario_to_mod+'''">
 
 
-
-
-<div id="container_a" class="border-container1">
-<div   class="testo" >Scenario Name</div>
-
-<input type="text" class="textbox" id="new_scenario_name" onclick="this.select();"    name="new_scenario_name"   value="'''+scenario_to_mod+'''">
-
+<div class="riga_container">
+	<div class="riga_name">Nome</div>
+		<input type="text" class="textbox" onclick="this.select();" name="new_scenario_name" value="'''+scenario_to_mod+'''">
+	<div class="info_box">?</div>
 </div>
 
 
-<div id="container_b" class="border-container1">
-			<div   class="testo" >Enabled</div>
+<div class="riga_container">
+	<div class="riga_name">Abilitato</div>
+	<input type="checkbox" class="checkbox" name="enabling" '''+sel0+''' >
+</div>
 
-			<input  type="checkbox" id="enabling" name="enabling" '''+sel0+'''>
+
+<div class="riga_container">
+	<div class="riga_name">Tipo</div>
+	<select class="select" name="set_type_after_run">'''+sel1+'''</select> 
+	<div class="info_box">?</div>
+</div>
 
 
+<div class="riga_container">
+	<div class="riga_name">Ritardo</div>
+	<input type="text" class="textbox" name="delay_time" value="'''+sel3+'''" class="textbox" onclick="this.select();">
+	<div class="info_box">?</div>
 </div>
 
 
 
-
-
-
-
-<div id="container_d" class="border-container1">
-			<div   class="testo" >Set type after run</div>
-
-			 	<select id="select" name="set_type_after_run" >'''+sel1+'''
-				</select> 
-
-
-</div>
-
-<div id="container_e" class="border-container1">
-			<div   class="testo" >Delay time</div>
-
-				<input type="text" name="delay_time" value="'''+sel3+'''" class="textbox" onclick="this.select();"/> 
-
+<div class="riga_container">
+	<div class="riga_name">Priorit&agrave;</div>
+	<select class="select" name="priority">'''+sel2+'''</select>
+	<div class="info_box">?</div>
 </div>
 
 
 
 
-<div id="container_f" class="border-container1">
-			<div   class="testo" >Priority</div>
-
-			 	<select id="select" name="priority">
-  				'''+sel2+'''
-				</select> 
-
-
-</div>
-
-
-<div id="container_e" class="border-container1">
-
-
-<div   class="testo" >Conditions</div>
-
-<input type="text" class="textbox" id="Conditions"   name="conditions"   value="'''+scenarioDict[scenario_to_mod]["conditions"]+'''">
-
-</div>
 
 
 
-<div id="container_e" class="border-container1">
-<div   class="testo" >Functions to run</div>
-
-<input type="text" class="textbox" id="functions"   name="functions"   value="'''+functionsToRun_html+'''">
-
-</div>
-
-<div id="container_condition">
-
-
-                <button class="submit-button" type="submit" name="set_conditions_submit" value="condition_submit">Set condition</button>
-
-
-
-
-</div>
-
-</div>
-
-<div id="container_set_function">
-
-
-
-  				<button class="submit-button" type="submit" name="set_function_submit" value="functions_to_run">Set Functions to run</button>
-
-
-
-</div>
-
-
-<div id="container_i" class="ghost">
-
-
-
-  				<button  class="submit-button" type="button" name="functions_to_run_after_delay"   value="">Set After delay function to run </button>
-
-
-
+<div class="riga_container">
+	<div class="riga_name">Condizioni</div>
+	<input type="text" class="textbox" name="conditions" value="'''+scenarioDict[scenario_to_mod]["conditions"]+'''">
+	<div class="info_box">?</div>
 </div>
 
 
 
 
-<div id="container_create" >
-
-
-
-  				<button id="sbutton" class="submit-button" type="submit" name="finish_scenario_setup" value="finish_submit">Finish</button>
-
-
-
-
+<div class="riga_container">
+	<div class="riga_name">Function</div>
+	<input type="text" class="textbox" name="functions" value="'''+functionsToRun_html+'''">
+	<div class="info_box">?</div>
 </div>
+
+
+
+<button class="button" type="submit" name="set_conditions_submit" value="condition_submit">Set condition</button>
+<button class="button" type="submit" name="set_function_submit" value="functions_to_run">Set Functions to run</button>
+<!-- <button class="button" type="button" name="functions_to_run_after_delay" value="">Set After delay function to run </button> -->
+<button class="button" type="submit" name="finish_scenario_setup" value="finish_submit">Finish</button>
+
+
+
+
+
 
 
 </form> 
@@ -255,7 +202,7 @@ html=html+'''
 
 
 
-end_html='''<div id="footer"></div>	</div> </body></html> '''
+end_html='''<div id="footer"></div></body></html> '''
 
 
 web_page=html+end_html

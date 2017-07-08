@@ -4907,7 +4907,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                       except Exception as e  :
-                        message="error in mod_scenario conditions form post parse  "
+                        message="error in mod_scenario conditions form post parse ,the contions were:"+conditions
                         logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
 
