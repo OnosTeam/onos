@@ -695,14 +695,8 @@ error2 after main error in handle_new_query_to_remote_node_thread;;;
 
        bug in a4 analog value display ? 
 
-       bug onosplug6way (arduino code), after boot the socket take n request before answering ok and turning on the relay...then works fine
 
-
-
-       make the mode setup query   more robust from arduino side...
-
-       
-
+   
        bug: if a post request is made and then broken onos will wait forever.
        bug: if you start onos after arduino ,arduino will never get the setup and ask forever 
        
@@ -710,23 +704,16 @@ error2 after main error in handle_new_query_to_remote_node_thread;;;
        bug: problem with the analog pins number readed   
        
 
-
        if the arduino reset itself (with watchdog for example)  the output status are not resumed as before the reset...
        make onos resume them every time its receive a setup request
 
-       
+      
 
 next   
-       make the json read safe and load an alternative json if the one readed is corrupted 
+
        timezone , the user must be able to edit it!
 
-       make the arduino onos_sensor_node_example.pde code ask the pin configuration to the webserver.py 
-       and configure the arduino pin .
-       the arduino has to send its ip to the webserver .
-       make the message repeted if packets were lost
-       make each node answer to a url query with the firmware version like 001_01-12-15
 
-       make the pin setup custom for each serial number?
        make a function to change the node serial number and hwtype remotely?
 
        when the webserver is executed on a pc , write in the router zone  
@@ -741,23 +728,12 @@ next
          two to store the serial number(0:9999)
          mac address will be composed from serial number+ node type
 
-       make a reset button that reset the css style of a webobject or all the webobject in a node
 
        make onos know which node are active , 
 
-       make onos recognise when the config use a pin that is impossible for that hardsware...example pin 55 on arduino 2009
-
        make possible to disable a node (maybe a broken node ) in order to make onos ignore the node requests ?
 
-       make the router node created from conf.py with relanive webobjects and zone 
-       make the node slave request the an ip to use , and make webserver.py give it one  and save it on the nodeDict 
 
-       implement digitalWriteSection()  in router_handler.py  and in arduino_handler  and in arduino serial 
-       implement and modify setPinMode in router_handler.py
-       modify arduino_serial.py
-
-       use hardwareModelDict  inside the router_handler.py  and in hw_node,py
-       save the node_dict on json
                
 to do:
 use regular exression to replace part in the webpage in modPage()
