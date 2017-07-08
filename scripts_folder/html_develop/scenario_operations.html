@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html><!--Start_of_html--><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+<title>Scenario Operations</title>
+
+<script type="text/javascript">
+function checkvalue() {
+    var mystring = document.getElementById('select_new_dx').value;
+    var mystring2 = document.getElementById('select_new_sx').value;
+    if((mystring=="select_an_element")||(mystring2=="select_an_element")) {
+        alert ('This is not allowed because already used or not valid');
+        return false;
+    } else {
+        //alert("correct input");
+        return true;
+    }
+}
+</script>
+
+
+
+
+    <!--Start_of_head-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+	<link rel="stylesheet" href="css/onos_font.css">
+	<link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/scenario_operations.css">
+
+	<meta charset="utf-8">
+
+
+<script>
+var x = 0; //la metto prima della funzione perche voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
+var y = 0;
+
+
+function menusxfunction(menu_sx,funzionesx) {
+		if (funzionesx=="open_close_sx"){
+	  		if(x === 0){
+	      	x=1;
+	      	y=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "0%";
+	    	}
+	  		else {
+	      	x=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%";
+	    	}
+	  	}
+}
+
+function menudxfunction(menu_rx,funzionedx) {
+	if (funzionedx=="open_close_dx"){
+  		if(y === 0){
+      	y=1;
+      	X=0;
+      	document.getElementById('menu_rx').style.marginRight = "0%";
+    	}
+  		else {
+      	y=0;
+      	document.getElementById('menu_rx').style.marginRight = "-100%";
+    	}
+  	}
+}
+
+</script>
+
+    <!--Javascript_to_replace-->
+    <!--End_of_head-->
+    </head>
+   <body>
+
+	<div id="invisible_top_banner"></div>
+
+
+		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-menu"></i></div>
+		<div id="date" class="banner-color banner-col2">12-10-2016</div>
+		<div id="time" class="banner-color banner-col3">23:36</div>
+		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-plus"></i></div>
+
+
+    <!--Start_of_menu_sx-->
+
+	<div id="menu_sx">
+
+
+		<a href="http://192.168.1.102/"><div id="homebutton" class="vocemenu_sx"><i class="icon-home3"></i>Home</div></a>
+		<a href="http://192.168.1.102/"><div id="zonebutton" class="vocemenu_sx"><i class="icon-book"></i>Zone</div></a>
+		<a href="http://192.168.1.102/scenarios_list/"><div id="scenaributton" class="vocemenu_sx"><i class="icon-calculator"></i>Scenari</div></a>
+		<a href="#"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Oggetti</div></a>
+		<a href="http://192.168.1.102/setup/"><div id="impostazionibutton" class="vocemenu_sx"><i class="icon-settings"></i>Impostazioni</div></a>
+		<a href="#"><div id="accountbutton" class="vocemenu_sx"><i class="icon-user2"></i>Account</div></a>
+
+
+		<div id="closebutton_sx" onclick="menusxfunction(this.id,'open_close_sx');"><i class="icon-cross"></i></div>
+
+	</div>
+
+    <!--End_of_menu_sx-->
+
+    <!--Start_of_menu_rx-->
+
+	<div id="menu_rx">
+
+		<a href="http://192.168.1.102/scenario_operations/right_menu_add_link_to_replace"><div class="menu_rx_riga">
+			<div id="newzone" class="voce-menu-R side-col1">Nuova</div>
+			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
+		</div></a>
+
+		<div class="menu_rx_riga">
+			<div id="deletezone" class="voce-menu-R side-col1">Elimina</div>
+			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
+		</div>
+
+		<div class="menu_rx_riga">
+			<div id="submit" class="voce-menu-R side-col1">Applica</div>
+			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
+		</div>
+
+		<div id="closebutton_rx" onclick="menudxfunction(this.id,'open_close_dx');"><i class="icon-cross"></i></div>
+
+	</div>
+    <!--End_of_menu_rx-->
+
+
+
+		<div id="nomescenario">
+				<div class="testo">scenario_prova1</div>
+		</div>
+
+
+
+		<div id="infotext">
+				<div class="testo">Imposta ora le AZIONI che lo scenario eseguirà automaticamente</div>
+		</div>
+
+
+
+
+<form action="" method="POST">
+<input name="function_to_run_1" value="scenario_prova1" type="hidden">
+<input name="scenario_operations" value="scenario_prova1" type="hidden">
+<input name="menu_number" value="2" type="hidden">
+
+
+
+
+
+<div class="riga_container">			<!--tutto ciò che è contenuto dentro a riga_container fa parte di una singola riga ovvero i 5 select e i due textbox a comparsa-->
+			<!--select1 -->
+   				<select id ="select_1" class ="select" name="select_l1">
+              <option selected="selected">counter1</option><option>button0_RouterGA0000</option>
+              <option>caldaia_Wrelay4x0007</option>
+              <option>d_sensor0_RouterGA0000</option>
+              <option>day</option>
+              <option>dayTime</option>
+              <option>hours</option>
+              <option>lux_threshold_Wrelay4x0007</option>
+              <option>minutes</option>
+              <option>month</option>
+              <option>onosCenterWifi</option>
+              <option>relay0_Wrelay4x0007</option>
+              <option>relay1_Wrelay4x0007</option>
+              <option>router_Wrelay4x0007</option>
+              <option>timeout_to_turn_off_Wrelay4x0007</option>
+              <option>year</option>
+   				</select>
+			<!--fine select 1 -->
+
+			<!--select2 -->
+   				<select id ="select_2" class ="select" name="select_op1">
+                <option>&lt;</option>
+                <option selected="selected">=</option>
+      					<option>&gt;</option>
+   				</select>
+			<!--fine select 2 -->
+
+			<!--select3 -->
+   				<select id ="select_3" class ="select" name="select_r1">
+
+            <option>-----------</option>			<!--queste 3 righe servono per fare una "divisione dal resto delle scelte e far comparire il textbox"-->
+            <option>inserisci numero</option>
+            <option>-----------</option>
+
+                <option selected="selected">counter1</option>
+                <option>caldaia_Wrelay4x0007</option>
+                <option>d_sensor0_RouterGA0000</option>
+                <option>day</option>
+                <option>dayTime</option>
+                <option>hours</option>
+                <option>lux_threshold_Wrelay4x0007</option>
+                <option>minutes</option>
+                <option>month</option>
+                <option>onosCenterWifi</option>
+                <option>relay0_Wrelay4x0007</option>
+                <option>relay1_Wrelay4x0007</option>
+                <option>router_Wrelay4x0007</option>
+                <option>timeout_to_turn_off_Wrelay4x0007</option>
+                <option>year</option>
+
+   				</select>
+			<!--fine select 3 -->
+
+      <input id="text_area1" class ="textarea" type="tel"> 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+
+
+
+			<!--select4 -->
+   				<select id ="select_4" class ="select" name="second_op1">
+
+      					<option selected="selected">vuoto</option>
+      					<option>+</option>
+      					<option>-</option>
+      					<option>/</option>
+      					<option>*</option>
+      					<option>%</option>
+      					<option>&amp;</option>
+      					<option>|</option>
+                <option>===</option>
+   				</select>
+			<!--fine select 4 -->
+
+			<!--select5 -->
+   				<select id ="select_5" class ="select" name="third_element1">
+                <option selected="selected">vuoto</option>
+
+                <option>-----------</option><!--queste 3 righe servono per fare una "divisione dal resto delle scelte e far comparire il textbox"-->
+                <option>inserisci numero</option>
+                <option>-----------</option>
+
+                <option>counter1</option>
+                <option>d_sensor0_RouterGA0000</option>
+                <option>day</option>
+                <option>dayTime</option>
+                <option>hours</option>
+                <option>lux_threshold_Wrelay4x0007</option>
+                <option>minutes</option>
+                <option>month</option>
+                <option>onosCenterWifi</option>
+                <option>relay0_Wrelay4x0007</option>
+                <option>relay1_Wrelay4x0007</option>
+                <option>router_Wrelay4x0007</option>
+                <option>timeout_to_turn_off_Wrelay4x0007</option>
+                <option>year</option>
+
+   				</select>
+			<!--fine select 5 -->
+
+      <input id="text_area2" class ="textarea" type="tel"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+
+
+</div>
+    <button class="submit_button" type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Aggiungi funzione</button>
+
+    <button class="submit_button" type="submit" name="finish_operation_setup" value="finish_submit">Fine</button>
+
+
+
+
+
+
+
+
+</form></body></html>

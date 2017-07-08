@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html><!--Start_of_html-->
+
+
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+	<link rel="stylesheet" href="css/onos_font.css">
+	<link rel="stylesheet" href="css/menu.css">
+	<link rel="stylesheet" href="css/mod_scenario.css">
+	<meta charset="utf-8">
+   	<title>Modifica Scenario</title>
+
+<script type="text/javascript">
+function checkvalue() {
+    var mystring = document.getElementById('new_scenario_name').value;
+    if((mystring=="")||(mystring=="scenarioA")||(mystring=="dd")||(mystring=="scenario10")||(mystring=="scenario3")||(mystring=="scenario2")||(mystring=="scenario21")||(mystring=="scenario7")||(mystring=="scenario6")||(mystring=="scenario5")||(mystring=="scenario4")||(mystring=="scenario9")||(mystring=="scenario8")) {
+        alert ('This is not allowed because already used or not valid');
+        return false;
+    } else {
+        //alert("correct input");
+        return true;
+    }
+}
+</script>
+
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="stylesheet" href="./scenario00_files/onos-font.css"><link rel="stylesheet" href="./scenario00_files/menu.css"><script>
+var x = 0; //la metto prima della funzione perche voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
+var y = 0;
+
+
+function menusxfunction(menu_sx,funzionesx) {
+		if (funzionesx=="open_close_sx"){
+	  		if(x === 0){
+	      	x=1;
+	      	y=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "0%";
+	    	}
+	  		else {
+	      	x=0;
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%";
+	    	}
+	  	}
+}
+
+function menudxfunction(menu_rx,funzionedx) {
+	if (funzionedx=="open_close_dx"){
+  		if(y === 0){
+      	y=1;
+      	X=0;
+      	document.getElementById('menu_rx').style.marginRight = "0%";
+
+    	}
+  		else {
+      	y=0;
+      	document.getElementById('menu_rx').style.marginRight = "-100%";
+        delete_check_box_hide();
+    	}
+  	}
+}
+
+</script>
+
+</head>
+
+
+<body>
+
+		<div id="invisible_top_banner"></div>
+
+
+		<div id="menu_top_button" class="banner-color banner-col1" onclick="menusxfunction(this.id,&#39;open_close_sx&#39;);"><i class="icon-menu"></i></div>
+		<div id="date" class="banner-color banner-col2">12-10-2016</div>
+		<div id="time" class="banner-color banner-col3">23:36</div>
+		<div id="right_menu_button" class="banner-color banner-col4" onclick="menudxfunction(this.id,&#39;open_close_dx&#39;);"><i class="icon-plus"></i></div>
+
+
+
+	<div id="menu_sx">
+
+
+		<a href="http://192.168.1.102/"><div id="homebutton" class="vocemenu_sx"><i class="icon-home3"></i>Home</div></a>
+		<a href="http://192.168.1.102/"><div id="zonebutton" class="vocemenu_sx"><i class="icon-book"></i>Zone</div></a>
+		<a href="http://192.168.1.102/scenarios_list/"><div id="scenaributton" class="vocemenu_sx"><i class="icon-calculator"></i>Scenari</div></a>
+		<a href="http://192.168.1.102/mod_scenario/scenario00#"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Oggetti</div></a>
+		<a href="http://192.168.1.102/setup/"><div id="impostazionibutton" class="vocemenu_sx"><i class="icon-settings"></i>Impostazioni</div></a>
+		<a href="http://192.168.1.102/mod_scenario/scenario00#"><div id="accountbutton" class="vocemenu_sx"><i class="icon-user2"></i>Account</div></a>
+
+
+		<div id="closebutton_sx" onclick="menusxfunction(this.id,&#39;open_close_sx&#39;);"><i class="icon-cross"></i></div>
+
+	</div>
+
+    <!--End_of_menu_sx-->
+
+    <!--Start_of_menu_rx-->
+
+	<div id="menu_rx">
+
+		<a href="http://192.168.1.102/mod_scenario/right_menu_add_link_to_replace"><div class="menu_rx_riga">
+			<div id="newzone" class="voce-menu-R side-col1">Nuova</div>
+			<div class="icona-menu-R new side-col2"><i class="icon-plus"></i></div>
+		</div></a>
+
+		<div class="menu_rx_riga">
+			<div id="deletezone" class="voce-menu-R side-col1" onclick="delete_check_box_show();">Elimina</div>
+			<div class="icona-menu-R delete side-col2"><i class="icon-bin"></i></div>
+		</div>
+
+		<div class="menu_rx_riga">
+			<div id="submit" class="voce-menu-R side-col1" onclick="delete_dialog()">Applica</div>
+			<div class="icona-menu-R sub side-col2"><i class="icon-checkmark"></i></div>
+		</div>
+
+		<div id="closebutton_rx" onclick="menudxfunction(this.id,&#39;open_close_dx&#39;);"><i class="icon-cross"></i></div>
+
+	</div>
+    <!--End_of_menu_rx-->
+
+
+
+
+		<div id="nomescenario">
+				<div class="testo">Scenario 00</div>
+		</div>
+
+
+
+		<div class="infotext">
+				<div class="testo">Qui puoi modificare le impostazioni relative allo scenario</div>
+		</div>
+
+
+
+
+<form action="http://192.168.1.102/mod_scenario/scenario00" method="POST" onsubmit="return checkvalue(this)">
+<input type="hidden" name="mod_scenario" value="scenario00">
+
+<div class="riga_container">
+	<div class="riga_name">Nome</div>
+	<input type="text" class="textbox" onclick="this.select();" name="new_scenario_name" value="scenario00">
+	<div class="info_box">?</div>
+</div>
+
+<div class="riga_container">
+	<div class="riga_name">Abilitato</div>
+	<input type="checkbox" class="checkbox" name="enabling" unchecked="">
+</div>
+
+<div class="riga_container">
+	<div class="riga_name">Tipo</div>
+	<select class="select" name="set_type_after_run"><option value="0">nessuno</option>
+	<option value="autodelete">autoelimina</option>
+	<option value="one_time_shot">esegui una volta</option>
+	</select>
+	<div class="info_box">?</div>
+</div>
+
+<div class="riga_container">
+	<div class="riga_name">Ritardo</div>
+	<input type="text" class="textbox" name="delay_time" value="0" class="textbox" onclick="this.select();">
+	<div class="info_box">?</div>
+</div>
+
+
+<div class="riga_container">
+	<div class="riga_name">Priorit&agrave;</div>
+	<select class="select" name="priority">
+		<option value="0">0</option>
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+	</select>
+	<div class="info_box">?</div>
+</div>
+
+
+<div class="riga_container">
+	<div class="riga_name">Condizioni</div>
+	<input type="text" class="textbox" name="conditions" value="(#_hours_#==5.0)">
+	<div class="info_box">?</div>
+</div>
+
+
+<div class="riga_container">
+	<div class="riga_name">Function</div>
+	<input type="text" class="textbox" name="functions" value="#_caldaia_Wrelay4x0007_#=1">
+	<div class="info_box">?</div>
+</div>
+
+
+<button class="button" type="submit" name="set_conditions_submit" value="condition_submit">Set condition</button>
+<button class="button" type="submit" name="set_function_submit" value="functions_to_run">Set Functions to run</button>
+<button class="button" type="button" name="functions_to_run_after_delay" value="">Set After delay function to run </button>
+<button class="button" type="submit" name="finish_scenario_setup" value="finish_submit">Finish</button>
+
+
+
+
+</body></html>
