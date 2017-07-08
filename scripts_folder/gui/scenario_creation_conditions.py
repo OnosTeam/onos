@@ -3,6 +3,8 @@
 from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 
 advanced_settings=0
+
+logprint("gui scenario_creation_condition executed with path:"+path)
 if current_username!="nobody":
   #print(usersDict[current_username])
   print("current_username="+current_username)
@@ -11,7 +13,19 @@ if current_username!="nobody":
 
 
  # scenario_to_mod is passed from namespace in webserver.py
+ # paths passed from namespace in webserver.py
 
+
+if path.find("scenario_conditions")!=-1:
+  #this will understand if is a new scenario being created or if is a old scenario being modifyed and then make the links in the buttons act according to that
+
+  logprint("mod_condition_found")
+  add_button_link="condition_mod_add_submit"
+  finish_button_link="finish_conditions_setup"
+else:
+  logprint("goto_operations_found")
+  add_button_link="condition_add_submit"
+  finish_button_link="goto_operations"
 
 
 
@@ -68,7 +82,7 @@ initial__obj_sel_dx='''<option value="1">ON</option>
 
 
 default_obj_sel_sx='''<option>select_an_element</option>'''+obj_sel
-default_obj_sel_dx='''<option>select_an_element</option>'''+initial__obj_sel_dx+obj_sel
+default_obj_sel_dx='''<option>select_an_element</option>'''+obj_sel
 
 
 
@@ -78,6 +92,13 @@ conditions_rows=""
 conditions_string=scenarioDict[scenario_to_mod]["conditions"]  #get the string where there are the conditions
 
 list_of_single_conditions=conditions_string.split("&")  #each condition is separed by &
+
+
+
+
+
+
+
 
 
 
@@ -137,21 +158,20 @@ try:
                    
         conditions_rows=conditions_rows+'''
 
-      		<div class="riga_container">
-				<div  class="nometesto">  
-                  <select  name="select_l'''+str(i)+'''">
+		<div class="riga_container">
+			<div  class="nometesto">  
+				<select  name="select_l'''+str(i)+'''">
  
                  '''+obj_sel_sx+'''
-                  </select>
-                </div>
+                </select>
+            </div>
 
-
-					<select id="compara" name="select_op'''+str(i)+'''" >
+			<select id="compara" name="select_op'''+str(i)+'''" >
                     '''+operator_sel+'''
-  			  </select>
+			</select>
           <input id="textarea" type="text" name="numeric_value_field'''+str(i)+'''">
           <select id="listaoggetti" name="select_r'''+str(i)+'''">
-          '''+obj_sel_dx+'''
+ 	         '''+obj_sel_dx+'''
           </select>
 		</div>
 
@@ -161,22 +181,21 @@ try:
 
   conditions_rows=conditions_rows+'''
 
-      		<div class="riga_container">
-				<div  class="nometesto">  
-                  <select  id="select_new_sx" name="select_new_l" >
- 
-                 '''+default_obj_sel_sx+'''
-                  </select>
-                </div>
+		<div class="riga_container">
+			<div  class="nometesto">  
+        	    <select  id="select_new_sx" name="select_new_l" > 
+                '''+default_obj_sel_sx+'''
+            	</select>
+            </div>
 
 
-					<select id="compara" name="select_new_o">
+			<select id="compara" name="select_new_o">
                     '''+operator_sel+'''
-  			  </select>
-          <input id="textarea" type="text" name="numeric_value_field">
-          <select id="listaoggetti" name="select_new_r">
-          '''+default_obj_sel_dx+'''
-          </select>
+  			</select>
+			<input id="textarea" type="text" name="numeric_value_field">
+			<select id="listaoggetti" name="select_new_r">
+				'''+default_obj_sel_dx+'''
+          	</select>
 		</div>
 
   '''
@@ -200,10 +219,11 @@ except Exception as e  :
 
 html=html+'''
 
-        <form action="" method="POST" >
+        <form id="main_form" action="" method="post"  >
         <input type="hidden" name="mod_conditions" value="'''+scenario_to_mod+'''">
         <input type="hidden" name="menu_number" value="'''+menu_number+'''">
         <input type="hidden" name="scenario_creation_conditions" value="'''+scenario_to_mod+'''">
+
 
 
 
@@ -214,17 +234,20 @@ html=html+'''
 
 
 		<div class="infotext">
-				<div class="testo">Imposta ora le condizioni che ATTIVERANNO lo scenario.
-          ATTENZIONE! Impostando piu' di una condizione
-         ogniuna di esse dovra' verificarsi per attivare lo scenario</div>
+			<div class="testo">Imposta ora le condizioni che ATTIVERANNO lo scenario.
+          	ATTENZIONE! Impostando piu' di una condizione
+         	ogniuna di esse dovra' verificarsi per attivare lo scenario</div>
 		</div>
 
 
         '''+conditions_rows+'''
 
-         <button  class="submit_button"><input type="submit" name="condition_add_submit" value="Aggiungi condizione"></button>
 
-		 <button  class="submit_button"><input type="submit" value="Submit" name="finish_conditions_goto_operations"> </button>
+
+         <button class="submit_button" name="'''+add_button_link+'''" type="submit"  value="Aggiungi condizione">Aggiungi condizione</button> 
+
+         <button class="submit_button" name="'''+finish_button_link+'''" type="submit"  value="Submit">Submit</button> 
+
 
          </form>
 
@@ -233,12 +256,12 @@ html=html+'''
 
 
 
-   </body>
-</html>
+
+
+
+
 
 '''
-
-
 
 
 

@@ -176,7 +176,6 @@ html=html+'''
 </div>
 
 
-
 <button class="button" type="submit" name="set_conditions_submit" value="condition_submit">Set condition</button>
 <button class="button" type="submit" name="set_function_submit" value="functions_to_run">Set Functions to run</button>
 <!-- <button class="button" type="button" name="functions_to_run_after_delay" value="">Set After delay function to run </button> -->

@@ -3509,7 +3509,7 @@ class MyHandler(BaseHTTPRequestHandler):
               return
 
             if self.path.find("scenario_creation_conditions/")!=-1: # render the scenario list 
-              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2]}
+              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2],"path":self.path}
               cgi_name="gui/scenario_creation_conditions.py" 
               #execfile(cgi_name,globals(),namespace)
               exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -3587,15 +3587,12 @@ class MyHandler(BaseHTTPRequestHandler):
               
               try:
                 if (self.path.split("/")[2])in scenarioDict.keys():
-                  namespace={"scenario_to_mod":self.path.split("/")[2]}
+                  namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2],"path":self.path}
                   scenario_to_mod=(self.path.split("/"))[2]
-                  cgi_name="gui/scenario_conditions.py"       
-                  
+                  cgi_name="gui/scenario_creation_conditions.py"                      
                   #execfile(cgi_name,globals(),namespace)
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
-
-                  
 
               except Exception as e  :
                 message="error, scenario name does not exist "
@@ -4949,7 +4946,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   elif "set_function_submit" in postvars:
 
                     self.send_response(301)
-                    self.send_header('Location','/function_to_run/'+scenario_name)
+                    self.send_header('Location','/scenario_operations/'+scenario_name)
                     self.end_headers()
 
                   elif "finish_scenario_setup" in postvars:
@@ -4965,7 +4962,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            elif "mod_conditions" in postvars:#old implemenatation if the current page is /mod_conditions/scenario name  because "mod_scenario"  is the hidden form name
+            elif ("mod_conditions" in postvars) :#old implemenatation if the current page is /mod_conditions/scenario name  because "mod_scenario"  is the hidden form name
             #<input type="hidden" name="mod_conditions" value="">
 
               logprint("found a form mod_conditions ")
@@ -5068,10 +5065,15 @@ class MyHandler(BaseHTTPRequestHandler):
                   #if the scenario is not included in the web_object attachedScenarios
 
 
-                                   
-                  
- 
 
+                                   
+              if "condition_mod_add_submit" in postvars:
+
+                self.send_response(301)
+                self.send_header('Location','/scenario_creation_conditions/'+scenario_name)
+                self.end_headers()
+                return              
+ 
 
               if "condition_add_submit" in postvars:
 
@@ -5089,18 +5091,19 @@ class MyHandler(BaseHTTPRequestHandler):
                 return 
 
 
-
-
-              elif "finish_conditions_goto_operations" in postvars:
-
+              elif "goto_operations" in postvars:
+     
                 self.send_response(301)
                 self.send_header('Location','/scenario_operations/'+scenario_name)
                 self.end_headers()
                 return 
 
+              else:
+                logprint("error non submit button post found on mod_conditions page ")
 
 
-            elif "function_to_run_1" in postvars:# old implementation if the current page is /function_to_run/scenario name  because "function_to_run_1"  is the hidden form name
+
+            elif "function_to_run_1" in postvars:# if the current page is /function_to_run/scenario name  because "function_to_run_1"  is the hidden form name
             #<input type="hidden" name="mod_functions1a" value="">
 
 
@@ -5933,7 +5936,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
           if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #if the node was already inactive or preactive
             nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
-            message="the node:"+a+"is disconnected for timeout but was alredy so.." 
+            message="the node:"+a+"is disconnected for timeout but was already so.." 
             logprint(message,verbose=2) 
             continue #skip
 

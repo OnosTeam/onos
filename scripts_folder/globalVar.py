@@ -145,7 +145,7 @@ mail_retry_timeout=120  #seconds between retry after error in sending mail
 
 last_internet_check=0  #the last time the internet connection was checked
 enable_onos_auto_update="yes" # possible value: "yes","no","ask_me"  # banana ask_me not implemented yet
-scenarios_enable=1  # tell onos if it have to check the scenarios or not. warning overwrite by scenarios_enable in cfg.json
+scenarios_enable=1  # tell onos if it have to check the scenarios or not. warning overwritten by scenarios_enable in cfg.json
 online_server_enable=1  #enable the remote online server to controll onos from internet without opening the router ports
 #will be overwritten by /scripts_folder/config_files/cf.json
 
