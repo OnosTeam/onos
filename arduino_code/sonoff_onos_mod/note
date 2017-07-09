@@ -1,6 +1,6 @@
-enery mod done to make sonoff working with onos is commented with "onosmod".
+Every mod done to make sonoff working with onos is commented with "onosmod".
 
-i have modyfied only 2 files : 
+I have modyfied only 2 files : 
 sonoff.ino
 
 user_config.h
