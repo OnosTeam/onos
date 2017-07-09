@@ -1,0 +1,21 @@
+Note that the sonoff must be programmed with serial port with atom platformio build and then the firmware must be generated with atom platformio as well otherwise the fota will not work.
+
+
+building with platformio will make the file:
+/arduino_code/sonoff_onos_mod/Sonoff_onos_mod_Tasmota_v5.2.4-3-g3a4210e/.pioenvs/sonoff/firmware.bin
+
+
+take that file ,rename it like: Sonoff1P.ino.bin   and put it in  /scripts_folder/sonoffOTA/
+
+no tell sonoff to update using the command:
+
+
+
+http://192.168.1.9/cm?user=admin&password=onosBestHome9999&cmnd=Upgrade%201
+
+
+to see if the url is right use:
+http://192.168.1.9/cm?user=admin&password=onosBestHome9999&cmnd=OtaUrl
+
+
+

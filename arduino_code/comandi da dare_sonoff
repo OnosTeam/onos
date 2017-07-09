@@ -33,9 +33,23 @@ Disable wifi config but retry other AP without restart
 http://192.168.1.4/cm?cmnd=WebPassword onos1234
 
 
+cambiare seriale:
+
+http://192.168.1.9/cm?user=admin&password=onosBestHome9999&cmnd=FriendlyName%20Sonoff1P0002
+
+Salvare su eprom i parametri cambiati:
+http://192.168.1.9/cm?user=admin&password=onosBestHome9999&cmnd=SaveData
+
+
+
+
+
 
 
 http://192.168.1.17/cm?user=admin&password=onosBestHome9999&cmnd=Power%200
+
+
+caricare nuovo fw (sonoff richiederà il fw al webserver) :
 
 http://192.168.1.17/cm?user=admin&password=onosBestHome9999&cmnd=Upload%201
 

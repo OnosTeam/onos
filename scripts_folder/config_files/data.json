@@ -13,23 +13,30 @@
         "nodeObjectsDict": {}, 
         "node_serial_number": "RouterGL0000"
       }, 
+      "Sonoff1P0000": {
+        "hwModelName": "Sonoff1P", 
+        "nodeAddress": "192.168.1.9", 
+        "nodeObjectsDict": {}, 
+        "node_serial_number": "Sonoff1P0000"
+      }, 
       "Sonoff1P0001": {
         "hwModelName": "Sonoff1P", 
-        "nodeAddress": "192.168.1.13", 
-        "nodeObjectsDict": {}, 
+        "nodeAddress": "192.168.1.9", 
+        "nodeObjectsDict": {
+          "0": "relay_Sonoff1P0001"
+        }, 
         "node_serial_number": "Sonoff1P0001"
+      }, 
+      "Sonoff1P0002": {
+        "hwModelName": "Sonoff1P", 
+        "nodeAddress": "192.168.1.9", 
+        "nodeObjectsDict": {}, 
+        "node_serial_number": "Sonoff1P0002"
       }, 
       "Wrelay4x0007": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "003", 
-        "nodeObjectsDict": {
-          "0": "caldaia_Wrelay4x0007", 
-          "1": "router_Wrelay4x0007", 
-          "2": "relay0_Wrelay4x0007", 
-          "3": "relay1_Wrelay4x0007", 
-          "4": "lux_threshold_Wrelay4x0007", 
-          "5": "timeout_to_turn_off_Wrelay4x0007"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "Wrelay4x0007"
       }
     }, 
@@ -198,7 +205,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 5, 
+        "status": 9, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -234,7 +241,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 96, 
+        "status": 983, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -278,7 +285,7 @@
           "scenario5", 
           "scenario4"
         ], 
-        "status": 1, 
+        "status": 16, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -357,7 +364,7 @@
           "scenario4", 
           "scenario8"
         ], 
-        "status": 36, 
+        "status": 23, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -529,7 +536,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 

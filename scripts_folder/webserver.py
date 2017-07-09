@@ -6236,10 +6236,12 @@ def executeQueueFunction(dataExchanged):
       node_address=dataExchanged["nodeAddress"]
       node_fw=dataExchanged["nodeFw"]
 
+      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
+
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node was inactive
         nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
 
-      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
+
 
     except Exception as e:
       message="error in the createNewNode of onosBusThread ,NewNode:"+str(node_serial_number)

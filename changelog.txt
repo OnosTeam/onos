@@ -656,8 +656,13 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
 
 5.29            Now when you press the hardware button on the sonoff-basic the relay status will be send to OnosCenter web interface
                 Working of sonoff node..now it will reconnect to wifi
-                Bugfix in router_handler.py, moved queryToNetworkNodeQueue.put()  outside composeChangeNodeOutputPinStatusQuery() 
-  
+                Bugfix in router_handler.py, moved queryToNetworkNodeQueue.put()  outside composeChangeNodeOutputPinStatusQuery()
+                Started implementing scenario_operations page
+                Created javascript to show delete checkbox in scenario list
+                Changed mod_scenario gui with Enrico's new ones                  
+                Now sonoff reads serial_number from sysCfg.friendlyname which is saved on eprom  
+                Updated sonoff Tasmota to v5.2.4-3-g3a4210e
+
 
 
 (110, 'Connection timed out');;;
