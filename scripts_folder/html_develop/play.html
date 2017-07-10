@@ -14,19 +14,19 @@
 
 
 <script>
-var x = 0; //la metto prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
+var x = 0; //la metto  prima della funzione perchè voglio che esista sempre..non solo quando eseguo la funzione,altrimenti sarebbe sempre ricreata ed uguale a 0
 
 
 function menufunction(menu_sx,funzione_da_eseguire) {
 		if (funzione_da_eseguire=="click"){
-	  		if(x === 0){ 
+	  		if(x === 0){
 	      	x=1;
 	      	document.getElementById('menu_sx').style.marginLeft = "0%";
-	    	} 
+	    	}
 	  		else {
 	      	x=0;
-	      	document.getElementById('menu_sx').style.marginLeft = "-100%"; 
-	    	}  
+	      	document.getElementById('menu_sx').style.marginLeft = "-100%";
+	    	}
 	  	}
 }
 
