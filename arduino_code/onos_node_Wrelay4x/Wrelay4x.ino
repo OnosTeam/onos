@@ -256,10 +256,6 @@ boolean changeObjStatus(char obj_number,int status_to_set){
   }
 
 
-
-
-
-
 return(0);
 
 }
@@ -761,7 +757,7 @@ void handleButton(){
   obj_button_pin=node_obj_pinout[button];
   if (digitalRead(obj_button_pin)==0) {
     Serial.print(F("obj_button pressed"));
-    if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than 20 seconds
+    if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
         Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
         noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
         memset(encript_key,0,sizeof(encript_key)); //to clear the array

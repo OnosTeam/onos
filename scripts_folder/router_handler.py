@@ -662,14 +662,14 @@ class RouterHandler:
 
 
 
-    def setAddressToNode(self,node_serial_number,new_address):
+    def setAddressToNode(self,node_serial_number,old_address,new_address):
 
       
-      logprint("new address for the node:"+str(new_address))
+      logprint("setAddressToNode executed with address:"+str(new_address))
 
 
-      node_address=nodeDict[node_serial_number].getNodeAddress()  
-      query="[S_"+node_address+"sa"+new_address+node_serial_number+self.getProgressive_msg_id()+"_#]"+'''\n'''
+      #node_address=nodeDict[node_serial_number].getNodeAddress()  
+      query="[S_"+old_address+"sa"+new_address+node_serial_number+self.getProgressive_msg_id()+"_#]"+'''\n'''
       #result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
       #if result ==1:
       #  int_address=int(new_address)

@@ -352,17 +352,36 @@ def getNextFreeAddress(node_sn,uart_router_sn,object_dictionary,nodeDictionary,z
 
   #logprint(next_node_free_address_list) 
   if node_sn in nodeDict:  #if the node has already an address..reuse it
-    address=nodeDict[node_sn].getNodeAddress()
-    if (address!="254" ): 
+    address=nodeDict[node_sn].getNodeAddress() 
+    address_occurrences=0
+    for a in nodeDict.keys():  #read all nodes
+      tmp_address=nodeDict[a].getNodeAddress()   #get all nodes addresses
+      if len(tmp_address)==3: #if radio node
+        if int(tmp_address) not in next_node_free_address_list:
+          next_node_free_address_list.append(int(tmp_address))  
+        if tmp_address==address:   
+          address_occurrences=address_occurrences+1
+        if address_occurrences>1:
+          break
+        
+    if (address_occurrences<2)&(address!="254"):  # if the address is not used in two nodes and is not 254 then return it. 
       return (address)
+    elif address_occurrences>1 :
+      logprint("2 or more nodes uses the same address")
+
+
 
 
   for number in range(2,254):
-    if number not in next_node_free_address_list:# if the address is not used then assign it
-     # next_node_free_address_list.append(number)
-     # updateNodeAddress(node_sn,number,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
-      logprint("I found a free address "+str(number)+"for the node with sn:"+node_sn)
-      #errorQueue.put("i found a free address "+str(number)+"for the node with sn:"+node_sn)
+    
+    for node in nodeDict:
+      free_address=1
+      tmp_address=nodeDict[node].getNodeAddress() 
+      if tmp_address==number:
+        free_address=0
+        break
+
+    if free_address==1:
       str_address=str(number)
       while (len(str_address)<3):
         str_address="0"+str_address
@@ -6252,15 +6271,15 @@ def executeQueueFunction(dataExchanged):
 
     try:
       node_serial_number=dataExchanged["nodeSn"]
-      node_address=dataExchanged["nodeAddress"]
-
+      #old_address=dataExchanged["nodeAddress"]
+      old_address=nodeDict[node_serial_number].getNodeAddress()  
       #   [S_254sa123WLightSS0003_#]
-      if node_address=="001":   #the router node will not need another address ..only a confirm for first message sync
+      if old_address=="001":   #the router node will not need another address ..only a confirm for first message sync
         new_address=node_address
       else:
         new_address=getNextFreeAddress(node_serial_number,uart_router_sn,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
 
-      hardware.setAddressToNode(node_serial_number,new_address) 
+      hardware.setAddressToNode(node_serial_number,old_address,new_address) 
       #if result==1:
       #  print "i save the new address in the config memory"
 
