@@ -1,6 +1,12 @@
 {
   "dictionaries": {
     "nodeDictionary": {
+      "ProminiS0001": {
+        "hwModelName": "ProminiS", 
+        "nodeAddress": "001", 
+        "nodeObjectsDict": {}, 
+        "node_serial_number": "ProminiS0001"
+      }, 
       "RouterGA0000": {
         "hwModelName": "RouterGA", 
         "nodeAddress": "0", 
@@ -15,21 +21,9 @@
       }, 
       "Sonoff1P0000": {
         "hwModelName": "Sonoff1P", 
-        "nodeAddress": "192.168.1.9", 
+        "nodeAddress": "192.168.1.16", 
         "nodeObjectsDict": {}, 
         "node_serial_number": "Sonoff1P0000"
-      }, 
-      "Sonoff1P0001": {
-        "hwModelName": "Sonoff1P", 
-        "nodeAddress": "192.168.1.9", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "Sonoff1P0001"
-      }, 
-      "Sonoff1P0002": {
-        "hwModelName": "Sonoff1P", 
-        "nodeAddress": "192.168.1.9", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "Sonoff1P0002"
       }, 
       "Wrelay4x0007": {
         "hwModelName": "Wrelay4x", 
@@ -40,12 +34,19 @@
       "Wrelay4x0008": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "002", 
-        "nodeObjectsDict": {}, 
+        "nodeObjectsDict": {
+          "0": "caldaia_Wrelay4x0008", 
+          "1": "router_Wrelay4x0008", 
+          "2": "relay0_Wrelay4x0008", 
+          "3": "relay1_Wrelay4x0008", 
+          "4": "lux_threshold_Wrelay4x0008", 
+          "5": "timeout_to_turn_off_Wrelay4x0008"
+        }, 
         "node_serial_number": "Wrelay4x0008"
       }, 
       "Wrelay4x0009": {
         "hwModelName": "Wrelay4x", 
-        "nodeAddress": "004", 
+        "nodeAddress": "005", 
         "nodeObjectsDict": {
           "0": "caldaia_Wrelay4x0009", 
           "1": "router_Wrelay4x0009", 
@@ -55,22 +56,44 @@
           "5": "timeout_to_turn_off_Wrelay4x0009"
         }, 
         "node_serial_number": "Wrelay4x0009"
-      }, 
-      "Wrelay4x0010": {
-        "hwModelName": "Wrelay4x", 
-        "nodeAddress": "003", 
-        "nodeObjectsDict": {
-          "0": "caldaia_Wrelay4x0010", 
-          "1": "router_Wrelay4x0010", 
-          "2": "relay0_Wrelay4x0010", 
-          "3": "relay1_Wrelay4x0010", 
-          "4": "lux_threshold_Wrelay4x0010", 
-          "5": "timeout_to_turn_off_Wrelay4x0010"
-        }, 
-        "node_serial_number": "Wrelay4x0010"
       }
     }, 
     "objectDictionary": {
+      "button0_ProminiS0001": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "button0_ProminiS0001=0", 
+          "1": "button0_ProminiS0001=1", 
+          "onoswait": "button0_ProminiS0001WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ProminiS0001", 
+        "notes": " ", 
+        "objname": "button0_ProminiS0001", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          5
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_output"
+      }, 
       "button0_RouterGA0000": {
         "cmdDict": {
           "0": "", 
@@ -163,7 +186,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -191,39 +214,6 @@
         "node_sn": "Wrelay4x0009", 
         "notes": " ", 
         "objname": "caldaia_Wrelay4x0009", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "onoswait", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj"
-      }, 
-      "caldaia_Wrelay4x0010": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "caldaia_Wrelay4x0010=0", 
-          "1": "caldaia_Wrelay4x0010=1", 
-          "onoswait": "caldaia_Wrelay4x0010WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0010", 
-        "notes": " ", 
-        "objname": "caldaia_Wrelay4x0010", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
@@ -272,6 +262,41 @@
           "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
+      }, 
+      "d_sensor0_ProminiS0001": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "d_sensor0_ProminiS0001=0", 
+          "1": "d_sensor0_ProminiS0001=1", 
+          "onoswait": "d_sensor0_ProminiS0001WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ProminiS0001", 
+        "notes": " ", 
+        "objname": "d_sensor0_ProminiS0001", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          21
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_input"
       }, 
       "d_sensor0_RouterGA0000": {
         "cmdDict": {
@@ -334,7 +359,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 13, 
+        "status": 15, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -370,7 +395,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 225, 
+        "status": 1375, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -405,16 +430,8 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "scenario10", 
-          "scenario3", 
-          "scenario2", 
-          "scenario7", 
-          "scenario6", 
-          "scenario5", 
-          "scenario4"
-        ], 
-        "status": 3, 
+        "scenarios": [], 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -514,40 +531,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "cfg_obj"
-      }, 
-      "lux_threshold_Wrelay4x0010": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "lux_threshold_Wrelay4x0010=0", 
-          "1": "lux_threshold_Wrelay4x0010=1", 
-          "onoswait": "lux_threshold_Wrelay4x0010WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0010", 
-        "notes": " ", 
-        "objname": "lux_threshold_Wrelay4x0010", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -581,18 +565,8 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "scenario10", 
-          "scenario3", 
-          "scenario2", 
-          "scenario21", 
-          "scenario7", 
-          "scenario6", 
-          "scenario5", 
-          "scenario4", 
-          "scenario8"
-        ], 
-        "status": 45, 
+        "scenarios": [], 
+        "status": 55, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -764,40 +738,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj"
-      }, 
-      "relay0_Wrelay4x0010": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "relay0_Wrelay4x0010=0", 
-          "1": "relay0_Wrelay4x0010=1", 
-          "onoswait": "relay0_Wrelay4x0010WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0010", 
-        "notes": " ", 
-        "objname": "relay0_Wrelay4x0010", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -896,7 +837,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -905,7 +846,7 @@
         }, 
         "type": "digital_obj"
       }, 
-      "relay1_Wrelay4x0010": {
+      "relay_Sonoff1P0000": {
         "cmdDict": {
           "0": "", 
           "1": "", 
@@ -916,47 +857,14 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "relay1_Wrelay4x0010=0", 
-          "1": "relay1_Wrelay4x0010=1", 
-          "onoswait": "relay1_Wrelay4x0010WAIT"
+          "0": "relay_Sonoff1P0000=0", 
+          "1": "relay_Sonoff1P0000=1", 
+          "onoswait": "relay_Sonoff1P0000WAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "Wrelay4x0010", 
+        "node_sn": "Sonoff1P0000", 
         "notes": " ", 
-        "objname": "relay1_Wrelay4x0010", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "onoswait", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj"
-      }, 
-      "relay_Sonoff1P0001": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "relay_Sonoff1P0001=0", 
-          "1": "relay_Sonoff1P0001=1", 
-          "onoswait": "relay_Sonoff1P0001WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Sonoff1P0001", 
-        "notes": " ", 
-        "objname": "relay_Sonoff1P0001", 
+        "objname": "relay_Sonoff1P0000", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
@@ -1061,7 +969,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1070,7 +978,7 @@
         }, 
         "type": "digital_obj"
       }, 
-      "router_Wrelay4x0010": {
+      "socket0_ProminiS0001": {
         "cmdDict": {
           "0": "", 
           "1": "", 
@@ -1081,27 +989,30 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "router_Wrelay4x0010=0", 
-          "1": "router_Wrelay4x0010=1", 
-          "onoswait": "router_Wrelay4x0010WAIT"
+          "0": "socket0_ProminiS0001=0", 
+          "1": "socket0_ProminiS0001=1", 
+          "onoswait": "socket0_ProminiS0001WAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "Wrelay4x0010", 
+        "node_sn": "ProminiS0001", 
         "notes": " ", 
-        "objname": "router_Wrelay4x0010", 
+        "objname": "socket0_ProminiS0001", 
         "own": "onos_admin", 
         "perm": "111111111", 
-        "pins": [], 
+        "pins": [
+          20, 
+          19
+        ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "sr_relay"
       }, 
       "timeout_to_turn_off_Wrelay4x0007": {
         "cmdDict": {
@@ -1193,40 +1104,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "cfg_obj"
-      }, 
-      "timeout_to_turn_off_Wrelay4x0010": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "timeout_to_turn_off_Wrelay4x0010=0", 
-          "1": "timeout_to_turn_off_Wrelay4x0010=1", 
-          "onoswait": "timeout_to_turn_off_Wrelay4x0010WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0010", 
-        "notes": " ", 
-        "objname": "timeout_to_turn_off_Wrelay4x0010", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1260,9 +1138,7 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "scenarioA"
-        ], 
+        "scenarios": [], 
         "status": 2017, 
         "styleDict": {
           "0": "background-color:green;", 
@@ -1273,132 +1149,20 @@
         "type": "b"
       }
     }, 
-    "scenarioDictionary": {
-      "scenario10": {
-        "conditions": "(#_hours_#==23)&(#_minutes_#==30)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "Caldaia=0"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario2": {
-        "conditions": "(#_hours_#==8)&(#_minutes_#==0)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=1", 
-          "Wifi_netgear==1", 
-          "Caldaia=0"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario21": {
-        "conditions": "(#_minutes_#>-1)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "socket0_WLightSS0004=!#_socket0_WLightSS0004_#", 
-          "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario3": {
-        "conditions": "(#_hours_#==8)&(#_minutes_#==25)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=0", 
-          "Wifi_netgear==0"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario4": {
-        "conditions": "(#_hours_#==12)&(#_minutes_#==30)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=1", 
-          "Wifi_netgear==1"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario5": {
-        "conditions": "(#_hours_#==14)&(#_minutes_#==0)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=0", 
-          "Wifi_netgear==0"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario6": {
-        "conditions": "(#_hours_#==18)&(#_minutes_#==0)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=1", 
-          "Wifi_netgear==1"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario7": {
-        "conditions": "(#_hours_#==0)&(#_minutes_#==0)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=0", 
-          "Wifi_netgear==0", 
-          "counter1=0"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario8": {
-        "conditions": "(#_minutes_#>-1)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "wifi0_Plug6way0001=!#_wifi0_Plug6way0001_#", 
-          "button1_RouterGL0000==!#_wifi0_Plug6way0001_#"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario9": {
-        "conditions": "1", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "counter1=#_counter1_#+1"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenarioA": {
-        "conditions": "(#_year_#==2016)", 
-        "enabled": 1, 
-        "functionsToRun": [
-          "button0_RouterGL0000=1", 
-          "aaaaaaaaaaaaaaaaaaaaaaaaa=2016", 
-          "counter1=1", 
-          "socket3_Plug6way0001=1"
-        ], 
-        "one_time_shot": 0, 
-        "priority": 0, 
-        "type_after_run": "0"
-      }
-    }, 
+    "scenarioDictionary": {}, 
     "zoneDictionary": {
+      "ProminiS0001": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "socket0_ProminiS0001", 
+          "button0_ProminiS0001", 
+          "d_sensor0_ProminiS0001"
+        ], 
+        "order": 2, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
       "RouterGA0000": {
         "group": [], 
         "hidden": 0, 
@@ -1411,13 +1175,13 @@
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
-      "Sonoff1P0001": {
+      "Sonoff1P0000": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "relay_Sonoff1P0001"
+          "relay_Sonoff1P0000"
         ], 
-        "order": 2, 
+        "order": 5, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
@@ -1447,7 +1211,7 @@
           "lux_threshold_Wrelay4x0008", 
           "timeout_to_turn_off_Wrelay4x0008"
         ], 
-        "order": 5, 
+        "order": 3, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
@@ -1461,21 +1225,6 @@
           "relay1_Wrelay4x0009", 
           "lux_threshold_Wrelay4x0009", 
           "timeout_to_turn_off_Wrelay4x0009"
-        ], 
-        "order": 3, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "Wrelay4x0010": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "caldaia_Wrelay4x0010", 
-          "router_Wrelay4x0010", 
-          "relay0_Wrelay4x0010", 
-          "relay1_Wrelay4x0010", 
-          "lux_threshold_Wrelay4x0010", 
-          "timeout_to_turn_off_Wrelay4x0010"
         ], 
         "order": 4, 
         "owner": "onos_sys", 

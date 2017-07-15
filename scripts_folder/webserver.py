@@ -304,44 +304,57 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
 
 
 
-def updateNodeAddress(node_sn,uart_router_sn,address,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):
+def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
   """,
-  Given a node serialnumber and an address, updates the node in the nodeDict with the current address. 
+  Given a node serialnumber and an address, updates the node in the nodeDict with the given address. 
 
   """
-
+  logprint("updateNodeAddress() executed with node_sn:"+node_sn,verbose=3)
   try: #if (node_sn in nodeDict.keys()):
 
 
     nodeDict[node_sn].updateLastNodeSync(time.time())
-    if len(address)==3:  #if is a radio node
-      if address not in next_node_free_address_list: 
-        next_node_free_address_list.append(address)   
+    if len(node_address)==3:  #if is a radio node
+      logprint("the node to update is a radio node",verbose=3)
+      numeric_address=int(node_address)
+      if numeric_address not in next_node_free_address_list: 
+        logprint("numeric_address not in list,I add it",verbose=1)
+        next_node_free_address_list.append(numeric_address)  
+      else :
+        for node in nodeDict.keys():
+          if nodeDict[node].getNodeAddress()==node_address:
+            
+            if node!=node_sn:  #found another node with the same address! I will therefore assing another one to this node..
+              message="warning I have found another node with the same address,I will therefore assing another one to this node:"+node_sn
+              logprint(message,verbose=5)
 
-      #if address !="254": #if the node have already an address
+              priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":node_sn,"nodeAddress":node_address,"nodeFw":node_fw}) 
+         
+
+      #if node_address !="254": #if the node have already an address
 
 
       if uart_router_sn in nodeDict.keys():
         nodeDict[uart_router_sn].updateLastNodeSync(time.time())  #I update also the uart_router last time sync since it is him that sent the remote node message
 
-    if (nodeDict[node_sn].getNodeAddress())!=address:
-      logprint("node "+node_sn+" address changed to "+address)
-      nodeDict[node_sn].setNodeAddress(address)
-      updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary) #save all the new data
+    if (nodeDict[node_sn].getNodeAddress())!=node_address:
+      logprint("node "+node_sn+" address changed to "+node_address)
+      nodeDict[node_sn].setNodeAddress(node_address)
+      updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options) #save all the new data
 
       
     else:
       logprint("the node has still the same address")
 
   except Exception as e  :
-    message="error in updateNodeAddress() node_sn was:"+node_sn+" address was:"+address
+    message="error in updateNodeAddress() node_sn was:"+node_sn+" address was:"+node_address
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
   return()
 
 
-def getNextFreeAddress(node_sn,uart_router_sn,object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):# get the next free address 
+def getNextFreeAddress(node_sn,uart_router_sn,node_fw):# get the next free address 
   """
   | Given a node serialnumber this function will return the first free address to assign to the node. 
   | If there are no free addresses left it will check if there are nodes disconnected to which steal the address.
@@ -352,46 +365,41 @@ def getNextFreeAddress(node_sn,uart_router_sn,object_dictionary,nodeDictionary,z
 
   #logprint(next_node_free_address_list) 
   if node_sn in nodeDict:  #if the node has already an address..reuse it
-    address=nodeDict[node_sn].getNodeAddress() 
-    address_occurrences=0
-    for a in nodeDict.keys():  #read all nodes
-      tmp_address=nodeDict[a].getNodeAddress()   #get all nodes addresses
-      if len(tmp_address)==3: #if radio node
-        if int(tmp_address) not in next_node_free_address_list:
-          next_node_free_address_list.append(int(tmp_address))  
-        if tmp_address==address:   
-          address_occurrences=address_occurrences+1
-        if address_occurrences>1:
-          break
-        
-    if (address_occurrences<2)&(address!="254"):  # if the address is not used in two nodes and is not 254 then return it. 
-      return (address)
-    elif address_occurrences>1 :
-      logprint("2 or more nodes uses the same address")
+    node_address=nodeDict[node_sn].getNodeAddress() 
+    repeated_address=0
+    for node in nodeDict.keys():  #read all nodes
+      tmp_address=nodeDict[node].getNodeAddress()   #get all nodes addresses
+      if (len(tmp_address)==3)&(node!=node_sn): #if radio node
+        if nodeDict[node].getNodeAddress()==node_address:           
+            if node!=node_sn:  #found another node with the same address! I will therefore assing another one to this node..
+              repeated_address=1
 
-
+  if repeated_address==0: #the address is still the same and is not used by others nodes
+    logprint("the address is still the same and is not used by others nodes")
+    return(node_address)  
 
 
   for number in range(2,254):
-    
-    for node in nodeDict:
-      free_address=1
-      tmp_address=nodeDict[node].getNodeAddress() 
-      if tmp_address==number:
-        free_address=0
-        break
+    if number not in next_node_free_address_list:
+      for node in nodeDict:
+        free_address=1
+        tmp_address=nodeDict[node].getNodeAddress() 
+        if tmp_address==number:
+          free_address=0
+          break
 
-    if free_address==1:
-      str_address=str(number)
-      while (len(str_address)<3):
-        str_address="0"+str_address
-      return(str_address)
+      if free_address==1:
+        str_address=str(number)
+        while (len(str_address)<3):
+          str_address="0"+str_address
+        next_node_free_address_list.append(number)
+        return(str_address)
 
-  for node in nodeDict.keys():
+  for node in nodeDict.keys(): #todo test it!
     address=nodeDict[node].getNodeAddress()
     if (  (  (time.time()-nodeDict[node].getLastNodeSync() )>nodeDict[node].getNodeTimeout()  )&(len(address)<=3)) : #the node is not connected
         #updateNodeAddress(node_sn,address) 
-      updateNodeAddress(node,"reassigned",object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary)
+      updateNodeAddress(node,uart_router_sn,"reassigned",node_fw)
       logprint( "I had finished all the free addresses so I recycled a not used one",verbose=5) 
       return(address)
 
@@ -439,7 +447,7 @@ def changeWebObjectType(objName,typeToSet):#
         return(1)
 
       if len (pins_to_set)!=1:   # under this i put every object with one single hardware pin 
-          logprint("error , number of pins different from 1 for this obj type ",verbose=7)
+          logprint("warning , number of pins different from 1 for this obj type ",verbose=4)
           return(-1)   
 
       if ((typeToSet=="b")|(typeToSet=="sb")):
@@ -1850,7 +1858,7 @@ def createNewNode(node_sn,node_address,node_fw):
     #  createNewNode(node_sn,node_address,node_fw,1) 
       # if the node doesn't have any object it means there is a problem so will force an update
 
-    updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+    updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #create a new node
     logprint("requested setup for a node not existing yet ")                 
@@ -1892,7 +1900,7 @@ def createNewNode(node_sn,node_address,node_fw):
     zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
 
     createNewWebObjFromNode(hwType,node_sn)
-    updateNodeAddress(node_sn,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)  
+    updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)  
     msg=nodeDict[node_sn].getSetupMsg() 
     updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
 
@@ -4242,7 +4250,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if node_sn in nodeDict.keys():
               logprint("the node exist so i update the pin input status")
-              updateNodeAddress(node_sn,uart_router_sn,node_ip,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)# update the node ip 
+              updateNodeAddress(node_sn,uart_router_sn,node_ip,node_fw)# update the node ip 
               
             else:
               msg=createNewNode(node_sn,node_ip,node_fw)
@@ -6172,7 +6180,7 @@ def executeQueueFunction(dataExchanged):
 
   if (dataExchanged["cmd"]=="updateObjFromNode"):
 
-    logprint("updateObjFromNode")
+    logprint("updateObjFromNode_in_executeQueueFunction")
 
 #hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}# 
 
@@ -6180,10 +6188,12 @@ def executeQueueFunction(dataExchanged):
     node_address=dataExchanged["nodeAddress"]
     node_fw=dataExchanged["nodeFw"]
     if node_serial_number not in nodeDict.keys():
+      message="error node_sn:"+node_serial_number+" not in nodeDict"
+      logprint(message,verbose=6)
       priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
       return
 
-    updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+    updateNodeAddress(node_serial_number,uart_router_sn,node_address,node_fw)
     node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
     logprint(str(dataExchanged["objects_to_update"].keys())+"end data_exanged")
 
@@ -6197,7 +6207,7 @@ def executeQueueFunction(dataExchanged):
           object_dict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
         except Exception as e: #todo place this somewhere else..
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
-          message="warning in the updateObjFromNode"
+          message="warning in the updateObjFromNode,the object doesnt exist yet"
           logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
           msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
           createNewWebObjFromNode(hwType,node_serial_number) 
@@ -6223,13 +6233,13 @@ def executeQueueFunction(dataExchanged):
 
 
 
-  if (dataExchanged["cmd"]=="updateNodeAddress"):
+  if (dataExchanged["cmd"]=="updateNodeAddress"): # called from node_query_handler.py
 
 
     try:
       node_serial_number=dataExchanged["nodeSn"]
       node_address=dataExchanged["nodeAddress"]
-
+      node_fw=dataExchanged["nodeFw"]
       if node_serial_number not in nodeDict.keys():
         priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
         return
@@ -6237,7 +6247,7 @@ def executeQueueFunction(dataExchanged):
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node was inactive
         nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
 
-      updateNodeAddress(node_serial_number,uart_router_sn,node_address,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+      updateNodeAddress(node_serial_number,uart_router_sn,node_address,node_fw)
 
     except Exception as e:
       message="error in the updateNodeAddress of onosBusThread ,Node:"+str(node_serial_number)
@@ -6273,11 +6283,12 @@ def executeQueueFunction(dataExchanged):
       node_serial_number=dataExchanged["nodeSn"]
       #old_address=dataExchanged["nodeAddress"]
       old_address=nodeDict[node_serial_number].getNodeAddress()  
+      node_fw=dataExchanged["nodeFw"]
       #   [S_254sa123WLightSS0003_#]
       if old_address=="001":   #the router node will not need another address ..only a confirm for first message sync
         new_address=node_address
       else:
-        new_address=getNextFreeAddress(node_serial_number,uart_router_sn,object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+        new_address=getNextFreeAddress(node_serial_number,uart_router_sn,node_fw)
 
       hardware.setAddressToNode(node_serial_number,old_address,new_address) 
       #if result==1:

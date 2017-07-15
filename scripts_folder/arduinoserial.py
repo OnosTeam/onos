@@ -339,7 +339,7 @@ class SerialPort:
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
-                priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
+                #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
                 #waitTowriteUntilIReceive=0
                 continue
 

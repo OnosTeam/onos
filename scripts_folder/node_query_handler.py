@@ -477,8 +477,9 @@ def handle_new_query_to_radio_node_thread(serialCom):
       queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
 
     else:##if the query was accepted from the radio/serial node
+      node_fw=nodeDict[node_serial_number].getNodeFwVersion()
       #since onos was able to talk to the node I update the LastNodeSync
-      layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address}) 
+      layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
       if cmd=="set_address":
         new_address=status_to_set
