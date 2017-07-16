@@ -12,9 +12,10 @@ part_to_insert_in_head='''<link rel="stylesheet" href="css/zone-list.css">
 '''.encode('ascii','ignore')
 
 
-html=getTopMenu(part_to_insert_in_head)
+menu=getTopMenu(part_to_insert_in_head)
+menu=menu.replace("right_menu_add_link_to_replace","/zone_creation/")  # replace the link in the + of the right menu
 
-
+html=menu
 
 for zone_name in l :             
 
@@ -28,7 +29,7 @@ for zone_name in l :
 
 		<div class="riga" >
 			<a href="/'''+zone_name+'''/index.html?="><div class="zone-name col1">'''+zone_name+'''</div></a>
-			<a href="#"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
+			<a href="/zone_creation/'''+zone_name+'''"><div class="impostazioni-link col2"><i class="icon-wrench"></i></div></a>
 		</div>
 
 '''.encode('ascii','ignore')

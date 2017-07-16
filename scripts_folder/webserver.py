@@ -2306,7 +2306,7 @@ class MyHandler(BaseHTTPRequestHandler):
 <div id="object">'''+c+'''</div>
 <div id="used">  
   ADD
-  <input type="checkbox" name="'''+a+'''_sl_obj_room" checked="checked" />
+  <input type="checkbox" name="'''+a+'''_sel_obj" checked="checked" />
   </div>
 </div>
   '''
@@ -2364,7 +2364,7 @@ class MyHandler(BaseHTTPRequestHandler):
 <div id="object">'''+c+'''</div>
 <div id="add">
   ADD
-  <input type="checkbox" name="'''+b+'''_sl_obj_room" />
+  <input type="checkbox" name="'''+b+'''_sel_obj" />
   </div>
 </div>
   ''' 
@@ -3758,7 +3758,23 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
+            if self.path.find("/zone_creation/")!=-1: # render the scenario list 
+              namespace={"current_username":self.current_username,"zone_to_mod":self.path.split("/")[2]}
+              cgi_name="gui/mod_zone.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
 
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error16a in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return
 
 
             if  ( string.find(self.path,"/zone_objects_setup/")!=-1): # 
@@ -4339,7 +4355,7 @@ class MyHandler(BaseHTTPRequestHandler):
  #the data are the value of the input 
 
             data_to_update=0
-            logprint("POST:"+str(postvars.keys()) )
+            #logprint("POST:"+str(postvars.keys()) )
             
 #<form action="" method="POST"><input type="hidden" name="zone_manager" value="/setup/zone_manager">
             location="zone_manager"
@@ -4486,31 +4502,89 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            elif "zone_objects_setup" in postvars:   #   to add or remove objects to a zone 
-              
-              
-              zone=self.clear_PostData(postvars["zone_objects_setup"][0])
-              logprint("zone_objects_setup page send a post to mode zone"+zone)
-              
-              obj_name_list=zoneDict[zone]["objects"]
 
+            elif "zone_setup_manager" in postvars:   #   to add or remove objects to a zone 
+
+              zone=self.clear_PostData(postvars["zone_setup_manager"][0])
+              logprint("zone_objects_setup page send a post to mode zone"+zone)   
+
+              if "new_zone_to_create" in postvars:   #  
+                new_zone_name=self.clear_PostData(postvars["new_zone_to_create"][0])
+                new_zone_name=new_zone_name.replace("/", "_")
+                if new_zone_name!="" and new_zone_name!="Scrivi il nome della zona":
+                  if zone!="" and new_zone_name!=zone :   # if I have to rename a zone
+                     zoneDict[new_zone_name] = zoneDict[zone]   #update the zoneDict with the new key
+                     zoneDict.pop(zone, None)  # del zoneDict[zone]            #and delete the old key                  
+                 
+                  elif new_zone_name!=zone: # if I have to create a new zone...                  
+                    zoneDict[new_zone_name]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+                    zoneDict[new_zone_name]["objects"]=[new_zone_name+"_body"]  # modify to update also the webobject dict and list 
+                    #object_dict[new_zone_name+"_body"]=newDefaultWebObjBody(new_zone_name+"_body") #create a new web_object and insert only his name          
+                    try:
+                      os.stat(baseRoomPath+new_zone_name)
+                    except:
+                      os.mkdir(baseRoomPath+new_zone_name)  
+                    with open(baseRoomPath+new_zone_name+"/index.html", 'w') as f:
+                      f.write(getRoomHtml(new_zone_name,object_dict,"",zoneDict))
+                    os.chmod(baseRoomPath+new_zone_name+"/index.html", 0o777)
+                    updateOneZone(new_zone_name)       
+                    logprint("create a new zone"+new_zone_name)
+                    data_to_update=1
+                else:# new_zone_name is not valid
+                  new_zone_name=zone
+  
+              obj_name_list=zoneDict[new_zone_name]["objects"]
 
               for a in  object_dict.keys():
-                #a=b.replace("_sl_obj_room","")
+
+
+                if (a+"_sel_obj" in postvars): 
+                  
+                  if a not in obj_name_list:
+                    logprint("add obj to zone :"+a)
+                    zoneDict[new_zone_name]["objects"].append(a)   #add the 
+
+                else: # not checked , so remove the  object from the zone if it is there
+                  
+                  if a in  obj_name_list:
+                    logprint("i try to remove the object "+a+"from the zone"+zone)
+                    index=zoneDict[new_zone_name]["objects"].index(a)
+                    zoneDict[new_zone_name]["objects"].pop(index)
+
+
+              self.send_response(301)
+              self.send_header('Location','/')
+              self.end_headers()
+              return    
+
+
+
+
+
+
+
+            elif "zone_objects_setup" in postvars:   #   to add or remove objects to a zone 
+                        
+              zone=self.clear_PostData(postvars["zone_objects_setup"][0])
+              logprint("zone_objects_setup page send a post to mode zone"+zone)     
+              obj_name_list=zoneDict[zone]["objects"]
+
+              for a in  object_dict.keys():
+
                 
 
                 if (1):
-                  if (a+"_sl_obj_room" in postvars): 
+                  if (a+"_sel_obj" in postvars): 
                   
-                    if (postvars[a+"_sl_obj_room"][0]=='on'):
-                      if a not in obj_name_list:
-                        logprint("add obj to zone :"+a)
-                        zoneDict[zone]["objects"].append(a)   #add the 
-                    else:# not checked , so remove the  object from the zone if it is there
-                      if a in  obj_name_list: 
-                        logprint("i try to remove the object "+a+"from the zone"+zone)
-                        index=zoneDict[zone]["objects"].index(a)
-                        zoneDict[zone]["objects"].pop(index)
+                    #if (postvars[a+"_sel_obj"][0]=='on'):
+                    if a not in obj_name_list:
+                      logprint("add obj to zone :"+a)
+                      zoneDict[zone]["objects"].append(a)   #add the 
+                    #else:# not checked , so remove the  object from the zone if it is there
+                    #  if a in  obj_name_list: 
+                    #    logprint("i try to remove the object "+a+"from the zone"+zone)
+                    #    index=zoneDict[zone]["objects"].index(a)
+                    #    zoneDict[zone]["objects"].pop(index)
 
                   else: # not checked , so remove the  object from the zone if it is there
                   
