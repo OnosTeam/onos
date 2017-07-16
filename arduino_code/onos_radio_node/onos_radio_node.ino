@@ -96,6 +96,97 @@
 #define remote_node   //tell the compiler that this is a remote node
 //#define local_node  //tell the compiler that this is a local node
  
+
+
+//**************************************Onos Define node **************************************
+
+char serial_number[13]="xxxxxxxxxxxx";
+char numeric_serial[5]="0004";   // this is the progressive numeric serial number
+
+//you should comment all the type but the one you want to use
+//commentare tutti i tipi di nodo tranne quello utilizzato
+#define node_type_WreedSaa
+/*
+#define node_type_Wrelay4x
+#define node_type_WLightSS
+#define node_type_WPlug1vx
+#define node_type_WIRbarr0
+#define node_type_WSoilHaa
+*/                  
+
+
+//************************************End ofOnos Define node **************************************
+
+
+
+
+//**********************************Onos objects configuration **************************************
+
+
+
+
+#if defined(node_type_WreedSaa)
+  // define object numbers to use in the pin configuration warning this is not the pinout numbers
+  #define reed1   0
+  #define button  1
+  #define led     2
+  #define tempS   3
+  #define digOut  4
+  #define reed2   5
+  #define syncTime  6
+  #define NODE_TIMEOUT 36000000  //10 minutes of timeout
+  #define TOTAL_OBJECTS 7 // 7 because there are 6 elements + a null for the array closing
+
+#elif defined(node_type_Wrelay4x)
+  // define object numbers to use in the pin configuration warning this is not the pinout numbers
+  #define relay1  0
+  #define relay2  1
+  #define relay3  2 
+  #define relay4  3
+  #define button  4
+  #define led     5
+  #define syncTime  6
+  #define NODE_TIMEOUT 1500
+  #define TOTAL_OBJECTS 8
+ 
+#elif defined(node_type_WLightSS)
+  #define NODE_TIMEOUT 1500
+
+#elif defined(node_type_WPlug1vx)
+  #define NODE_TIMEOUT 1500
+
+#elif defined(node_type_WIRbarr0)
+  #define NODE_TIMEOUT 1500
+
+#elif defined(node_type_WSoilHaa)
+  #define NODE_TIMEOUT 1500
+
+
+#endif 
+
+
+
+const uint8_t number_of_total_objects=TOTAL_OBJECTS ;
+
+uint8_t node_obj_pinout[number_of_total_objects]; 
+uint8_t node_obj_status[number_of_total_objects];  
+
+
+
+
+
+
+//********************************End of Onos objects configuration **************************************
+
+
+
+
+
+
+
+
+
+
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  
 RFM69_ATC radio;
@@ -105,8 +196,9 @@ RFM69_ATC radio;
 boolean radio_enabled=1;
 
 unsigned long sync_time=0;
+unsigned long sync_timeout=NODE_TIMEOUT;
 
-char serial_number[13]="Wrelay4x0007";
+
 char node_fw[]="5.27";
 char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 //char init_encript_key[17]=INITENCRYPTKEY;
@@ -162,19 +254,7 @@ volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to
 volatile char received_serial_number[13]; //used in OnosMsg
 volatile boolean reInitializeRadio=0;
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
-// node object pinuot//
 
-// define object numbers to use in the pin configuration warning this is not the pinout numbers
-#define relay1  0
-#define relay2  1
-#define relay3  2
-#define relay4  3
-#define button  4
-#define led     5
-const uint8_t number_of_total_objects=7;      // 7 because there are 6 elements + a null 
-
-uint8_t node_obj_pinout[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as void for array in c..
-uint8_t node_obj_status[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as
 
 uint8_t obj_button_pin;
 //end node object pinuot, continue in setup() // 
@@ -248,6 +328,10 @@ boolean changeObjStatus(char obj_number,int status_to_set){
       main_obj_state=status_to_set;
       changeObjStatus(led,!status_to_set);
     }
+    else if(obj_number==syncTime){  // if the object sent is syncTime change the sync_timeout with the value received
+      sync_timeout=status_to_set*1000;// get the value in seconds
+    }
+
 
 
     node_obj_status[obj_number]=status_to_set;
@@ -675,8 +759,8 @@ void checkCurrentRadioAddress(){
 
   }
   else{
-    random_time=1500;//random(1500,2500);
-    if ((millis()-sync_time)>random_time){ //every 1500/2500 ms
+    //random_time=1500;//random(1500,2500);
+    if ((millis()-sync_time)>sync_timeout){ //every 1500/2500 ms
    
       sync_time=millis();
 
@@ -792,12 +876,60 @@ void handleButton(){
 
 void setup() {
 
+  #define reed1   0
+  #define button  1
+  #define led     2
+  #define tempS   3
+  #define digOut  4
+  #define reed2  5
+
+#if defined(node_type_WreedSaa)
+  memset(serial_number,0,sizeof(serial_number)); //to clear the array
+  strcpy(serial_number,"WreedSaa");
+  strcat(serial_number,numeric_serial);
+  node_obj_pinout[reed1]=4;   // the first  object is the reed1 connected on pin 4 
+  node_obj_pinout[button]=3;  // the second  object is the button  connected on pin 3 
+  node_obj_pinout[led]=5;     // the third  object is the led     connected on pin 5
+  node_obj_pinout[tempS]=0;   // the forth object is the temperature sensor connected on pin 0  
+  node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
+  node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
+  pinMode(node_obj_pinout[reed1], INPUT);
+  pinMode(node_obj_pinout[button], INPUT);
+  pinMode(node_obj_pinout[led], OUTPUT);
+  pinMode(node_obj_pinout[digOut], OUTPUT);
+  pinMode(node_obj_pinout[reed2], INPUT);
+  delay(2);
+  digitalWrite(node_obj_pinout[reed1],1); //set pullup on reed
+
+//  digitalwrite(node_obj_pinout[reed2],1);
+
+#elif defined(node_type_Wrelay4x)
+  memset(serial_number,0,sizeof(serial_number)); //to clear the array
+  strcpy(serial_number,"Wrelay4x");
+  strcat(serial_number,numeric_serial);
   node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
-  node_obj_pinout[relay2]=8;  // the second object is the relay 1 connected on pin 8  
+  node_obj_pinout[relay2]=8;  // the second object is the relay 2 connected on pin 8  
   node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
   node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 
   node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
   node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+   
+#elif defined(node_type_WLightSS)
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+#elif defined(node_type_WPlug1vx)
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+#elif defined(node_type_WIRbarr0)
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+#elif defined(node_type_WSoilHaa)
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+
+#endif 
+
+
+
+
+
+
 
 
 //  while (!Serial); // wait until serial console is open, remove if not tethered to computer
@@ -806,12 +938,7 @@ void setup() {
 //  pinMode(RFM69_RST, OUTPUT);
 
 
-  pinMode(node_obj_pinout[relay1], OUTPUT);
-  pinMode(node_obj_pinout[relay2], OUTPUT);
-  pinMode(node_obj_pinout[relay3], OUTPUT);
-  pinMode(node_obj_pinout[relay4], OUTPUT);
-  pinMode(node_obj_pinout[led], OUTPUT);
-  pinMode(node_obj_pinout[button], INPUT);
+
 
   attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, CHANGE);
 
