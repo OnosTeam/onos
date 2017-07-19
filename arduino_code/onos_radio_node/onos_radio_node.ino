@@ -68,6 +68,7 @@
 #include <RFM69_ATC.h> 
 #include <EEPROM.h>
 #include <OnosMsg.h>
+#include <LowPower.h>
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
@@ -130,12 +131,18 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define reed1   0
   #define button  1
   #define led     2
-  #define tempS   3
+  #define tempSensor   3
   #define digOut  4
   #define reed2   5
   #define syncTime  6
-  #define NODE_TIMEOUT 36000000  //10 minutes of timeout
-  #define TOTAL_OBJECTS 7 // 7 because there are 6 elements + a null for the array closing
+  #define reed1Logic  7
+  #define reed2Logic  8
+  #define battery_state 9
+
+  #define TOTAL_OBJECTS 10 //10 because there are 9 elements + a null for the array closing
+  #define node_default_timeout 36000000  //10 minutes of timeout
+  uint8_t reed1_status=0;  //
+
 
 #elif defined(node_type_Wrelay4x)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -146,20 +153,21 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define button  4
   #define led     5
   #define syncTime  6
-  #define NODE_TIMEOUT 1500
+
   #define TOTAL_OBJECTS 8
+  #define node_default_timeout 1500
  
 #elif defined(node_type_WLightSS)
-  #define NODE_TIMEOUT 1500
+  #define node_default_timeout 1500
 
 #elif defined(node_type_WPlug1vx)
-  #define NODE_TIMEOUT 1500
+  #define node_default_timeout 1500
 
 #elif defined(node_type_WIRbarr0)
-  #define NODE_TIMEOUT 1500
+  #define node_default_timeout 1500
 
 #elif defined(node_type_WSoilHaa)
-  #define NODE_TIMEOUT 1500
+  #define node_default_timeout 1500
 
 
 #endif 
@@ -169,7 +177,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 const uint8_t number_of_total_objects=TOTAL_OBJECTS ;
 
 uint8_t node_obj_pinout[number_of_total_objects]; 
-uint8_t node_obj_status[number_of_total_objects];  
+int node_obj_status[number_of_total_objects];  
 
 
 
@@ -196,7 +204,7 @@ RFM69_ATC radio;
 boolean radio_enabled=1;
 
 unsigned long sync_time=0;
-unsigned long sync_timeout=NODE_TIMEOUT;
+unsigned long sync_timeout=node_default_timeout;
 
 
 char node_fw[]="5.27";
@@ -263,6 +271,8 @@ OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
 
 uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
+uint8_t radioRetryAllarm=100; 
+uint8_t radioTxTimeoutAllarm=200;  
 
 # define gateway_address 1
 boolean first_sync=1;
@@ -346,6 +356,10 @@ return(0);
 
 
 void composeSyncMessage(){
+#if defined(node_type_WreedSaa)
+//[S_001rsWreedSaa00013125agx_#]
+
+#endif 
 
   Serial.println(F("composeSyncMessage executed"));
   //[S_123ul5.24WPlugAvx000810000x_#]
@@ -768,6 +782,12 @@ void checkCurrentRadioAddress(){
 
 
     }
+#if defined(node_type_WreedSaa)
+    else{ // else i put the node to sleep
+      radio.sleep();
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+    }
+#endif  //end  if defined(node_type_WreedSaa)
 
   }
 
@@ -811,8 +831,26 @@ void buttonStateChanged(){
   button_still_same_status=0;
 
 }
- 
-void handleButton(){
+
+#if defined(node_type_WreedSaa)
+
+void handleReed(){//handle the reed sensor
+  node_obj_status[reed1Logic]=0;
+  if (digitalRead(node_obj_pinout[reed1])==node_obj_status[reed1Logic]){ //the sensor should send allarm
+    sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
+  }
+
+  if (digitalRead(node_obj_pinout[reed2])==node_obj_status[reed2Logic]){ //the sensor should send allarm
+    sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
+  }
+
+
+}
+#endif  //end  if defined(node_type_WreedSaa)
+
+
+
+void handleButton(){//handle the main node button
 /*
   Serial.println(F("handleButton() executed "));
   Serial.print("button_still_same_status:");
@@ -835,10 +873,8 @@ void handleButton(){
   }
 
 
-
-
-
   obj_button_pin=node_obj_pinout[button];
+
   if (digitalRead(obj_button_pin)==0) {
     Serial.print(F("obj_button pressed"));
     if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
@@ -871,26 +907,36 @@ void handleButton(){
 
 }
 
+void interrupt1_handler(){
 
+#if defined(node_type_WreedSaa)
+  handleReed();
+#endif
+  Serial.println(F("interrupt called"));
+
+}
 
 
 void setup() {
 
-  #define reed1   0
-  #define button  1
-  #define led     2
-  #define tempS   3
-  #define digOut  4
-  #define reed2  5
+
+  node_obj_status[syncTime]=node_default_timeout;
+  sync_timeout=node_obj_status[syncTime];
+  node_obj_status[reed1Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
+  node_obj_status[reed2Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
 
 #if defined(node_type_WreedSaa)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"WreedSaa");
   strcat(serial_number,numeric_serial);
+
+  attachInterrupt(1, interrupt1_handler, RISING); //set interrupt on the hardware interrupt 1
+
   node_obj_pinout[reed1]=4;   // the first  object is the reed1 connected on pin 4 
   node_obj_pinout[button]=3;  // the second  object is the button  connected on pin 3 
   node_obj_pinout[led]=5;     // the third  object is the led     connected on pin 5
-  node_obj_pinout[tempS]=0;   // the forth object is the temperature sensor connected on pin 0  
+  node_obj_pinout[tempSensor]=1;   // the forth object is the temperature sensor connected on analog pin 1  
+  node_obj_pinout[battery_state]=0;   // the 9th object is the battery state connected on analog pin 0  
   node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
   node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
   pinMode(node_obj_pinout[reed1], INPUT);
@@ -993,6 +1039,11 @@ void loop() {
 
 
   handleButton();
+
+#if defined(node_type_WreedSaa)
+  handleReed() ; 
+
+#endif 
 
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..

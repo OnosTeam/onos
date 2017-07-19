@@ -370,10 +370,19 @@ I will use post instead of get message
 
 
 
-  
+  If a reed node have to send a update message with multiple objects status it will write:
 
-
-
+  3  bytes with "[S_" for the start of the message
+  3  bytes for the address of the node ("001" for the arduino gateway)
+  2  bytes containing "rs" for the type of msg (reed sensor)
+  12 bytes to tell the node serial number
+  1 byte to tell the status of 2 reeds( 0:"both reeds off",1:"reed1 on and reed2 off",2:"reed1 off and reed2 on",3:"both reeds on")
+  3 bytes to tell the status of the temperature sensor
+  1 byte to tell the status of the luminosity sensor(binary)
+  1 byte to tell the status of the battery sensor(binary)
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001rsWreedSaa00013125agx_#]      reeds:3, temperature sensor:125, luminosity sensor:a, battery sensor:g     
 
 ////////////////////////////////////OLD... TO UPDATE/////////////////////////////////////////////////////////
 
