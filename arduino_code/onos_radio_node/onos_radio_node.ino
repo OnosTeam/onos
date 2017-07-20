@@ -141,8 +141,12 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
   #define TOTAL_OBJECTS 10 //10 because there are 9 elements + a null for the array closing
   #define node_default_timeout 36000000  //10 minutes of timeout
-  uint8_t reed1_status=0;  //
-
+  uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
+  uint8_t real_reed1_status=0;
+  uint8_t real_reed2_status=0;
+  int temperature_sensor_value=0;
+  uint8_t temperature_sensor_hex_lower=0;
+  uint8_t temperature_sensor_hex_upper=0;
 
 #elif defined(node_type_Wrelay4x)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -356,10 +360,7 @@ return(0);
 
 
 void composeSyncMessage(){
-#if defined(node_type_WreedSaa)
-//[S_001rsWreedSaa00013125agx_#]
 
-#endif 
 
   Serial.println(F("composeSyncMessage executed"));
   //[S_123ul5.24WPlugAvx000810000x_#]
@@ -370,6 +371,96 @@ void composeSyncMessage(){
   else{
     progressive_msg_id=48;  //48 is 0 in ascii
   }
+
+
+  
+
+  tmp_number=0;
+  //strcpy(str_this_node_address,"");
+  memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
+  str_this_node_address[0]='0';
+  str_this_node_address[1]='0';
+  str_this_node_address[2]='0';
+
+  if (this_node_address>99){
+    str_this_node_address[0]=(this_node_address/100)+48;
+    tmp_number=this_node_address%100;
+    str_this_node_address[1]=(tmp_number/10)+48;
+    tmp_number=this_node_address%10; 
+    str_this_node_address[2]=tmp_number+48;
+
+  }
+
+  else if (this_node_address>9){
+    str_this_node_address[1]=(tmp_number/10)+48;
+    tmp_number=this_node_address%10; 
+    str_this_node_address[2]=tmp_number+48;
+
+  }
+  else{ 
+    str_this_node_address[2]=this_node_address+48;
+  }
+  
+
+  //strcpy(syncMessage, "");
+  memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
+  strcpy(syncMessage, "[S_");
+  strcat(syncMessage, str_this_node_address);
+
+
+
+  
+
+
+
+
+
+
+#if defined(node_type_WreedSaa)
+//[S_001rsWreedSaa0001312argx_#]
+
+  
+
+
+
+  if (first_sync==1 ){
+    strcat(syncMessage, "ga");
+    strcat(syncMessage, node_fw);
+  }
+  else{
+    strcat(syncMessage, "rs");
+
+  }
+
+ // strcat(syncMessage, "sy");
+  strcat(syncMessage, serial_number);
+
+  real_reed1_status=node_obj_status[reed1]&node_obj_status[reed1Logic];
+  real_reed2_status=node_obj_status[reed2]&node_obj_status[reed2Logic];
+
+
+  if ((real_reed1_status==0)&&(real_reed2_status==0)){
+    reed_sensors_state=0;   
+  }
+  else if ((real_reed1_status==0)&&(real_reed2_status==1)){
+    reed_sensors_state=1;   
+  }
+  else if ((real_reed1_status==1)&&(real_reed2_status==0)){
+    reed_sensors_state=2;   
+  }
+  else if ((real_reed1_status==1)&&(real_reed2_status==1)){
+    reed_sensors_state=3;   
+  }
+
+  syncMessage[strlen(syncMessage)]=reed_sensors_state+48;   //+48 for ascii translation
+
+  temperature_sensor_value=analogRead(node_obj_status[tempSensor]);
+
+  uint8_t temperature_sensor_hex_lower=temperature_sensor_value/16;
+  uint8_t temperature_sensor_hex_upper=temperature_sensor_value;//todo mod 
+
+
+#elif defined(node_type_WLightSS)
 
   if (main_obj_state==1){
       
@@ -431,64 +522,6 @@ void composeSyncMessage(){
 
   //snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from float to char array
 
-  
-
-  tmp_number=0;
-  //strcpy(str_this_node_address,"");
-  memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
-  str_this_node_address[0]='0';
-  str_this_node_address[1]='0';
-  str_this_node_address[2]='0';
-
-  if (this_node_address>99){
-    str_this_node_address[0]=(this_node_address/100)+48;
-    tmp_number=this_node_address%100;
-    str_this_node_address[1]=(tmp_number/10)+48;
-    tmp_number=this_node_address%10; 
-    str_this_node_address[2]=tmp_number+48;
-
-  }
-
-  else if (this_node_address>9){
-    str_this_node_address[1]=(tmp_number/10)+48;
-    tmp_number=this_node_address%10; 
-    str_this_node_address[2]=tmp_number+48;
-
-  }
-  else{ 
-    str_this_node_address[2]=this_node_address+48;
-  }
-  
-
-  //strcpy(syncMessage, "");
-  memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
-  strcpy(syncMessage, "[S_");
-  strcat(syncMessage, str_this_node_address);
-
-
-  if (first_sync==1 ){
-    strcat(syncMessage, "ga");
-    strcat(syncMessage, node_fw);
-  }
-  else{
-    strcat(syncMessage, "ul");
-
-  }
-
- // strcat(syncMessage, "sy");
-  strcat(syncMessage, serial_number);
-  
-
-    //[S_123ul5.24WPlugAvx000810000x_#]
-
-/*
-  if (main_obj_state==0){
-    strcat(syncMessage,"0");
-  }
-  else{
-    strcat(syncMessage,"1");
-  }
-*/
   syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
 
@@ -497,6 +530,16 @@ void composeSyncMessage(){
 
 
   strcat(syncMessage, minutes_time_from_turn_on_array);
+
+
+#endif  //end node_type_WLightSS
+
+
+
+
+
+
+
   syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
   //Serial.println(syncMessage[28]);
   //Serial.println(strlen(syncMessage));
@@ -835,7 +878,7 @@ void buttonStateChanged(){
 #if defined(node_type_WreedSaa)
 
 void handleReed(){//handle the reed sensor
-  node_obj_status[reed1Logic]=0;
+  //node_obj_status[reed1Logic]=0;
   if (digitalRead(node_obj_pinout[reed1])==node_obj_status[reed1Logic]){ //the sensor should send allarm
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
   }
