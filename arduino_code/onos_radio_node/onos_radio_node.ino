@@ -138,15 +138,18 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define reed1Logic  7
   #define reed2Logic  8
   #define battery_state 9
+  #define luminosity_sensor 10
 
-  #define TOTAL_OBJECTS 10 //10 because there are 9 elements + a null for the array closing
+  #define TOTAL_OBJECTS 11 //11 because there are 10 elements + a null for the array closing
   #define node_default_timeout 36000000  //10 minutes of timeout
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
   uint8_t real_reed1_status=0;
   uint8_t real_reed2_status=0;
   int temperature_sensor_value=0;
-  uint8_t temperature_sensor_hex_lower=0;
-  uint8_t temperature_sensor_hex_upper=0;
+  uint8_t temperature_sensor_lower_byte=0;
+  uint8_t temperature_sensor_upper_byte=0;
+  uint8_t luminosity_sensor_value=0;
+  uint8_t battery_value=0;
 
 #elif defined(node_type_Wrelay4x)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -246,7 +249,7 @@ WPlugAvx node parameter:
 #define decoded_radio_answer_lenght 32
 #define syncMessage_lenght 28
 
-//#define DEVMODE 1
+#define DEVMODE 1
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
 char received_message_type_of_onos_cmd[3];
@@ -417,23 +420,7 @@ void composeSyncMessage(){
 
 
 #if defined(node_type_WreedSaa)
-//[S_001rsWreedSaa0001312argx_#]
-
-  
-
-
-
-  if (first_sync==1 ){
-    strcat(syncMessage, "ga");
-    strcat(syncMessage, node_fw);
-  }
-  else{
-    strcat(syncMessage, "rs");
-
-  }
-
- // strcat(syncMessage, "sy");
-  strcat(syncMessage, serial_number);
+//[S_001rsWreedSaa0001312Lgx_#]      reeds:3, temperature sensor:12, luminosity sensor:L, battery sensor:g 
 
   real_reed1_status=node_obj_status[reed1]&node_obj_status[reed1Logic];
   real_reed2_status=node_obj_status[reed2]&node_obj_status[reed2Logic];
@@ -452,12 +439,52 @@ void composeSyncMessage(){
     reed_sensors_state=3;   
   }
 
-  syncMessage[strlen(syncMessage)]=reed_sensors_state+48;   //+48 for ascii translation
+
 
   temperature_sensor_value=analogRead(node_obj_status[tempSensor]);
 
-  uint8_t temperature_sensor_hex_lower=temperature_sensor_value/16;
-  uint8_t temperature_sensor_hex_upper=temperature_sensor_value;//todo mod 
+  //convert from integer to 2 binary bytes 
+  //for example 1024 will be        00000100 00000000
+  if (temperature_sensor_value<256){
+    temperature_sensor_upper_byte=0;
+    temperature_sensor_lower_byte=byte(temperature_sensor_value);
+  }
+  else{
+    temperature_sensor_upper_byte=byte(temperature_sensor_value/256);   
+    temperature_sensor_lower_byte=byte(temperature_sensor_value % 256);
+
+  }
+
+  luminosity_sensor_value=byte(analogRead(node_obj_status[luminosity_sensor])/4);//get the value of the lux sensor , 0:255
+
+  battery_value=byte(analogRead(node_obj_status[battery_state])/4);
+
+
+
+
+
+  if (first_sync==1 ){
+    strcat(syncMessage, "ga");
+    strcat(syncMessage, node_fw);
+  }
+  else{
+    strcat(syncMessage, "rs");
+
+  }
+
+ // strcat(syncMessage, "sy");
+  strcat(syncMessage, serial_number);
+
+  syncMessage[strlen(syncMessage)]=reed_sensors_state+48;   //+48 for ascii translation
+
+  syncMessage[strlen(syncMessage)]=temperature_sensor_upper_byte;  
+
+  syncMessage[strlen(syncMessage)]=temperature_sensor_lower_byte;  
+
+  syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
+
+  syncMessage[strlen(syncMessage)]=battery_value;  
+
 
 
 #elif defined(node_type_WLightSS)
@@ -825,8 +852,11 @@ void checkCurrentRadioAddress(){
 
 
     }
-#if defined(node_type_WreedSaa)
+#if defined(node_typeffffff) // defined(node_type_WreedSaa)
     else{ // else i put the node to sleep
+
+      Serial.println(F("I go to sleep"));
+
       radio.sleep();
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
     }
@@ -834,7 +864,7 @@ void checkCurrentRadioAddress(){
 
   }
 
-#endif
+#endif  // end if defined(remote_node) 
 
 }
 
@@ -980,6 +1010,7 @@ void setup() {
   node_obj_pinout[led]=5;     // the third  object is the led     connected on pin 5
   node_obj_pinout[tempSensor]=1;   // the forth object is the temperature sensor connected on analog pin 1  
   node_obj_pinout[battery_state]=0;   // the 9th object is the battery state connected on analog pin 0  
+  node_obj_pinout[luminosity_sensor]=2; 
   node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
   node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
   pinMode(node_obj_pinout[reed1], INPUT);

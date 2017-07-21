@@ -303,7 +303,6 @@ class SerialPort:
 
               if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i received a confirm from the node
                 
-
                 #with lock_serial_input:              
                 #serial_incomingBuffer=buf
                 self.readed_packets_list.append(cmd)
@@ -312,7 +311,7 @@ class SerialPort:
                 #waitTowriteUntilIReceive=0
                 continue
 
-              if( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
+              elif( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
               # [S_001syProminiS0001_#]   or [S_123ulWPlugAvx000810000_#]
 
                 logprint("serial rx cmd="+cmd)
@@ -345,7 +344,57 @@ class SerialPort:
 
 
 
-              if( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
+####reed node
+
+              elif( (cmd[6]=="r")&(cmd[7]=="s") ) :
+              #  [S_001rsWreedSaa0001312Lgx_#] 
+
+                logprint("serial rx cmd="+cmd)
+                try:
+                  serial_number=cmd[8:20]   
+                  node_address=cmd[3:6]
+                  node_fw="def0"  #default
+                  reeds_status=cmd[20]
+                  reed1_status=(reeds_status==2)or(reeds_status==3) #get boolean result
+                  reed2_status=(reeds_status==1)or(reeds_status==3) #get boolean result
+               
+                  tempSensor= ord(cmd[21])*256+ord(cmd[22])
+                  luminosity_sensor= ord(cmd[23])
+                  battery_state= ord(cmd[24])
+
+                  objects_to_update_dict={0:reed1_status,5:reed2_status,3:tempSensor,10:luminosity_sensor,9:battery_state}
+
+                  obj_address_to_update=0
+                  priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+
+
+                  if node_address=="254":  #the node is looking for a free address
+
+                    priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    continue
+
+                except Exception, e  :               
+                  message="error receiving serial sync message cmd was :"+cmd
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+
+                #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
+                #waitTowriteUntilIReceive=0
+                continue
+
+
+
+####end reed node
+
+
+
+
+
+
+
+
+
+
+              elif( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
                 logprint("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd)
                 try:
 

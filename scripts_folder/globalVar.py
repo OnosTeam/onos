@@ -1058,9 +1058,13 @@ hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["tempSensor"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["tempSensor"]["object_numbers"]=[3]   #
 
+hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["luminosity_sensor"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["luminosity_sensor"]["object_numbers"]=[10] 
 
 hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["battery_state"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["battery_state"]["object_numbers"]=[9]   #
+
+
 
 
 # "analog_input" don't need the query part because is only a input and not an output..
