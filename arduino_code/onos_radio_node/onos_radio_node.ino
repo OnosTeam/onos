@@ -141,7 +141,8 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define luminosity_sensor 10
 
   #define TOTAL_OBJECTS 11 //11 because there are 10 elements + a null for the array closing
-  #define node_default_timeout 36000000  //10 minutes of timeout
+  #define node_default_timeout 1500 //36000000  //10 minutes of timeout
+  #define battery_node 1            // tell the software to go to sleep to keep battery power. 
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
   uint8_t real_reed1_status=0;
   uint8_t real_reed2_status=0;
@@ -339,12 +340,19 @@ boolean changeObjStatus(char obj_number,int status_to_set){
 
   if (obj_number!=button){ //will not change the status to the button...
 
-    digitalWrite(node_obj_pinout[obj_number],!status_to_set); // !  is only for this hardware since the ralay are actived low..
+#if defined(node_type_WreedSaa)
+    if ( (obj_number==led)|(obj_number==digOut) ){
+      digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+      Serial.println(F("digitalWrite with obj")); 
+    }
 
-    if (obj_number==0){
+#elif defined(node_type_Wrelay4x)
+    else if (obj_number==0){
       main_obj_state=status_to_set;
       changeObjStatus(led,!status_to_set);
     }
+#endif
+
     else if(obj_number==syncTime){  // if the object sent is syncTime change the sync_timeout with the value received
       sync_timeout=status_to_set*1000;// get the value in seconds
     }
@@ -422,24 +430,36 @@ void composeSyncMessage(){
 #if defined(node_type_WreedSaa)
 //[S_001rsWreedSaa0001312Lgx_#]      reeds:3, temperature sensor:12, luminosity sensor:L, battery sensor:g 
 
-  real_reed1_status=node_obj_status[reed1]&node_obj_status[reed1Logic];
-  real_reed2_status=node_obj_status[reed2]&node_obj_status[reed2Logic];
+
+
+
+  node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
+  node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
+
+  Serial.print(F("reed1_status="));
+  Serial.println(node_obj_status[reed1]);
+  Serial.print(F("reed2_status="));
+  Serial.println(node_obj_status[reed2]);
+
+  real_reed1_status=(node_obj_status[reed1])^(node_obj_status[reed1Logic]); //the 2 value must be different for the result to be 1
+  real_reed2_status=(node_obj_status[reed2])^(node_obj_status[reed2Logic]);
 
 
   if ((real_reed1_status==0)&&(real_reed2_status==0)){
-    reed_sensors_state=0;   
+    reed_sensors_state='0';   
   }
   else if ((real_reed1_status==0)&&(real_reed2_status==1)){
-    reed_sensors_state=1;   
+    reed_sensors_state='1';   
   }
   else if ((real_reed1_status==1)&&(real_reed2_status==0)){
-    reed_sensors_state=2;   
+    reed_sensors_state='2';   
   }
   else if ((real_reed1_status==1)&&(real_reed2_status==1)){
-    reed_sensors_state=3;   
+    reed_sensors_state='3';   
   }
 
-
+  Serial.print(F("reed_total_status="));
+  Serial.println(reed_sensors_state);
 
   temperature_sensor_value=analogRead(node_obj_status[tempSensor]);
 
@@ -460,22 +480,31 @@ void composeSyncMessage(){
   battery_value=byte(analogRead(node_obj_status[battery_state])/4);
 
 
+/*
+  //todo remove these fixed values
+  temperature_sensor_upper_byte=60;
+  temperature_sensor_lower_byte=61;
+  luminosity_sensor_value=51;
+  battery_value=49;
+*/
 
-
-
-  if (first_sync==1 ){
+  if (this_node_address==254){
     strcat(syncMessage, "ga");
     strcat(syncMessage, node_fw);
+    strcat(syncMessage, serial_number);
+    syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
+    strcat(syncMessage, "_#]");
+    return;
+
   }
   else{
     strcat(syncMessage, "rs");
-
   }
 
  // strcat(syncMessage, "sy");
   strcat(syncMessage, serial_number);
 
-  syncMessage[strlen(syncMessage)]=reed_sensors_state+48;   //+48 for ascii translation
+  syncMessage[strlen(syncMessage)]=reed_sensors_state;   
 
   syncMessage[strlen(syncMessage)]=temperature_sensor_upper_byte;  
 
@@ -585,11 +614,12 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
   composeSyncMessage();
   
 
+/*
   if (first_sync!=1 ){
-    syncMessage[6]='u'; //modify the message
-    syncMessage[7]='l'; //modify the message
+    syncMessage[6]='r'; //modify the message
+    syncMessage[7]='a'; //modify the message
   }
-
+*/
 
 
 
@@ -657,7 +687,10 @@ void getAddressFromGateway(){
       Serial.print(F("radio tx failed, I retry"));
       random_time=10;//random(10,radioTxTimeout*3);
       tryed_times=tryed_times+1;
-      delay(random_time);
+      //delay(random_time);
+      LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
+
+
     }
 
 
@@ -804,6 +837,8 @@ boolean checkAndHandleIncomingRadioMsg(){
   }// end if (radio.receiveDone())
 
 
+
+
 }
 
 
@@ -846,21 +881,33 @@ void checkCurrentRadioAddress(){
     //random_time=1500;//random(1500,2500);
     if ((millis()-sync_time)>sync_timeout){ //every 1500/2500 ms
    
-      sync_time=millis();
+
 
       sendSyncMessage(radioRetry,radioTxTimeout);
+      sync_time=millis();
+
+#if defined(battery_node) // defined(node_type_WreedSaa)
+      //  I put the node to sleep
+        Serial.println(F("I go to sleep"));
+        radio.sleep();
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+
+        sync_time=millis();
+
+#endif  //end  if defined(battery_node)
 
 
     }
-#if defined(node_typeffffff) // defined(node_type_WreedSaa)
-    else{ // else i put the node to sleep
 
-      Serial.println(F("I go to sleep"));
-
-      radio.sleep();
-      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-    }
-#endif  //end  if defined(node_type_WreedSaa)
 
   }
 
@@ -909,14 +956,18 @@ void buttonStateChanged(){
 
 void handleReed(){//handle the reed sensor
   //node_obj_status[reed1Logic]=0;
+  Serial.println(F("handleReed called"));
+
   if (digitalRead(node_obj_pinout[reed1])==node_obj_status[reed1Logic]){ //the sensor should send allarm
+    detachInterrupt(1);
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
   }
 
-  if (digitalRead(node_obj_pinout[reed2])==node_obj_status[reed2Logic]){ //the sensor should send allarm
+  else if (digitalRead(node_obj_pinout[reed2])==node_obj_status[reed2Logic]){ //the sensor should send allarm
+    detachInterrupt(1);
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
   }
-
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 
 }
 #endif  //end  if defined(node_type_WreedSaa)
@@ -1003,11 +1054,11 @@ void setup() {
   strcpy(serial_number,"WreedSaa");
   strcat(serial_number,numeric_serial);
 
-  attachInterrupt(1, interrupt1_handler, RISING); //set interrupt on the hardware interrupt 1
 
-  node_obj_pinout[reed1]=4;   // the first  object is the reed1 connected on pin 4 
-  node_obj_pinout[button]=3;  // the second  object is the button  connected on pin 3 
-  node_obj_pinout[led]=5;     // the third  object is the led     connected on pin 5
+
+  node_obj_pinout[reed1]=3;   // the first  object is the reed1 connected on pin 3 
+  node_obj_pinout[button]=5;  // the second  object is the button  connected on pin 5 
+  node_obj_pinout[led]=4;     // the third  object is the led     connected on pin 4
   node_obj_pinout[tempSensor]=1;   // the forth object is the temperature sensor connected on analog pin 1  
   node_obj_pinout[battery_state]=0;   // the 9th object is the battery state connected on analog pin 0  
   node_obj_pinout[luminosity_sensor]=2; 
@@ -1060,7 +1111,7 @@ void setup() {
 
 
 
-  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, CHANGE);
+
 
   digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
@@ -1093,12 +1144,16 @@ void setup() {
   beginRadio();
 
   changeObjStatus(0,1);
-  delay(300);
+  //delay(300);   
+  LowPower.powerDown(SLEEP_250MS, ADC_OFF, BOD_OFF);
   changeObjStatus(0,0);
 
   Blink(node_obj_pinout[led],100,3); 
+  digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
 
   composeSyncMessage();
+
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
@@ -1112,12 +1167,9 @@ void setup() {
 void loop() {
 
 
-  handleButton();
+//  handleButton();
 
-#if defined(node_type_WreedSaa)
-  handleReed() ; 
 
-#endif 
 
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..

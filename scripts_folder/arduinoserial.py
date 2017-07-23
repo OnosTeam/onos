@@ -331,7 +331,7 @@ class SerialPort:
 
                   if node_address=="254":  #the node is looking for a free address
 
-                    priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                     continue
 
                 except Exception, e  :               
@@ -355,8 +355,9 @@ class SerialPort:
                   node_address=cmd[3:6]
                   node_fw="def0"  #default
                   reeds_status=cmd[20]
-                  reed1_status=(reeds_status==2)or(reeds_status==3) #get boolean result
-                  reed2_status=(reeds_status==1)or(reeds_status==3) #get boolean result
+                  logprint("reeds status received:"+reeds_status) 
+                  reed1_status=(reeds_status=="2")or(reeds_status=="3") #get boolean result
+                  reed2_status=(reeds_status=="1")or(reeds_status=="3") #get boolean result
                
                   tempSensor= ord(cmd[21])*256+ord(cmd[22])
                   luminosity_sensor= ord(cmd[23])
@@ -370,7 +371,7 @@ class SerialPort:
 
                   if node_address=="254":  #the node is looking for a free address
 
-                    priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                     continue
 
                 except Exception, e  :               
@@ -405,7 +406,7 @@ class SerialPort:
                   node_address=cmd[3:6]
 
                   if node_address=="254" or node_address=="001" :  #the node is looking for a free address or to a confirm for first contact
-                    priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
                
                   priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })               

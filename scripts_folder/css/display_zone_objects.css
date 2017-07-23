@@ -1,6 +1,6 @@
 
 .flex {max-width: 100%}
-	
+
 
 .riga{
 	position:relative;
@@ -21,12 +21,12 @@
 
 
 .imagebutton{
-	
+
 	position:absolute;
 	top:0px;
 	height:100px;
 	width:100px;
-	background-image: url("../img/presa.png");
+	background-image: url("/img/presa.png");
     background-repeat: no-repeat;
     background-size:100px 100px;
 	background-color:red;
@@ -37,7 +37,7 @@
 
 
 .specs{
-	
+
 	position:absolute;
 	top:0px;
 	height:100px;
@@ -46,10 +46,10 @@
 	font-size:20px;
 	color:black;
 	font-weight:bold;
-	
-	
-	
-	
+
+
+
+
 }
 
 
@@ -57,41 +57,13 @@
 
 .impostazioni-link{
 	position:absolute;
-	top:0px;
+	top:29px;
 	width:15%;
 	height:50px;
 	line-height:50px;
 	text-align:center;
 	font-size:25px;
-	border-top: 1px solid black;
-	border-left: 1px solid black;
-	border-top-left-radius:10px; 
-	
-	
-}
-
-.scenario-link{
-	position:absolute;
-	top:50px;
-	width:15%;
-	height:50px;
-	line-height:50px;
-	text-align:center;
-	font-size:25px;
-	border-left: 1px solid black;
-	border-bottom: 1px solid black;
-	border-bottom-left-radius:10px; 
-	
-}
-
-
-
-
+	color:white;
 
 }
-
-
-
-
-
 

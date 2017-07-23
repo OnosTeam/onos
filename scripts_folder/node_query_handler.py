@@ -49,19 +49,23 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     # [S_ok003sr070811_#]
     expected_confirm="[S_ok"+query[3:end_of_query+3]
      #if data.find("ok"+query[3:end_of_query+3])!=-1:    
+    logprint("expected_confirm:"+expected_confirm)
 
     if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
       copy_of_readed_packets_list=serialCom.uart.readed_packets_list
 
+      logprint("current serialCom.uart.readed_packets_list:"+str(serialCom.uart.readed_packets_list))
+
       i=len(serialCom.uart.readed_packets_list)-1 
       while i>0:  #iterate the list from the last element to the first
         try:
-          a=serialCom.uart.readed_packets_list[i]
+          a=copy_of_readed_packets_list[i]
                 
           logprint("check of all received answers000000000 current one was:"+str(a))
 
           if a.find(expected_confirm)!=-1 :  #found the answer
-            serialCom.uart.readed_packets_list.remove(a)
+            while a in serialCom.uart.readed_packets_list:  # remove all the occurences of the answer 
+              serialCom.uart.readed_packets_list.remove(a)  
             logprint("I have found the answer I was looking for")
             return (a)
 

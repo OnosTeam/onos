@@ -25,6 +25,23 @@
         "nodeObjectsDict": {}, 
         "node_serial_number": "Sonoff1P0000"
       }, 
+      "WreedSaa0004": {
+        "hwModelName": "WreedSaa", 
+        "nodeAddress": "008", 
+        "nodeObjectsDict": {
+          "0": "reed1_WreedSaa0004", 
+          "2": "led_WreedSaa0004", 
+          "3": "tempSensor_WreedSaa0004", 
+          "4": "digOut_WreedSaa0004", 
+          "5": "reed2_WreedSaa0004", 
+          "6": "syncTime_WreedSaa0004", 
+          "7": "reed1Logic_WreedSaa0004", 
+          "8": "reed2Logic_WreedSaa0004", 
+          "9": "battery_state_WreedSaa0004", 
+          "10": "luminosity_sensor_WreedSaa0004"
+        }, 
+        "node_serial_number": "WreedSaa0004"
+      }, 
       "Wrelay4x0007": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "003", 
@@ -34,31 +51,50 @@
       "Wrelay4x0008": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "002", 
-        "nodeObjectsDict": {
-          "0": "caldaia_Wrelay4x0008", 
-          "1": "router_Wrelay4x0008", 
-          "2": "relay0_Wrelay4x0008", 
-          "3": "relay1_Wrelay4x0008", 
-          "4": "lux_threshold_Wrelay4x0008", 
-          "5": "timeout_to_turn_off_Wrelay4x0008"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "Wrelay4x0008"
       }, 
       "Wrelay4x0009": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "005", 
-        "nodeObjectsDict": {
-          "0": "caldaia_Wrelay4x0009", 
-          "1": "router_Wrelay4x0009", 
-          "2": "relay0_Wrelay4x0009", 
-          "3": "relay1_Wrelay4x0009", 
-          "4": "lux_threshold_Wrelay4x0009", 
-          "5": "timeout_to_turn_off_Wrelay4x0009"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "Wrelay4x0009"
       }
     }, 
     "objectDictionary": {
+      "battery_state_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "battery_state_WreedSaa0004=0", 
+          "1": "battery_state_WreedSaa0004=1", 
+          "onoswait": "battery_state_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "battery_state_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": 75, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "analog_obj_in"
+      }, 
       "button0_ProminiS0001": {
         "cmdDict": {
           "0": "", 
@@ -120,7 +156,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -160,7 +196,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "caldaia_Wrelay4x0008": {
         "cmdDict": {
@@ -186,14 +222,14 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "caldaia_Wrelay4x0009": {
         "cmdDict": {
@@ -219,14 +255,14 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "counter1": {
         "cmdDict": {
@@ -254,7 +290,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -324,7 +360,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -359,7 +395,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 15, 
+        "status": 23, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -395,7 +431,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1375, 
+        "status": 282, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -404,6 +440,39 @@
           "wait": "background-color:grey ;color black"
         }, 
         "type": "b"
+      }, 
+      "digOut_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "digOut_WreedSaa0004=0", 
+          "1": "digOut_WreedSaa0004=1", 
+          "onoswait": "digOut_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "digOut_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_out"
       }, 
       "hours": {
         "cmdDict": {
@@ -431,7 +500,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 22, 
+        "status": 4, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -440,6 +509,72 @@
           "wait": "background-color:grey ;color black"
         }, 
         "type": "b"
+      }, 
+      "led_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "led_WreedSaa0004=0", 
+          "1": "led_WreedSaa0004=1", 
+          "onoswait": "led_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "led_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "onoswait", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_out"
+      }, 
+      "luminosity_sensor_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "luminosity_sensor_WreedSaa0004=0", 
+          "1": "luminosity_sensor_WreedSaa0004=1", 
+          "onoswait": "luminosity_sensor_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "luminosity_sensor_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": 55, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "analog_obj_in"
       }, 
       "lux_threshold_Wrelay4x0007": {
         "cmdDict": {
@@ -566,7 +701,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 55, 
+        "status": 42, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -638,7 +773,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -647,6 +782,138 @@
           "wait": "background-color:grey ;color black"
         }, 
         "type": "b"
+      }, 
+      "reed1Logic_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "reed1Logic_WreedSaa0004=0", 
+          "1": "reed1Logic_WreedSaa0004=1", 
+          "onoswait": "reed1Logic_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "reed1Logic_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": 1, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "cfg_obj"
+      }, 
+      "reed1_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "reed1_WreedSaa0004=0", 
+          "1": "reed1_WreedSaa0004=1", 
+          "onoswait": "reed1_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "reed1_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": false, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_in"
+      }, 
+      "reed2Logic_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "reed2Logic_WreedSaa0004=0", 
+          "1": "reed2Logic_WreedSaa0004=1", 
+          "onoswait": "reed2Logic_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "reed2Logic_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": 1, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "cfg_obj"
+      }, 
+      "reed2_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "reed2_WreedSaa0004=0", 
+          "1": "reed2_WreedSaa0004=1", 
+          "onoswait": "reed2_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "reed2_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": false, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_in"
       }, 
       "relay0_Wrelay4x0007": {
         "cmdDict": {
@@ -679,7 +946,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay0_Wrelay4x0008": {
         "cmdDict": {
@@ -712,7 +979,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay0_Wrelay4x0009": {
         "cmdDict": {
@@ -745,7 +1012,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay1_Wrelay4x0007": {
         "cmdDict": {
@@ -778,7 +1045,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay1_Wrelay4x0008": {
         "cmdDict": {
@@ -811,7 +1078,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay1_Wrelay4x0009": {
         "cmdDict": {
@@ -844,7 +1111,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay_Sonoff1P0000": {
         "cmdDict": {
@@ -877,7 +1144,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "router_Wrelay4x0007": {
         "cmdDict": {
@@ -910,7 +1177,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "router_Wrelay4x0008": {
         "cmdDict": {
@@ -943,7 +1210,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "router_Wrelay4x0009": {
         "cmdDict": {
@@ -976,7 +1243,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "socket0_ProminiS0001": {
         "cmdDict": {
@@ -1013,6 +1280,72 @@
           "onoswait": "background-color:grey ;color black"
         }, 
         "type": "sr_relay"
+      }, 
+      "syncTime_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "syncTime_WreedSaa0004=0", 
+          "1": "syncTime_WreedSaa0004=1", 
+          "onoswait": "syncTime_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "syncTime_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "cfg_obj"
+      }, 
+      "tempSensor_WreedSaa0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "tempSensor_WreedSaa0004=0", 
+          "1": "tempSensor_WreedSaa0004=1", 
+          "onoswait": "tempSensor_WreedSaa0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0004", 
+        "notes": " ", 
+        "objname": "tempSensor_WreedSaa0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": 57399, 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "analog_obj_in"
       }, 
       "timeout_to_turn_off_Wrelay4x0007": {
         "cmdDict": {
@@ -1182,6 +1515,25 @@
           "relay_Sonoff1P0000"
         ], 
         "order": 5, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "WreedSaa0004": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "reed2Logic_WreedSaa0004", 
+          "syncTime_WreedSaa0004", 
+          "reed1Logic_WreedSaa0004", 
+          "led_WreedSaa0004", 
+          "digOut_WreedSaa0004", 
+          "reed1_WreedSaa0004", 
+          "reed2_WreedSaa0004", 
+          "tempSensor_WreedSaa0004", 
+          "battery_state_WreedSaa0004", 
+          "luminosity_sensor_WreedSaa0004"
+        ], 
+        "order": 6, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 

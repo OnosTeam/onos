@@ -664,6 +664,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Updated sonoff Tasmota to v5.2.4-3-g3a4210e
                 Implemented mod_zone.py gui now is possible to add and remove objects in a zone and is possible to create new zones.
                 Started using ifdef in the arduino code to make different config for different node in the same file
+                Replaced "digital_obj" with "digital_obj_out" in all the code
 
 
 (110, 'Connection timed out');;;

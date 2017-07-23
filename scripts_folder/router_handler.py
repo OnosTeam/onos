@@ -297,10 +297,12 @@ class RouterHandler:
 
       self.progressive_msg_number=self.progressive_msg_number+1
 
-      self.progressive_msg_id=str(self.progressive_msg_number)  #todo  create a progressive number
-
       if  self.progressive_msg_number>8: #restart the number
         self.progressive_msg_number=0 
+
+      self.progressive_msg_id=str(self.progressive_msg_number)  #todo  create a progressive number
+
+
 
       return(self.progressive_msg_id)
 
@@ -392,14 +394,14 @@ class RouterHandler:
       try:
 
         for a in hardwareModelDict[remoteNodeHwModelName]["object_list"].keys():   
-          #a will iterate all the ["object_list"] ..for example will be digital_obj from :
-          #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]   #
+          #a will iterate all the ["object_list"] ..for example will be digital_obj_out from :
+          #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]["object_numbers"]=[0]   #
           for b in  hardwareModelDict[remoteNodeHwModelName]["object_list"][a].keys(): 
-            #b will iterate all the digital_obj ..for example will be caldaia from :
-            #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]   #
+            #b will iterate all the obj ..for example will be caldaia from :
+            #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]["object_numbers"]=[0]   #
             for c in hardwareModelDict[remoteNodeHwModelName]["object_list"][a][b]["object_numbers"]:
               #c will iterate all the object adresses ..for example will be 0 from :
-              #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0] 
+              #hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]["object_numbers"]=[0] 
               logprint ("""(hardwareModelDict[remoteNodeHwModelName]["object_list"][a][b]["object_numbers"]) : """)
               logprint (str(hardwareModelDict[remoteNodeHwModelName]["object_list"][a][b]["object_numbers"]) )
               logprint ("c:"+str(c)) 
@@ -459,7 +461,7 @@ class RouterHandler:
       base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
    
 
-      if (out_type in ("digital_obj","cfg_obj","analog_obj") ):
+      if (out_type in ("digital_obj_out","cfg_obj","analog_obj_out") ):  #todo remove "analog_obj_out"
         logprint("digital_obj compose query")
         #query example:  [S_123wp01x_#]
  
@@ -494,8 +496,8 @@ class RouterHandler:
           if "query_expected_answer" in hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name].keys() :
 
 #example: 
-#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"][0]="""RESULT = {"POWER":"ON"}"""
-#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"][1]="""RESULT = {"POWER":"OFF"}"""
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_expected_answer"][0]="""RESULT = {"POWER":"ON"}"""
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_expected_answer"][1]="""RESULT = {"POWER":"OFF"}"""
 #
 #get    """RESULT = {"POWER":"ON"}""" from the dictionary when status_to_set is "0"..
  
@@ -556,7 +558,8 @@ class RouterHandler:
 
 
           if (len(node_address)==3): #radio node
-            query='''[S_'''+node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
+            logprint("query_placeholder:"+query_placeholder)
+            query='''[S_'''+node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]\n'''
             # print "query:::::"+query
             #valuelen_pos=query_placeholder.find("valuelen")
             #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
@@ -572,9 +575,8 @@ class RouterHandler:
               query_placeholder=query_placeholder.replace("#_node_password_#",node_password) 
             query=query_placeholder
           
-           
 
-          logprint("composed query was:"+query)
+          logprint("composed query was:"+query+"Endquery")
           
 
 
@@ -645,7 +647,7 @@ class RouterHandler:
       #if  (len(node_address)==len("001")):#  arduino serial node or a node that communicate by radio serial gateway
       if  (len(node_address)==3):#  arduino serial node or a node that communicate by radio serial gateway
         logprint("the node is serial")
-        logprint("query to remote node:"+query)
+        logprint("query to remote node:"+query+"Endquery")
         return(query)
 
 
@@ -834,6 +836,12 @@ class RouterHandler:
 
 
           query=self.composeChangeNodeOutputPinStatusQuery(pinList,node_obj,objName,statusList[0],node_serial_number,node_address,output_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
+          
+          if query=="error_compose_query":
+            message="error composed query is not valid,I will not send it to the node"
+            logprint(message,verbose=9)
+            return(-1)
+
           logprint("I WRITE THIS QUERY TO SERIAL NODE:"+query+"end")  
           query_time=time.time()
           query_order=priority

@@ -303,7 +303,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -343,7 +343,7 @@ recoverydata_json='''
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "counter1": {
         "cmdDict": {
@@ -371,7 +371,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -406,7 +406,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -441,7 +441,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 18, 
+        "status": "18", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -477,7 +477,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1259, 
+        "status": "1259", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -513,7 +513,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 20, 
+        "status": "20", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -582,7 +582,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 59, 
+        "status": "59", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -618,7 +618,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 6, 
+        "status": "6", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -654,7 +654,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -695,7 +695,7 @@ recoverydata_json='''
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "relay1_Wrelay4x0007": {
         "cmdDict": {
@@ -728,7 +728,7 @@ recoverydata_json='''
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "router_Wrelay4x0007": {
         "cmdDict": {
@@ -761,7 +761,7 @@ recoverydata_json='''
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj"
+        "type": "digital_obj_out"
       }, 
       "timeout_to_turn_off_Wrelay4x0007": {
         "cmdDict": {
@@ -822,7 +822,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 2017, 
+        "status": "2017", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -999,35 +999,35 @@ hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
 
 
 hardwareModelDict["WLightSA"]={"hwName":"WLightSA","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"parameters":{},"query":{},"timeout":360}
-hardwareModelDict["WLightSA"]["pin_mode"]["digital_obj"]={"lamp":[(5,6)]}
+hardwareModelDict["WLightSA"]["pin_mode"]["digital_obj_out"]={"lamp":[(5,6)]}
 hardwareModelDict["WLightSA"]["pin_mode"]["analog_input"]={"luminosity":[(14)],"temperature":[(15)]}
 hardwareModelDict["WLightSA"]["pin_mode"]["cfg_obj"]={"lux_threshold":[(-1)],"timeout_to_turn_off":[(-1)]}#this have no pins..
-hardwareModelDict["WLightSA"]["query"]["digital_obj"]={"lamp":"wl#_objnumber_##_valuelen:1_#"}  #define the base query for this
+hardwareModelDict["WLightSA"]["query"]["digital_obj_out"]={"lamp":"wl#_objnumber_##_valuelen:1_#"}  #define the base query for this
 hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen:3_#" ,"timeout_to_turn_off":"to#_valuelen:4_#" }  #define the base query for this
                    
 hardwareModelDict["WPlugAvx"]={"hwName":"WPlugAvx","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
-hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)]}#  one object with a double set reset relay, is the obj0
+hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj_out"]={"plug":[(0)]}#  one object with a double set reset relay, is the obj0
 hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
-hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wb#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
+hardwareModelDict["WPlugAvx"]["query"]["digital_obj_out"]={"plug":"wb#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj_out..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj_out)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
 
 
 hardwareModelDict["Wrelay4x"]={"hwName":"Wrelay4x","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["object_numbers"]=[0]   #
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["caldaia"]["query"]="do#_objnumber_##_valuelen:1_#"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["router"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["router"]["object_numbers"]=[1]   #
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["router"]["query"]="do#_objnumber_##_valuelen:1_#"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]#see arduino code at :"define object numbers to use in the pin configuration"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["query"]="do#_objnumber_##_valuelen:1_#"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["led"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["led"]["object_numbers"]=[5]   #
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["led"]["query"]="do#_objnumber_##_valuelen:1_#"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["led"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]["object_numbers"]=[0]   #
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]["object_numbers"]=[1]   #
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]#see arduino code at :"define object numbers to use in the pin configuration"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[5]   #
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]={}
 
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]={}
 
@@ -1044,76 +1044,74 @@ hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["syncTime"]["query"]="ac
 
 
 hardwareModelDict["WreedSaa"]={"hwName":"WreedSaa","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["reed1"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["reed1"]["object_numbers"]=[0]   #
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["reed1"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]["object_numbers"]=[0]   #
+
 # object 1 is hardware button but I don't have to show it on html
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["led"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["led"]["object_numbers"]=[2]   #
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["led"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[2]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]["query"]="do#_objnumber_##_valuelen:1_#"
 
 
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["tempSensor"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["tempSensor"]["object_numbers"]=[3]   #
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["tempSensor"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["tempSensor"]["object_numbers"]=[3]   #
 
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["luminosity_sensor"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["luminosity_sensor"]["object_numbers"]=[10] 
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["luminosity_sensor"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["luminosity_sensor"]["object_numbers"]=[10] 
 
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["battery_state"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["analog_input"]["battery_state"]["object_numbers"]=[9]   #
-
-
-
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]["object_numbers"]=[9]   #
 
 # "analog_input" don't need the query part because is only a input and not an output..
 
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["digOut"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["digOut"]["object_numbers"]=[4]   #
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["digOut"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["object_numbers"]=[4]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["query"]="do#_objnumber_##_valuelen:1_#"
 
 
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["reed2"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["reed2"]["object_numbers"]=[5]   #
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj"]["reed2"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]["object_numbers"]=[5]   #
+
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]={}
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[6]   #
-hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]["query"]="ac#_objnumber_##_valuelen:3_#"
+
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]["object_numbers"]=[7] 
-hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]["query"]="ac#_objnumber_##_valuelen:3_#"
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]["query"]="dc#_objnumber_##_valuelen:1_#"
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["object_numbers"]=[8] 
-hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["query"]="ac#_objnumber_##_valuelen:3_#"
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["query"]="dc#_objnumber_##_valuelen:1_#"
 
 
 
 hardwareModelDict["Sonoff1P"]={"hwName":"Sonoff1P","max_pin":13,"hardware_type":"sonoff_single_plug","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360} #  360 seconds of timeout
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]={}
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]={}
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[0]#see arduino code at :"define object numbers to use in the pin configuration"
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["begin_connection_query"]="""http://#_node_address_#/cm?cmnd=LedState%201""" #todo to implement it..this query will be sent the first time a this object is connected..
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query"]="http://#_node_address_#/cm?user=admin&password=#_node_password_#&cmnd=Power%20#_objnumber_##_valuelen:1_#"  #http://192.168.1.6/cm?cmnd=Power%2000   and http://192.168.1.6/cm?cmnd=Power%2001
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"]={}
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"][0]="""RESULT = {"POWER":"OFF"}"""
-hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["query_expected_answer"][1]="""RESULT = {"POWER":"ON"}"""
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[0]#see arduino code at :"define object numbers to use in the pin configuration"
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["begin_connection_query"]="""http://#_node_address_#/cm?cmnd=LedState%201""" #todo to implement it..this query will be sent the first time a this object is connected..
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query"]="http://#_node_address_#/cm?user=admin&password=#_node_password_#&cmnd=Power%20#_objnumber_##_valuelen:1_#"  #http://192.168.1.6/cm?cmnd=Power%2000   and http://192.168.1.6/cm?cmnd=Power%2001
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_expected_answer"]={}
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_expected_answer"][0]="""RESULT = {"POWER":"OFF"}"""
+hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_expected_answer"][1]="""RESULT = {"POWER":"ON"}"""
 hardwareModelDict["Sonoff1P"]["object_list"]["cfg_obj"]={}
 hardwareModelDict["Sonoff1P"]["parameters"]["password"]="onosBestHome9999"
 
-#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+#hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
 
 
 
 #hardwareModelDict["WPlugAvx"]={"hwName":"WPlugAvx","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"parameters":{},"query":{},"timeout":360}
-#hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}#  one object with a double set reset relay, is the obj0
+#hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj_out"]={"plug":[(0)],"plug2":[(1)]}#  one object with a double set reset relay, is the obj0
 #hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_output"]={"button":[(5),(6)]}
-#hardwareModelDict["WPlugAvx"]["query"]["digital_obj"]={"plug":"wb#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway.
+#hardwareModelDict["WPlugAvx"]["query"]["digital_obj_out"]={"plug":"wb#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway.
 
 
 
@@ -1132,7 +1130,7 @@ hardwareModelDict["Sonoff1P"]["parameters"]["password"]="onosBestHome9999"
 
 hardwareModelDict["RouterRB"]={"hwName":"RouterRB","max_pin":15,"hardware_type":"rasberry_b_rev2_only","pin_mode":{},"parameters":{},"timeout":180}
 hardwareModelDict["RouterRB"]["pin_mode"]["digital_output"]={"button":[(2),(3),(4),(7),(8),(9),(10),(23),(24),(25),(27)]}
-hardwareModelDict["RouterRB"]["pin_mode"]["digital_input"]={"d_sensor":[(0),(1),(2),(3),(4),(5),(6)]}
+hardwareModelDict["RouterRB"]["pin_mode"]["digital_in"]={"d_sensor":[(0),(1),(2),(3),(4),(5),(6)]}
 hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)]}
 
 
@@ -1143,6 +1141,8 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 #the hardware_model.json file  todo..
 
 #option for obj_type :
+
+#old
 # sr_relay:  latch relay where the first pi in the tuple is set and the second is reset
 # digital_output: output digital pins 
 # digital_input : input  digital pins
@@ -1150,14 +1150,19 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 # servo_output  : servomotor control pin
 # analog_output    : pwm output pin
 # time  : containing a int with a time
+# serial_output    : serial output , allow to write to a serial port 
+# serial_input     : serial input  , allow to read  a serial port
+#end old
+
 # numeric_var:   containing a numeric float varaible 
 # string_var :   containing a utf8 string varaible 
-# serial_output : serial output , allow to write to a serial port 
-# serial_input  : serial input  , allow to read  a serial port
-# special_pin   : handled on the node arduino firmware side
-# digital_obj    : handled on the node arduino firmware side
-# analog_obj     : handled on the node arduino firmware side     
-# cfg_obj        : handled on the node arduino firmware side, will be hidden in the created zone not avaible in the config...
+
+# special_pin      : handled on the node arduino firmware side
+# digital_obj_out  : handled on the node arduino firmware side
+# digital_obj_in   : handled on the node arduino firmware side
+# analog_obj_in    : handled on the node arduino firmware side 
+# analog_obj_out   : handled on the node arduino firmware side 
+# cfg_obj          : handled on the node arduino firmware side, will be hidden in the created zone not avaible in the config...
 
 
 

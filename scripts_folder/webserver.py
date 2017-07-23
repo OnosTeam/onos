@@ -314,6 +314,21 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 
 
     nodeDict[node_sn].updateLastNodeSync(time.time())
+#    if nodeDict[node_sn].getNodeActivity()==0 or nodeDict[node_sn].getNodeActivity()==2: #the node was not connected but now it is
+#      nodeDict[node_sn].setNodeActivity(1)  #set the node as active
+#    for b in nodeDict[node_sn].getnodeObjectsDict().values():#for each object in the node 
+#      logprint("object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber()) )
+#      logprint("webobject:"+b+"returned active",verbose=5)  
+#      object_type=object_dict[b].getType()
+#      if object_type in ("digital_obj_in","analog_obj_in","cfg_obj"): #skip input objects  todo:remove cfg_obj
+#        continue
+#      current_s=object_dict[b].getStatus()
+#      if ((current_s=="inactive") or (current_s=="onoswait") ): 
+#        prev_s=object_dict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
+#        logprint("the new status will be:"+str(prev_s) )
+#        layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"0","write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
+
+
     if len(node_address)==3:  #if is a radio node
       logprint("the node to update is a radio node",verbose=3)
       numeric_address=int(node_address)
@@ -328,7 +343,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
               message="warning I have found another node with the same address,I will therefore assing another one to this node:"+node_sn
               logprint(message,verbose=5)
 
-              priorityCmdQueue.put( {"cmd":"sendNewAddressToNode","nodeSn":node_sn,"nodeAddress":node_address,"nodeFw":node_fw}) 
+              priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":node_sn,"nodeAddress":node_address,"nodeFw":node_fw}) 
          
 
       #if node_address !="254": #if the node have already an address
@@ -375,8 +390,9 @@ def getNextFreeAddress(node_sn,uart_router_sn,node_fw):# get the next free addre
               repeated_address=1
 
   if repeated_address==0: #the address is still the same and is not used by others nodes
-    logprint("the address is still the same and is not used by others nodes")
-    return(node_address)  
+    if node_address!="254":
+      logprint("the address is still:"+str(node_address)+" the same and is not used by others nodes")
+      return(node_address)  
 
 
   for number in range(2,254):
@@ -981,7 +997,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
   if ( object_dict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
 
     logprint("no pin attached to this webobject , I change its status")
-    if object_dict[objName].getType() not in ["digital_obj","analog_obj","cfg_obj"]:
+    if object_dict[objName].getType() not in ["digital_obj_out","analog_obj_out","cfg_obj"]:
       write_to_hardware=0
 
 
@@ -994,9 +1010,12 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
     if object_dict[objName].getStatus()=="onoswait":
-      if user=="onos_node":
-        logprint("I will not set the status because the change is from a node")
-        return(-1)
+      if (user=="onos_node"):
+        if (object_dict[objName].getType() in object_dict[objName].general_out_group):
+          logprint("[objName].getType() :"+object_dict[objName].getType())
+          logprint("general_out_group:"+str(object_dict[objName].general_out_group))
+          logprint("I will not set the status because the change is from a node")
+          return(-1)
 
 
     object_dict[objName].setStatus(statusToSet)#set the web object status 
@@ -1042,7 +1061,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
     nodeSerialNumber=object_dict[objName].getHwNodeSerialNumber()
     if  nodeDict[nodeSerialNumber].getNodeActivity()==0:
       message="the web_object"+objName+" belongs to a disconnected node, i will not set it"
-      logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))  
+      logprint(message,verbose=9)  
       return(-1)
 
     
@@ -1135,7 +1154,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       return(1)
 
         
-    if (obj_type in ("digital_obj","cfg_obj")): #general digital object (for example a plug node)  todo remove cfg_obj..
+    if (obj_type in ("digital_obj_out","cfg_obj","digital_obj_in","analog_obj_in","analog_obj_out")): #general digital object (for example a plug node)  todo remove cfg_obj..
      # status_list=[statusToSet] 
       #while len(pins_to_set)!=len(status_list): #to make the same len...to bypass check in routerhandler..
       #  status_list.append(statusToSet)
@@ -1174,7 +1193,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
     else:
-      logprint("error in changeWebObjectStatus(),the out_type"+obj_type+" is not yet implemented",verebose=10) 
+      logprint("error in changeWebObjectStatus(),the out_type"+obj_type+" is not yet implemented",verbose=10) 
 
 
 
@@ -1326,20 +1345,20 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
     if "object_list" in  hardwareModelDict[hwType0]:
 
-      try:#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]#see globalVar.py
+      try:#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]#see globalVar.py
         list_of_different_object_type=hardwareModelDict[hwType0]["object_list"].keys() #get a list of different obj  
         for a in list_of_different_object_type: 
- # a will be for example "digital_obj" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3] 
+ # a will be for example "digital_obj_out" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3] 
           objType=a  
           for b in hardwareModelDict[hwType0]["object_list"][a].keys():
-# b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]
+# b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
 
             progressive_number=0
             logprint ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
             logprint (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
 
             for c in hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:
-# c will be for example 2 from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj"]["relay"]["object_numbers"]=[2,3]
+# c will be for example 2 from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
 
               object_address_in_the_node=c
 
@@ -1385,13 +1404,13 @@ def createNewWebObjFromNode(hwType0,node_sn):
     
       for a in list_of_different_pin_type:
         #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]
-        # so the first a will be "digital_obj"
+        # so the first a will be "digital_obj_out"
         objType=a 
         i=0
 
 
         for b in hardwareModelDict[hwType0]["pin_mode"][a]:
-          #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj"]
+          #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj_out"]
           #print hardwareModelDict[hwType0]["pin_mode"][a][b]
           #so the first b will be "relay"
         
@@ -1604,13 +1623,13 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
     onos_automatic_object_id=''' id="'''+obj+'''" '''
 
     objType=WebObjectdictionary[obj].getType() 
-    if objType in ("b","sb","digital_obj","cfg_obj","sr_relay","digital_output"):  #banana to use group and to update the online php server with digital_obj...
+    if objType in ("b","sb","digital_obj_out","cfg_obj","sr_relay","digital_output"):  #banana to use group and to update the online php server with digital_obj...
       onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
       onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
       onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
 
-    elif objType in  ("analog_obj","numeric_var","digital_obj","servo_output","analog_output"):  #banana to use group and to update the onlyne php server with digital_obj...
-      onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
+    elif objType in  ("analog_obj_in","numeric_var","digital_obj_in","servo_output","analog_output"):  #banana to use group and to update the onlyne php server with digital_obj...
+      onos_automatic_object_href='''href="#"'''
       onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
       onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
 
@@ -1859,6 +1878,8 @@ def createNewNode(node_sn,node_address,node_fw):
       # if the node doesn't have any object it means there is a problem so will force an update
 
     updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)
+
+
     msg=nodeDict[node_sn].getSetupMsg() 
   else: #create a new node
     logprint("requested setup for a node not existing yet ")                 
@@ -6256,7 +6277,7 @@ def executeQueueFunction(dataExchanged):
 
     logprint("updateObjFromNode_in_executeQueueFunction")
 
-#hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj"]={"plug":[(0)],"plug2":[(1)]}# 
+#hardwareModelDict["WPlugAvx"]["pin_mode"]["digital_obj_out"]={"plug":[(0)],"plug2":[(1)]}# 
 
     node_serial_number=dataExchanged["nodeSn"]
     node_address=dataExchanged["nodeAddress"]
@@ -6333,13 +6354,12 @@ def executeQueueFunction(dataExchanged):
   if (dataExchanged["cmd"]=="createNewNode"):
 
 
-
     try:
       node_serial_number=dataExchanged["nodeSn"]
       node_address=dataExchanged["nodeAddress"]
       node_fw=dataExchanged["nodeFw"]
 
-      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
+      msg=str(createNewNode(node_serial_number,node_address,node_fw) )+"_#]" 
 
       if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node was inactive
         nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
@@ -6351,7 +6371,7 @@ def executeQueueFunction(dataExchanged):
       logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
 
     
-  if (dataExchanged["cmd"]=="sendNewAddressToNode"):
+  if (dataExchanged["cmd"]=="NewAddressToNodeRequired"):
 
     try:
       node_serial_number=dataExchanged["nodeSn"]
@@ -6360,7 +6380,7 @@ def executeQueueFunction(dataExchanged):
       node_fw=dataExchanged["nodeFw"]
       #   [S_254sa123WLightSS0003_#]
       if old_address=="001":   #the router node will not need another address ..only a confirm for first message sync
-        new_address=node_address
+        new_address=old_address
       else:
         new_address=getNextFreeAddress(node_serial_number,uart_router_sn,node_fw)
 
@@ -6369,9 +6389,9 @@ def executeQueueFunction(dataExchanged):
       #  print "i save the new address in the config memory"
 
     except Exception as e:
-      message="error in the sendNewAddressToNode of onosBusThread ,Node:"+str(node_serial_number)
+      message="error in the NewAddressToNodeRequired of onosBusThread ,Node:"+str(node_serial_number)
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
-      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
+      msg=createNewNode(node_serial_number,old_address,node_fw)+"_#]" 
      
   if (dataExchanged["cmd"]=="set_serialCommunicationIsWorking=0"): #todo check if it works
     try:

@@ -46,7 +46,7 @@ class WebObject(object):   # inherit from object python class
    
 
 
-    def __init__(self,name,obj_type="b",start_status=0,styleDictionary={},htmlDictionary={},cmdDictionary={},note=" ",hardware_pin=[9999],HwNodeSerialNumber=0,spareDict={}):
+    def __init__(self,name,obj_type="b",start_status="0",styleDictionary={},htmlDictionary={},cmdDictionary={},note=" ",hardware_pin=[9999],HwNodeSerialNumber=0,spareDict={}):
       self.__object_type=obj_type
       self.__style0="background-color:red ;"
       self.__style1="background-color:green ;"
@@ -133,7 +133,7 @@ class WebObject(object):   # inherit from object python class
  
 
       self.start_status=start_status
-      self.status=0
+      self.status="0"
      #self.pre_previous_status=self.status 
       self.previous_status=self.status          
       self.note=note
@@ -143,11 +143,12 @@ class WebObject(object):   # inherit from object python class
       #self.analog_threshold=512
       #self.__hw_node_name="rasberry_b_rev2_only"  #banana to remove
       self.simply_digital_output_group=["digital_output","b","button"] #makes alias
-      self.general_digital_output_group=self.simply_digital_output_group+["sr_relay"]+["digital_obj"]
-      self.general_analog_output_group=["analog_output","servo_output","numeric_var","analog_obj"]
+      self.general_digital_output_group=self.simply_digital_output_group+["sr_relay"]+["digital_obj_out"]
+      self.general_analog_output_group=["analog_output","servo_output","numeric_var","analog_obj_out"]
       self.general_out_group=self.general_digital_output_group+self.general_analog_output_group+["string_var"] #all output
       self.simply_digital_input_group=["d_sensor","digital_input"]     #make alias
-      self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var","cfg_obj"]#objtype with num values
+      self.general_input_group=self.simply_digital_input_group+["analog_obj_in","digital_obj_in"]
+      self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var","cfg_obj","analog_obj_input","analog_obj_out"]#objtype with num values
 
       self.isActive=1 #tell onos if the web_object is connected or not
 
@@ -159,12 +160,11 @@ class WebObject(object):   # inherit from object python class
       with lock_bash_cmd: 
         subprocess.call(self.init_function+'> logs/cmd_init.log 2>&1 &', shell=True,close_fds=True)
       logprint(self.init_function)
-
-
       if self.status in self.cmdDict.keys():
-        #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &')
-        with lock_bash_cmd:
-          subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
+        if self.cmdDict[self.status]!="":
+          os.system(self.cmdDict[self.status]+'> logs/cmd1.log 2>&1 &')
+          with lock_bash_cmd:
+            subprocess.call(self.cmdDict[self.status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
       
 
 
@@ -185,8 +185,9 @@ class WebObject(object):   # inherit from object python class
 
         if status in self.cmdDict.keys():
             #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
-          with lock_bash_cmd:
-            subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
+          if self.cmdDict[status]!="":
+            with lock_bash_cmd:
+              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
         if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
           self.previous_status=self.status 
 

@@ -47,7 +47,7 @@ for a in obj_name_list :      # for every web_obj in the zone make a row...
             <!--onos_automatic_object_a-->  
 			<div class="specs col2"><!--onos_automatic_object_html--></div>
 			<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
-			<div class="scenario-link col3"><i class="icon-calculator"></i></div>
+
 
 
 		</div>
