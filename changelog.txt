@@ -666,7 +666,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Started using ifdef in the arduino code to make different config for different node in the same file
                 Replaced "digital_obj" with "digital_obj_out" in all the code
                 Now all the objects status will be handled as string , converted all the integers to strings.
-
+                Now the reed node goes to sleep with LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
   
 
 (110, 'Connection timed out');;;
