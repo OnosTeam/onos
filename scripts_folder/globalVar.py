@@ -37,7 +37,7 @@ import random
 import binascii  #used by weobject class for the permission 
 import re  #regular expression
 import smtplib   #used by mail_agent to send mail
-
+import platform
 
 
 # Add vendor directory to module search path
@@ -114,7 +114,15 @@ router_read_pin_frequency=20  #seconds between a pin read in the router hardware
 last_pin_read_time=0
 
 
-if (os.path.exists("/sys/class/gpio")==1)&(router_hardware_type=="RouterGL") : #if the directory exist ,then the hardware has embedded IO pins
+platform=platform.node()
+
+if platform.find("Orange")!=-1: #found uname with orange pi name
+  router_hardware_type="RouterOP"
+
+
+
+
+if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
   discovered_running_hardware=router_hardware_type
   base_cfg_path="/bin/onos/scripts_folder/"
 else:
@@ -965,6 +973,14 @@ onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta1234","smtp_
 conf_options={u"online_server_enable":online_server_enable,u"enable_mail_output_service":enable_mail_output_service,u"enable_mail_service":enable_mail_service,u"accept_only_from_white_list":accept_only_from_white_list,u"mail_whiteList":mail_whiteList,u"timezone":timezone,u"login_required":login_required,u"logTimeout":logTimeout,"node_password_dict":node_password_dict,"online_usersDict":online_usersDict,"enable_onos_auto_update":enable_onos_auto_update,"scenarios_enable":scenarios_enable}
 
 #localhost/setup/node_manager/RouterGL0001
+
+
+hardwareModelDict["RouterOP"]={"hwName":"RouterOP","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":"never"}
+hardwareModelDict["RouterOP"]["pin_mode"]["digital_input"]={}
+hardwareModelDict["RouterOP"]["parameters"]["bash_pin_enable"]=1
+hardwareModelDict["RouterOP"]["parameters"]["serial_port_enable"]=1  #not yet implemented
+
+
 hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":"never"}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["RouterGL"]["parameters"]["bash_pin_enable"]=1

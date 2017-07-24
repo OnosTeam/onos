@@ -21,9 +21,9 @@ ifup wan
 while [ true ]
 
 do  nice -n -16 python time_zone.py 
-    nice -n -16 python ../update_check.py
+    #nice -n -16 python ../update_check.py  #check for update
     nice -n -16 python webserver.py
-    #python webserver.py
+
     echo "python closed for 2 sec"
     sleep 2
 done

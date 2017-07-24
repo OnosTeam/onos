@@ -19,6 +19,11 @@ mv /tmp/onos/ /bin/onos
 scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) root@192.168.1.2:/bin/onos/
 
 
+scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) orangepi@192.168.1.139:/bin/onos/
+
+scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) orangepi@192.168.1.139:/tmp/onos/
+
+scp -r  orangepi@192.168.1.139:/tmp/onos/
 
 git add *
 git commit -a -m "working on lamp node" 

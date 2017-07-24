@@ -93,6 +93,12 @@ class Serial_connection_Handler():
     logprint("searchForSerialCable() executed with self.exluded_port_list= "+str(list_of_port_to_not_use))
     list_of_dev=os.listdir("/dev")
 
+
+    if router_hardware_type=="RouterOP":  #if the router hardware is orange pi zero
+      if "/dev/ttyS2" in  list_of_dev: #for orange pi
+        return(dev)
+
+
     if ("ttyUSB0" in list_of_dev)and('/dev/ttyUSB0' not in list_of_port_to_not_use):
       return("ttyUSB0")
 
@@ -120,6 +126,7 @@ class Serial_connection_Handler():
     for dev in  list_of_dev:
       if (dev.find("ttyACM")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
         return(dev)
+
 
     for dev in  list_of_dev:
       if (dev.find("ttyS")!=-1)and('/dev/'+dev not in list_of_port_to_not_use):
