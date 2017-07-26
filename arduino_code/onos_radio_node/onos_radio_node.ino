@@ -147,8 +147,9 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   uint8_t real_reed1_status=0;
   uint8_t real_reed2_status=0;
   int temperature_sensor_value=0;
-  uint8_t temperature_sensor_lower_byte=0;
-  uint8_t temperature_sensor_upper_byte=0;
+  uint8_t temperature_sensor_value_byte=0;
+  //uint8_t temperature_sensor_lower_byte=0;
+  //uint8_t temperature_sensor_upper_byte=0;
   uint8_t luminosity_sensor_value=0;
   uint8_t battery_value=0;
 
@@ -280,7 +281,7 @@ OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
 uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
 uint8_t radioRetryAllarm=100; 
-uint8_t radioTxTimeoutAllarm=200;  
+uint8_t radioTxTimeoutAllarm=100;  
 
 # define gateway_address 1
 boolean first_sync=1;
@@ -376,15 +377,8 @@ void composeSyncMessage(){
   Serial.println(F("composeSyncMessage executed"));
   //[S_123ul5.24WPlugAvx000810000x_#]
 
-  if (progressive_msg_id<122){  //122 is z in ascii
-    progressive_msg_id=progressive_msg_id+1;
-  }
-  else{
-    progressive_msg_id=48;  //48 is 0 in ascii
-  }
 
 
-  
 
   tmp_number=0;
   //strcpy(str_this_node_address,"");
@@ -428,7 +422,7 @@ void composeSyncMessage(){
 
 
 #if defined(node_type_WreedSaa)
-//[S_001rsWreedSaa0001312Lgx_#]      reeds:3, temperature sensor:12, luminosity sensor:L, battery sensor:g 
+//[S_001rsWreedSaa000132Lgx_#]      reeds:3, temperature sensor:2, luminosity sensor:L, battery sensor:g 
 
 
 
@@ -461,8 +455,19 @@ void composeSyncMessage(){
   Serial.print(F("reed_total_status="));
   Serial.println(reed_sensors_state);
 
-  temperature_sensor_value=analogRead(node_obj_status[tempSensor]);
+ // temperature_sensor_value=(  analogRead(A0)*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius
 
+
+  
+  temperature_sensor_value=(  analogRead(node_obj_pinout[tempSensor])*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius
+
+
+  if (temperature_sensor_value>254){// limit the data to only a byte
+    temperature_sensor_value=254;  
+  }
+  temperature_sensor_value_byte=byte(temperature_sensor_value); //cast from int to byte
+
+/*
   //convert from integer to 2 binary bytes 
   //for example 1024 will be        00000100 00000000
   if (temperature_sensor_value<256){
@@ -475,9 +480,22 @@ void composeSyncMessage(){
 
   }
 
-  luminosity_sensor_value=byte(analogRead(node_obj_status[luminosity_sensor])/4);//get the value of the lux sensor , 0:255
+*/
 
-  battery_value=byte(analogRead(node_obj_status[battery_state])/4);
+  luminosity_sensor_value=byte(analogRead(node_obj_pinout[luminosity_sensor])/4);//get the value of the lux sensor , 0:255
+
+  battery_value=byte(analogRead(node_obj_pinout[battery_state])/4);
+
+
+  Serial.print(F("temperature_sensor_value="));
+  Serial.print(temperature_sensor_value);
+
+
+  Serial.print(F(",luminosity="));
+  Serial.print(luminosity_sensor_value);
+
+  Serial.print(F(",battery_value="));
+  Serial.println(battery_value);
 
 
 /*
@@ -506,9 +524,7 @@ void composeSyncMessage(){
 
   syncMessage[strlen(syncMessage)]=reed_sensors_state;   
 
-  syncMessage[strlen(syncMessage)]=temperature_sensor_upper_byte;  
-
-  syncMessage[strlen(syncMessage)]=temperature_sensor_lower_byte;  
+  syncMessage[strlen(syncMessage)]=temperature_sensor_value_byte;  
 
   syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
 
@@ -594,6 +610,12 @@ void composeSyncMessage(){
 
 
 
+  if (progressive_msg_id<122){  //122 is z in ascii
+    progressive_msg_id=progressive_msg_id+1;
+  }
+  else{
+    progressive_msg_id=48;  //48 is 0 in ascii
+  }
 
 
   syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
@@ -611,7 +633,7 @@ void composeSyncMessage(){
 
 void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
 
-  composeSyncMessage();
+ // composeSyncMessage();
   
 
 /*
@@ -882,7 +904,7 @@ void checkCurrentRadioAddress(){
     if ((millis()-sync_time)>sync_timeout){ //every 1500/2500 ms
    
 
-
+      composeSyncMessage();
       sendSyncMessage(radioRetry,radioTxTimeout);
       sync_time=millis();
 
@@ -957,17 +979,19 @@ void buttonStateChanged(){
 void handleReed(){//handle the reed sensor
   //node_obj_status[reed1Logic]=0;
   Serial.println(F("handleReed called"));
-
+  composeSyncMessage();
+  sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
+/*
   if (digitalRead(node_obj_pinout[reed1])==node_obj_status[reed1Logic]){ //the sensor should send allarm
-    detachInterrupt(1);
+    composeSyncMessage();
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
   }
 
   else if (digitalRead(node_obj_pinout[reed2])==node_obj_status[reed2Logic]){ //the sensor should send allarm
-    detachInterrupt(1);
+    composeSyncMessage();
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
   }
-  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+*/
 
 }
 #endif  //end  if defined(node_type_WreedSaa)
@@ -1019,6 +1043,7 @@ void handleButton(){//handle the main node button
     if (((millis()-button_time_same_status)>time_to_change_status)&&(button_still_same_status==0)){
       Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
       changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+      composeSyncMessage();
       sendSyncMessage(radioRetry+2,radioTxTimeout); 
       button_still_same_status=1;
       button_time_same_status=millis();
@@ -1034,7 +1059,11 @@ void handleButton(){//handle the main node button
 void interrupt1_handler(){
 
 #if defined(node_type_WreedSaa)
+
+  detachInterrupt(1);
   handleReed();
+  //note adc readings are the old values until about 3 interrupt are called 
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 #endif
   Serial.println(F("interrupt called"));
 
@@ -1059,9 +1088,9 @@ void setup() {
   node_obj_pinout[reed1]=3;   // the first  object is the reed1 connected on pin 3 
   node_obj_pinout[button]=5;  // the second  object is the button  connected on pin 5 
   node_obj_pinout[led]=4;     // the third  object is the led     connected on pin 4
-  node_obj_pinout[tempSensor]=1;   // the forth object is the temperature sensor connected on analog pin 1  
-  node_obj_pinout[battery_state]=0;   // the 9th object is the battery state connected on analog pin 0  
-  node_obj_pinout[luminosity_sensor]=2; 
+  node_obj_pinout[tempSensor]=A1;   // the forth object is the temperature sensor connected on analog pin 1  
+  node_obj_pinout[battery_state]=A2;   // the 9th object is the battery state connected on analog pin 0  
+  node_obj_pinout[luminosity_sensor]=A0; 
   node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
   node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
   pinMode(node_obj_pinout[reed1], INPUT);

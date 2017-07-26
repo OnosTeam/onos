@@ -668,6 +668,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Now all the objects status will be handled as string , converted all the integers to strings.
                 Now the reed node goes to sleep with LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
                 Now onos can detect if the hardware is orngepi with platform.node()
+                Now the reed node has 3 analog sensor,temperature luminosity and battery level
   
 
 (110, 'Connection timed out');;;
