@@ -1583,18 +1583,23 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 
 
   logprint("modPage()  executed with zone:"+str(zone))
-  if zone in zoneDictionary:
-    zoneObjList=zoneDictionary[zone]["objects"]
-  else:
-    logprint("zone not in the system"+ str(zone) )
-    zoneObjList=[]
-    return(htmlPag)
+  #if zone in zoneDictionary:
+  zoneObjList=zoneDictionary[zone]["objects"]
+  #else:
+  #  logprint("zone not in the system"+ str(zone) )
+  #  zoneObjList=[]
+  #  return(htmlPag)
   tmp_pag=htmlPag
 
-  try:
-    onos_automatic_body_style=''' body {'''+WebObjectdictionary[zone+'_body'].getStyle()+'''}'''
-  except:
+  if zone+'_body' in WebObjectdictionary.keys():
+    try:
+      onos_automatic_body_style=''' body {'''+WebObjectdictionary[zone+'_body'].getStyle()+'''}'''
+    except:
+      onos_automatic_body_style=' '
+  else:
     onos_automatic_body_style=' '
+
+
     #print "no  body obj found in zone"+zone
   #print zoneObjList
 
@@ -1697,8 +1702,6 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html to insert in the index.html of a room directory  which must be inside the baseRoomPath directory, modify to read the html ..
   logprint("getRoomHtml()executed")
 
-  
-
   retval = os.getcwd()   #you musn't have spaces on the path..
   #print "retval:"+retval
   #x=retval+"/"room+"/index.html"
@@ -1708,9 +1711,6 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
   #x=string.replace(x, '\n', '') 
   readed_html="nothing"
   logprint("file to open="+x)
-
-  
-
     
   try:
     in_file=open(x,"r")
@@ -1726,8 +1726,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
   #print "readed htm="+readed_html+"end"
 
 
-  
-
+ 
   if (len(readed_html)>10)&(string.find(readed_html,'<!--onos_automatic_page-->')==-1):  #if the file exist and is not automatic then serve it as it is 
     logprint("readed_htmlis mod from user",verbose=5)
     #roomHtml=readed_html
@@ -3216,16 +3215,19 @@ class MyHandler(BaseHTTPRequestHandler):
               
               global oldpag
               global nothing_changed
+              logprint("r_onos_s found0")
                  #   global  old_zoneDict
                  #   global  old_object_dict
                  #   global  old_web_page
               end_file_name=0
               end_file_name=string.find(self.path,".html")+5
               web_page=''
-              try:              
-                b1 = open(baseRoomPath+self.path[1:end_file_name] ,'r')    
-                web_page=b1.read()    
-                b1.close()
+
+              try:       
+
+                with open(baseRoomPath+self.path[1:end_file_name] , 'r') as b1:       
+                  web_page=b1.read()    
+
               except:
                 logprint("error opening the file" )  
 
@@ -3298,7 +3300,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if (self.path.endswith("=")&( string.find(self.path,"?")!=-1)&((string.find(self.path,".html")!=-1))): # not an object change but just a webpage show 
+            elif (self.path.endswith("=")&( string.find(self.path,"?")!=-1)&((string.find(self.path,".html")!=-1))): # not an object change but just a webpage show 
 
                 
               html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
@@ -3326,156 +3328,6 @@ class MyHandler(BaseHTTPRequestHandler):
               except Exception as e  :
                 message="error11 in send_header "      
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-                pass
-              return
-
-
-            if (    ( string.find(self.path,"?")!=-1)&(string.find(self.path,"=")!=-1)&(string.find(self.path,"r_onos_s")==-1)):
-              logprint("get query found")
-              end_file_name=0
-              if (  (string.find(self.path,".html")!=-1) ):  #if a html file is called
-             
-                #start_file_name=""
-                
-                #x=(string.find(self.path,"/")) 
-                
-                html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
-                logprint("html_filename=",html_filename)
-                #end_file_name=string.find(self.path,".html")+5
-
-                #print "addressbar1= "+self.path
-                #print "file:"+self.path[1:end_file_name]  
-                try:              
-                  #b1 = open(baseRoomPath+self.path[1:end_file_name] ,'r')    
-                  b1 = open(baseRoomPath+html_filename ,'r')    
-                  web_page=b1.read()    
-                  b1.close()
-                except Exception as e  :
-                  message="error opening the htlm file"
-                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-                  web_page="error no html found"
-                #print web_page
-                
-              else: #no .html in the address bar
-                k=0
-                last_bar=len(self.path)
-                while ((string.find(self.path,"/",k))!=-1):   #search for the last / in the address bar
-                  last_bar=string.find(self.path,"/",k)
-                  k=last_bar+1
-              
-              
-                logprint("local address bar ="+self.path[0:last_bar+1])
-                try:              
-                  b1 = open(baseRoomPath+self.path[1:last_bar+1] +"index.html" ,'r')   
-                  
-                  web_page=b1.read()    
-                  b1.close()
-                except Exception as e  :
-                  message="error opening the file local address bar ="+self.path[0:last_bar+1] 
-                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-
-                  web_page=web_page_not_found
-                #print web_page
-            
-                                  
-                    
-             
-              address_bar=self.path[end_file_name:]
-              #print "a---"+address_bar
-              #banana use regex to read all the obj and status to set
-              address_bar=address_bar[string.find(address_bar,"?")+1:]
-
-              equal_position=string.find(address_bar,"=")
-              next_point_position=string.find(address_bar,"&",equal_position)
-              objName=address_bar[0: equal_position]
-
-              if (next_point_position!=-1):
-                status_to_set=(  address_bar[(equal_position+1):(next_point_position)]  )
-                logprint("value="+(status_to_set) )
-              else:                     
-                status_to_set=(address_bar[(equal_position+1):])
-                logprint("value="+(status_to_set) )
-
-              if status_to_set=="!":  # to make a not of the current status
-                 #print "make the opposite"
-                status_to_set=not (object_dict[objName].getStatus())
-
-              if (  objName  in object_dict ):
-                #print "pulsante trovato in dizionario"                
-             
-                if status_to_set=="!":  # to make a not of the current status
-                    #print "make the opposite"
-                  status_to_set=not (object_dict[objName].getStatus())
-
-
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":self.current_username,"mail_report_list":[]})  
- 
-
-                logprint("i set"+objName+" to :"+str(status_to_set) )
-
-              else:
-                logprint("the objName :"+objName+" not in dictionary 2")
-
-
-              address_bar=address_bar[next_point_position-2:]
-
-              #address_bar example  "http://192.168.0.100/RouterGL0000/index.html?socket0_RouterGL0000=0&socket0_RouterGL0020=1&socket0_ttgg0000=69"
-              while ( ( string.find(address_bar,"&")!=-1)&(len(address_bar)>1 )):
-                point_position=string.find(address_bar,"&")
-                equal_position=string.find(address_bar,"=",point_position)
-                next_point_position=string.find(address_bar,"&",equal_position)
-                objName=address_bar[point_position+1: equal_position]
-                
-                #print "cmd:"+cmd
-                #print "a:"+address_bar[(equal_position):]
-                 
-                try :
-                  if (next_point_position!=-1):
-                    status_to_set=(  address_bar[(equal_position+1):(next_point_position)]  )
-                    logprint("value="+(status_to_set) )
-                  else:                     
-                    status_to_set=(address_bar[(equal_position+1):])
-                    logprint("value="+(status_to_set) )
-
-                except Exception as e  :
-                
-                  message="error in the status_to_set_value in the address bar"+address_bar[(equal_position+2):]
-                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
-                  #logprint("next:"+str(next_point_position)+address_bar[equal_position+2:] )
-                  status_to_set=-1
-
-                if (  objName  in object_dict ):
-                #print "pulsante trovato in dizionario"                
-             
-                  if status_to_set=="!":  # to make a not of the current status
-                    #print "make the opposite"
-                    status_to_set=not (object_dict[objName].getStatus())
-
-                  logprint("path="+address_bar)
-                  #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":self.current_username,"mail_report_list":[]})    
-
-                  logprint ("i set"+objName+" to :"+str(status_to_set))
-
-                else:
-                  logprint ("objName :"+objName+" not in dictionary 1")
-                
-
-                address_bar=address_bar[(equal_position+1):] #remove the first '?'
-                #print "addressbar= "+address_bar
-
-              
-              pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
-
-              try:
-                self.send_response(202)
-                self.send_header('Content-type',	'text/html')
-                self.end_headers() 
-                self.wfile.write(pag) 
-         #      print "percorso="+self.path+"fine percorso"   
-              except Exception as e  :
-                message="error11 in send_header "     
-                logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
                 pass
               return
 
@@ -4145,44 +3997,6 @@ class MyHandler(BaseHTTPRequestHandler):
 ########################################################################### end experimental code
 
 
-
-
-
-
-
-
-
-
-
-            if ((self.path.endswith("?="))&(string.find(self.path,"r_onos_s")==-1)):
-              end_file_name=0
-              end_file_name=string.find(self.path,".html")+5              
-              web_page=''
-              try:              
-                b1 = open(baseRoomPath+self.path[1:end_file_name] ,'r')    
-                web_page=b1.read()    
-                b1.close()
-              except Exception as e  :
-                message="error4 opening the file"
-                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-              
-              pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
-              try:
-                self.send_response(202)
-                self.send_header('Content-type',	'text/html')
-                self.end_headers()          
-                self.wfile.write(pag) 
-              except Exception as e  :
-                message="error24 in send_header "    
-                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-                pass
-              return
-
-
-
-
-
-
             elif self.path.endswith(".html"):
                 f = open(curdir + sep + self.path) #self.path has /test.html
                 tmpF=f.read()
@@ -4740,6 +4554,9 @@ class MyHandler(BaseHTTPRequestHandler):
      
             elif "current_room_text_area" in postvars:
               currentRoom=self.clear_PostData(postvars["current_room_text_area"][0])
+              if currentRoom not in zoneDict.keys():
+                logprint("currentRoom:"+currentRoom+" not in zonedict",verbose=8)
+                return(-1)
               new_html_room=postvars["html_room_mod"][0]
               logprint("new_html_room="+new_html_room)
 
@@ -5382,7 +5199,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   namespace={} 
                   web_page=""
-                  #execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py  
+                  #execfile(cgi_name,locals(),namespace)  #execute external script 
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)                 
                   web_page=namespace["web_page"]
                   self.send_response(200)
@@ -5400,7 +5217,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   namespace={} 
                   web_page=""
-                  #execfile(cgi_name,locals(),namespace)  #execute external script /gui/display_zone_objects.py 
+                  #execfile(cgi_name,locals(),namespace)  #execute external script 
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
                   web_page=namespace["web_page"]
                   self.send_response(200)
