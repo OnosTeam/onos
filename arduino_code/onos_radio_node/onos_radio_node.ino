@@ -146,12 +146,16 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
   uint8_t real_reed1_status=0;
   uint8_t real_reed2_status=0;
+  byte keep_ADCSRA=ADCSRA; //save the state of the register;
   int temperature_sensor_value=0;
+  #define analog_readings 20  //repeated readings  , don't make them more than 20 or there will be overflow
   uint8_t temperature_sensor_value_byte=0;
   //uint8_t temperature_sensor_lower_byte=0;
   //uint8_t temperature_sensor_upper_byte=0;
-  uint8_t luminosity_sensor_value=0;
-  uint8_t battery_value=0;
+  int luminosity_sensor_value=0;
+  uint8_t luminosity_sensor_value_byte=0;
+  int battery_value=0;
+  uint8_t battery_value_byte=0;
 
 #elif defined(node_type_Wrelay4x)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -457,9 +461,16 @@ void composeSyncMessage(){
 
  // temperature_sensor_value=(  analogRead(A0)*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius
 
-
+  for (uint8_t i=0;i<=analog_readings;i=i+1){
+    temperature_sensor_value=temperature_sensor_value+(analogRead(node_obj_pinout[tempSensor])*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius  
+    delay(1);
+    luminosity_sensor_value= luminosity_sensor_value+analogRead(node_obj_pinout[luminosity_sensor])/4;
+    delay(1);
+    battery_value=battery_value+analogRead(node_obj_pinout[battery_state])/4;
+    delay(1);
+  }
   
-  temperature_sensor_value=(  analogRead(node_obj_pinout[tempSensor])*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius
+  temperature_sensor_value=(temperature_sensor_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..
 
 
   if (temperature_sensor_value>254){// limit the data to only a byte
@@ -482,9 +493,20 @@ void composeSyncMessage(){
 
 */
 
-  luminosity_sensor_value=byte(analogRead(node_obj_pinout[luminosity_sensor])/4);//get the value of the lux sensor , 0:255
+  luminosity_sensor_value=(luminosity_sensor_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..
+  if (luminosity_sensor_value>254){// limit the data to only a byte
+    luminosity_sensor_value=254;  
+  }
 
-  battery_value=byte(analogRead(node_obj_pinout[battery_state])/4);
+  luminosity_sensor_value_byte=byte(luminosity_sensor_value);//get the value of the lux sensor , 0:255
+
+  battery_value=(battery_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..
+
+  if (battery_value>254){// limit the data to only a byte
+    battery_value=254;  
+  }
+
+  battery_value_byte=byte(battery_value);
 
 
   Serial.print(F("temperature_sensor_value="));
@@ -495,9 +517,10 @@ void composeSyncMessage(){
   Serial.print(luminosity_sensor_value);
 
   Serial.print(F(",battery_value="));
-  Serial.println(battery_value);
+  Serial.print(battery_value);
 
-
+  Serial.print(F(",battery_value_byte="));
+  Serial.println(battery_value_byte);
 /*
   //todo remove these fixed values
   temperature_sensor_upper_byte=60;
@@ -711,7 +734,7 @@ void getAddressFromGateway(){
       tryed_times=tryed_times+1;
       //delay(random_time);
       LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
-
+      ADCSRA=keep_ADCSRA; //resume the status of the register
 
     }
 
@@ -922,7 +945,7 @@ void checkCurrentRadioAddress(){
         LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
         LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
         LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-
+        ADCSRA=keep_ADCSRA; //resume the status of the register
         sync_time=millis();
 
 #endif  //end  if defined(battery_node)
@@ -962,7 +985,7 @@ void beginRadio(){
   Serial.println(F(" MHz"));
   Serial.print(F("radio address changed to:"));
   Serial.println(this_node_address);
-
+  keep_ADCSRA=ADCSRA; //save the state of the register
 
 
 }
@@ -1061,6 +1084,7 @@ void interrupt1_handler(){
 #if defined(node_type_WreedSaa)
 
   detachInterrupt(1);
+  ADCSRA=keep_ADCSRA; //resume the status of the register
   handleReed();
   //note adc readings are the old values until about 3 interrupt are called 
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
@@ -1174,7 +1198,9 @@ void setup() {
 
   changeObjStatus(0,1);
   //delay(300);   
+
   LowPower.powerDown(SLEEP_250MS, ADC_OFF, BOD_OFF);
+  ADCSRA=keep_ADCSRA; //resume the status of the register
   changeObjStatus(0,0);
 
   Blink(node_obj_pinout[led],100,3); 

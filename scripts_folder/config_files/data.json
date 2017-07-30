@@ -86,7 +86,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 177, 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -395,7 +395,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 28, 
+        "status": 30, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -431,7 +431,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 126, 
+        "status": 1245, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -500,7 +500,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 2, 
+        "status": 20, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -534,7 +534,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": 1, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -567,7 +567,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 79, 
+        "status": 21, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -701,7 +701,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 6, 
+        "status": 45, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -906,7 +906,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": false, 
+        "status": true, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1338,7 +1338,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 22, 
+        "status": 24, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 

@@ -670,7 +670,9 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Now onos can detect if the hardware is orngepi with platform.node()
                 Now the reed node has 3 analog sensor,temperature luminosity and battery level
                 Improved the javascript update of the webobject list in the zone,now it will reconnect to onos after onos restart.
-  
+                Corrected and impoved the analog reading and transmission of analog sensor in reed node .
+
+
 
 (110, 'Connection timed out');;;
 main error in handle_new_query_to_remote_node_thread;;;

@@ -359,9 +359,9 @@ class SerialPort:
                   reed1_status=(reeds_status=="2")or(reeds_status=="3") #get boolean result
                   reed2_status=(reeds_status=="1")or(reeds_status=="3") #get boolean result
                
-                  tempSensor= ord(cmd[21])
-                  luminosity_sensor= ord(cmd[22])
-                  battery_state= ord(cmd[23])
+                  tempSensor= ord(cmd[21])-1       #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                  luminosity_sensor= ord(cmd[22])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                  battery_state= ord(cmd[23])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
 
                   objects_to_update_dict={0:reed1_status,5:reed2_status,3:tempSensor,10:luminosity_sensor,9:battery_state}
 

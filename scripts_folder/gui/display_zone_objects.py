@@ -41,12 +41,11 @@ for a in obj_name_list :      # for every web_obj in the zone make a row...
 
 
 		<div class="riga" <!--onos_automatic_local_style--> >
-
-			<div id="<!--onos_automatic_object_id-->"   class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
-
             <!--onos_automatic_object_a-->  
-			<div class="specs col2"><!--onos_automatic_object_html--></div>
-			<div class="impostazioni-link col3"><i class="icon-wrench"></i></div>
+			  <div id="<!--onos_automatic_object_id-->"   class="imagebutton col1" onclick="buttonfunction(this.id,'click1');"></div>
+			  <div class="specs col2"><!--onos_automatic_object_html--></div>
+			  <div class="impostazioni-link col3"><i class="icon-wrench"></i>
+            </div>
 
 
 
