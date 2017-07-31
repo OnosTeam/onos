@@ -27,7 +27,7 @@
       }, 
       "WreedSaa0004": {
         "hwModelName": "WreedSaa", 
-        "nodeAddress": "009", 
+        "nodeAddress": "004", 
         "nodeObjectsDict": {
           "0": "reed1_WreedSaa0004", 
           "2": "led_WreedSaa0004", 
@@ -395,7 +395,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 30, 
+        "status": 31, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -431,7 +431,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1245, 
+        "status": 123, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -465,7 +465,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -500,7 +500,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 20, 
+        "status": 2, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -534,7 +534,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1, 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -567,7 +567,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 21, 
+        "status": 86, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -701,7 +701,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 45, 
+        "status": 3, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -807,7 +807,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -840,7 +840,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": true, 
+        "status": false, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -873,7 +873,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1305,7 +1305,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": "onoswait", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1338,7 +1338,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 24, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 

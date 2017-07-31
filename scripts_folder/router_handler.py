@@ -680,7 +680,7 @@ class RouterHandler:
 
       query_time=time.time()
       number_of_retry_done=0
-      priority=99
+      priority=10  #99
       query_order=priority
       cmd="set_address"
       objName="set_address"

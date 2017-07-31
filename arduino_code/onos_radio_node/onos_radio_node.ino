@@ -144,8 +144,12 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define node_default_timeout 1500 //36000000  //10 minutes of timeout
   #define battery_node 1            // tell the software to go to sleep to keep battery power. 
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
-  uint8_t real_reed1_status=0;
-  uint8_t real_reed2_status=0;
+  uint8_t logic_reed1_status=0;
+  uint8_t logic_reed2_status=0;
+
+  uint8_t reed1_status_sent=0;
+  uint8_t reed2_status_sent=0;
+
   byte keep_ADCSRA=ADCSRA; //save the state of the register;
   int temperature_sensor_value=0;
   #define analog_readings 20  //repeated readings  , don't make them more than 20 or there will be overflow
@@ -285,7 +289,7 @@ OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
 uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
 uint8_t radioRetryAllarm=100; 
-uint8_t radioTxTimeoutAllarm=100;  
+uint8_t radioTxTimeoutAllarm=50;  
 
 # define gateway_address 1
 boolean first_sync=1;
@@ -433,26 +437,31 @@ void composeSyncMessage(){
 
   node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
   node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
+  
+  reed1_status_sent=node_obj_status[reed1];
+  reed2_status_sent=node_obj_status[reed2];
+
 
   Serial.print(F("reed1_status="));
   Serial.println(node_obj_status[reed1]);
   Serial.print(F("reed2_status="));
   Serial.println(node_obj_status[reed2]);
 
-  real_reed1_status=(node_obj_status[reed1])^(node_obj_status[reed1Logic]); //the 2 value must be different for the result to be 1
-  real_reed2_status=(node_obj_status[reed2])^(node_obj_status[reed2Logic]);
+  logic_reed1_status=(node_obj_status[reed1])^(node_obj_status[reed1Logic]); //the 2 value must be different for the result to be 1
+  logic_reed2_status=(node_obj_status[reed2])^(node_obj_status[reed2Logic]);
 
 
-  if ((real_reed1_status==0)&&(real_reed2_status==0)){
+
+  if ((logic_reed1_status==0)&&(logic_reed2_status==0)){
     reed_sensors_state='0';   
   }
-  else if ((real_reed1_status==0)&&(real_reed2_status==1)){
+  else if ((logic_reed1_status==0)&&(logic_reed2_status==1)){
     reed_sensors_state='1';   
   }
-  else if ((real_reed1_status==1)&&(real_reed2_status==0)){
+  else if ((logic_reed1_status==1)&&(logic_reed2_status==0)){
     reed_sensors_state='2';   
   }
-  else if ((real_reed1_status==1)&&(real_reed2_status==1)){
+  else if ((logic_reed1_status==1)&&(logic_reed2_status==1)){
     reed_sensors_state='3';   
   }
 
@@ -732,9 +741,9 @@ void getAddressFromGateway(){
       Serial.print(F("radio tx failed, I retry"));
       random_time=10;//random(10,radioTxTimeout*3);
       tryed_times=tryed_times+1;
-      //delay(random_time);
-      LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
-      ADCSRA=keep_ADCSRA; //resume the status of the register
+      delay(15);
+      //LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
+      //ADCSRA=keep_ADCSRA; //resume the status of the register
 
     }
 
@@ -926,29 +935,38 @@ void checkCurrentRadioAddress(){
     //random_time=1500;//random(1500,2500);
     if ((millis()-sync_time)>sync_timeout){ //every 1500/2500 ms
    
+      composeSyncMessage();
 
+#if defined(battery_node) // defined(node_type_WreedSaa)
+      sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
+      sync_time=millis();
+      //  I put the node to sleep
+      Serial.println(F("I go to sleep"));
+      radio.sleep();
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      delayMicroseconds(50);
+      ADCSRA=keep_ADCSRA; //resume the status of the register
+      composeSyncMessage();
+      sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
+      sync_time=millis();
+
+#else    //not a battery node
       composeSyncMessage();
       sendSyncMessage(radioRetry,radioTxTimeout);
       sync_time=millis();
 
-#if defined(battery_node) // defined(node_type_WreedSaa)
-      //  I put the node to sleep
-        Serial.println(F("I go to sleep"));
-        radio.sleep();
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-        ADCSRA=keep_ADCSRA; //resume the status of the register
-        sync_time=millis();
-
 #endif  //end  if defined(battery_node)
+
+
 
 
     }
@@ -1004,6 +1022,7 @@ void handleReed(){//handle the reed sensor
   Serial.println(F("handleReed called"));
   composeSyncMessage();
   sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
+
 /*
   if (digitalRead(node_obj_pinout[reed1])==node_obj_status[reed1Logic]){ //the sensor should send allarm
     composeSyncMessage();
@@ -1084,12 +1103,24 @@ void interrupt1_handler(){
 #if defined(node_type_WreedSaa)
 
   detachInterrupt(1);
+  Serial.println(F("interrupt called"));
   ADCSRA=keep_ADCSRA; //resume the status of the register
   handleReed();
-  //note adc readings are the old values until about 3 interrupt are called 
+
+
+  node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
+  node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
+  
+  if ((reed1_status_sent!=node_obj_status[reed1] ) |(reed2_status_sent!=node_obj_status[reed2] )){ //if the reed has changed status during last tranmission
+    handleReed();
+  }
+  reed1_status_sent=node_obj_status[reed1];
+  reed2_status_sent=node_obj_status[reed2];
+
+
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 #endif
-  Serial.println(F("interrupt called"));
+
 
 }
 
@@ -1197,10 +1228,7 @@ void setup() {
   beginRadio();
 
   changeObjStatus(0,1);
-  //delay(300);   
-
-  LowPower.powerDown(SLEEP_250MS, ADC_OFF, BOD_OFF);
-  ADCSRA=keep_ADCSRA; //resume the status of the register
+  delay(300);   
   changeObjStatus(0,0);
 
   Blink(node_obj_pinout[led],100,3); 

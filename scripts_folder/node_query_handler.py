@@ -29,7 +29,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
   """
   logprint("make_query_to_radio_node executed with number_of_retry_already_done:"+str(number_of_retry_already_done))
   max_retry=1 
-  for m in range(0,max_retry):   #retry n times to get the answer from node   #retry n times to get the answer from node
+  for m in range(0,max_retry):   #retry n times to get the answer from node  
     
     # [S_001dw06001_#]
 
