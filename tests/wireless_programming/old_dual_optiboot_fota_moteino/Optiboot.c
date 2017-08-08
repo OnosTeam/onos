@@ -678,7 +678,6 @@ int main(void) {
 #ifdef DEBUG_ON
     putch('A');
 #endif
-    SPCR &= ~_BV(SPE) & ~_BV(MSTR);
     appStart(ch);
   }
 

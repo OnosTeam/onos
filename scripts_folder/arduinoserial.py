@@ -259,8 +259,9 @@ class SerialPort:
               #if (buf.find("\n")!=-1):
               #  print ("end of line received but no onoscmd found")
               #  break
-              if len(buf)>0:  
-                logprint(buf) 
+
+              #if len(buf)>0:   
+              #  logprint(buf) 
 
 
 ##################################################################
@@ -435,7 +436,9 @@ class SerialPort:
 
               logprint("incoming buffer="+serial_incomingBuffer)
             else: #cmd not found
-              logprint("incoming buffer="+buf)
+              tmp_buf=buf.decode("utf8","replace")
+              tmp_buf.encode("ascii","replace")
+              logprint("incoming buffer="+tmp_buf)
               self.dataAvaible=0
 
 

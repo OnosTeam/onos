@@ -109,7 +109,7 @@ class RouterHandler:
         self.serial_arduino_used=0
 
 
-      if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
+      if (os.path.exists("/sys/class/gpio")==1)&(enable_onosCenter_hw_pins==1) : #if the directory exist ,then the hardware has embedded IO pins
         logprint ("discovered local hardware io pins")
         self.bash_pin_enable=1
       else:

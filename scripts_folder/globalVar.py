@@ -99,7 +99,8 @@ baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
-enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+enable_usb_serial_port=0 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+enable_onosCenter_hw_pins=0 #enable the use of onosCenter local hw pins
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
 router_sn="RouterGA0000"
 uart_router_sn="" #the sn of the node connected to the usb of the pc where onos is run..
@@ -239,6 +240,11 @@ recoverycfg_json='''
     "logTimeout": 15, 
     "login_required": 0, 
     "mail_whiteList": [], 
+    "node_password_dict": {
+      "Sonoff1P0000": "onosBestHome9999", 
+      "Sonoff1P0001": "onosBestHome9999", 
+      "Sonoff1P0002": "onosBestHome9999"
+    }, 
     "online_server_enable": 0, 
     "online_usersDict": {
       "'''+router_sn+'''": {
@@ -1257,11 +1263,12 @@ def logprint(message,verbose=1,error_tuple=None):
     message=message+", e:"+str(e.args)+str(exc_type)+str(fname)+" at line:"+str(exc_tb.tb_lineno)
 
 
-  syslog.syslog(message)  
+
   debug=1
   debug_level=0
   
   if verbose>debug_level or verbose>8:
+    syslog.syslog(message)  
     print (message)
     if debug==1 or verbose>1:
       errorQueue.put(message)  

@@ -1,0 +1,38 @@
+
+Prima bisogna avere un  arduino "programmatore" su cui si installa arduinoISP  ...
+
+A questo punto si collega questo arduino a quello dove installare il bootloader..il pc quindi è collegato solo all'arduinoISP
+
+da terminale dare:
+
+sudo avrdude -p m328p -b 19200 -v -P /dev/ttyUSB0 -c arduino -u -U flash:w:DualOptiboot_V5.0_atmega328_BlinkD9.hex
+
+
+avendo un arduino isp programmato con bautrate 19200  ..che è lo standard arduino ide vecchio...
+
+
+
+dopo aver installato il bootloader non si potrà più usare l'ide arduino per mandare i programmi...bisognerà fare da terminale..
+
+prima si compila con ide arduino..poi si cerca il file hex in /tmp   ...
+
+
+Attenzione !!! il bootloader deve essere installato prima di saldare il modulo radio o la flash, dopo non si potrà più scrivere..
+
+
+
+Esempi non testati:
+
+sudo avrdude -v -p atmega328p -c arduino -P /dev/ttyUSB0 -b 57600 -D -U flash:w:BlinkWithoutDelay.cpp.hex:i
+sudo avrdude -v -p atmega328p -c arduino -P /dev/ttyUSB0 -b 115200 -D -U flash:w:BlinkWithoutDelay.cpp.hex:i
+
+
+
+
+The man page for avrdude gives a full description of all the options, but it’s worth explaining a few of these, because my findings seem to contradict much of the advice floating around the forums.
+
+-b This option sets the baud rate for communicating with the board. Most documents I read lead me to believe the baud rate should be set to 19200. However, this is apparently far too slow, and most likely accounts for the failure-to-respond error that avrdude was throwing. The correct value seems to be 57600, at least for my set of devices, and the Arduino IDE build transcript confirms it.
+-p This specifies the target type. The configuration file for avrdude has a long list of supported targets, with all the important parameters for each. The Duemilanove uses Atmel’s Atmega 328p, and m328p is just the flag for this. Consult the documentation for a full list.
+-P Specifies the communication port. As soon as the Arduino is hooked up to your USB, it should be assigned a file in /dev/, and this is the string that needs to be passed to the -P option. The easiest way to find this is just
+
+

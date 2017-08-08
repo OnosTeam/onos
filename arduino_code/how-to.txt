@@ -10,17 +10,7 @@ change the pc or router ip to 192.168.0.101
 
 run onos.sh on the pc or router
 
-connect the arduino to the ethernet
 
 done
 
 
-
-
-if you use more than one node make sure to  change the    uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
-in the void setup of the sketch  and also the  String node_code_name="ProminiA0001";    
-example:
-String node_code_name="ProminiA0002";
-
-
-uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x06};
