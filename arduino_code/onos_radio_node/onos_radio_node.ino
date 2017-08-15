@@ -106,9 +106,9 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WreedSaa
-/*
 #define node_type_Wrelay4x
+/*
+#define node_type_WreedSaa
 #define node_type_WLightSS
 #define node_type_WPlug1vx
 #define node_type_WIRbarr0
@@ -171,7 +171,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define led     5
   #define syncTime  6
 
-  #define TOTAL_OBJECTS 8
+  #define TOTAL_OBJECTS 7
   #define node_default_timeout 1500
  
 #elif defined(node_type_WLightSS)
@@ -190,6 +190,11 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 #endif 
 
 
+#if defined(battery_node)   //if the node is a battery node:
+int stay_awake_period=700 ;   //how long in ms the node will stay awake to receive radio messages.
+unsigned long awake_time=0;
+
+#endif 
 
 const uint8_t number_of_total_objects=TOTAL_OBJECTS ;
 
@@ -688,6 +693,7 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
   }
 
   radio.receiveDone(); //put radio in RX mode
+  sync_time=millis();
 }
 
 
@@ -939,7 +945,7 @@ void checkCurrentRadioAddress(){
 
 #if defined(battery_node) // defined(node_type_WreedSaa)
       sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
-      sync_time=millis();
+      //sync_time=millis();
       //  I put the node to sleep
       Serial.println(F("I go to sleep"));
       radio.sleep();
@@ -955,14 +961,23 @@ void checkCurrentRadioAddress(){
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
       delayMicroseconds(50);
       ADCSRA=keep_ADCSRA; //resume the status of the register
-      composeSyncMessage();
-      sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
-      sync_time=millis();
+      //composeSyncMessage();
+      //sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
+      //sync_time=millis();
+
+      awake_time=millis();
+      Serial.println(F("w for possible messages"));
+      while ((millis()-awake_time)>stay_awake_period ){
+        radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+      }
+      Serial.println(F("end wait"));
+
 
 #else    //not a battery node
+      Serial.println(F("not a battery node part executed"));
       composeSyncMessage();
       sendSyncMessage(radioRetry,radioTxTimeout);
-      sync_time=millis();
+      //sync_time=millis();
 
 #endif  //end  if defined(battery_node)
 
@@ -1106,16 +1121,17 @@ void interrupt1_handler(){
   Serial.println(F("interrupt called"));
   ADCSRA=keep_ADCSRA; //resume the status of the register
   handleReed();
-
-
+  reed1_status_sent=node_obj_status[reed1];
+  reed2_status_sent=node_obj_status[reed2];
+  delay(2);
   node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
   node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
   
-  if ((reed1_status_sent!=node_obj_status[reed1] ) |(reed2_status_sent!=node_obj_status[reed2] )){ //if the reed has changed status during last tranmission
+  if ((reed1_status_sent!=node_obj_status[reed1] ) |(reed2_status_sent!=node_obj_status[reed2] )){ //if the reed has changed status during last transmission
+    Serial.println(F("-reed has changed again"));
     handleReed();
   }
-  reed1_status_sent=node_obj_status[reed1];
-  reed2_status_sent=node_obj_status[reed2];
+
 
 
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1

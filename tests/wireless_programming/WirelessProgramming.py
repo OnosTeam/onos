@@ -45,6 +45,8 @@ import re
 
 #example:
 #  sudo python WirelessProgramming.py -s /dev/ttyUSB0 -t 123 -f target.hex
+#  sudo python WirelessProgramming.py -s /dev/ttyUSB0 -t 123 -f ASCIITable.ino.hex
+#  sudo python WirelessProgramming.py -s /dev/ttyUSB1 -t 123 -f ASCIITable.ino.hex
 #  to program a remote node with address 123 ..
 
 

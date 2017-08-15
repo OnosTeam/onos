@@ -6348,6 +6348,8 @@ def executeQueueFunction(dataExchanged):
 
     
   if (dataExchanged["cmd"]=="NewAddressToNodeRequired"):
+  
+    old_address="254"
 
     try:
       node_serial_number=dataExchanged["nodeSn"]

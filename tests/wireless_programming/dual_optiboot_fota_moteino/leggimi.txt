@@ -1,4 +1,4 @@
-da terminale dare:
+Per installare bootloader da terminale dare:
 
 sudo avrdude -p m328p -b 19200 -v -P /dev/ttyUSB0 -c arduino -u -U flash:w:DualOptiboot_V5.0_atmega328_BlinkD9_SPIdisable.hex
 

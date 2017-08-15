@@ -21,25 +21,14 @@
       }, 
       "Sonoff1P0000": {
         "hwModelName": "Sonoff1P", 
-        "nodeAddress": "192.168.1.16", 
+        "nodeAddress": "192.168.1.15", 
         "nodeObjectsDict": {}, 
         "node_serial_number": "Sonoff1P0000"
       }, 
       "WreedSaa0004": {
         "hwModelName": "WreedSaa", 
         "nodeAddress": "004", 
-        "nodeObjectsDict": {
-          "0": "reed1_WreedSaa0004", 
-          "2": "led_WreedSaa0004", 
-          "3": "tempSensor_WreedSaa0004", 
-          "4": "digOut_WreedSaa0004", 
-          "5": "reed2_WreedSaa0004", 
-          "6": "syncTime_WreedSaa0004", 
-          "7": "reed1Logic_WreedSaa0004", 
-          "8": "reed2Logic_WreedSaa0004", 
-          "9": "battery_state_WreedSaa0004", 
-          "10": "luminosity_sensor_WreedSaa0004"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "WreedSaa0004"
       }, 
       "Wrelay4x0007": {
@@ -86,7 +75,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -465,7 +454,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -534,7 +523,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -567,7 +556,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 86, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -807,7 +796,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -840,7 +829,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": false, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -873,7 +862,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 0, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -906,7 +895,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": true, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1305,7 +1294,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -1338,7 +1327,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 22, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
