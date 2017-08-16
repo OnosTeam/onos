@@ -106,8 +106,9 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_Wrelay4x
+#define node_type_WreedSaa
 /*
+#define node_type_Wrelay4x
 #define node_type_WreedSaa
 #define node_type_WLightSS
 #define node_type_WPlug1vx
@@ -961,8 +962,8 @@ void checkCurrentRadioAddress(){
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
       delayMicroseconds(50);
       ADCSRA=keep_ADCSRA; //resume the status of the register
-      //composeSyncMessage();
-      //sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
+      composeSyncMessage();
+      sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
       //sync_time=millis();
 
       awake_time=millis();
