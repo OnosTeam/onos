@@ -99,7 +99,7 @@ baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
-enable_usb_serial_port=0 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 enable_onosCenter_hw_pins=0 #enable the use of onosCenter local hw pins
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
 router_sn="RouterGA0000"
@@ -818,20 +818,15 @@ hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]["object_numbers"]=[1]   #
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]["query"]="do#_objnumber_##_valuelen:1_#"
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]#see arduino code at :"define object numbers to use in the pin configuration"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2]#see arduino code at :"define object numbers to use in the pin configuration"
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["query"]="do#_objnumber_##_valuelen:1_#"
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[5]   #
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]["query"]="do#_objnumber_##_valuelen:1_#"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]={}
+
 
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]={}
-
-hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]={}
-hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["object_numbers"]=[4]
-hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["lux_threshold"]["query"]="ac#_objnumber_##_valuelen:3_#"
-
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["syncTime"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[6]
 hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["syncTime"]["query"]="ac#_objnumber_##_valuelen:3_#"

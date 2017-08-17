@@ -671,7 +671,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Now the reed node has 3 analog sensor,temperature luminosity and battery level
                 Improved the javascript update of the webobject list in the zone,now it will reconnect to onos after onos restart.
                 Corrected and impoved the analog reading and transmission of analog sensor in reed node .
-
+                Now node_type_Wrelay4x is working, implemented the arduino and python part.
 
 
 (110, 'Connection timed out');;;

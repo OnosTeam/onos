@@ -182,7 +182,7 @@ boolean message_to_decode_avaible=0;
 boolean serial_msg_to_decode_is_avaible=0;
 boolean radio_msg_to_decode_is_avaible=0;
 
-
+volatile char main_obj_state=0;
 uint8_t skipUartRxMsg=0;
 
 int freeRam () 
@@ -194,7 +194,30 @@ int freeRam ()
 
 
 
+boolean changeObjStatus(char obj_number,int status_to_set){
 
+   Serial.print(F("changeObjStatus executed with  status:"));
+   Serial.println(status_to_set);
+
+  if (obj_number!=button){ //will not change the status to the button...
+
+    digitalWrite(node_obj_pinout[obj_number],!status_to_set); // !  is only for this hardware since the ralay are actived low..
+
+    if (obj_number==0){
+      main_obj_state=status_to_set;
+      changeObjStatus(led,!status_to_set);
+    }
+
+
+    node_obj_status[obj_number]=status_to_set;
+
+    return(1);
+  }
+
+
+return(0);
+
+}
 void composeSyncMessage(){
 
   //[S_001sy3.05ProminiS0001_#] 

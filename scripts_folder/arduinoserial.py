@@ -325,8 +325,6 @@ class SerialPort:
                     obj_address_to_update=0
                     priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_address_to_update:obj_value} }) 
 
-                    #todo update the first node obj reading the name from hardwaremodel
-
 
 
 
@@ -359,41 +357,58 @@ class SerialPort:
                   logprint("reeds status received:"+reeds_status) 
                   reed1_status=(reeds_status=="2")or(reeds_status=="3") #get boolean result
                   reed2_status=(reeds_status=="1")or(reeds_status=="3") #get boolean result
-               
                   tempSensor= ord(cmd[21])-1       #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
                   luminosity_sensor= ord(cmd[22])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
                   battery_state= ord(cmd[23])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
-
                   objects_to_update_dict={0:reed1_status,5:reed2_status,3:tempSensor,10:luminosity_sensor,9:battery_state}
-
                   obj_address_to_update=0
                   priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
-
-
                   if node_address=="254":  #the node is looking for a free address
-
                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                     continue
 
                 except Exception, e  :               
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })                 #waitTowriteUntilIReceive=0
 
-                #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
-                #waitTowriteUntilIReceive=0
                 continue
-
 
 
 ####end reed node
 
 
+#### 4 relay node
+
+              elif( (cmd[6]=="r")&(cmd[7]=="4") ) :
+              #  [S_001rsWreedSaa0001312Lgx_#] 
+
+                logprint("serial rx cmd="+cmd)
+                try:
+                  serial_number=cmd[8:20]   
+                  node_address=cmd[3:6]
+                  node_fw="def0"  #default
+                  relay0_status=cmd[20]
+                  relay1_status=cmd[21]
+                  relay2_status=cmd[22]
+                  relay3_status=cmd[23]
+
+                  objects_to_update_dict={0:relay0_status,1:relay1_status,2:relay2_status,3:relay3_status}
+                  obj_address_to_update=0
+                  priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+                  if node_address=="254":  #the node is looking for a free address
+                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    continue
+
+                except Exception, e  :               
+                  message="error receiving serial sync message cmd was :"+cmd
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })                 #waitTowriteUntilIReceive=0
+
+                continue
 
 
-
-
-
-
+####end reed node
 
 
               elif( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]

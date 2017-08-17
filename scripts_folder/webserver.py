@@ -379,15 +379,16 @@ def getNextFreeAddress(node_sn,uart_router_sn,node_fw):# get the next free addre
   logprint("getNextFreeAddress executed with node_sn:"+str(node_sn) )
 
   #logprint(next_node_free_address_list) 
-  if node_sn in nodeDict:  #if the node has already an address..reuse it
-    node_address=nodeDict[node_sn].getNodeAddress() 
-    repeated_address=0
-    for node in nodeDict.keys():  #read all nodes
-      tmp_address=nodeDict[node].getNodeAddress()   #get all nodes addresses
-      if (len(tmp_address)==3)&(node!=node_sn): #if radio node
-        if nodeDict[node].getNodeAddress()==node_address:           
-            if node!=node_sn:  #found another node with the same address! I will therefore assing another one to this node..
-              repeated_address=1
+  
+  #if the node has already an address..reuse it
+  node_address=nodeDict[node_sn].getNodeAddress() 
+  repeated_address=0
+  for node in nodeDict.keys():  #read all nodes
+    tmp_address=nodeDict[node].getNodeAddress()   #get all nodes addresses
+    if (len(tmp_address)==3)&(node!=node_sn): #if radio node
+      if nodeDict[node].getNodeAddress()==node_address:           
+          if node!=node_sn:  #found another node with the same address! I will therefore assing another one to this node..
+            repeated_address=1
 
   if repeated_address==0: #the address is still the same and is not used by others nodes
     if node_address!="254":
@@ -1350,10 +1351,15 @@ def createNewWebObjFromNode(hwType0,node_sn):
         for a in list_of_different_object_type: 
  # a will be for example "digital_obj_out" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3] 
           objType=a  
+
+
           for b in hardwareModelDict[hwType0]["object_list"][a].keys():
 # b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
 
             progressive_number=0
+            logprint ("""hardwareModelDict[hwType0]["object_list"][a]""")
+            logprint (str(hardwareModelDict[hwType0]["object_list"][a])) 
+
             logprint ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
             logprint (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
 
@@ -6038,6 +6044,10 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             logprint(message,verbose=2) 
             continue #skip
 
+          node_address=nodeDict[a].getNodeAddress() 
+          numeric_address=int(node_address)
+          if numeric_address not in next_node_free_address_list: 
+            next_node_free_address_list.pop()
 
           nodeDict[a].setNodeActivity(0)  #set the node as inactive
           message="the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it? difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
@@ -6350,12 +6360,16 @@ def executeQueueFunction(dataExchanged):
   if (dataExchanged["cmd"]=="NewAddressToNodeRequired"):
   
     old_address="254"
-
+    node_fw="def1"
     try:
       node_serial_number=dataExchanged["nodeSn"]
-      #old_address=dataExchanged["nodeAddress"]
-      old_address=nodeDict[node_serial_number].getNodeAddress()  
       node_fw=dataExchanged["nodeFw"]
+      #old_address=dataExchanged["nodeAddress"]
+      if node_serial_number in nodeDict:
+        old_address=nodeDict[node_serial_number].getNodeAddress()  
+      else:
+        msg=createNewNode(node_serial_number,old_address,node_fw)+"_#]" 
+
       #   [S_254sa123WLightSS0003_#]
       if old_address=="001":   #the router node will not need another address ..only a confirm for first message sync
         new_address=old_address
@@ -6370,6 +6384,8 @@ def executeQueueFunction(dataExchanged):
       message="error in the NewAddressToNodeRequired of onosBusThread ,Node:"+str(node_serial_number)
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
       msg=createNewNode(node_serial_number,old_address,node_fw)+"_#]" 
+
+
      
   if (dataExchanged["cmd"]=="set_serialCommunicationIsWorking=0"): #todo check if it works
     try:

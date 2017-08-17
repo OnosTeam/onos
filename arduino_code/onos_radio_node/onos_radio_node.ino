@@ -106,7 +106,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WreedSaa
+#define node_type_Wrelay4x
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -151,7 +151,6 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   uint8_t reed1_status_sent=0;
   uint8_t reed2_status_sent=0;
 
-  byte keep_ADCSRA=ADCSRA; //save the state of the register;
   int temperature_sensor_value=0;
   #define analog_readings 20  //repeated readings  , don't make them more than 20 or there will be overflow
   uint8_t temperature_sensor_value_byte=0;
@@ -171,6 +170,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define button  4
   #define led     5
   #define syncTime  6
+  #define IS_RFM69HCW    false
 
   #define TOTAL_OBJECTS 7
   #define node_default_timeout 1500
@@ -192,6 +192,8 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 
 #if defined(battery_node)   //if the node is a battery node:
+byte keep_ADCSRA=ADCSRA; //save the state of the register;
+
 int stay_awake_period=700 ;   //how long in ms the node will stay awake to receive radio messages.
 unsigned long awake_time=0;
 
@@ -362,10 +364,22 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     }
 
 #elif defined(node_type_Wrelay4x)
-    else if (obj_number==0){
+
+    if (obj_number==0){
       main_obj_state=status_to_set;
-      changeObjStatus(led,!status_to_set);
+      digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
+      Serial.println(F("digitalWrite with obj")); 
+      changeObjStatus(led,status_to_set);
     }
+    else if(obj_number<4) { //objects from 0 to 3 are relay  
+      digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
+      Serial.println(F("digitalWrite with obj")); 
+    }
+    else if (obj_number==led){
+      digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+      Serial.println(F("digitalWrite with obj")); 
+    }
+
 #endif
 
     else if(obj_number==syncTime){  // if the object sent is syncTime change the sync_timeout with the value received
@@ -392,7 +406,12 @@ void composeSyncMessage(){
   //[S_123ul5.24WPlugAvx000810000x_#]
 
 
-
+  if (progressive_msg_id<122){  //122 is z in ascii
+    progressive_msg_id=progressive_msg_id+1;
+  }
+  else{
+    progressive_msg_id=48;  //48 is 0 in ascii
+  }
 
   tmp_number=0;
   //strcpy(str_this_node_address,"");
@@ -548,25 +567,46 @@ void composeSyncMessage(){
     strcat(syncMessage, "ga");
     strcat(syncMessage, node_fw);
     strcat(syncMessage, serial_number);
-    syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
-    strcat(syncMessage, "_#]");
-    return;
-
   }
   else{
     strcat(syncMessage, "rs");
+ // strcat(syncMessage, "sy");
+ 
+    strcat(syncMessage, serial_number);
+
+    syncMessage[strlen(syncMessage)]=reed_sensors_state;   
+
+    syncMessage[strlen(syncMessage)]=temperature_sensor_value_byte;  
+
+    syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
+
+    syncMessage[strlen(syncMessage)]=battery_value; 
   }
 
+
+ 
+#elif defined(node_type_Wrelay4x)
+
+  if (this_node_address==254){
+    strcat(syncMessage, "ga");
+    strcat(syncMessage, node_fw);
+    strcat(syncMessage, serial_number);
+  }
+  else{
+  //[S_123r4Wrelay4x00080110x_#]     0110 is the 4 relay status
+    strcat(syncMessage, "r4");
  // strcat(syncMessage, "sy");
-  strcat(syncMessage, serial_number);
+ 
+    strcat(syncMessage, serial_number);
 
-  syncMessage[strlen(syncMessage)]=reed_sensors_state;   
+    syncMessage[strlen(syncMessage)]=node_obj_status[0]+48;  
+    syncMessage[strlen(syncMessage)]=node_obj_status[1]+48;  
+    syncMessage[strlen(syncMessage)]=node_obj_status[2]+48;  
+    syncMessage[strlen(syncMessage)]=node_obj_status[3]+48;  
 
-  syncMessage[strlen(syncMessage)]=temperature_sensor_value_byte;  
+ 
+  }
 
-  syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
-
-  syncMessage[strlen(syncMessage)]=battery_value;  
 
 
 
@@ -584,20 +624,12 @@ void composeSyncMessage(){
  // char char_main_obj_state[2];
  // char_main_obj_state[0]=main_obj_state+48;
 
-
-
-
-
   minutes_time_from_turn_on=0;  //time_from_turn_on/60000; //get minutes from milliseconds  todo set it correctly..
-
 
   if( minutes_time_from_turn_on>9999) {//banana todo change it in some way...
     minutes_time_from_turn_on=0;
 
   }
-
-
-
 
 
   memset(tmp_minutes_time_from_turn_on_array,0,sizeof(tmp_minutes_time_from_turn_on_array)); //to clear the array
@@ -628,19 +660,13 @@ void composeSyncMessage(){
     strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
   }
 
-
-
   //snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from float to char array
 
   syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
-
   Serial.print(F("composeSyncMessage executed with  status:"));
   Serial.println(main_obj_state);
-
-
   strcat(syncMessage, minutes_time_from_turn_on_array);
-
 
 #endif  //end node_type_WLightSS
 
@@ -648,12 +674,7 @@ void composeSyncMessage(){
 
 
 
-  if (progressive_msg_id<122){  //122 is z in ascii
-    progressive_msg_id=progressive_msg_id+1;
-  }
-  else{
-    progressive_msg_id=48;  //48 is 0 in ascii
-  }
+
 
 
   syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
@@ -1019,7 +1040,11 @@ void beginRadio(){
   Serial.println(F(" MHz"));
   Serial.print(F("radio address changed to:"));
   Serial.println(this_node_address);
+
+#if defined(battery_node)   //if the node is a battery node:
   keep_ADCSRA=ADCSRA; //save the state of the register
+
+#endif 
 
 
 }
@@ -1056,61 +1081,43 @@ void handleReed(){//handle the reed sensor
 
 
 
-void handleButton(){//handle the main node button
-/*
-  Serial.println(F("handleButton() executed "));
+void handleButton(){//handle the main node button , you can't call this from interrupt because millis() won't work
+
+  Serial.print(F("handleButton() executed "));
   Serial.print("button_still_same_status:");
   Serial.print(button_still_same_status);
   Serial.print("button_time_same_status:");
   Serial.println(millis()-button_time_same_status);
-*/
 
 
 
 
-/*  if (button_still_same_status==1){ //filter 
-    //button_time_same_status=millis();
-    return;
-  }
-*/
 
-  if ((millis()-button_time_same_status)<time_to_change_status){ //filter 
-    return;
-  }
-
-
-  obj_button_pin=node_obj_pinout[button];
-
-  if (digitalRead(obj_button_pin)==0) {
-    Serial.print(F("obj_button pressed"));
-    if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
-        Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
-        noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
-        memset(encript_key,0,sizeof(encript_key)); //to clear the array
-        strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
-        this_node_address=254;//reset the node address
-        first_sync=1;
-        setup();
-        //beginRadio();  //restart radio with the default encript_key  
-
-        //checkCurrentRadioAddress();  
-        interrupts(); // Enable interrupts 
-        button_time_same_status=millis();
-      }
-
-    if (((millis()-button_time_same_status)>time_to_change_status)&&(button_still_same_status==0)){
-      Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
-      changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
-      composeSyncMessage();
-      sendSyncMessage(radioRetry+2,radioTxTimeout); 
-      button_still_same_status=1;
+   // Serial.print(F("obj_button pressed"));
+  if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
+      Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
+      noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
+      memset(encript_key,0,sizeof(encript_key)); //to clear the array
+      strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
+      this_node_address=254;//reset the node address
+      first_sync=1;
+      setup();
+      //beginRadio();  //restart radio with the default encript_key  
+      //checkCurrentRadioAddress();  
+      interrupts(); // Enable interrupts 
       button_time_same_status=millis();
-      delay(100);//todo change it smaller
-
     }
 
-  }
+  if (((millis()-button_time_same_status)>time_to_change_status)&&(button_still_same_status==0)){
+    Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
+    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+    composeSyncMessage();
+    sendSyncMessage(radioRetry+2,radioTxTimeout); 
+    button_still_same_status=1;
+    button_time_same_status=millis();
+    delay(100);//todo change it smaller
 
+  }
 
 }
 
@@ -1147,10 +1154,11 @@ void setup() {
 
   node_obj_status[syncTime]=node_default_timeout;
   sync_timeout=node_obj_status[syncTime];
+
+#if defined(node_type_WreedSaa)
   node_obj_status[reed1Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
   node_obj_status[reed2Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
 
-#if defined(node_type_WreedSaa)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"WreedSaa");
   strcat(serial_number,numeric_serial);
@@ -1172,19 +1180,27 @@ void setup() {
   pinMode(node_obj_pinout[reed2], INPUT);
   delay(2);
   digitalWrite(node_obj_pinout[reed1],1); //set pullup on reed
-
 //  digitalwrite(node_obj_pinout[reed2],1);
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+
 
 #elif defined(node_type_Wrelay4x)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"Wrelay4x");
   strcat(serial_number,numeric_serial);
-  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+  node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
   node_obj_pinout[relay2]=8;  // the second object is the relay 2 connected on pin 8  
   node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
   node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 
   node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
   node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+  pinMode(node_obj_pinout[relay1], OUTPUT);
+  pinMode(node_obj_pinout[relay2], OUTPUT);
+  pinMode(node_obj_pinout[relay3], OUTPUT);
+  pinMode(node_obj_pinout[relay4], OUTPUT);
+  pinMode(node_obj_pinout[led], OUTPUT);
+  pinMode(node_obj_pinout[button], INPUT);
+  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
    
 #elif defined(node_type_WLightSS)
   node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
@@ -1253,7 +1269,7 @@ void setup() {
 
   composeSyncMessage();
 
-  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+
 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
@@ -1267,9 +1283,15 @@ void setup() {
 void loop() {
 
 
-//  handleButton();
+  if (button_still_same_status==0){ //filter 
 
+    obj_button_pin=node_obj_pinout[button];
 
+    if (digitalRead(obj_button_pin)==0) { 
+      handleButton();
+    }
+
+  }
 
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
