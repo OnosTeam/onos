@@ -27,7 +27,7 @@ from conf import *           # import parameter from conf.py  which will read th
 from mail_agent import *
 
 global scenarioDict
-global object_dict
+global objectDict
 global zoneDict
 global exit  #exit is on conf.py  f exit ==1 all the program stop and exit
 global hardware
@@ -123,7 +123,7 @@ get_zone_manager_inner_html='''<!DOCTYPE html>
 
 oldpag=" "
 #old_zoneDict={}
-#old_object_dict={}
+#old_objectDict={}
 #old_web_page=" "
 
 baseDir=""
@@ -135,7 +135,7 @@ nothing_changed=0
 
 
 
-#object_dict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
+#objectDict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
 
 
 notes="Enter_The_Web_Object_Notes"
@@ -317,14 +317,14 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 #    if nodeDict[node_sn].getNodeActivity()==0 or nodeDict[node_sn].getNodeActivity()==2: #the node was not connected but now it is
 #      nodeDict[node_sn].setNodeActivity(1)  #set the node as active
 #    for b in nodeDict[node_sn].getnodeObjectsDict().values():#for each object in the node 
-#      logprint("object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber()) )
+#      logprint("objectDict[b].getHwNodeSerialNumber():"+str(objectDict[b].getHwNodeSerialNumber()) )
 #      logprint("webobject:"+b+"returned active",verbose=5)  
-#      object_type=object_dict[b].getType()
+#      object_type=objectDict[b].getType()
 #      if object_type in ("digital_obj_in","analog_obj_in","cfg_obj"): #skip input objects  todo:remove cfg_obj
 #        continue
-#      current_s=object_dict[b].getStatus()
+#      current_s=objectDict[b].getStatus()
 #      if ((current_s=="inactive") or (current_s=="onoswait") ): 
-#        prev_s=object_dict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
+#        prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
 #        logprint("the new status will be:"+str(prev_s) )
 #        layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"0","write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
 
@@ -355,7 +355,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
     if (nodeDict[node_sn].getNodeAddress())!=node_address:
       logprint("node "+node_sn+" address changed to "+node_address)
       nodeDict[node_sn].setNodeAddress(node_address)
-      updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options) #save all the new data
+      updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) #save all the new data
 
       
     else:
@@ -441,15 +441,15 @@ def changeWebObjectType(objName,typeToSet):#
   """
 
   logprint("executed changeWebObjectType() with :"+objName)
-  if objName in object_dict.keys(): #if the web object exist
-    object_dict[objName].setType(typeToSet)
-    pinList=object_dict[objName].getAttachedPinList()
+  if objName in objectDict.keys(): #if the web object exist
+    objectDict[objName].setType(typeToSet)
+    pinList=objectDict[objName].getAttachedPinList()
 
     if pinList!=[9999] : #if there is a pin attached to this webobject
 
-      obj_type=object_dict[objName].getType()
-      SerialNumber=object_dict[objName].getHwNodeSerialNumber()
-      pins_to_set=object_dict[objName].getAttachedPinList()
+      obj_type=objectDict[objName].getType()
+      SerialNumber=objectDict[objName].getHwNodeSerialNumber()
+      pins_to_set=objectDict[objName].getAttachedPinList()
       node_address=nodeDict[SerialNumber].getNodeAddress()
       if (obj_type=="sr_relay"):
         if len (pins_to_set)!=2:
@@ -511,7 +511,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
       return(-1)
  
     try:
-      scenario_functions=scenario_functions.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))      
+      scenario_functions=scenario_functions.replace("#_"+objname+"_#",str(objectDict[objname].getStatusForScenario()))      
     except Exception as e :
       message="error01 the webobject does not exist in the dict, i close the scenario check,objname: "
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
@@ -521,7 +521,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
  # now all the obj value are replaced
 
   try:# replace all the #p_webobjectname_# with the previous webobject status value
-    scenario_functions=re.sub(r'#p_.+?_#',lambda x: str( object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_functions)
+    scenario_functions=re.sub(r'#p_.+?_#',lambda x: str( objectDict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_functions)
   except Exception as e :
     message="error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_functions+",scenario_name"+scenario_name
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()) )
@@ -563,7 +563,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
       return(-1)
  
     try:
-      scenario_conditions=scenario_conditions.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))   
+      scenario_conditions=scenario_conditions.replace("#_"+objname+"_#",str(objectDict[objname].getStatusForScenario()))   
       obj_list.append(objname)   
       if (len(objname_prev)>0 )&(objname_prev!="")&(objname_prev not in obj_list ):  #if there is a #p_objectName_#
         obj_list.append(objname)
@@ -577,7 +577,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
  # now all the obj value are replaced
 
   try:# replace all the #p_webobjectname_# with the previous webobject status value
-    scenario_conditions=re.sub(r'#p_.+?_#',lambda x: str( object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_conditions)
+    scenario_conditions=re.sub(r'#p_.+?_#',lambda x: str( objectDict[x.group(0)[3:-2]].getPreviousStatusForScenario()),scenario_conditions)
   except Exception as e :
     message="error1 the webobject does not exist in the dict, i close the scenario check: scenario_condition:"+scenario_conditions+",scenario_name"+scenario_name
     logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
@@ -675,14 +675,14 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     logprint("scenario conditions are true")
 
 #    try:# replace all #_webobjectname_# with the webobjectname status value
-#      scenario_math=re.sub(r'#_.+?_#',lambda x: str(object_dict[x.group(0)[2:-2]].getStatus()),scenario_math)
+#      scenario_math=re.sub(r'#_.+?_#',lambda x: str(objectDict[x.group(0)[2:-2]].getStatus()),scenario_math)
 #    except:
 #      print "error the webobject does not exist in the dict, i close the scenario scenario_math check"
 #      errorQueue.put("error2 the webobject does not exist in the dict, i close the scenario check: scenario_math:"+scenario_math)
 #      return()
 
 #    try:# and all the #p_webobjectname_# with the previous webobject status value
-#      scenario_math=re.sub(r'#p_.+?_#',lambda x: str(object_dict[x.group(0)[3:-2]].getPreviousStatus()),scenario_math)
+#      scenario_math=re.sub(r'#p_.+?_#',lambda x: str(objectDict[x.group(0)[3:-2]].getPreviousStatus()),scenario_math)
 #    except :
 #      print "error the webobject does not exist in the dict, i close the scenario scenario_math check"
 #      errorQueue.put("error3 the webobject does not exist in the dict, i close the scenario check: #scenario_math:"+scenario_math)
@@ -751,7 +751,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
           break
  
         try:
-          f=f.replace("#_"+objname+"_#",str(object_dict[objname].getStatusForScenario()))      
+          f=f.replace("#_"+objname+"_#",str(objectDict[objname].getStatusForScenario()))      
         except Exception as e :
           message="error003 the webobject does not exist in the dict, i close the scenario check of:"+scenario_name+",objname: "+objname
           logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
@@ -761,14 +761,14 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
 
 
       #try:# replace all #_webobjectname_# with the webobjectname status value
-      #  f=re.sub(r'#_.+?_#',lambda x: str(object_dict[x.group(0)[2:-2]].getStatus()),f)
+      #  f=re.sub(r'#_.+?_#',lambda x: str(objectDict[x.group(0)[2:-2]].getStatus()),f)
       #except KeyError:
       #  print "error0 the webobject does not exist in the dict, i close the scenario check,operation:"+f
       #  errorQueue.put(" error0 the webobject does not exist in the dict, i close the scenario check,operation:"+f)
       #  return()
 
       try:# replcace all the #p_webobjectname_# with the previous webobject status value
-        f=re.sub(r'#p_.+?_#',lambda x: str(object_dict[x.group(0)[3:-2]].getPreviousStatusForScenario()),f)
+        f=re.sub(r'#p_.+?_#',lambda x: str(objectDict[x.group(0)[3:-2]].getPreviousStatusForScenario()),f)
       except Exception as e :
         message="error2 the webobject does not exist in the dict, i close the scenario function to run check"+" e:"+str(e.args)
         logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
@@ -813,9 +813,9 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         if (statusToSet==False)or(statusToSet=="False"):
           statusToSet="0"
 
-        if (object_dict[obj_to_change].validateStatusToSetObj(statusToSet)==1):  #the status to set is valid for the object
+        if (objectDict[obj_to_change].validateStatusToSetObj(statusToSet)==1):  #the status to set is valid for the object
 
-          if obj_to_change in object_dict:
+          if obj_to_change in objectDict:
             logprint("scenario act to change the weboject: "+str(obj_to_change) )
             layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":obj_to_change,"status_to_set":statusToSet,"write_to_hw":1,"user":"scenario","priority":scenario_priority,"mail_report_list":[]})
         else:
@@ -833,7 +833,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
     if delayTime>0:
       logprint("create a new scenario...banana")
 
-      currentDayTime=object_dict["dayTime"].getStatusForScenario()
+      currentDayTime=objectDict["dayTime"].getStatusForScenario()
   
       if (delayTime+currentDayTime) < 1440:    #  1440 is 24 * 60   the max number of minuts in a day
         selectedMinutes=str(currentDayTime+delayTime)
@@ -851,12 +851,12 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
       logprint("now real time is "+str((datetime.datetime.today().minute+(datetime.datetime.today().hour)*60 ))+" obj time is"+str(currentDayTime) )
          
       scenarioDict[new_scenario_name]={"enabled":1,"type_after_run":"autodelete","conditions":"#_dayTime_#=="+selectedMinutes,"functionsToRun":afterDelayFunctionsToRun,"afterDelayFunctionsToRun":[],"delayTime":0,"priority":scenario_priority}
-      object_dict["dayTime"].attachScenario(new_scenario_name)
+      objectDict["dayTime"].attachScenario(new_scenario_name)
  
     if type_after_run=="autodelete":
       del scenarioDict[scenario_name] 
-      for a in object_dict.keys():   # delete the reference to this scenario from all the webobjects 
-        object_dict[a].removeAttachedScenario(scenario_name) 
+      for a in objectDict.keys():   # delete the reference to this scenario from all the webobjects 
+        objectDict[a].removeAttachedScenario(scenario_name) 
    
     if type_after_run=="one_time_shot":
       logprint("iI disable the one_time_shot :"+scenario_name)
@@ -890,11 +890,11 @@ def compose_error_mail(error_type,objName=""):
   logprint("compose_error_mail executed")
   mailtext=""
   if error_type=="so_priority":
-    obj_previous_status=object_dict[objName].getStatus()
+    obj_previous_status=objectDict[objName].getStatus()
     mailtext="onos_report_message,"+objName+",error_so_priority,obj stays,"+str(obj_previous_status)
 
   if error_type=="so_permissions":
-    obj_previous_status=object_dict[objName].getStatus()
+    obj_previous_status=objectDict[objName].getStatus()
     mailtext="onos_report_message,"+objName+",error_so_permission,obj stays,"+str(obj_previous_status)
 
   if error_type=="wrong_password":
@@ -930,12 +930,12 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
   logprint("changeWebObjectStatus executed with obj="+objName)
 
-  if objName not in object_dict.keys(): #if the web object does not exist exit
-    logprint("error the webobject does NOT exist in the dictionary object_dict ",verbose=9)
+  if objName not in objectDict.keys(): #if the web object does not exist exit
+    logprint("error the webobject does NOT exist in the dictionary objectDict ",verbose=9)
 
     return(-1)
 
-  obj_previous_status=object_dict[objName].getStatus()
+  obj_previous_status=objectDict[objName].getStatus()
 
 
 
@@ -945,45 +945,45 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 #    return(1)
 
   logprint("write_to_hardware="+str(write_to_hardware) )
-  #print "attached pin0 ="+str(object_dict[objName].getAttachedPinList())+";"    
+  #print "attached pin0 ="+str(objectDict[objName].getAttachedPinList())+";"    
   global nodeDict 
 
 
 
-  #print "24444444444444444444444444444444444444444444444444444444444",object_dict[objName].getMailReport()
-  mail_report_list=mail_report_list+object_dict[objName].getMailReport() #summ the 2 list
+  #print "24444444444444444444444444444444444444444444444444444444444",objectDict[objName].getMailReport()
+  mail_report_list=mail_report_list+objectDict[objName].getMailReport() #summ the 2 list
 
 
   mail_report_list=list(set(mail_report_list))   #removes duplicates
   #print "2222222222222222222222222222222222222222222222222222222222222",mail_report_list
 
-  if object_dict[objName].checkRequiredPriority(priority)==1:   #check priority 
+  if objectDict[objName].checkRequiredPriority(priority)==1:   #check priority 
     logprint("priority ok")
   else:
 
-    #obj_previous_status=object_dict[objName].getStatus()
+    #obj_previous_status=objectDict[objName].getStatus()
     mailText=compose_error_mail("so_priority",objName)
     mailSubject="onos_report_error"+objName
     for m in mail_report_list:
       #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
       mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
 
-    logprint("error ,required priority is "+str(object_dict[objName].required_priority()),verbose=10)
+    logprint("error ,required priority is "+str(objectDict[objName].required_priority()),verbose=10)
  
 
     return(-1)
 
-  if object_dict[objName].checkPermissions(user,"x",priority):   #check permission  
+  if objectDict[objName].checkPermissions(user,"x",priority):   #check permission  
     logprint("permission ok, i set the obj")
   else:
-    #obj_previous_status=object_dict[objName].getStatus()
+    #obj_previous_status=objectDict[objName].getStatus()
     mailText=compose_error_mail("so_permissions",objName)
     mailSubject="onos_report_error"+objName
     for m in mail_report_list:
       #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
       mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
 
-    logprint("error Permissions not sufficent to change"+objName+",required required permission is "+str(object_dict[objName].getPermissions()),verbose=10 )
+    logprint("error Permissions not sufficent to change"+objName+",required required permission is "+str(objectDict[objName].getPermissions()),verbose=10 )
 
     return(-1)
 
@@ -992,13 +992,13 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
 
-#  global object_dict  #banana  to remove?
+#  global objectDict  #banana  to remove?
 
 
-  if ( object_dict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
+  if ( objectDict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
 
     logprint("no pin attached to this webobject , I change its status")
-    if object_dict[objName].getType() not in ["digital_obj_out","analog_obj_out","cfg_obj"]:
+    if objectDict[objName].getType() not in ["digital_obj_out","analog_obj_out","cfg_obj"]:
       write_to_hardware=0
 
 
@@ -1010,18 +1010,18 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
     logprint("i change the webobject status")
 
 
-    if object_dict[objName].getStatus()=="onoswait":
+    if objectDict[objName].getStatus()=="onoswait":
       if (user=="onos_node"):
-        if (object_dict[objName].getType() in object_dict[objName].general_out_group):
-          logprint("[objName].getType() :"+object_dict[objName].getType())
-          logprint("general_out_group:"+str(object_dict[objName].general_out_group))
+        if (objectDict[objName].getType() in objectDict[objName].general_out_group):
+          logprint("[objName].getType() :"+objectDict[objName].getType())
+          logprint("general_out_group:"+str(objectDict[objName].general_out_group))
           logprint("I will not set the status because the change is from a node")
           return(-1)
 
 
-    object_dict[objName].setStatus(statusToSet)#set the web object status 
+    objectDict[objName].setStatus(statusToSet)#set the web object status 
     if (priority!=99):  #if priority == 99 will not write to webobject the new priority
-      object_dict[objName].setRequiredPriority(priority) #set the webobject priority
+      objectDict[objName].setRequiredPriority(priority) #set the webobject priority
     
 
     if len(mail_report_list)>0:
@@ -1035,7 +1035,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
     scenarios_list=[]
-    scenarios_list=object_dict[objName].getListAttachedScenarios()  #get the list of scenarios where there is a reference to this webobject
+    scenarios_list=objectDict[objName].getListAttachedScenarios()  #get the list of scenarios where there is a reference to this webobject
     logprint("scenarios_list:"+str(scenarios_list) )
     for tmp_scenario in scenarios_list:
       logprint("scenario name:"+tmp_scenario)
@@ -1056,10 +1056,10 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
   logprint("write_to_hardware="+str(write_to_hardware) )
-  try:# objName in object_dict.keys(): #if the web object exist    banana to remove
+  try:# objName in objectDict.keys(): #if the web object exist    banana to remove
     logprint("the web object:"+objName+" exist in the dict")
 
-    nodeSerialNumber=object_dict[objName].getHwNodeSerialNumber()
+    nodeSerialNumber=objectDict[objName].getHwNodeSerialNumber()
     if  nodeDict[nodeSerialNumber].getNodeActivity()==0:
       message="the web_object"+objName+" belongs to a disconnected node, i will not set it"
       logprint(message,verbose=9)  
@@ -1073,14 +1073,14 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
 
-    if (object_dict[objName].validateStatusToSetObj(statusToSet)<1):
+    if (objectDict[objName].validateStatusToSetObj(statusToSet)<1):
       logprint("error the state"+str(statusToSet)+"is not valid for the obj:"+objName,verbose=10)
       return(-1)  
 
     statusToSet=int(statusToSet)  #int nit float otherwise there will be errors
 
 
-    #obj_previous_status=object_dict[objName].getStatus()
+    #obj_previous_status=objectDict[objName].getStatus()
     #if statusToSet==obj_previous_status:
     #  print "nothing to change,the webobject status is already :"+str(obj_previous_status)
     #  return(1)
@@ -1090,15 +1090,15 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     #if True:  # to remove..
     logprint("there are one or more pins attached to this webobject")
-    object_dict[objName].setStatus("onoswait")#set the wait status
-    pins_to_set=object_dict[objName].getAttachedPinList()
+    objectDict[objName].setStatus("onoswait")#set the wait status
+    pins_to_set=objectDict[objName].getAttachedPinList()
     #single_pin=pins_to_set[0]
-    #nodeSerialNumber=object_dict[objName].getHwNodeSerialNumber()
+    #nodeSerialNumber=objectDict[objName].getHwNodeSerialNumber()
     #print nodeDict[nodeSerialNumber].getNodeName()
     logprint("obj node="+str(nodeSerialNumber)+"pins_to_set="+str(pins_to_set) +str(statusToSet) )
 
 
-    obj_type=object_dict[objName].getType()
+    obj_type=objectDict[objName].getType()
 
     logprint("obj_name="+objName)
     logprint("obj_type="+obj_type)
@@ -1211,20 +1211,20 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 def NodePinToWebObject(node_sn,pin_number,pin_status):#change the webobject status given a node ,a pin and a status to set
   write_hw_enable=0
 
-  for a in object_dict.keys():
-    #print object_dict[a].getHwNodeSerialNumber()
-    if (object_dict[a].getHwNodeSerialNumber()==node_sn):
+  for a in objectDict.keys():
+    #print objectDict[a].getHwNodeSerialNumber()
+    if (objectDict[a].getHwNodeSerialNumber()==node_sn):
       #print "node exist"
-      if object_dict[a].getAttachedPinList()[0]==int(pin_number):
-        if (len(object_dict[a].getAttachedPinList())==1):#the sensor object must have only a pin attached
+      if objectDict[a].getAttachedPinList()[0]==int(pin_number):
+        if (len(objectDict[a].getAttachedPinList())==1):#the sensor object must have only a pin attached
 
  
 
-          if (object_dict[a].validateStatusToSetObj(pin_status)<1):
+          if (objectDict[a].validateStatusToSetObj(pin_status)<1):
             logprint("error NodePinToWebObject the state"+str(pin_status)+"is not valid for the obj:"+a,verbose=10)
 
           else:#the status is legit with the webobj type
-            objName=object_dict[a].getName()                      
+            objName=objectDict[a].getName()                      
             #changeWebObjectStatus(objName,int (pin_status),write_hw_enable) #banana add to queue
             layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str (pin_status),"write_to_hw":write_hw_enable,"user":"onos_node","priority":99,"mail_report_list":[]})
 
@@ -1336,7 +1336,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
   #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
   logprint("createNewWebObjFromNode executed with node_sn:"+node_sn+"and hwType0:"+hwType0)
   global zoneDict
-  global object_dict
+  global objectDict
   logprint(hardwareModelDict.keys())
   if hwType0 in hardwareModelDict.keys():  #if the type exist in the hardwareModelDict
 #hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"][0]
@@ -1386,12 +1386,12 @@ def createNewWebObjFromNode(hwType0,node_sn):
               else:
                 logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
       
-              if new_obj_name not in  object_dict.keys():  #if the object does not exist yet, create it: 
+              if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
                 logprint("added new webobj from node")        
-                object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
+                objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
               else:
-                logprint("warning001  the object "+new_obj_name+" already exist in the object_dict") 
-        logprint("now the object dict of the node:"+str(object_dict.keys()))
+                logprint("warning001  the object "+new_obj_name+" already exist in the objectDict") 
+        logprint("now the object dict of the node:"+str(objectDict.keys()))
 
       except Exception as e:
         message="error createNewWebObjFromNode in the object part"
@@ -1445,11 +1445,11 @@ def createNewWebObjFromNode(hwType0,node_sn):
             else:
               logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
       
-            if new_obj_name not in  object_dict.keys():  #if the object does not exist yet, create it: 
+            if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
               logprint("added new webobj from node")      
-              object_dict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn,c)
+              objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn,c)
             else:
-              logprint("warning001  the object "+new_obj_name+" already exist in the object_dict")
+              logprint("warning001  the object "+new_obj_name+" already exist in the objectDict")
          
         
     except Exception as e:
@@ -1480,7 +1480,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 
 for a in objectList :                # append to dictionary all the web object
-  object_dict[a.getName()]=a
+  objectDict[a.getName()]=a
   changeWebObjectType(a.getName(),a.getType())  #i call this in order to setup the node io conf for the webobjects
   a.InitFunction()
   s=a.getStartStatus()
@@ -1500,13 +1500,13 @@ for a in objectList :                # append to dictionary all the web object
 
 
 
-for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
+for a in objectDict.keys():#check and remove the not used scenarios from web_object attachedScenarios
   for b in scenarioDict.keys():
     if scenarioDict[b]["conditions"].find(a+"_#")==-1: 
      # if the object is not in the conditions then remove it from web_object attachedScenarios
-      object_dict[a].removeAttachedScenario(b)
+      objectDict[a].removeAttachedScenario(b)
     else:
-      object_dict[a].attachScenario(b)   
+      objectDict[a].attachScenario(b)   
 
 
 
@@ -1515,28 +1515,23 @@ for a in object_dict.keys():#check and remove the not used scenarios from web_ob
 
 
 
-#object_dict["dayTime"].attachScenario("scenario1")   #banana to remove
-#object_dict["hours"].attachScenario("scenario2")   #banana to remove
-#object_dict["hours"].attachScenario("scenario3")   #banana to remove
-#object_dict["hours"].attachScenario("scenario4")   #banana to remove
-#object_dict["hours"].attachScenario("scenario5")   #banana to remove
-#object_dict["hours"].attachScenario("scenario6")   #banana to remove
-#object_dict["hours"].attachScenario("scenario7")   #banana to remove
-#object_dict["hours"].attachScenario("scenario10")   #banana to remove
+#objectDict["dayTime"].attachScenario("scenario1")   #banana to remove
 
-#object_dict["minutes"].attachScenario("scenario2")   #banana to remove
-#object_dict["minutes"].attachScenario("scenario3")   #banana to remove
-#object_dict["minutes"].attachScenario("scenario4")   #banana to remove
-#object_dict["minutes"].attachScenario("scenario5")   #banana to remove
-#object_dict["minutes"].attachScenario("scenario6")   #banana to remove
-#object_dict["minutes"].attachScenario("scenario7")   #banana to remove
-#object_dict["minutes"].attachScenario("scenario8")   #banana to remove
-#object_dict["wifi0_Plug6way0001"].attachScenario("scenario9")   #banana to remove
+#objectDict["hours"].attachScenario("scenario10")   #banana to remove
 
-#object_dict["Wifi_netgear"].attachScenario("scenario10")   #banana to remove
-#object_dict["Caldaia"].attachScenario("scenario11")   #banana to remove
-#object_dict["button0_RouterGL0000"].setMailReport(["electronicflame@gmail.com"]) #banana to remove
-#object_dict["wifi0_Plug6way0001=0"].setMailReport(["electronicflame@gmail.com"]) #banana to remove
+#objectDict["minutes"].attachScenario("scenario2")   #banana to remove
+#objectDict["minutes"].attachScenario("scenario3")   #banana to remove
+#objectDict["minutes"].attachScenario("scenario4")   #banana to remove
+#objectDict["minutes"].attachScenario("scenario5")   #banana to remove
+#objectDict["minutes"].attachScenario("scenario6")   #banana to remove
+#objectDict["minutes"].attachScenario("scenario7")   #banana to remove
+#objectDict["minutes"].attachScenario("scenario8")   #banana to remove
+#objectDict["wifi0_Plug6way0001"].attachScenario("scenario9")   #banana to remove
+
+#objectDict["Wifi_netgear"].attachScenario("scenario10")   #banana to remove
+#objectDict["Caldaia"].attachScenario("scenario11")   #banana to remove
+#objectDict["button0_RouterGL0000"].setMailReport(["electronicflame@gmail.com"]) #banana to remove
+#objectDict["wifi0_Plug6way0001=0"].setMailReport(["electronicflame@gmail.com"]) #banana to remove
 #print "room dict="
 #print zoneDict
 
@@ -1564,8 +1559,8 @@ def formParse(text):
 #if the option is "add" then find the "/*start of automatic css,do not remove this comment*/" and add after this the reative css
 #add also the id=web_object  on the end of the body
 
-def findRoomName(path,roomDictionary):
-  logprint("findRoomName()  executed")
+def findZoneName(path,roomDictionary):
+  logprint("findZoneName()  executed")
   if (len(path)>0):
     address_list=string.split(path,"/")  
     if address_list[1] in roomDictionary.keys() :    #if  the path is   /anyroomname/....   take the room name
@@ -1705,13 +1700,13 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 
 
 
-def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html to insert in the index.html of a room directory  which must be inside the baseRoomPath directory, modify to read the html ..
+def getRoomHtml(room,objectDictionary,path,roomDictionary):  #render the html to insert in the index.html of a room directory  which must be inside the baseRoomPath directory, modify to read the html ..
   logprint("getRoomHtml()executed")
 
   retval = os.getcwd()   #you musn't have spaces on the path..
   #print "retval:"+retval
   #x=retval+"/"room+"/index.html"
-  logprint("room passed="+room)
+  logprint("zone passed="+room)
   x=retval+"/"+baseRoomPath+room+"/index.html"
   #x=string.replace(x, ',&%', '') 
   #x=string.replace(x, '\n', '') 
@@ -1739,7 +1734,7 @@ def getRoomHtml(room,object_dictionary,path,roomDictionary):  #render the html t
     return(readed_html)
     #print "html parsed "
     #if (string.find(readed_html,'<!--onos_automatic_page-->')!=-1):
-      #roomHtml=modPage(readed_html,object_dictionary,room,roomDictionary) 
+      #roomHtml=modPage(readed_html,objectDictionary,room,roomDictionary) 
     #  return(roomHtml)
     #else:
     #  print " readed_html is:not <!--onos_automatic_page-->"
@@ -1774,7 +1769,7 @@ def updateOneZone(zone):
   logprint("updateOneZone()  executed  with zone:"+zone+";")
   if os.path.isfile(html_file_location):   #if the file in the directory exist don't create it
     logprint(zone+" exist so i don't create it")
-    fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
+    fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
     file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
     file0.close()
@@ -1797,7 +1792,7 @@ def updateOneZone(zone):
       message="error executing os.mkdir(baseRoomPath+zone)"
       logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
-    fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
+    fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
     file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
     file0.close()
@@ -1817,7 +1812,7 @@ def updateDir():
     index=retval+"/"+baseRoomPath+zone+"/index.html"
     if os.path.isfile(index):   #if the directory exist don't create it
       logprint(zone+" exist so i don't create it")
-      fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
+      fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
       file0 = open(baseRoomPath+zone+"/index.html", "w")
       file0.write(fileToWrite)
       file0.close()
@@ -1836,7 +1831,7 @@ def updateDir():
       except:
         os.mkdir(baseRoomPath+zone) 
 
-      fileToWrite=getRoomHtml(zone,object_dict,"",zoneDict)
+      fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
       try:
         file0 = open(index, "w")
         file0.write(fileToWrite)
@@ -1905,7 +1900,7 @@ def createNewNode(node_sn,node_address,node_fw):
           node_password=hardwareModelDict[hwType]["parameters"]["password"]         
           node_password_dict[node_sn]=node_password
           conf_options["node_password_dict"]=node_password_dict  # todo delete the password when the node is deleted..
-          updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options) 
+          updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
 
         #nodeDict[node_sn].updateLastNodeSync(time.time())
@@ -1918,10 +1913,10 @@ def createNewNode(node_sn,node_address,node_fw):
   if (node_sn in zoneDict.keys()):
     logprint("the node:"+node_sn+" already exist in the zoneDict") 
   else:
-    # if (node_sn+"_body" in object_dict.keys()):
+    # if (node_sn+"_body" in objectDict.keys()):
     #   print "the node body already exist in the web_object_dict" 
     # else:
-    #   object_dict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
+    #   objectDict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
     #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
     zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
 
@@ -1937,7 +1932,7 @@ def createNewNode(node_sn,node_address,node_fw):
 
     try:
       text_file = open(baseRoomPath+node_sn+"/index.html", "w")
-      text_file.write(getRoomHtml(node_sn,object_dict,"",zoneDict))
+      text_file.write(getRoomHtml(node_sn,objectDict,"",zoneDict))
       text_file.close()
     except Exception as e: 
       message= "error creating new node index file  "+node_sn+" e:"+str(e.args)
@@ -1961,14 +1956,14 @@ def setNodePin(node_sn,pin_number,pin_status,write_hw_enable):  # equal to NodeP
     logprint("the serial number is not in the dictionary...so i add  the new node")
     return("error_the_node_does_not_exist")
   found=0
-  for a in object_dict.keys():
-    logprint(object_dict[a].getHwNodeSerialNumber() )
-    if (object_dict[a].getHwNodeSerialNumber()==node_sn):
+  for a in objectDict.keys():
+    logprint(objectDict[a].getHwNodeSerialNumber() )
+    if (objectDict[a].getHwNodeSerialNumber()==node_sn):
       logprint("node exist")
-      if object_dict[a].getAttachedPinList()[0]==int(pin_number):
+      if objectDict[a].getAttachedPinList()[0]==int(pin_number):
         found=1  
-        if (len(object_dict[a].getAttachedPinList())==1):#the sensor object must have only a pin attached
-          objName=object_dict[a].getName()                      
+        if (len(objectDict[a].getAttachedPinList())==1):#the sensor object must have only a pin attached
+          objName=objectDict[a].getName()                      
           #changeWebObjectStatus(objName,int (pin_status),write_hw_enable) #banana add to queue
           layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str(pin_status),"write_to_hw":write_hw_enable })  
                 
@@ -2041,7 +2036,7 @@ def getUserFromIp(ipUserAddress):
 
 
 class MyHandler(BaseHTTPRequestHandler):
-    #global object_dict  
+    #global objectDict  
     #global roomDict
     
 
@@ -2722,7 +2717,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 logprint("------set "+objName+"to"+status_to_set)
                   
-                #if objName in object_dict.keys():
+                #if objName in objectDict.keys():
                 #try:
                   #changeWebObjectStatus(objName,int (status_to_set),write_hw_enable) 
                 layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":write_hw_enable })  
@@ -3217,13 +3212,13 @@ class MyHandler(BaseHTTPRequestHandler):
             #/RouterGL0001/index.html?=r_onos_s12
 
             if  ( string.find(self.path,"r_onos_s")!=-1)& ( string.find(self.path,"?")!=-1)& ( string.find(self.path,"=")!=-1):   #if is the javascript on the page asking to update the webpage             /
-                 #   global object_dict
+                 #   global objectDict
               
               global oldpag
               global nothing_changed
               logprint("r_onos_s found0")
                  #   global  old_zoneDict
-                 #   global  old_object_dict
+                 #   global  old_objectDict
                  #   global  old_web_page
               end_file_name=0
               end_file_name=string.find(self.path,".html")+5
@@ -3241,13 +3236,13 @@ class MyHandler(BaseHTTPRequestHandler):
 
                    
               #if True : #to implement a check to not execute modPag if the dictionary are equal
-              pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
+              pag=modPage(web_page,objectDict,findZoneName(self.path,zoneDict),zoneDict)
               p_start=string.find(pag,'<div id="ReloadThis" >')
                 
               pag=pag[p_start+len('<div id="ReloadThis" >'):] #send only the part of page to update 
 
                       #old_zoneDict=zoneDict
-                      #old_object_dict=object_dict
+                      #old_objectDict=objectDict
                       #old_web_page=web_page
                      
                 #if (1):#  (oldpag!=pag):  removed the not updating part for problem with arduino update
@@ -3323,7 +3318,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 web_page="error no html found"
 
-              pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
+              try:              
+                pag=modPage(web_page,objectDict,findZoneName(self.path,zoneDict),zoneDict)
+              except Exception as e  :
+                message="error modPage "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                pag="error modPage "
+
 
               try:
                 self.send_response(202)
@@ -3407,14 +3408,14 @@ class MyHandler(BaseHTTPRequestHandler):
 
               if status_to_set=="!":  # to make a not of the current status
                  #print "make the opposite"
-                status_to_set=not (object_dict[objName].getStatus())
+                status_to_set=not (objectDict[objName].getStatus())
 
-              if (  objName  in object_dict ):
+              if (  objName  in objectDict ):
                 #print "pulsante trovato in dizionario"                
              
                 if status_to_set=="!":  # to make a not of the current status
                     #print "make the opposite"
-                  status_to_set=not (object_dict[objName].getStatus())
+                  status_to_set=not (objectDict[objName].getStatus())
 
 
                 priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":self.current_username,"mail_report_list":[]})  
@@ -3453,12 +3454,12 @@ class MyHandler(BaseHTTPRequestHandler):
                   #logprint("next:"+str(next_point_position)+address_bar[equal_position+2:] )
                   status_to_set=-1
 
-                if (  objName  in object_dict ):
+                if (  objName  in objectDict ):
                 #print "pulsante trovato in dizionario"                
              
                   if status_to_set=="!":  # to make a not of the current status
                     #print "make the opposite"
-                    status_to_set=not (object_dict[objName].getStatus())
+                    status_to_set=not (objectDict[objName].getStatus())
 
                   logprint("path="+address_bar)
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
@@ -3474,7 +3475,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 #print "addressbar= "+address_bar
 
               
-              pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
+              pag=modPage(web_page,objectDict,findZoneName(self.path,zoneDict),zoneDict)
 
               try:
                 self.send_response(202)
@@ -3741,7 +3742,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if self.path.endswith("setup/obj_manager/"): 
               logprint("enter in  obj_manager")
-              html_page=self.get_WebOjectManager(object_dict)
+              html_page=self.get_WebOjectManager(objectDict)
                   
               try:
                 self.send_response(200)
@@ -3832,7 +3833,7 @@ class MyHandler(BaseHTTPRequestHandler):
       
 
 
-              html_page= self.get_Zone_Objects_Setup(self.path,object_dict,zone)
+              html_page= self.get_Zone_Objects_Setup(self.path,objectDict,zone)
               try:    
                 self.send_response(200)
                 self.send_header('Content-type',	'text/html')
@@ -3855,7 +3856,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             if self.path.endswith("setup/save_configuration/"): #     
               logprint("json saved",verbose=1)
-              updateJson(object_dict,nodeDict,zoneDict,scenarioDict,conf_options)
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options)
                   
               try:              
                 b1 = open('setup/select_config_menu.html','r')    
@@ -3934,15 +3935,15 @@ class MyHandler(BaseHTTPRequestHandler):
               
               pag="no_web_object_to_modify"
               if ((len(lista))==4):
-                if ((lista[3] in object_dict.keys())):
+                if ((lista[3] in objectDict.keys())):
                   logprint("edit a web object")
-                  pag=self.get_WebObjForm(object_dict[lista[3]])
+                  pag=self.get_WebObjForm(objectDict[lista[3]])
 
 
               if ((len(lista))==5):
-                if ((lista[4] in object_dict.keys())&(lista[3]=="delete_item")):
+                if ((lista[4] in objectDict.keys())&(lista[3]=="delete_item")):
                   logprint("deleted web object"+lista[4])
-                  object_dict.pop(lista[4],None)   #bug
+                  objectDict.pop(lista[4],None)   #bug
                   index=-1
                   for b in zoneDict.keys():
                     if lista[4] in zoneDict[b]["objects"]: 
@@ -3955,7 +3956,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   #zoneDict=zoneDictMod 
                   #zoneDict.remove()
-                  pag=self.get_WebOjectManager(object_dict)
+                  pag=self.get_WebOjectManager(objectDict)
 
                   updateDir()          
               try:
@@ -3989,7 +3990,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 if (self.path[(setup_start+6):]==a):  #found a room in the address bar
                   logprint("found a room in the address bar")
                   
-                  pag=self.get_RoomObjectList(a,object_dict) 
+                  pag=self.get_RoomObjectList(a,objectDict) 
                   try:
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -4019,9 +4020,9 @@ class MyHandler(BaseHTTPRequestHandler):
            
               if ( (setup_start!=-1)&(len(lista)==4)): #if path is like  /setup/Room0/body
                 logprint("not show room modifier but obj modifier")
-                if (lista[3] in object_dict.keys()):
+                if (lista[3] in objectDict.keys()):
                   logprint("edit a web object")
-                  pag=self.get_WebObjForm(object_dict[lista[3]])
+                  pag=self.get_WebObjForm(objectDict[lista[3]])
                   try:
                     self.send_response(200)
                     self.send_header('Content-type',	'text/html')
@@ -4061,9 +4062,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 pag=message
 
 
-              if current_obj_name not in object_dict.keys():
+              if current_obj_name not in objectDict.keys():
                 pag="error renaming webobject not in dict"
-                #print (object_dict.keys())
+                #print (objectDict.keys())
                 logprint(pag)
 
               else:  
@@ -4087,21 +4088,21 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 try:             
 
-                  object_dict[current_obj_name].setName(new_obj_name)    #rename the object_name in the object..
-                  tmp_htmlDict=object_dict[current_obj_name].getHtmlDict()
+                  objectDict[current_obj_name].setName(new_obj_name)    #rename the object_name in the object..
+                  tmp_htmlDict=objectDict[current_obj_name].getHtmlDict()
 
                   for a in tmp_htmlDict.keys():
                     tmp_htmlDict[a]=tmp_htmlDict[a].replace(current_obj_name+"=",new_obj_name+"=") 
                   tmp_htmlDict["onoswait"]=new_obj_name+u"WAIT"  
-                  object_dict[current_obj_name].setHtmlDict(tmp_htmlDict)
-                  object_dict[new_obj_name]=object_dict[current_obj_name]  #copy the old dictionary key to the new one
-                  del object_dict[current_obj_name] #delete the old key
+                  objectDict[current_obj_name].setHtmlDict(tmp_htmlDict)
+                  objectDict[new_obj_name]=objectDict[current_obj_name]  #copy the old dictionary key to the new one
+                  del objectDict[current_obj_name] #delete the old key
 
                   pag="ok"
 
                 #todo  save all to json
                 except Exception as e  :
-                  message="error4.3 rename obj in object_dict"
+                  message="error4.3 rename obj in objectDict"
                   logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                   pag=message
 
@@ -4201,7 +4202,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.send_response(200)
                   self.send_header('Content-type',	'text/html')
                   self.end_headers()
-                  pag=modPage(web_page,object_dict,findRoomName(self.path,zoneDict),zoneDict)
+                  pag=modPage(web_page,objectDict,findZoneName(self.path,zoneDict),zoneDict)
                   self.wfile.write(pag) 
                 except Exception as e  :
                   message="error26 in send_header "+" e:"+str(e.args)                     
@@ -4376,10 +4377,10 @@ class MyHandler(BaseHTTPRequestHandler):
           
 
                                  
-                     if (room+"_body" in object_dict.keys()) :
-                       object_dict[new_name+"_body"]=object_dict[room+"_body"]  #copy the body object from the old name
+                     if (room+"_body" in objectDict.keys()) :
+                       objectDict[new_name+"_body"]=objectDict[room+"_body"]  #copy the body object from the old name
 
-                       object_dict.pop(room+"_body",None)#del object_dict[room+"_body"]         #and delete the old key
+                       objectDict.pop(room+"_body",None)#del objectDict[room+"_body"]         #and delete the old key
                        if  room+"_body"  in zoneDict[room]["objects"] :
                          logprint("i try to remove the object"+room+"_body  from zone"+room)
                          index=zoneDict[room]["objects"].index(room+"_body")   
@@ -4394,7 +4395,7 @@ class MyHandler(BaseHTTPRequestHandler):
                      zoneDict[new_name] = zoneDict[room]   #update the zoneDict with the new key
                      zoneDict.pop(room, None)  # del zoneDict[room]            #and delete the old key
                      #except:
-                      # print "can't remove object from object_dict"
+                      # print "can't remove object from objectDict"
 
 
                      try : 
@@ -4417,14 +4418,14 @@ class MyHandler(BaseHTTPRequestHandler):
                 new_name=self.clear_PostData(postvars["new_room"][0])
                 new_name=new_name.replace("/", "_")
                 #print new_name
-                if((new_name!=default_new_zone_value)&(new_name!=default_rename_zone_value)&(new_name!=default_rename_zone_value2)&(len(new_name)>0)&((new_name)!=" ")&(new_name not in zoneDict.keys())&(new_name+"_body" not in object_dict.keys() )): 
+                if((new_name!=default_new_zone_value)&(new_name!=default_rename_zone_value)&(new_name!=default_rename_zone_value2)&(len(new_name)>0)&((new_name)!=" ")&(new_name not in zoneDict.keys())&(new_name+"_body" not in objectDict.keys() )): 
                   #roomList.append(new_name) #create a new room 
                   zoneDict[new_name]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
                   zoneDict[new_name]["objects"]=[new_name+"_body"]  # modify to update also the webobject dict and list 
-                  object_dict[new_name+"_body"]=newDefaultWebObjBody(new_name+"_body") #create a new web_object and insert only his name          
-                  #objectList.append(object_dict[new_name+"_body"])
+                  objectDict[new_name+"_body"]=newDefaultWebObjBody(new_name+"_body") #create a new web_object and insert only his name          
+                  #objectList.append(objectDict[new_name+"_body"])
                   #os.system("mkdir "+baseRoomPath+new_name) 
-                  #os.system("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html")
+                  #os.system("cat "+getRoomHtml(new_name,objectDict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html")
                   #os.system("chmod 777 "+new_name)
 
                   try:
@@ -4434,12 +4435,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   #with lock_bash_cmd:
                     #subprocess.check_output("mkdir "+baseRoomPath+new_name, shell=True,close_fds=True)  
-                  #  subprocess.check_output("cat "+getRoomHtml(new_name,object_dict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
+                  #  subprocess.check_output("cat "+getRoomHtml(new_name,objectDict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
                   
                     #subprocess.check_output("chmod 777 "+new_name, shell=True,close_fds=True)  
 
                   with open(baseRoomPath+new_name+"/index.html", 'w') as f:
-                    f.write(getRoomHtml(new_name,object_dict,"",zoneDict))
+                    f.write(getRoomHtml(new_name,objectDict,"",zoneDict))
 
                   os.chmod(baseRoomPath+new_name+"/index.html", 0o777)
                   updateOneZone(new_name)       
@@ -4462,7 +4463,7 @@ class MyHandler(BaseHTTPRequestHandler):
                  #     zoneDict[a].pop(index)
 
                     zoneDict.pop(a,None)
-                    object_dict.pop(a+"_body",None)  # remove also the web_obj body of the pag from the dict
+                    objectDict.pop(a+"_body",None)  # remove also the web_obj body of the pag from the dict
                     
                     #os.system("rm "+baseRoomPath+a+"/*")
                     #os.system("rmdir "+baseRoomPath+a)
@@ -4518,24 +4519,28 @@ class MyHandler(BaseHTTPRequestHandler):
                  
                   elif new_zone_name!=zone: # if I have to create a new zone...                  
                     zoneDict[new_zone_name]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+
+                    if new_zone_name+"_body" not in objectDict:#create the body object if doesn't exist
+                      objectDict[new_zone_name+"_body"]=newDefaultWebObjBody(new_zone_name+"_body")  
+                     
                     zoneDict[new_zone_name]["objects"]=[new_zone_name+"_body"]  # modify to update also the webobject dict and list 
-                    #object_dict[new_zone_name+"_body"]=newDefaultWebObjBody(new_zone_name+"_body") #create a new web_object and insert only his name          
+                    #objectDict[new_zone_name+"_body"]=newDefaultWebObjBody(new_zone_name+"_body") #create a new web_object and insert only his name          
                     try:
                       os.stat(baseRoomPath+new_zone_name)
                     except:
                       os.mkdir(baseRoomPath+new_zone_name)  
                     with open(baseRoomPath+new_zone_name+"/index.html", 'w') as f:
-                      f.write(getRoomHtml(new_zone_name,object_dict,"",zoneDict))
+                      f.write(getRoomHtml(new_zone_name,objectDict,"",zoneDict))
                     os.chmod(baseRoomPath+new_zone_name+"/index.html", 0o777)
                     updateOneZone(new_zone_name)       
-                    logprint("create a new zone"+new_zone_name)
+                    logprint("create a new zone:"+new_zone_name)
                     data_to_update=1
                 else:# new_zone_name is not valid
                   new_zone_name=zone
   
               obj_name_list=zoneDict[new_zone_name]["objects"]
 
-              for a in  object_dict.keys():
+              for a in  objectDict.keys():
 
 
                 if (a+"_sel_obj" in postvars): 
@@ -4569,7 +4574,7 @@ class MyHandler(BaseHTTPRequestHandler):
               logprint("zone_objects_setup page send a post to mode zone"+zone)     
               obj_name_list=zoneDict[zone]["objects"]
 
-              for a in  object_dict.keys():
+              for a in  objectDict.keys():
 
                 
 
@@ -4600,15 +4605,15 @@ class MyHandler(BaseHTTPRequestHandler):
                 new_obj0=self.clear_PostData(postvars["new_objects"][0])
                  
                 new_obj=new_obj0+'_p_'+zone
-                if  ( (new_obj0 !="TYPE_NEW_OBJECT_HERE")&(new_obj not in object_dict.keys())&(len(new_obj)>0)&(new_obj!=" ")   ):           
-                  object_dict[new_obj]=newDefaultWebObj(new_obj) #create a new object and insert it in the dictionary  
+                if  ( (new_obj0 !="TYPE_NEW_OBJECT_HERE")&(new_obj not in objectDict.keys())&(len(new_obj)>0)&(new_obj!=" ")   ):           
+                  objectDict[new_obj]=newDefaultWebObj(new_obj) #create a new object and insert it in the dictionary  
                   zoneDict[zone]["objects"].append(new_obj)   #add the object name to the zone
 
 
               postvars={}
               updateOneZone(zone)#to update the zone with the new objects
 
-              webpag=self.get_Zone_Objects_Setup(self.path,object_dict,zone)
+              webpag=self.get_Zone_Objects_Setup(self.path,objectDict,zone)
               try:
                 self.send_response(200)
                 self.send_header('Content-type',	'text/html')
@@ -4627,14 +4632,14 @@ class MyHandler(BaseHTTPRequestHandler):
               if q in postvars:   
                 new_obj=self.clear_PostData(postvars[q][0])
                 logprint("try to create a new webobj"+new_obj)
-                if((new_obj!=default_new_obj_value)&(new_obj!=default_new_obj_value2)&(len(new_obj)>0)&((new_obj)!=" ")&(  new_obj not in object_dict.keys() ) ): 
-                  object_dict[new_obj]=newDefaultWebObj(new_obj) #create a new web_object and insert only his name 
-                 # objectList.append(object_dict[new_obj])
-                  logprint("created a new web object "+object_dict[new_obj].getName() )
+                if((new_obj!=default_new_obj_value)&(new_obj!=default_new_obj_value2)&(len(new_obj)>0)&((new_obj)!=" ")&(  new_obj not in objectDict.keys() ) ): 
+                  objectDict[new_obj]=newDefaultWebObj(new_obj) #create a new web_object and insert only his name 
+                 # objectList.append(objectDict[new_obj])
+                  logprint("created a new web object "+objectDict[new_obj].getName() )
                   data_to_update=1  
                   
               postvars = {}
-              pag=self.get_WebOjectManager(object_dict)
+              pag=self.get_WebOjectManager(objectDict)
               try:
                 self.send_response(200)
                 self.send_header('Content-type',	'text/html')
@@ -4653,11 +4658,11 @@ class MyHandler(BaseHTTPRequestHandler):
               if q in postvars:   
                 new_obj=self.clear_PostData(postvars[q][0])
 
-                if((new_obj!=default_new_obj_value)&(new_obj!=default_new_obj_value2)&(len(new_obj)>0)&((new_obj)!=" ")&(  new_obj not in object_dict.keys() ) ): 
-                  object_dict[new_obj]=newDefaultWebObj(new_obj) #create a new web_object and insert only his name 
+                if((new_obj!=default_new_obj_value)&(new_obj!=default_new_obj_value2)&(len(new_obj)>0)&((new_obj)!=" ")&(  new_obj not in objectDict.keys() ) ): 
+                  objectDict[new_obj]=newDefaultWebObj(new_obj) #create a new web_object and insert only his name 
 
-                 # objectList.append(object_dict[new_obj])
-                  logprint("created a new web object "+object_dict[new_obj].getName() )
+                 # objectList.append(objectDict[new_obj])
+                  logprint("created a new web object "+objectDict[new_obj].getName() )
                   data_to_update=1  
                   
               
@@ -4669,10 +4674,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint("postvars="+str(postvars[a]))
 
                 
-                if ((string.find(a,"add_obj_to_room")!=-1)&((postvars[a][0]) in object_dict.keys())&(postvars[a][0]not in zoneDict[currentRoom]["objects"]  )):  #add a obj to the room
+                if ((string.find(a,"add_obj_to_room")!=-1)&((postvars[a][0]) in objectDict.keys())&(postvars[a][0]not in zoneDict[currentRoom]["objects"]  )):  #add a obj to the room
                   zoneDict[currentRoom]["objects"].append(postvars[a][0])
                   updateOneZone(currentRoom)
-                  #html_to_write=getRoomHtml(currentRoom,object_dict,"",zoneDict)
+                  #html_to_write=getRoomHtml(currentRoom,objectDict,"",zoneDict)
                   #file0 = open(currentRoom+"/index.html", "w")
                   #file0.write(html_to_write) 
                   #file0.close()
@@ -4692,7 +4697,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 #updateOneZone(currentRoom)           
               if data_to_update==1:    #update the html removing the webobj removed by the form 
-                html_to_write=getRoomHtml(currentRoom,object_dict,"",zoneDict)
+                html_to_write=getRoomHtml(currentRoom,objectDict,"",zoneDict)
                # file0 = open(baseRoomPath+currentRoom+"/index.html", "w")
                # file0.write(html_to_write) 
                # file0.close()
@@ -4702,7 +4707,7 @@ class MyHandler(BaseHTTPRequestHandler):
               postvars = {}               
               #print "actual room: "+currentRoom
               
-              pag=self.get_RoomObjectList(currentRoom,object_dict)  
+              pag=self.get_RoomObjectList(currentRoom,objectDict)  
               try: 
                 self.send_response(200)
                 self.send_header('Content-type',	'text/html')
@@ -4727,14 +4732,14 @@ class MyHandler(BaseHTTPRequestHandler):
 
               logprint("currentroom_modhtml="+currentRoom)
               #updateOneZone(currentRoom)
-              html_to_write=modPage(new_html_room,object_dict,currentRoom,zoneDict)
+              html_to_write=modPage(new_html_room,objectDict,currentRoom,zoneDict)
               logprint("html wrote to the file "+currentRoom+"/index.html="+html_to_write)
               logprint("correction..not wrote because commented part")
               #file0 = open(baseRoomPath+currentRoom+"/index.html", "w")
               #file0.write(html_to_write) 
               #file0.close()
               postvars = {}
-              pag=self.get_RoomObjectList(currentRoom,object_dict)  
+              pag=self.get_RoomObjectList(currentRoom,objectDict)  
               try: 
                 self.send_response(200)
                 self.send_header('Content-type',	'text/html')
@@ -4755,55 +4760,55 @@ class MyHandler(BaseHTTPRequestHandler):
               logprint("modify the web object:"+web_object_name)
               for a in postvars.keys() :
                 if (postvars["obj_notes"]!=notes):
-                  object_dict[web_object_name].setNotes(postvars["obj_notes"][0])
+                  objectDict[web_object_name].setNotes(postvars["obj_notes"][0])
 
 
                 if (postvars["obj_hardware_pin"]!=no_pin_selected)&(len(postvars["obj_hardware_pin"])>0):
                   try:
-                    object_dict[web_object_name].setAttachedPin(int (postvars["obj_hardware_pin"][0]))
+                    objectDict[web_object_name].setAttachedPin(int (postvars["obj_hardware_pin"][0]))
                   except:
-                    object_dict[web_object_name].setAttachedPin(9999)
+                    objectDict[web_object_name].setAttachedPin(9999)
 
 
-               # if (postvars["obj_type"]!=object_dict[web_object_name].getType()):
+               # if (postvars["obj_type"]!=objectDict[web_object_name].getType()):
                #   changeWebObjectType(web_object_name,postvars["obj_type"][0])
-                  #object_dict[web_object_name].setType(postvars["obj_type"][0])
+                  #objectDict[web_object_name].setType(postvars["obj_type"][0])
                   
 
-                if (postvars["obj_current_status"]!=int (object_dict[web_object_name].getStatus())):
+                if (postvars["obj_current_status"]!=int (objectDict[web_object_name].getStatus())):
 
-                  #object_dict[web_object_name].setStatus(int(postvars["obj_current_status"][0]))
+                  #objectDict[web_object_name].setStatus(int(postvars["obj_current_status"][0]))
                   changeWebObjectStatus(web_object_name,int (postvars["obj_current_status"][0]),1)#banana add to queue
 
 
 
                 if (postvars["obj_style0"]!=style0):
-                  object_dict[web_object_name].setStyle0(postvars["obj_style0"][0])
+                  objectDict[web_object_name].setStyle0(postvars["obj_style0"][0])
 
                 if (postvars["obj_style1"]!=style1):
-                  object_dict[web_object_name].setStyle1(postvars["obj_style1"][0])
+                  objectDict[web_object_name].setStyle1(postvars["obj_style1"][0])
 
                 if (postvars["obj_html0"]!=html0):
-                  object_dict[web_object_name].setHtml0(postvars["obj_html0"][0])
+                  objectDict[web_object_name].setHtml0(postvars["obj_html0"][0])
 
                 if (postvars["obj_html1"]!=html1):
-                  object_dict[web_object_name].setHtml1(postvars["obj_html1"][0])
+                  objectDict[web_object_name].setHtml1(postvars["obj_html1"][0])
 
 
                 if (postvars["obj_cmd0"]!=" "):
-                  object_dict[web_object_name].setCommand0(formParse(postvars["obj_cmd0"][0]))
+                  objectDict[web_object_name].setCommand0(formParse(postvars["obj_cmd0"][0]))
 
                 if (postvars["obj_cmd1"]!=" "):
-                  object_dict[web_object_name].setCommand1(formParse(postvars["obj_cmd1"][0]))
+                  objectDict[web_object_name].setCommand1(formParse(postvars["obj_cmd1"][0]))
 
 
                 if (postvars["obj_init_cmd"]!=" "):
-                  object_dict[web_object_name].setInitCommand(formParse(postvars["obj_init_cmd"][0]))
-                  object_dict[web_object_name].InitFunction()  #execute the new init command
+                  objectDict[web_object_name].setInitCommand(formParse(postvars["obj_init_cmd"][0]))
+                  objectDict[web_object_name].InitFunction()  #execute the new init command
 
               postvars = {}
               data_to_update=1 
-              pag=self.get_WebObjForm(object_dict[web_object_name])
+              pag=self.get_WebObjForm(objectDict[web_object_name])
               try:
                 self.send_response(200)
                 self.send_header('Content-type',	'text/html')
@@ -4895,10 +4900,10 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     if del_scenario_name in scenarioDict.keys(): #if scenario name doesn't exist  
                 
-                      for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
-                        tmp_list_scenarios=object_dict[a].getListAttachedScenarios()
+                      for a in objectDict.keys():#check and remove the not used scenarios from web_object attachedScenarios
+                        tmp_list_scenarios=objectDict[a].getListAttachedScenarios()
                         if del_scenario_name in tmp_list_scenarios: 
-                          object_dict[a].removeAttachedScenario(del_scenario_name)
+                          objectDict[a].removeAttachedScenario(del_scenario_name)
                       del scenarioDict[del_scenario_name]  
 
 
@@ -4930,8 +4935,8 @@ class MyHandler(BaseHTTPRequestHandler):
                     if scenario_name not in scenarioDict:
                       scenarioDict[scenario_name]=scenarioDict[scenario_start_name]
                       del scenarioDict[scenario_start_name]
-                      for obj in object_dict.keys():
-                        object_dict[obj].replaceAttachedScenario(scenario_start_name,scenario_name) #replace the reference in the web object with the new one
+                      for obj in objectDict.keys():
+                        objectDict[obj].replaceAttachedScenario(scenario_start_name,scenario_name) #replace the reference in the web object with the new one
                   
                       
 
@@ -4990,20 +4995,20 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-                        for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
-                          tmp_list_scenarios=object_dict[a].getListAttachedScenarios()
+                        for a in objectDict.keys():#check and remove the not used scenarios from web_object attachedScenarios
+                          tmp_list_scenarios=objectDict[a].getListAttachedScenarios()
                           for b in tmp_list_scenarios:
                             if scenarioDict[b]["conditions"].find(a+"_#")==-1: 
                              # if the object is not in the conditions then remove it from web_object attachedScenarios
-                              object_dict[a].removeAttachedScenario(b)
+                              objectDict[a].removeAttachedScenario(b)
                       
                             
 
 
                         list_of_object_inside_conditions=replace_conditions(conditions,scenario_name)[1] 
                         for a in list_of_object_inside_conditions :# add the scenario to each web_object attachedScenarios    
-                          if a in object_dict.keys():  
-                            object_dict[a].attachScenario(scenario_name)  
+                          if a in objectDict.keys():  
+                            objectDict[a].attachScenario(scenario_name)  
                             #if the scenario is not included in the web_object attachedScenarios
 
 
@@ -5152,20 +5157,20 @@ class MyHandler(BaseHTTPRequestHandler):
               logprint("conditions"+str(conditions) )
 
 
-              for a in object_dict.keys():#check and remove the not used scenarios from web_object attachedScenarios
-                tmp_list_scenarios=object_dict[a].getListAttachedScenarios()
+              for a in objectDict.keys():#check and remove the not used scenarios from web_object attachedScenarios
+                tmp_list_scenarios=objectDict[a].getListAttachedScenarios()
                 for b in tmp_list_scenarios:
                   if scenarioDict[b]["conditions"].find(a+"_#")==-1: 
                 # if the object is not in the conditions then remove it from web_object attachedScenarios
-                    object_dict[a].removeAttachedScenario(b)
+                    objectDict[a].removeAttachedScenario(b)
                   else:
-                    object_dict[a].attachScenario(b)  
+                    objectDict[a].attachScenario(b)  
 
 
               list_of_object_inside_conditions=replace_conditions(conditions,scenario_name)[1] 
               for a in list_of_object_inside_conditions :# add the scenario to each web_object attachedScenarios    
-                if a in object_dict.keys():  
-                  object_dict[a].attachScenario(scenario_name)  
+                if a in objectDict.keys():  
+                  objectDict[a].attachScenario(scenario_name)  
                   #if the scenario is not included in the web_object attachedScenarios
 
 
@@ -5567,7 +5572,7 @@ def onlineServerSync():
      
 
     try:
-      object_tmp_dict=transform_object_to_dict(object_dict) 
+      object_tmp_dict=transform_object_to_dict(objectDict) 
     except Exception as e  :
       message="error executing transform_object_to_dict()"
       logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))   
@@ -5889,15 +5894,15 @@ def mailCheckThread():
             
             objName=cmd_argument
             if (len(objName)>0)&(len(status)>0):  #the arguments lenghts are ok
-              if objName in object_dict:  #the object exist
-                obj_previous_status=object_dict[objName].getStatus()
-                if (object_dict[objName].validateStatusToSetObj(status)==1 ):  #if the status is ok and type is output  
+              if objName in objectDict:  #the object exist
+                obj_previous_status=objectDict[objName].getStatus()
+                if (objectDict[objName].validateStatusToSetObj(status)==1 ):  #if the status is ok and type is output  
                   logprint("check priority")
-                  if object_dict[objName].checkRequiredPriority(priority)==1:  #check priority 
+                  if objectDict[objName].checkRequiredPriority(priority)==1:  #check priority 
                     logprint("priority ok")
 
                     #check permission  
-                    if object_dict[objName].checkPermissions(onos_usr,"x",priority):#check if user has execution to obj                   
+                    if objectDict[objName].checkPermissions(onos_usr,"x",priority):#check if user has execution to obj                   
                       logprint("permission ok ,i write to obj")
                       mailText=mailText+"O.N.O.S. received the mail :"+l+" and is processing it ,"
                       priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status,"write_to_hw":1,"priority":priority,"user":"onos_usr","mail_report_list":[m_sender] })  
@@ -6056,9 +6061,9 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
             priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
-          #for b in object_dict.keys():
-          #  if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
-              #object_dict[b].setStatus("inactive")
+          #for b in objectDict.keys():
+          #  if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
+              #objectDict[b].setStatus("inactive")
           #    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
         else:#now the node is connected
@@ -6066,15 +6071,15 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             nodeDict[a].setNodeActivity(1)  #set the node as active
             message="The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
             logprint(message,verbose=5)
-            #for b in object_dict.keys():
+            #for b in objectDict.keys():
             for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
-              logprint("object_dict[b].getHwNodeSerialNumber():"+str(object_dict[b].getHwNodeSerialNumber()) )
-              #if object_dict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
+              logprint("objectDict[b].getHwNodeSerialNumber():"+str(objectDict[b].getHwNodeSerialNumber()) )
+              #if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
               logprint("webobject:"+b+"returned active",verbose=5)
-              prev_s=object_dict[b].getPreviousStatus() 
-              current_s=object_dict[b].getStatus()
+              prev_s=objectDict[b].getPreviousStatus() 
+              current_s=objectDict[b].getStatus()
               if ((current_s=="inactive") or (current_s=="onoswait") ): 
-              #  prev_s=object_dict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
+              #  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
                 logprint("the new status will be:"+str(prev_s) )
                 priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
                 #set the web_object to the status before the disconnection 
@@ -6285,7 +6290,7 @@ def executeQueueFunction(dataExchanged):
         logprint("object address in the node="+str(a) )
         try:
           objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a))
-          object_dict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
+          objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
         except Exception as e: #todo place this somewhere else..
           hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
           message="warning in the updateObjFromNode,the object doesnt exist yet"
@@ -6303,7 +6308,7 @@ def executeQueueFunction(dataExchanged):
         mail_list_to_report_to=[]
       #example of objName: socket0_Plug6way0002
         logprint("I call changeWebObjectStatus() to update the obj from node update")
-        if status_to_set!=object_dict[objName].getStatus():
+        if status_to_set!=objectDict[objName].getStatus():
           #print(str((objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)))
 
           changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
@@ -6487,7 +6492,7 @@ def onosBusThread():
 
          
       try:
-        old_minutes=object_dict["minutes"].getStatus()
+        old_minutes=objectDict["minutes"].getStatus()
       except Exception as e:  
         logprint("error in the minutes update of onosBusThread ")
         logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
@@ -6503,11 +6508,11 @@ def onosBusThread():
           changeWebObjectStatus("minutes",datetime.datetime.today().minute,0)
           changeWebObjectStatus("dayTime",datetime.datetime.today().minute+(datetime.datetime.today().hour)*60,0)
 
-          old_hours=object_dict["hours"].getStatus()
-          old_day=object_dict["day"].getStatus()
-          old_month=object_dict["month"].getStatus()
-          old_year=object_dict["year"].getStatus()
-          old_dayTime=object_dict["dayTime"].getStatus()  #hours of the day expressed in minutes
+          old_hours=objectDict["hours"].getStatus()
+          old_day=objectDict["day"].getStatus()
+          old_month=objectDict["month"].getStatus()
+          old_year=objectDict["year"].getStatus()
+          old_dayTime=objectDict["dayTime"].getStatus()  #hours of the day expressed in minutes
 
 
           if (old_hours!=datetime.datetime.today().hour):

@@ -65,7 +65,7 @@ url_request_manager = PoolManager(8)
 
 exit=0
 debug=2  #debug mode , if set to 1  the debug mode is on if setted to 2 the debug is medium
-object_dict={} #object_dict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
+objectDict={} #objectDict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
 zoneDict={}#dict where the key is the name from roomList and the value is a list of all the webobject names present in the room  
 router_hardware={}
 scenarioDict={}

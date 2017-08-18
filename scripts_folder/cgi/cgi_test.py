@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 web_page="<h1>webobjects:</h1>"
 
-for a in object_dict.keys():
+for a in objectDict.keys():
   web_page=web_page+"<div>"+a+"</div>" 
 
 web_page=web_page+"<h1>zones:</h1>"

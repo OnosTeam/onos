@@ -69,8 +69,8 @@ html_object_list=""
 
 
 system_object_list=[""]
-for object_name in object_dict.keys():# for every object in the dictionary make the html
-  if (object_dict[object_name].getType()=="cfg_obj") : #don't display cfg objects in the scenarios
+for object_name in objectDict.keys():# for every object in the dictionary make the html
+  if (objectDict[object_name].getType()=="cfg_obj") : #don't display cfg objects in the scenarios
     continue
 
   html_object_list=html_object_list+'''<li>

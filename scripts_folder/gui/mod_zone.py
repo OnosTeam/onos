@@ -88,7 +88,7 @@ html=html+'''
 
 
 
-total_object_name_list=object_dict.keys()  
+total_object_name_list=objectDict.keys()  
 total_object_name_list.sort()#sorted by name
 zone_obj_name_list=""
 

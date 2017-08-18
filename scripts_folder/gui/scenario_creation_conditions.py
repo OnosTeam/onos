@@ -57,11 +57,11 @@ system_object_list=[""]
 obj_sel=''
 
 
-obj_list=object_dict.keys()
+obj_list=objectDict.keys()
 obj_list.sort()
 
 for object_name in obj_list:# for every object in the list make the html
-  if (object_dict[object_name].getType()=="cfg_obj") : #don't display cfg objects in the scenarios
+  if (objectDict[object_name].getType()=="cfg_obj") : #don't display cfg objects in the scenarios
     continue
 
   html_object_list_drop_menu=html_object_list_drop_menu+'''<option value="'''+object_name+'''">'''+object_name+'''</option>'''

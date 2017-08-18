@@ -31,7 +31,7 @@ import hw_node
 
 
 global exit   #if exit ==1 all the program stop and exit
-global object_dict
+global objectDict
 global zoneDict
 global nodeDict
 global hardwareModelDict
@@ -83,19 +83,19 @@ def newNodeWebObj(name,objType,node_sn,pinList=[]):
 
 
 
-object_dict={} #object_dict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
+objectDict={} #objectDict  contain all the web_object  and the key of the dictionary for each web_object is the name of the web_object
 
 objectList=[]
 roomList=[]
 zoneDict={}#dict where the key is the name from roomList and the value is a list of all the webobject names present in the room  
 
 
-object_dict["minutes"]=newDefaultWebObj("minutes")
-object_dict["hours"]=newDefaultWebObj("hours")
-object_dict["day"]=newDefaultWebObj("day")
-object_dict["month"]=newDefaultWebObj("month")
-object_dict["year"]=newDefaultWebObj("year")
-object_dict["dayTime"]=newDefaultWebObj("dayTime")  #hours of the day expressed in minutes
+objectDict["minutes"]=newDefaultWebObj("minutes")
+objectDict["hours"]=newDefaultWebObj("hours")
+objectDict["day"]=newDefaultWebObj("day")
+objectDict["month"]=newDefaultWebObj("month")
+objectDict["year"]=newDefaultWebObj("year")
+objectDict["dayTime"]=newDefaultWebObj("dayTime")  #hours of the day expressed in minutes
 
 
 
@@ -242,7 +242,7 @@ def importConfig():
 
 
   #ricreate the nodeDict from the json backup
-  #note that the io config will be done in webserver.py where i add the objectList elements to object_dict
+  #note that the io config will be done in webserver.py where i add the objectList elements to objectDict
 
 
 
@@ -251,12 +251,12 @@ def importConfig():
 
 importConfig()
 
-object_dict["onosCenterWifi"]=newDefaultWebObj("onosCenterWifi")  #turn on or off wifi
-#object_dict["wifi0_Plug6way0001"]=newDefaultWebObj("wifi0_Plug6way0001")  #turn on or off wifi
-object_dict["onosCenterWifi"].setCommand0("uci set wireless.radio0.disabled=1&uci commit wireless && wifi")
-object_dict["onosCenterWifi"].setCommand1("uci set wireless.radio0.disabled=0&uci commit wireless && wifi")
+objectDict["onosCenterWifi"]=newDefaultWebObj("onosCenterWifi")  #turn on or off wifi
+#objectDict["wifi0_Plug6way0001"]=newDefaultWebObj("wifi0_Plug6way0001")  #turn on or off wifi
+objectDict["onosCenterWifi"].setCommand0("uci set wireless.radio0.disabled=1&uci commit wireless && wifi")
+objectDict["onosCenterWifi"].setCommand1("uci set wireless.radio0.disabled=0&uci commit wireless && wifi")
 
-object_dict["counter1"]=newDefaultWebObj("counter1")  #count
+objectDict["counter1"]=newDefaultWebObj("counter1")  #count
 
 #zoneDict[router_sn]["objects"].append("OnosCenterWifi")
 

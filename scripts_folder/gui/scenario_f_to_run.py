@@ -8,7 +8,7 @@ obj_name_comparison='(mystring=="select_an_element")||(mystring2=="select_an_ele
 
 obj_sel=''
 obj_sel_number=''
-obj_list=object_dict.keys()
+obj_list=objectDict.keys()
 obj_list.sort()
 
 
