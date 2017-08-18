@@ -26,9 +26,10 @@ function checkvalue() {
 
   if (mystring=="'''+default_zone_form_value+'''"){ // to reset the value when not inserted by user.
     document.getElementById('new_zone_to_create').value="";
+
   }
 
-  if(mystring=="'''+zone_to_mod+'''") {
+  if(mystring=="") {
     alert ('This is not allowed because already used or not valid');
     return false;
   }
@@ -66,6 +67,13 @@ html=menu
 html=html.replace("<!--Javascript_to_replace-->",javascript_to_insert_in_page)
 
 
+
+if zone_to_mod in zoneDict.keys():
+  zone_form_value=zone_to_mod
+else:
+  zone_form_value=default_zone_form_value
+
+
 html=html+'''
         <form action="" method="POST" onsubmit="return checkvalue(this)" >
         	<input type="hidden" name="zone_setup_manager" value="'''+zone_to_mod+'''" >
@@ -73,7 +81,7 @@ html=html+'''
 
 
 			<div class="riga" >
-			<input name="new_zone_to_create" id="new_zone_to_create" class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome della zona') { this.value = ''; }" value="'''+default_zone_form_value+'''"/>
+			<input name="new_zone_to_create" id="new_zone_to_create" class="name_text" type="text" onfocus="if(this.value == 'Scrivi il nome della zona') { this.value = ''; }" value="'''+zone_form_value+'''"/>
 			</div>
 
 			<div class="riga" >

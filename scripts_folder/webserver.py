@@ -4507,7 +4507,7 @@ class MyHandler(BaseHTTPRequestHandler):
             elif "zone_setup_manager" in postvars:   #   to add or remove objects to a zone 
 
               zone=self.clear_PostData(postvars["zone_setup_manager"][0])
-              logprint("zone_objects_setup page send a post to mode zone"+zone)   
+              logprint("zone_objects_setup page send a post to mode zone:"+zone)   
 
               if "new_zone_to_create" in postvars:   #  
                 new_zone_name=self.clear_PostData(postvars["new_zone_to_create"][0])
@@ -4532,13 +4532,14 @@ class MyHandler(BaseHTTPRequestHandler):
                     with open(baseRoomPath+new_zone_name+"/index.html", 'w') as f:
                       f.write(getRoomHtml(new_zone_name,objectDict,"",zoneDict))
                     os.chmod(baseRoomPath+new_zone_name+"/index.html", 0o777)
-                    updateOneZone(new_zone_name)       
+                    #updateOneZone(new_zone_name)       
                     logprint("create a new zone:"+new_zone_name)
                     data_to_update=1
                 else:# new_zone_name is not valid
                   new_zone_name=zone
   
               obj_name_list=zoneDict[new_zone_name]["objects"]
+              logprint("obj_name_list:"+str())
 
               for a in  objectDict.keys():
 
@@ -4555,8 +4556,8 @@ class MyHandler(BaseHTTPRequestHandler):
                     logprint("i try to remove the object "+a+"from the zone"+zone)
                     index=zoneDict[new_zone_name]["objects"].index(a)
                     zoneDict[new_zone_name]["objects"].pop(index)
-
-
+                updateOneZone(new_zone_name)
+              
               self.send_response(301)
               self.send_header('Location','/')
               self.end_headers()
@@ -4568,7 +4569,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            elif "zone_objects_setup" in postvars:   #   to add or remove objects to a zone 
+            elif "zone_objects_setup" in postvars:   # OLD GUI  to add or remove objects to a zone old gui..
                         
               zone=self.clear_PostData(postvars["zone_objects_setup"][0])
               logprint("zone_objects_setup page send a post to mode zone"+zone)     
@@ -4583,7 +4584,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                     #if (postvars[a+"_sel_obj"][0]=='on'):
                     if a not in obj_name_list:
-                      logprint("add obj to zone :"+a)
+                      logprint("OLD GUI add obj to the zone:"+a)
                       zoneDict[zone]["objects"].append(a)   #add the 
                     #else:# not checked , so remove the  object from the zone if it is there
                     #  if a in  obj_name_list: 

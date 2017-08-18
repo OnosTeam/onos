@@ -673,6 +673,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Corrected and impoved the analog reading and transmission of analog sensor in reed node .
                 Now node_type_Wrelay4x is working, implemented the arduino and python part.
                 Changed object_dict to objectDict everywhere,bugfix when creating a new zone the zone_body object will be created.
+                Bugfix:now the objects are added correctly to the zones.
+
 
 
 (110, 'Connection timed out');;;
