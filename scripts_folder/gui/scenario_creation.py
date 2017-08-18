@@ -27,7 +27,7 @@ javascript_scenario_name_check='''
 function checkvalue() { 
     var mystring = document.getElementById('new_scenario_name').value; 
     if('''+scenarios_name_comparison+''') {
-        alert ('This is not allowed because already used or not valid');
+        alert ('Nome Scenario invalido o usato, inserisci un nome diverso');
         return false;
     } else {
         //alert("correct input");
@@ -109,7 +109,7 @@ html=html+'''
 
 
 
-		 <div id="avanti_button"><input type="submit" value="Submit"> </div>
+		 <div id="avanti_button"><input type="submit" value="Conferma"> </div>
 
          </form>
  '''

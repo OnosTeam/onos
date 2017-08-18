@@ -677,13 +677,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
 
 
 
-(110, 'Connection timed out');;;
-main error in handle_new_query_to_remote_node_thread;;;
-('a float is required',);;;
-error2 after main error in handle_new_query_to_remote_node_thread;;;
-(u'Plug6way0001',)
 
- 
+Bug: if setted a numeric value like 19 in the condition the value will been then tralsated to 19.0   and it will not be supported from the http://192.168.1.102/mod_scenario/scenario1/   general config...modifying it to 20.0 and click on finish will not work ...
 
 
  bug ,the web object html will be replaced with the status if the status was a string 
