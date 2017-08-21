@@ -122,7 +122,7 @@ html=html+'''
 
 <div class="riga_container">
 	<div class="riga_name">Nome</div>
-		<input type="text" class="textbox" onclick="this.select();" name="new_scenario_name" value="'''+scenario_to_mod+'''">
+		<input type="text" class="textbox" onfocus="this.select();" name="new_scenario_name" value="'''+scenario_to_mod+'''">
 	<div class="info_box">?</div>
 </div>
 
@@ -142,7 +142,7 @@ html=html+'''
 
 <div class="riga_container">
 	<div class="riga_name">Ritardo</div>
-	<input type="text" class="textbox" name="delay_time" value="'''+sel3+'''" class="textbox" onclick="this.select();">
+	<input type="text" class="textbox" name="delay_time" value="'''+sel3+'''" class="textbox" onfocus="this.select();">
 	<div class="info_box">?</div>
 </div>
 

@@ -63,6 +63,9 @@ obj_list.sort()
 for object_name in obj_list:# for every object in the list make the html
   if (objectDict[object_name].getType()=="cfg_obj") : #don't display cfg objects in the scenarios
     continue
+  if object_name.endswith("_body"):
+    continue
+
 
   html_object_list_drop_menu=html_object_list_drop_menu+'''<option value="'''+object_name+'''">'''+object_name+'''</option>'''
   obj_sel=obj_sel+'''<option value="'''+object_name+'''">'''+object_name+'''</option>
@@ -91,7 +94,7 @@ conditions_rows=""
 
 conditions_string=scenarioDict[scenario_to_mod]["conditions"]  #get the string where there are the conditions
 
-list_of_single_conditions=conditions_string.split("&")  #each condition is separed by &
+#list_of_single_conditions=conditions_string.split("&")  #each condition is separed by &
 
 
 
@@ -106,13 +109,13 @@ list_of_single_conditions=conditions_string.split("&")  #each condition is separ
 
 try:
 
-  if ("|" not in conditions_string ):  # if the users has modified by hand the conditions..
+  if ("|" not in conditions_string ):  # if the users has not modified by hand the conditions..
 
 
     list_of_single_conditions=conditions_string.split("&")
-    i=0
+    i=0       
+    logprint("list_of_single_conditions:"+str(list_of_single_conditions))
     for c in list_of_single_conditions: # for each condition
-
       c=c.replace('#_','')
       c=c.replace('_#','')
       c=c.replace('(','')
@@ -123,7 +126,7 @@ try:
    
       operator=0
       if "==" in c:
-        operator="="
+        operator="=="
       elif "!=" in c:
         operator="!="
       elif ">" in c:
@@ -133,6 +136,8 @@ try:
       if operator !=0:
         left_element=c.split(operator)[0]   #get the left element so from  (#_year_#==2016)   gets "#_year_#"
         right_element=c.split(operator)[1]  #get the right element so from  (#_year_#==2016)   gets "2016"
+        logprint("left_element:"+left_element)
+        logprint("right_element:"+right_element)
         i=i+1 
 
         obj_sel_sx=obj_sel_sx.replace('(',' ')
@@ -144,6 +149,8 @@ try:
  
         obj_sel_dx=obj_sel_dx.replace('''<option>'''+str(right_element)+'''</option>''',' ')
         obj_sel_dx='''<option>'''+str(right_element)+'''</option>'''+obj_sel_dx
+
+
 
         operator_sel='''
       					<option>=</option>
@@ -176,10 +183,11 @@ try:
 		</div>
 
   '''
-  menu_number=str(i+1)
+  menu_number=str(i)
 
 
-  conditions_rows=conditions_rows+'''
+
+  added_condition_row='''
 
 		<div class="riga_container">
 			<div  class="nometesto">  
@@ -199,7 +207,7 @@ try:
 		</div>
 
   '''
-
+  #conditions_rows=conditions_rows+added_condition_row  # add an empty row..
 
 
 except Exception as e  :
@@ -219,7 +227,7 @@ except Exception as e  :
 
 html=html+'''
 
-        <form id="main_form" action="" method="post"  >
+        <form id="main_form" name="main_form" action="" method="post"  >
         <input type="hidden" name="mod_conditions" value="'''+scenario_to_mod+'''">
         <input type="hidden" name="menu_number" value="'''+menu_number+'''">
         <input type="hidden" name="scenario_creation_conditions" value="'''+scenario_to_mod+'''">
@@ -242,22 +250,15 @@ html=html+'''
 
         '''+conditions_rows+'''
 
+         <!--this button is hidden and will be pressed only when the user press enter key on a input form, will so reload the page saving the data  -->
+         <button  style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''">HiddenSubmit</button> 
 
+         <button class="submit_button" type="button"  value="Aggiungi condizione" name="'''+add_button_link+'''" >Aggiungi condizione</button> 
 
-         <button class="submit_button" name="'''+add_button_link+'''" type="submit"  value="Aggiungi condizione">Aggiungi condizione</button> 
-
-         <button class="submit_button" name="'''+finish_button_link+'''" type="submit"  value="Submit">Submit</button> 
+         <button class="submit_button" type="button"  value="invia" name="'''+finish_button_link+'''" >Salva</button> 
 
 
          </form>
-
-
-
-
-
-
-
-
 
 
 

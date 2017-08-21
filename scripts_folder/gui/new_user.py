@@ -32,19 +32,19 @@ web_page='''
 
   <div id="container">
     <h1>Username</h1>
-    <input class="textbox" id="create_user_form" name="create_user_form" onclick="SelectAll('create_user_form')"; type="text" value=""  size="40" maxlength="200" />
+    <input class="textbox" id="create_user_form" name="create_user_form" onfocus="SelectAll('create_user_form')"; type="text" value=""  size="40" maxlength="200" />
 
 
   <h1>Password</h1>
-  <input class="textbox" type="password" id="create_password_form" maxlength="200" size="40" name="create_password_form"  onclick="SelectAll('create_password_form')"; value="" />
+  <input class="textbox" type="password" id="create_password_form" maxlength="200" size="40" name="create_password_form"  onfocus="SelectAll('create_password_form')"; value="" />
 
 
   <h1>Repeat Password</h1>
-  <input class="textbox" type="password" id="repeat_password_form" maxlength="200" size="40" name="repeat_password_form"  onclick="SelectAll('repeat_password_form')"; value="" />
+  <input class="textbox" type="password" id="repeat_password_form" maxlength="200" size="40" name="repeat_password_form"  onfocus="SelectAll('repeat_password_form')"; value="" />
 
 
   <h1>Mail</h1>
-  <input class="textbox" type="text" id="create_mail_form" maxlength="200" size="40" name="create_mail_form"  onclick="SelectAll('create_mail_form')"; value="" />
+  <input class="textbox" type="text" id="create_mail_form" maxlength="200" size="40" name="create_mail_form"  onfocus="SelectAll('create_mail_form')"; value="" />
 
   </div>
 

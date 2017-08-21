@@ -1,0 +1,77 @@
+Ciao allego esempio  di invio con javascript applicato spero ti aiuti a capire meglio..se così noj è chiedi..
+Questo esempio usa javascript per settare su onos 2 condizioni sullo scenario10
+cioè  ore ==10  e minuti==30
+
+se vuoi provarlo crea un file e mettilo nella cartella onos  in  /html_develop/prova_send_post_javascript.html
+
+poi esegui onos e metti nella barra degli indirizzi:
+
+http://localhost/html_develop/prova_send_post_javascript.html
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+<html>
+
+    <head>   
+
+
+<script language="javascript">
+function post(dictionary, url, method) {
+    method = method || "post"; // post (set to default) or get
+
+    // Create the form object
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", url);
+
+    // For each key-value pair
+    for (key in dictionary) {
+        //alert('key: ' + key + ', value:' + dictionary[key]); // debug
+        var hiddenField = document.createElement("input");   
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", dictionary[key]);
+        // append the newly created control to the form
+        form.appendChild(hiddenField);
+    }
+
+    document.body.appendChild(form); // inject the form object into the body section
+    form.submit();
+}
+</script>
+
+
+
+    </head>
+    <body>
+
+
+<script language="javascript">
+    var myDictionary = [];
+    myDictionary["mod_conditions"] = "scenario10";
+    myDictionary["menu_number"] = "2";
+    myDictionary["select_l1"] = "hours";
+    myDictionary["select_op1"] = "==";
+    myDictionary["select_r1"] = "10";
+    myDictionary["select_l2"] = "minutes";
+    myDictionary["select_op2"] = "==";
+    myDictionary["select_r2"] = "30";
+    myDictionary["finish_conditions_setup"] = "finish_submit";
+
+
+// if hours==10 and minutes==30 ...
+</script>
+
+<input type="button" value="Click me to POST"
+    onclick="javascript:post(myDictionary, 'destination.html');" />
+
+
+
+   </body>
+</html>

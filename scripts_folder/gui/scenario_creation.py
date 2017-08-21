@@ -77,27 +77,7 @@ for object_name in objectDict.keys():# for every object in the dictionary make t
                     <input type="checkbox" name="'''+object_name+"_checkbox"+'''" value="'''+object_name+"_checkbox"+'''" />'''+object_name+'''</li>'''
 
 
-
-
-
-html=html+'''
-
-       
-        <form action="" method="POST" onsubmit="return checkvalue(this)">
-
-        <input type="hidden" name="scenario_creation" value="/scenario_creation/">
-
-		<div class="riga" >
-			<input class="name_text" name="new_scenario_name" id="new_scenario_name" type="text" onclick="if(this.value == '	'''+default_phrase_new_scenario+''' '){ this.value = ''; }" value=' '''+default_phrase_new_scenario+''' '/>
-		</div>
-	
-
-		
-		<div class="infotext">
-				<div class="testo">Seleziona UNO o PIU' oggetti o variabili</div>
-		</div>
-
-
+library='''
 		<div class="multiselect_button">Libreria <i class="icon-book"></i></div>
 		
 
@@ -106,13 +86,44 @@ html=html+'''
             '''+html_object_list+'''  
             </ul>
         </div>
+'''  #not used anymore..
+library=''  #library disabled..
 
 
+html=html+'''
+
+       
+        <form action="" method="POST" onsubmit="return checkvalue(this)">
+
+
+
+			<div class="infotext">
+				<div class="testo">Inserisci un nome per lo scenario</div>
+        	</div>
+
+
+        <input type="hidden" name="scenario_creation" value="/scenario_creation/">
+
+		<div class="riga" >
+
+
+			<input class="name_text" name="new_scenario_name" id="new_scenario_name" type="text" onfocus="if(this.value == 	' '''+default_phrase_new_scenario+''' '){ this.value = ''; }" value=' '''+default_phrase_new_scenario+''' '/>
+		</div>
+	
+         '''+library+'''
 
 		 <div id="avanti_button"><input type="submit" value="Conferma"> </div>
 
          </form>
  '''
+
+
+
+
+
+
+
+
 
 
 

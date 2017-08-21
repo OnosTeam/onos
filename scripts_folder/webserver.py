@@ -274,7 +274,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
   #print dictionary_group
   #note base_cfg_path is in the globalVar.py 
 
-
+  make_fs_ready_to_write()
   try:
     dictionary_group_json=json.dumps(dictionary_group, indent=2,sort_keys=True) #make the json structure
     file_to_save =codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
@@ -293,7 +293,7 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
     message="error in updateJson()"+" e:"+str(e.args)
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
-
+  make_fs_readonly()
 
 
 
@@ -1077,7 +1077,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       logprint("error the state"+str(statusToSet)+"is not valid for the obj:"+objName,verbose=10)
       return(-1)  
 
-    statusToSet=int(statusToSet)  #int nit float otherwise there will be errors
+    statusToSet=int(statusToSet)  #int not float otherwise there will be errors
 
 
     #obj_previous_status=objectDict[objName].getStatus()
@@ -1703,11 +1703,8 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 def getRoomHtml(room,objectDictionary,path,roomDictionary):  #render the html to insert in the index.html of a room directory  which must be inside the baseRoomPath directory, modify to read the html ..
   logprint("getRoomHtml()executed")
 
-  retval = os.getcwd()   #you musn't have spaces on the path..
-  #print "retval:"+retval
-  #x=retval+"/"room+"/index.html"
   logprint("zone passed="+room)
-  x=retval+"/"+baseRoomPath+room+"/index.html"
+  x=baseRoomPath+room+"/index.html"
   #x=string.replace(x, ',&%', '') 
   #x=string.replace(x, '\n', '') 
   readed_html="nothing"
@@ -1764,12 +1761,12 @@ def getRoomHtml(room,objectDictionary,path,roomDictionary):  #render the html to
 
 
 def updateOneZone(zone):
-  retval = os.getcwd()
-  html_file_location=retval+"/"+baseRoomPath+zone+"/index.html"
+  html_file_location=baseRoomPath+zone+"/index.html"
   logprint("updateOneZone()  executed  with zone:"+zone+";")
   if os.path.isfile(html_file_location):   #if the file in the directory exist don't create it
     logprint(zone+" exist so i don't create it")
     fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
+    make_fs_ready_to_write()
     file0 = open(baseRoomPath+zone+"/index.html", "w")
     file0.write(fileToWrite)
     file0.close()
@@ -1777,14 +1774,14 @@ def updateOneZone(zone):
     #with lock_bash_cmd:
     #  subprocess.call("chmod 777 "+html_file_location, shell=True,close_fds=True)
     os.chmod(html_file_location, 0o777)
-
+    make_fs_readonly()
 
   else:
     logprint("I make the directory:"+zone)
     #os.system("mkdir "+baseRoomPath+zone) 
     #with lock_bash_cmd:
     #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True) 
-
+    make_fs_ready_to_write()
     try:
       if os.path.isdir(baseRoomPath+zone)!=1:         #if the directory doesn't exist create it
         os.mkdir(baseRoomPath+zone)  
@@ -1800,6 +1797,7 @@ def updateOneZone(zone):
     #with lock_bash_cmd:
     #  subprocess.call("chmod 777 "+html_file_location, shell=True,close_fds=True)  
     os.chmod(html_file_location, 0o777)
+    make_fs_readonly()
   return
 
 def updateDir():
@@ -1813,6 +1811,7 @@ def updateDir():
     if os.path.isfile(index):   #if the directory exist don't create it
       logprint(zone+" exist so i don't create it")
       fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
+      make_fs_ready_to_write()
       file0 = open(baseRoomPath+zone+"/index.html", "w")
       file0.write(fileToWrite)
       file0.close()
@@ -1820,6 +1819,7 @@ def updateDir():
       #with lock_bash_cmd:
       #  subprocess.call("chmod 777 "+baseRoomPath+zone+"/index.html", shell=True,close_fds=True)  
       os.chmod(baseRoomPath+zone, 0o777)
+      make_fs_readonly()
     else:
       logprint("create the file"+index)
       #os.system("mkdir "+baseRoomPath+zone)
@@ -1832,6 +1832,7 @@ def updateDir():
         os.mkdir(baseRoomPath+zone) 
 
       fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
+      make_fs_ready_to_write()
       try:
         file0 = open(index, "w")
         file0.write(fileToWrite)
@@ -1842,7 +1843,7 @@ def updateDir():
       except Exception as e: 
         message="error creating "+baseRoomPath+zone+"/index.html"
         logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
-
+      make_fs_readonly()
 
       #os.system("chmod 777 "+baseRoomPath+zone+"/index.html")
 
@@ -4385,7 +4386,6 @@ class MyHandler(BaseHTTPRequestHandler):
                          logprint("i try to remove the object"+room+"_body  from zone"+room)
                          index=zoneDict[room]["objects"].index(room+"_body")   
                          zoneDict[room]["objects"][index]=new_name+"_body"   #rename the webobj in the room
-
                        else:
                          logprint("object not removed from zone beacuse not present there")
 
@@ -4402,10 +4402,12 @@ class MyHandler(BaseHTTPRequestHandler):
                        #os.system("mv "+baseRoomPath+room+" "+baseRoomPath+new_name)   #rename the directory
                        #with lock_bash_cmd:
                        #  subprocess.check_output("mv "+baseRoomPath+room+" "+baseRoomPath+new_name, shell=True,close_fds=True) 
+
+                       make_fs_ready_to_write()
                        os.rename(baseRoomPath+room, baseRoomPath+new_name,)
- 
+                       make_fs_readonly()
                        updateOneZone(new_name)
-                       
+                       updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
                        logprint("mv "+room+" "+new_name) 
                      except Exception as e  :
                        message="can't rename directory to"+new_name
@@ -4427,23 +4429,20 @@ class MyHandler(BaseHTTPRequestHandler):
                   #os.system("mkdir "+baseRoomPath+new_name) 
                   #os.system("cat "+getRoomHtml(new_name,objectDict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html")
                   #os.system("chmod 777 "+new_name)
-
+                  make_fs_ready_to_write()
                   try:
                     os.stat(baseRoomPath+new_name)
                   except:
                     os.mkdir(baseRoomPath+new_name)  
 
-                  #with lock_bash_cmd:
-                    #subprocess.check_output("mkdir "+baseRoomPath+new_name, shell=True,close_fds=True)  
-                  #  subprocess.check_output("cat "+getRoomHtml(new_name,objectDict,"",zoneDict)+" >> "+baseRoomPath+new_name+"/index.html", shell=True,close_fds=True)  
-                  
-                    #subprocess.check_output("chmod 777 "+new_name, shell=True,close_fds=True)  
 
                   with open(baseRoomPath+new_name+"/index.html", 'w') as f:
                     f.write(getRoomHtml(new_name,objectDict,"",zoneDict))
 
                   os.chmod(baseRoomPath+new_name+"/index.html", 0o777)
-                  updateOneZone(new_name)       
+                  make_fs_readonly()
+                  updateOneZone(new_name) 
+                  updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options)       
                   logprint("create a new room"+new_name)
                   data_to_update=1
 
@@ -4467,11 +4466,15 @@ class MyHandler(BaseHTTPRequestHandler):
                     
                     #os.system("rm "+baseRoomPath+a+"/*")
                     #os.system("rmdir "+baseRoomPath+a)
+
+                    make_fs_ready_to_write()
                     try:
                       shutil.rmtree(baseRoomPath+a)
                     except Exception as e  :
                       message="error deleting folder:"+baseRoomPath+a 
                       logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
+                    make_fs_readonly()
+                    updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
                     #with lock_bash_cmd:
                     #  subprocess.check_output("rm "+baseRoomPath+a+"/*", shell=True,close_fds=True)  
@@ -4525,6 +4528,7 @@ class MyHandler(BaseHTTPRequestHandler):
                      
                     zoneDict[new_zone_name]["objects"]=[new_zone_name+"_body"]  # modify to update also the webobject dict and list 
                     #objectDict[new_zone_name+"_body"]=newDefaultWebObjBody(new_zone_name+"_body") #create a new web_object and insert only his name          
+                    make_fs_ready_to_write()
                     try:
                       os.stat(baseRoomPath+new_zone_name)
                     except:
@@ -4532,6 +4536,8 @@ class MyHandler(BaseHTTPRequestHandler):
                     with open(baseRoomPath+new_zone_name+"/index.html", 'w') as f:
                       f.write(getRoomHtml(new_zone_name,objectDict,"",zoneDict))
                     os.chmod(baseRoomPath+new_zone_name+"/index.html", 0o777)
+                    updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
+                    make_fs_readonly() 
                     #updateOneZone(new_zone_name)       
                     logprint("create a new zone:"+new_zone_name)
                     data_to_update=1
@@ -4557,6 +4563,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     index=zoneDict[new_zone_name]["objects"].index(a)
                     zoneDict[new_zone_name]["objects"].pop(index)
                 updateOneZone(new_zone_name)
+                updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
               
               self.send_response(301)
               self.send_header('Location','/')
@@ -4598,7 +4605,7 @@ class MyHandler(BaseHTTPRequestHandler):
                       logprint("i try to remove the object "+a+"from the zone"+zone)
                       index=zoneDict[zone]["objects"].index(a)
                       zoneDict[zone]["objects"].pop(index)
-
+                      updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options)  
 
 
 
@@ -4613,7 +4620,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
               postvars={}
               updateOneZone(zone)#to update the zone with the new objects
-
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
               webpag=self.get_Zone_Objects_Setup(self.path,objectDict,zone)
               try:
                 self.send_response(200)
@@ -4651,7 +4658,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
                 pass
 
-              #updateJson()      
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options)       
 
             elif "current_room" in postvars:#if the current location is /setup/AnyRoomName  because "current_room"  is a post of that page
               currentRoom=self.clear_PostData(postvars["current_room"][0])
@@ -4718,7 +4725,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 message="error32 in send_header " 
                 logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
                 pass
-              #updateJson()
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
               #updateOneZone(currentRoom)        
               
 
@@ -4750,7 +4757,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 message="error33 in send_header "
                 logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
                 pass
-              #updateJson()
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
 
 
@@ -4820,7 +4827,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))
                 pass
 
-              #updateJson()
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
               updateDir()
 
 
@@ -4851,8 +4858,11 @@ class MyHandler(BaseHTTPRequestHandler):
                   if len (scenarioDict[new_scenario_name]["conditions"]) >0:
                     if len(conditions) >0:
                       scenarioDict[new_scenario_name]["conditions"]=conditions
+                      updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
                     else:
+                      conditions='''(#_select_an_element_#==select_an_object)'''
                       logprint("error_scenario_creation0 no objects passed",verbose=8)
+                      scenarioDict[new_scenario_name]["conditions"]=conditions
                   else:
                     logprint("error_scenario_creation1 the scenario has already conditions",verbose=8)
 
@@ -4877,6 +4887,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 new_scenario_name=self.clear_PostData(postvars["new_scenario_name"][0])
                 if new_scenario_name not in scenarioDict.keys(): #if scenario name doesn't exist already
                   scenarioDict[new_scenario_name]={"enabled":0,"type_after_run":"0","conditions":"0","functionsToRun":[],"delayTime":0,"priority":0}
+
                   self.send_response(301)
                   self.send_header('Location','/mod_scenario/'+new_scenario_name+'/')
                   self.end_headers()
@@ -4907,7 +4918,7 @@ class MyHandler(BaseHTTPRequestHandler):
                           objectDict[a].removeAttachedScenario(del_scenario_name)
                       del scenarioDict[del_scenario_name]  
 
-
+                updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
                 self.send_response(301)
                 self.send_header('Location','/scenarios_list/')
                 self.end_headers()
@@ -5020,10 +5031,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-
-
-
-
                   if "functions" in postvars:
                       functions=self.clear_PostData(postvars["functions"][0])
                       try:
@@ -5046,6 +5053,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                   #scenarioDict[scenario_name]={"enabled":0,"type_after_run":"0","conditions":"0","functionsToRun":[],"delayTime":0,"priority":0}
+
+                  updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
                   if "set_conditions_submit" in postvars:
 
@@ -5102,14 +5111,14 @@ class MyHandler(BaseHTTPRequestHandler):
                   if "numeric_value_field"+str(i) in postvars:   #if there is a text field with value i will read it
                     right_element_text_value=self.clear_PostData(postvars["numeric_value_field"+str(i)][0])
                     try:  #test if the value is a number         
-                      right_element=str(float(self.clear_PostData(postvars["numeric_value_field"+str(i)][0]) ) )     
+                      right_element=str(int(self.clear_PostData(postvars["numeric_value_field"+str(i)][0]) ) )     
                     except:
                       right_element=self.clear_PostData(postvars["select_r"+str(i)][0])    
 
        
 
                   try:#detect if is a number
-                    a=float(right_element)
+                    a=int(right_element)  #was float
                   except:
                     right_element="#_"+right_element+"_#"
 
@@ -5132,26 +5141,28 @@ class MyHandler(BaseHTTPRequestHandler):
                   #right_element="-99999"
                   #conditions=conditions+"&("+left_element+operator+right_element+")" 
 
-              try:  
-                l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
-                o=self.clear_PostData(postvars["select_new_o"][0])
+              if "select_new_l" in postvars:
 
-                if o=="=":
-                  o="=="
-                r=self.clear_PostData(postvars["select_new_r"][0])
-                try:#detect if is a number
-                  a=float(r)
-                except:
-                  r="#_"+r+"_#"
+                try:  
+                  l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
+                  o=self.clear_PostData(postvars["select_new_o"][0])
 
-                if (l!="#_select_an_element_#")&(r!="#_select_an_element_#"):
-                  if menu_number<1:
-                    conditions=conditions+"("+l+o+r+")"   
-                  else:
-                    conditions=conditions+"&("+l+o+r+")"   
-              except Exception as e  :  
-                message="error2 get cond menu"
-                logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
+                  if o=="=":
+                    o="=="
+                  r=self.clear_PostData(postvars["select_new_r"][0])
+                  try:#detect if is a number
+                    a=int(r) #was float
+                  except:
+                    r="#_"+r+"_#"
+
+                  if (l!="#_select_an_element_#")&(r!="#_select_an_element_#"):
+                    if menu_number<1:
+                      conditions=conditions+"("+l+o+r+")"   
+                    else:
+                      conditions=conditions+"&("+l+o+r+")"   
+                except Exception as e  :  
+                  message="error2 get cond menu"
+                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
               scenarioDict[scenario_name]["conditions"]=conditions
 
@@ -5176,7 +5187,18 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-                                   
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options)   
+
+
+
+              if "save_and_reload_this_page" in postvars:
+                logprint("i reload the page.......................")
+                current_page=self.clear_PostData(postvars["save_and_reload_this_page"][0])
+                self.send_response(301)
+                self.send_header('Location',current_page)
+                self.end_headers()
+                return         
+                                 
               if "condition_mod_add_submit" in postvars:
 
                 self.send_response(301)
@@ -5186,6 +5208,11 @@ class MyHandler(BaseHTTPRequestHandler):
  
 
               if "condition_add_submit" in postvars:
+                if menu_number<1:
+                  conditions=conditions+"(#_select_an_element_#==#_select_an_element_#)"   
+                else:
+                  conditions=conditions+"&(#_select_an_element_#==#_select_an_element_#)"  
+                scenarioDict[scenario_name]["conditions"]=conditions
 
                 self.send_response(301)
                 self.send_header('Location','/scenario_creation_conditions/'+scenario_name)
@@ -5240,13 +5267,13 @@ class MyHandler(BaseHTTPRequestHandler):
                   third_element=self.clear_PostData(postvars["third_element"+str(i)][0])
 
                   try:#detect if is a number
-                    a=float(right_element)
+                    a=int(right_element) #was float
                   except:
                     right_element="#_"+right_element+"_#"
 
                   if (third_element!="")&(third_element!=" ")&(second_operator!="")&(second_operator!=" "):
                     try:#detect if is a number
-                      a=float(third_element)
+                      a=int(third_element) #was float
                     except:
                       third_element="#_"+third_element+"_#"
 
@@ -5263,7 +5290,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   o="="
                 r=self.clear_PostData(postvars["select_new_r"][0])
                 try:#detect if is a number
-                  a=float(r)
+                  a=int(r) #was float
                 except:
                   r="#_"+r+"_#"
 
@@ -5274,6 +5301,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
               scenarioDict[scenario_name]["functionsToRun"]=functions_list
               logprint("functions"+str(functions_list) ) 
+
+              updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
               if "condition_add_submit" in postvars:
 
@@ -5454,8 +5483,8 @@ class MyHandler(BaseHTTPRequestHandler):
                   
                     usersDict[username]={"pw":password,"mail_control_password":password,"priority":0,"user_mail":mail}
 
-                  
-
+                    updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
+                    
                     message="username created in the online server and in the onos server"
                     logprint(message,verbose=5)
                     cgi_name="gui/new_user.py"

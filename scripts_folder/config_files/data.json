@@ -9,6 +9,41 @@
       }
     }, 
     "objectDictionary": {
+      "Jf_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Jf_body=0", 
+          "1": "Jf_body=1", 
+          "onoswait": "Jf_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "Jf_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
       "button0_RouterGA0000": {
         "cmdDict": {
           "0": "", 
@@ -34,7 +69,10 @@
           18
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "gg", 
+          "fff"
+        ], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
@@ -69,7 +107,11 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "Prova", 
+          "1234con", 
+          "DEFEF"
+        ], 
         "status": "55", 
         "styleDict": {
           "0": "background-color:green;", 
@@ -104,7 +146,11 @@
           21
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "Feff", 
+          "1234con", 
+          "DEFEF"
+        ], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
@@ -139,8 +185,13 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
-        "status": 18, 
+        "scenarios": [
+          "prova2", 
+          "Feff", 
+          "1234con", 
+          "klk"
+        ], 
+        "status": 21, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -175,8 +226,13 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
-        "status": 1049, 
+        "scenarios": [
+          "Prova", 
+          "Feff", 
+          "DEFEF", 
+          "klk"
+        ], 
+        "status": 1413, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -211,8 +267,14 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
-        "status": 17, 
+        "scenarios": [
+          "Prova", 
+          "prova2", 
+          "hhgh", 
+          "Feff", 
+          "1234con"
+        ], 
+        "status": 23, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -248,9 +310,11 @@
         ], 
         "priority": 0, 
         "scenarios": [
+          "prova2", 
+          "1234con", 
           "scenario1"
         ], 
-        "status": 29, 
+        "status": 33, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -285,7 +349,11 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "Prova", 
+          "prova2", 
+          "klk"
+        ], 
         "status": 8, 
         "styleDict": {
           "0": "background-color:green;", 
@@ -321,7 +389,9 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "Prova"
+        ], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:green;", 
@@ -357,7 +427,9 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "prova2"
+        ], 
         "status": 2017, 
         "styleDict": {
           "0": "background-color:green;", 
@@ -392,7 +464,9 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [], 
+        "scenarios": [
+          "prova2"
+        ], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
@@ -404,6 +478,108 @@
       }
     }, 
     "scenarioDictionary": {
+      "1234con": {
+        "conditions": "(#_day_#==88)&(#_counter1_#==8)&(#_minutes_#==77)&(#_hours_#==6)&(#_d_sensor0_RouterGA0000_#==44)&(#_minutes_#==44)&(#_minutes_#==3)", 
+        "delayTime": 66, 
+        "enabled": 0, 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "DEFEF": {
+        "conditions": "(#_counter1_#==#_dayTime_#)&(#_counter1_#==#_d_sensor0_RouterGA0000_#)&(#_select_an_element_#==#_select_an_element_#)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "Feff": {
+        "conditions": "(#_hours_#==66)&(#_dayTime_#==5)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_d_sensor0_RouterGA0000_#==55)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "Prova": {
+        "conditions": "(#_counter1_#==9)&(#_dayTime_#==6)&(#_onosCenterWifi_#==4)&(#_onosCenterWifi_#==#_onosCenterWifi_#)&(#_hours_#==66)&(#_dayTime_#==33)&(#_month_#==44)&(#_month_#==66)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          "#_dayTime_#=6", 
+          "#_minutes_#=8", 
+          "#_year_#=9"
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "ddd": {
+        "conditions": "(#_select_an_element_#==select_an_object)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "fff": {
+        "conditions": "(#_button0_RouterGA0000_#==66.0)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "gg": {
+        "conditions": "(#_button0_RouterGA0000_#!=#__#)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "hhgh": {
+        "conditions": "(#_hours_#==select_an_object)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "hhh": {
+        "conditions": "", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "klk": {
+        "conditions": "(#_day_#==#_month_#)&(#_dayTime_#==#_dayTime_#)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "prova2": {
+        "conditions": "(#_hours_#>#_day_#)&(#_minutes_#==#_month_#)&(#_year_#==#_month_#)&(#_zona1_body_#==#_month_#)&(#_year_#==#_hours_#)&(#_month_#==#_day_#)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
       "scenario1": {
         "conditions": "(#_minutes_#==29)", 
         "delayTime": 0, 
@@ -416,6 +592,16 @@
       }
     }, 
     "zoneDictionary": {
+      "Jf": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "d_sensor0_RouterGA0000"
+        ], 
+        "order": 2, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
       "RouterGA0000": {
         "group": [], 
         "hidden": 0, 

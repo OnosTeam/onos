@@ -95,11 +95,10 @@ error_log_mail_frequency=30  #seconds between a error check and another
 last_error_check_time=0
 mail_where_to_send_errors="electronicflame@gmail.com"
 
-baseRoomPath="zones/"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
-enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
+enable_usb_serial_port=0 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 enable_onosCenter_hw_pins=0 #enable the use of onosCenter local hw pins
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
 router_sn="RouterGA0000"
@@ -126,9 +125,11 @@ if platform.find("Orange")!=-1: #found uname with orange pi name
 if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
   discovered_running_hardware=router_hardware_type
   base_cfg_path="/bin/onos/scripts_folder/"
+  baseRoomPath="/bin/onos/scripts_folder/zones/"
 else:
   discovered_running_hardware="pc"  #the hardware has not IO pins
   base_cfg_path=""
+  baseRoomPath=os.getcwd()+"/zones/"    #you musn't have spaces on the path..
 
 
 
@@ -1157,6 +1158,15 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
  
   return(pin_list) 
 
+
+def make_fs_ready_to_write():  # enable the linux filesystem to write to disk ,if onos is running on orangePi
+  if router_hardware_type=="RouterOP":
+    subprocess.call('mount -o remount,rw /', shell=True,close_fds=True)
+
+
+def make_fs_readonly():  # change the linux filesystem to readOnly ,if onos is running on orangePi
+  if router_hardware_type=="RouterOP":
+    subprocess.call('mount -o remount,ro /', shell=True,close_fds=True)
 
 
 

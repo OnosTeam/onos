@@ -674,7 +674,8 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Now node_type_Wrelay4x is working, implemented the arduino and python part.
                 Changed object_dict to objectDict everywhere,bugfix when creating a new zone the zone_body object will be created.
                 Bugfix:now the objects are added correctly to the zones.
-
+                Added the support for readOnly filesystem using make_fs_ready_to_write() to remount as rw and 
+                Started fixing the form problems ,bug:when you hit enter key on a form the page continue to the next page..
 
 
 
