@@ -59,7 +59,7 @@
 	position:absolute;
 }
 
-#select_1{
+.select_1{
 
 	width:23%;
 	left:0%;
@@ -67,7 +67,7 @@
 }
 
 
-#select_2{
+.select_2{
 
 	width:15%;
 	left:23.3%;
@@ -75,7 +75,7 @@
 }
 
 
-#select_3{
+.select_3{
 
 	width:23%;
 	left:38.6%;
@@ -83,7 +83,7 @@
 }
 
 
-#select_4{
+.select_4{
 
 	width:15%;
 	left:61.9%;
@@ -91,30 +91,30 @@
 }
 
 
-#select_5{
+.select_5{
 
 	width:23%;
 	left:77.2%;
 
 }
 
-#text_area1{
+
+
+
+.textarea1{
 	display:inherit;/*cambiare questa riga in display:none; per far scomparire la textarea*/
 	width:23%;
 	left:38.6%;
-
+	height:30px;
+	top:36px;
+	position:absolute;
 
 }
 
-#text_area2{
+.textarea2{
  	display:inherit;/*cambiare questa riga in display:none; per far scomparire la textarea*/
 	width:23%;
 	left:77.2%;
-
-}
-
-.textarea{
-
 	height:30px;
 	top:36px;
 	position:absolute;

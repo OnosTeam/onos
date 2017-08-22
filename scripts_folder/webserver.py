@@ -495,6 +495,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
 
 
   scenario_functions=scenario_functions.replace("!","not ")  
+
   while 1:  # until all the objects are replaced by their value
 
     try:
@@ -513,7 +514,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
     try:
       scenario_functions=scenario_functions.replace("#_"+objname+"_#",str(objectDict[objname].getStatusForScenario()))      
     except Exception as e :
-      message="error01 the webobject does not exist in the dict, i close the scenario check,objname: "
+      message="error01f the webobject does not exist in the dict, i close the scenario check,objname: "
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
 
@@ -561,17 +562,23 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
     if objname is None:
       logprint ("error003 in the scenario operation search ,nonetype "+scenario_conditions,verbose=9)
       return(-1)
+
+
+
  
     try:
-      scenario_conditions=scenario_conditions.replace("#_"+objname+"_#",str(objectDict[objname].getStatusForScenario()))   
-      obj_list.append(objname)   
-      if (len(objname_prev)>0 )&(objname_prev!="")&(objname_prev not in obj_list ):  #if there is a #p_objectName_#
-        obj_list.append(objname)
+      if objname=="select_an_element":
+        scenario_conditions=scenario_conditions.replace("#_"+objname+"_#","1")   
+      else:
+        scenario_conditions=scenario_conditions.replace("#_"+objname+"_#",str(objectDict[objname].getStatusForScenario()))   
+        obj_list.append(objname)   
+        if (len(objname_prev)>0 )&(objname_prev!="")&(objname_prev not in obj_list ):  #if there is a #p_objectName_#
+          obj_list.append(objname)
        
 
 
     except Exception as e :
-      message="error01 the webobject does not exist in the dict, I close the scenario check,objname: "+objname+" e:"+str(e.args)
+      message="error01c the webobject does not exist in the dict, I close the scenario check,objname: "+objname+" e:"+str(e.args)
       logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
       return(-1)
  # now all the obj value are replaced
@@ -3596,7 +3603,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.find("scenario_operations/")!=-1: # render the scenario list 
-              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2]}
+              namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2],"path":self.path}
               cgi_name="gui/scenario_operations.py" 
               #execfile(cgi_name,globals(),namespace)
               exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -3626,7 +3633,7 @@ class MyHandler(BaseHTTPRequestHandler):
               web_page="error, scenario name does not exist "
               try:
                 if (self.path.split("/")[2])in scenarioDict.keys():
-                  namespace={"scenario_to_mod":self.path.split("/")[2]}
+                  namespace={"scenario_to_mod":self.path.split("/")[2],"path":self.path}
                   scenario_to_mod=(self.path.split("/"))[2]
                   cgi_name="gui/mod_scenario.py"       
                   #execfile(cgi_name,globals(),namespace)
@@ -3799,7 +3806,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             if self.path.find("/zone_creation/")!=-1: # render the scenario list 
-              namespace={"current_username":self.current_username,"zone_to_mod":self.path.split("/")[2]}
+              namespace={"current_username":self.current_username,"zone_to_mod":self.path.split("/")[2],"path":self.path}
               cgi_name="gui/mod_zone.py" 
               #execfile(cgi_name,globals(),namespace)
               exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -4508,7 +4515,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
             elif "zone_setup_manager" in postvars:   #   to add or remove objects to a zone 
-
               zone=self.clear_PostData(postvars["zone_setup_manager"][0])
               logprint("zone_objects_setup page send a post to mode zone:"+zone)   
 
@@ -4564,6 +4570,16 @@ class MyHandler(BaseHTTPRequestHandler):
                     zoneDict[new_zone_name]["objects"].pop(index)
                 updateOneZone(new_zone_name)
                 updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
+
+
+              if "save_and_reload_this_page" in postvars:
+                logprint("i reload the page.......................")
+                current_page=self.clear_PostData(postvars["save_and_reload_this_page"][0])
+                self.send_response(301)
+                self.send_header('Location',current_page)
+                self.end_headers()
+                return 
+
               
               self.send_response(301)
               self.send_header('Location','/')
@@ -5056,7 +5072,16 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
-                  if "set_conditions_submit" in postvars:
+                  if "save_and_reload_this_page" in postvars:
+                    logprint("i reload the page.......................")
+                    current_page=self.clear_PostData(postvars["save_and_reload_this_page"][0])
+                    self.send_response(301)
+                    self.send_header('Location',current_page)
+                    self.end_headers()
+                    return 
+
+
+                  elif "set_conditions_submit" in postvars:
 
                     self.send_response(301)
                     self.send_header('Location','/scenario_conditions/'+scenario_name)
@@ -5304,30 +5329,34 @@ class MyHandler(BaseHTTPRequestHandler):
 
               updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
 
-              if "condition_add_submit" in postvars:
+  
+              if "save_and_reload_this_page" in postvars:
+                logprint("i reload the page.......................")
+                current_page=self.clear_PostData(postvars["save_and_reload_this_page"][0])
+                self.send_response(301)
+                self.send_header('Location',current_page)
+                self.end_headers()
+                return  
 
+              elif "condition_add_submit" in postvars:
                 self.send_response(301)
                 self.send_header('Location','/function_to_run/'+scenario_name)
                 self.end_headers()
                 return 
-              elif "function_add_submit" in postvars:
 
+              elif "function_add_submit" in postvars:
                 self.send_response(301)
                 self.send_header('Location','/mod_scenario/'+scenario_name)
                 self.end_headers()
                 return 
 
-
-
               elif "scenario_operations_add_submit" in postvars:
-
                 self.send_response(301)
                 self.send_header('Location','/scenario_operations/'+scenario_name)
                 self.end_headers()
                 return 
 
               elif "finish_operation_setup" in postvars:
-
                 self.send_response(301)
                 self.send_header('Location','/mod_scenario/'+scenario_name)
                 self.end_headers()

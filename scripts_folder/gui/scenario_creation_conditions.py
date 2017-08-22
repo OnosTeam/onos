@@ -251,11 +251,11 @@ html=html+'''
         '''+conditions_rows+'''
 
          <!--this button is hidden and will be pressed only when the user press enter key on a input form, will so reload the page saving the data  -->
-         <button  style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''">HiddenSubmit</button> 
+         <button id="hidden_button" style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''">HiddenSubmit</button> 
 
-         <button class="submit_button" type="button"  value="Aggiungi condizione" name="'''+add_button_link+'''" >Aggiungi condizione</button> 
+         <button class="submit_button" type="submit"  value="Aggiungi condizione" name="'''+add_button_link+'''" >Aggiungi condizione</button> 
 
-         <button class="submit_button" type="button"  value="invia" name="'''+finish_button_link+'''" >Salva</button> 
+         <button class="submit_button" type="submit"  value="invia" name="'''+finish_button_link+'''" >Salva</button> 
 
 
          </form>

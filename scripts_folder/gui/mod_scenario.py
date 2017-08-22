@@ -93,12 +93,16 @@ function checkvalue() {
         return true;
     }
 }
+
+function replaceHiddenButtonValue() { 
+  var scenario_name ="";
+  scenario_name=document.getElementById('new_scenario_name').value;
+  document.getElementById('hidden_button').value="/'''+path.split('/')[1]+'''/"+scenario_name;
+}
+
+
 </script>
 
-
-
-
-    </head>
 
 '''
 
@@ -122,7 +126,7 @@ html=html+'''
 
 <div class="riga_container">
 	<div class="riga_name">Nome</div>
-		<input type="text" class="textbox" onfocus="this.select();" name="new_scenario_name" value="'''+scenario_to_mod+'''">
+		<input type="text" class="textbox" onfocus="this.select();" id="new_scenario_name" name="new_scenario_name" value="'''+scenario_to_mod+'''">
 	<div class="info_box">?</div>
 </div>
 
@@ -142,7 +146,7 @@ html=html+'''
 
 <div class="riga_container">
 	<div class="riga_name">Ritardo</div>
-	<input type="text" class="textbox" name="delay_time" value="'''+sel3+'''" class="textbox" onfocus="this.select();">
+	<input type="text" class="textbox" name="delay_time" value="'''+sel3+'''" onfocus="this.select();">
 	<div class="info_box">?</div>
 </div>
 
@@ -176,10 +180,14 @@ html=html+'''
 </div>
 
 
-<button class="button" type="submit" name="set_conditions_submit" value="condition_submit">Set condition</button>
-<button class="button" type="submit" name="set_function_submit" value="functions_to_run">Set Functions to run</button>
+<!--this button is hidden and will be pressed only when the user press enter key on a input form, will so reload the page saving the data  -->
+<button  id="hidden_button" style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''" onclick="replaceHiddenButtonValue()">HiddenSubmit</button> 
+
+
+<button class="button" type="submit" name="set_conditions_submit" value="condition_submit">Modifica Condizioni</button>
+<button class="button" type="submit" name="set_function_submit" value="functions_to_run">Modifica Funzioni da Eseguire</button>
 <!-- <button class="button" type="button" name="functions_to_run_after_delay" value="">Set After delay function to run </button> -->
-<button class="button" type="submit" name="finish_scenario_setup" value="finish_submit">Finish</button>
+<button class="button" type="submit" name="finish_scenario_setup" value="finish_submit">Salva</button>
 
 
 

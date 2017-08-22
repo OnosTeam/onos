@@ -27,15 +27,17 @@ obj_list.sort()
 
 
 
-for n in range(0,25):
-  obj_sel_number=obj_sel_number+'''<option>'''+str(n)+'''</option>'''
+#for n in range(0,25):
+#  obj_sel_number=obj_sel_number+'''<option>'''+str(n)+'''</option>'''
 
 
 for obj in obj_list:
- obj_sel=obj_sel+'''<option>'''+str(obj)+'''</option>
+  if obj.endswith("_body"):
+    continue
+  obj_sel=obj_sel+'''<option>'''+str(obj)+'''</option>
       '''
 
-
+obj_sel='''<option>variabile_numerica</option>'''+obj_sel
 
 
 operator2_sel_default='''
@@ -182,39 +184,40 @@ for c in functionsToRun: # for each function
 
 				
 			<!--select1 -->
-   				<select id ="select_1" class ="select"  name="select_l'''+str(i)+'''" >
+   				<select class="select select_1" id ="select_1"  name="select_l'''+str(i)+'''" >
                '''+obj_sel_sx+'''
    				</select>
 			<!--fine select 1 -->
 
 			<!--select2 -->
-   				<select id ="select_2" class ="select"  name="select_op'''+str(i)+'''">
+   				<select class="select select_2" id ="select_2"  name="select_op'''+str(i)+'''">
 '''+operator_sel+'''
    				</select>
 			<!--fine select 2 -->
 
 			<!--select3 -->
-   				<select id ="select_3" class ="select"  name="select_r'''+str(i)+'''">
+   				<select class="select select_3" id ="select_3_'''+str(i)+'''"  name="select_r'''+str(i)+'''" 
+onchange="checkToEnableNumericForm('''+"'"+'''text_area1_'''+str(i)+"'"+''','''+"'"+'''select_3_'''+str(i)+"'"+''')">
                 '''+obj_sel_dx+'''
    				</select>
 			<!--fine select 3 -->
 
-            <input id="text_area1" class ="textarea" type="tel"> 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input id="text_area1_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea1" type="text" 	>  	<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 			<!--select4 -->
-   				<select id ="select_4" class ="select"  name="second_op'''+str(i)+'''">
+   				<select class="select select_4" id ="select_4"   name="second_op'''+str(i)+'''">
                 '''+operator2_sel+'''
    				</select>
 			<!--fine select 4 -->
 
 			<!--select5 -->
-   				<select id ="select_5" class ="select"  name="third_element'''+str(i)+'''">
+   				<select class="select select_5" id ="select_5_'''+str(i)+'''"   name="third_element'''+str(i)+'''"  onchange="checkToEnableNumericForm('''+"'"+'''text_area2_'''+str(i)+"'"+''','''+"'"+'''select_5_'''+str(i)+"'"+''')">
                 '''+obj_sel_third+'''
    				</select>
 			<!--fine select 5 -->
             
-            <input id="text_area2" class ="textarea" type="tel"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input id="text_area2_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea2" type="text"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 
@@ -245,16 +248,33 @@ part_to_insert_in_head='''
 
 <script type="text/javascript">
 function checkvalue() { 
-    var mystring = document.getElementById('select_new_dx').value; 
-    var mystring2 = document.getElementById('select_new_sx').value; 
-    if('''+obj_name_comparison+''') {
-        alert ('This is not allowed because already used or not valid');
-        return false;
-    } else {
-        //alert("correct input");
-        return true;
-    }
+  var mystring = document.getElementById('select_new_dx').value; 
+  var mystring2 = document.getElementById('select_new_sx').value; 
+  if('''+obj_name_comparison+''') {
+    alert ('This is not allowed because already used or not valid');
+    return false;
+  }
+  else {
+    //alert("correct input");
+    return true;
+  }
 }
+
+
+function checkToEnableNumericForm(text_id,select_id){
+  //alert(document.getElementById(select_id).value);
+  if ( document.getElementById(select_id).value=="variabile_numerica" ){
+  //  alert("a");
+    document.getElementById(text_id).style="";
+  }
+  else{
+  //  alert("b");
+    document.getElementById(text_id).style="position: absolute;top: -1000px;";
+  }
+
+}
+
+
 </script>
 
 
@@ -310,38 +330,38 @@ html=html+'''
 <div class="riga_container">
 
 			<!--select1 -->
-                <select id ="select_1" class ="select" name="select_new_l">
+                <select id ="select_1" class ="select select_1" name="select_new_l">
                '''+default_obj_sel_sx+'''
    				</select>
 			<!--fine select 1 -->
 
 			<!--select2 -->
-                <select id ="select_2" class ="select" name="select_new_o">
+                <select id ="select_2" class ="select select_2" name="select_new_o">
       					<option>=</option>
                         <option>!=</option>
    				</select>
 			<!--fine select 2 -->
 
 			<!--select3 -->
-                <select id ="select_3" class ="select" name="select_new_r"> 
+                <select id ="select_3new_'''+str(i)+'''" class ="select select_3" name="select_new_r"  onchange="checkToEnableNumericForm('''+"'"+'''text_area1new_'''+str(i)+"'"+''','''+"'"+'''select_3new_'''+str(i)+"'"+''')"> 
                 '''+default_obj_sel_dx+'''
    				</select>
 			<!--fine select 3 -->
 
-      <input id="text_area1" class ="textarea" type="tel"> 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+      <input id="text_area1new_'''+str(i)+'''" class ="textarea1" type="text" style="position: absolute;top: -1000px;" > 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 			<!--select4 -->
-   				<select id ="select_4" class ="select"  name="second_operator'''+str(i)+'''">
+   				<select id ="select_4" class ="select select_4"  name="second_operator'''+str(i)+'''">
                 '''+operator2_sel_default+'''
    				</select>
 			<!--fine select 4 -->
 
 			<!--select5 -->
-                <select id ="select_5" class ="select" name="select_new_third_element">
+                <select id ="select_5new_'''+str(i)+'''" class ="select select_5" name="select_new_third_element"  onchange="checkToEnableNumericForm('''+"'"+'''text_area2new_'''+str(i)+"'"+''','''+"'"+'''select_5new_'''+str(i)+"'"+''')">
                 '''+default_obj_sel_dx2+'''
    				</select>
 			<!--fine select 5 -->
-            <input id="text_area2" class ="textarea" type="tel"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input id="text_area2new_'''+str(i)+'''" class ="textarea2" type="text" style="position: absolute;top: -1000px;" > <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 
@@ -349,6 +369,8 @@ html=html+'''
 
 
 
+         <!--this button is hidden and will be pressed only when the user press enter key on a input form, will so reload the page saving the data  -->
+        <button id="hidden_button" style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''">HiddenSubmit</button> 
 
         <button class="submit_button" type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
         

@@ -6,6 +6,7 @@ from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  
 
 
 # zone_to_mod is a variable from wenserver.py
+# paths passed from namespace in webserver.py
 
 default_zone_form_value="Scrivi il nome della zona"
 
@@ -21,12 +22,10 @@ javascript_to_insert_in_page='''
 
 <script type="text/javascript">
 function checkvalue() { 
-
   var mystring = document.getElementById('new_zone_to_create').value; 
 
   if (mystring=="'''+default_zone_form_value+'''"){ // to reset the value when not inserted by user.
     document.getElementById('new_zone_to_create').value="";
-
   }
 
   if(mystring=="") {
@@ -37,11 +36,15 @@ function checkvalue() {
     //alert("correct input");
     return true;
   }
-
-
 }
 
 
+
+function replaceHiddenButtonValue() { 
+  var zone_name ="";
+  zone_name=document.getElementById('new_zone_to_create').value;
+  document.getElementById('hidden_button').value="/'''+path.split('/')[1]+'''/"+zone_name;
+}
 
 
 
@@ -139,6 +142,10 @@ for a in total_object_name_list : # the object is not inside the zone list so I 
 
 html=html+'''
 			</div>
+
+         <!--this button is hidden and will be pressed only when the user press enter key on a input form, will so reload the page saving the data  -->
+         <button  id="hidden_button" style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''" onclick="replaceHiddenButtonValue()">HiddenSubmit</button> 
+
 		
 			<div class="riga" >
 					<button class="save_button" type="submit" name="finish_zone_setup" value="zone_submit" >Salva  <i class="icon-floppy-disk"></i></button>

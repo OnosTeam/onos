@@ -9,6 +9,41 @@
       }
     }, 
     "objectDictionary": {
+      "4ddd_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "4ddd_body=0", 
+          "1": "4ddd_body=1", 
+          "onoswait": "4ddd_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "4ddd_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
       "Jf_body": {
         "cmdDict": {
           "0": "", 
@@ -108,8 +143,8 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "Prova", 
           "1234con", 
+          "sdfwe", 
           "DEFEF"
         ], 
         "status": "55", 
@@ -147,8 +182,9 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "Feff", 
+          "sss", 
           "1234con", 
+          "ddd", 
           "DEFEF"
         ], 
         "status": "0", 
@@ -187,11 +223,14 @@
         "priority": 0, 
         "scenarios": [
           "prova2", 
-          "Feff", 
+          "sss", 
           "1234con", 
-          "klk"
+          "w3", 
+          "ddswef", 
+          "dfg", 
+          "ddd"
         ], 
-        "status": 21, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -227,18 +266,194 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "Prova", 
-          "Feff", 
-          "DEFEF", 
-          "klk"
+          "sss", 
+          "sdfwe", 
+          "ddswef", 
+          "ddd", 
+          "DEFEF"
         ], 
-        "status": 1413, 
+        "status": 1397, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black", 
           "wait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "ddd_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "ddd_body=0", 
+          "1": "ddd_body=1", 
+          "onoswait": "ddd_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "ddd_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "gg_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "gg_body=0", 
+          "1": "gg_body=1", 
+          "onoswait": "gg_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "gg_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "ggd_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "ggd_body=0", 
+          "1": "ggd_body=1", 
+          "onoswait": "ggd_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "ggd_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "gggg_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "gggg_body=0", 
+          "1": "gggg_body=1", 
+          "onoswait": "gggg_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "gggg_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "hhh_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "hhh_body=0", 
+          "1": "hhh_body=1", 
+          "onoswait": "hhh_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "hhh_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
@@ -268,11 +483,12 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "Prova", 
           "prova2", 
+          "sss", 
+          "1234con", 
           "hhgh", 
-          "Feff", 
-          "1234con"
+          "sdfwe", 
+          "ddd"
         ], 
         "status": 23, 
         "styleDict": {
@@ -312,9 +528,10 @@
         "scenarios": [
           "prova2", 
           "1234con", 
+          "dfsa", 
           "scenario1"
         ], 
-        "status": 33, 
+        "status": 17, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -350,9 +567,8 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "Prova", 
           "prova2", 
-          "klk"
+          "sdfwe"
         ], 
         "status": 8, 
         "styleDict": {
@@ -390,7 +606,7 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "Prova"
+          "sdfwe"
         ], 
         "status": "0", 
         "styleDict": {
@@ -399,6 +615,111 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black", 
           "wait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "rrr_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "rrr_body=0", 
+          "1": "rrr_body=1", 
+          "onoswait": "rrr_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "rrr_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "rrrrr_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "rrrrr_body=0", 
+          "1": "rrrrr_body=1", 
+          "onoswait": "rrrrr_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "rrrrr_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "b"
+      }, 
+      "ttttt_body": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "ttttt_body=0", 
+          "1": "ttttt_body=1", 
+          "onoswait": "ttttt_bodyWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": 9999, 
+        "notes": " ", 
+        "objname": "ttttt_body", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [
+          9999
+        ], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
@@ -492,11 +813,18 @@
         "conditions": "(#_counter1_#==#_dayTime_#)&(#_counter1_#==#_d_sensor0_RouterGA0000_#)&(#_select_an_element_#==#_select_an_element_#)", 
         "delayTime": 0, 
         "enabled": 0, 
-        "functionsToRun": [], 
+        "functionsToRun": [
+          "#_day_#=#_counter1_#", 
+          "#_ddd_body_#=#_hoursvariabile_numerica_#variabile_numerica", 
+          "#_ddd_body_#=#_counter1_#", 
+          "#_ddd_body_#=7variabile_numerica", 
+          "#_gggg_body_#=#_11day_#", 
+          "#_hhh_body_#=12"
+        ], 
         "priority": 0, 
         "type_after_run": "0"
       }, 
-      "Feff": {
+      "ddd": {
         "conditions": "(#_hours_#==66)&(#_dayTime_#==5)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_d_sensor0_RouterGA0000_#==55)", 
         "delayTime": 0, 
         "enabled": 0, 
@@ -506,23 +834,33 @@
         "priority": 0, 
         "type_after_run": "0"
       }, 
-      "Prova": {
-        "conditions": "(#_counter1_#==9)&(#_dayTime_#==6)&(#_onosCenterWifi_#==4)&(#_onosCenterWifi_#==#_onosCenterWifi_#)&(#_hours_#==66)&(#_dayTime_#==33)&(#_month_#==44)&(#_month_#==66)", 
-        "delayTime": 0, 
+      "ddswef": {
+        "conditions": "(#_day_#==6)&(#_dayTime_#==#_dayTime_#)&(#_select_an_element_#==#_select_an_element_#)", 
+        "delayTime": 2, 
         "enabled": 0, 
         "functionsToRun": [
-          "#_dayTime_#=6", 
-          "#_minutes_#=8", 
-          "#_year_#=9"
+          "#_day_#=6"
         ], 
         "priority": 0, 
         "type_after_run": "0"
       }, 
-      "ddd": {
-        "conditions": "(#_select_an_element_#==select_an_object)", 
+      "dfg": {
+        "conditions": "(#_day_#==5)", 
         "delayTime": 0, 
         "enabled": 0, 
-        "functionsToRun": [], 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "dfsa": {
+        "conditions": "(#_minutes_#==7)&(#_select_an_element_#==#_select_an_element_#)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          "#_dayTime_#=6"
+        ], 
         "priority": 0, 
         "type_after_run": "0"
       }, 
@@ -562,16 +900,6 @@
         "priority": 0, 
         "type_after_run": "0"
       }, 
-      "klk": {
-        "conditions": "(#_day_#==#_month_#)&(#_dayTime_#==#_dayTime_#)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          ""
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
       "prova2": {
         "conditions": "(#_hours_#>#_day_#)&(#_minutes_#==#_month_#)&(#_year_#==#_month_#)&(#_zona1_body_#==#_month_#)&(#_year_#==#_hours_#)&(#_month_#==#_day_#)", 
         "delayTime": 0, 
@@ -589,14 +917,73 @@
         ], 
         "priority": 0, 
         "type_after_run": "0"
+      }, 
+      "sd": {
+        "conditions": "(#_select_an_element_#==select_an_object)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "sdfwe": {
+        "conditions": "(#_counter1_#==9)&(#_dayTime_#==6)&(#_onosCenterWifi_#==4)&(#_onosCenterWifi_#==#_onosCenterWifi_#)&(#_hours_#==66)&(#_dayTime_#==33)&(#_month_#==44)&(#_month_#==66)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          "#_dayTime_#=6", 
+          "#_minutes_#=8", 
+          "#_year_#=9"
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "sss": {
+        "conditions": "(#_hours_#==66)&(#_dayTime_#==5)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_d_sensor0_RouterGA0000_#==55)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          ""
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "ttt": {
+        "conditions": "(#_select_an_element_#==select_an_object)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "w3": {
+        "conditions": "(#_day_#==4)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [], 
+        "priority": 0, 
+        "type_after_run": "0"
       }
     }, 
     "zoneDictionary": {
-      "Jf": {
+      "4dddcc": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "d_sensor0_RouterGA0000"
+          "4ddd_body", 
+          "Jf_body", 
+          "button0_RouterGA0000"
+        ], 
+        "order": 9, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "Jff": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "d_sensor0_RouterGA0000", 
+          "Jf_body"
         ], 
         "order": 2, 
         "owner": "onos_sys", 
@@ -606,21 +993,107 @@
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "onosCenterWifi", 
           "button0_RouterGA0000", 
-          "d_sensor0_RouterGA0000"
+          "d_sensor0_RouterGA0000", 
+          "onosCenterWifi"
         ], 
         "order": 0, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
-      "zona1": {
+      "ddd": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "Jf_body", 
+          "button0_RouterGA0000"
+        ], 
+        "order": 11, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "ff": {
         "group": [], 
         "hidden": 0, 
         "objects": [
           "counter1"
         ], 
         "order": 1, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "gg": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "button0_RouterGA0000", 
+          "counter1"
+        ], 
+        "order": 5, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "ggd": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "Jf_body", 
+          "button0_RouterGA0000"
+        ], 
+        "order": 10, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "gggg": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "counter1", 
+          "d_sensor0_RouterGA0000"
+        ], 
+        "order": 7, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "rrr": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [], 
+        "order": 3, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "rrrrrff": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "Jf_body", 
+          "button0_RouterGA0000"
+        ], 
+        "order": 4, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "sd": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "button0_RouterGA0000", 
+          "counter1"
+        ], 
+        "order": 8, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "tttttss": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "button0_RouterGA0000", 
+          "counter1", 
+          "Jf_body"
+        ], 
+        "order": 6, 
         "owner": "onos_sys", 
         "permissions": "777"
       }
