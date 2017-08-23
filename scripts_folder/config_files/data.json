@@ -226,11 +226,11 @@
           "sss", 
           "1234con", 
           "w3", 
+          "ddd", 
           "ddswef", 
-          "dfg", 
-          "ddd"
+          "dfg"
         ], 
-        "status": 22, 
+        "status": 24, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -267,12 +267,13 @@
         "priority": 0, 
         "scenarios": [
           "sss", 
+          "ddd", 
           "sdfwe", 
           "ddswef", 
-          "ddd", 
+          "ccf", 
           "DEFEF"
         ], 
-        "status": 1397, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -486,11 +487,11 @@
           "prova2", 
           "sss", 
           "1234con", 
+          "ddd", 
           "hhgh", 
-          "sdfwe", 
-          "ddd"
+          "sdfwe"
         ], 
-        "status": 23, 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -531,7 +532,7 @@
           "dfsa", 
           "scenario1"
         ], 
-        "status": 17, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -820,6 +821,16 @@
           "#_ddd_body_#=7variabile_numerica", 
           "#_gggg_body_#=#_11day_#", 
           "#_hhh_body_#=12"
+        ], 
+        "priority": 0, 
+        "type_after_run": "0"
+      }, 
+      "ccf": {
+        "conditions": "(#_dayTime_#==6)", 
+        "delayTime": 0, 
+        "enabled": 0, 
+        "functionsToRun": [
+          "#_day_#=#__#-33"
         ], 
         "priority": 0, 
         "type_after_run": "0"

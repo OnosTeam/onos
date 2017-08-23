@@ -5267,7 +5267,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             elif "function_to_run_1" in postvars:# if the current page is /function_to_run/scenario name  because "function_to_run_1"  is the hidden form name
             #<input type="hidden" name="mod_functions1a" value="">
-
+              logprint("function_to_run_1 post received ")
 
               scenario_name=self.clear_PostData(postvars["function_to_run_1"][0])#get the current scenario name 
 
@@ -5285,44 +5285,109 @@ class MyHandler(BaseHTTPRequestHandler):
                 try:
                   left_element="#_"+self.clear_PostData(postvars["select_l"+str(i)][0])+"_#"
                   operator=self.clear_PostData(postvars["select_op"+str(i)][0])
-                  second_operator=self.clear_PostData(postvars["second_op"+str(i)][0])
-                  if operator=="==":
-                    operator="="
                   right_element=self.clear_PostData(postvars["select_r"+str(i)][0])
-                  third_element=self.clear_PostData(postvars["third_element"+str(i)][0])
+                  if "second_op"+str(i) in postvars:
+                    if "third_element"+str(i) in postvars:
+                      second_operator=self.clear_PostData(postvars["second_op"+str(i)][0])   
+                      third_element=self.clear_PostData(postvars["third_element"+str(i)][0])
+                    else:
+                      second_operator=""
+                      third_element=""
+
+                  if right_element=="variabile_numerica":
+                    if "text_area1_"+str(i) in postvars:
+                      right_element=self.clear_PostData(postvars["text_area1_"+str(i)][0])
+                    else:
+                      right_element=""
+
+                  if third_element=="variabile_numerica":
+                    if "text_area2_"+str(i) in postvars:
+                      third_element=self.clear_PostData(postvars["text_area2_"+str(i)][0])
+                    else:
+                      third_element=""
+
+                  if operator=="==":
+                    operator="="  
+
 
                   try:#detect if is a number
                     a=int(right_element) #was float
                   except:
                     right_element="#_"+right_element+"_#"
 
-                  if (third_element!="")&(third_element!=" ")&(second_operator!="")&(second_operator!=" "):
+                  if (third_element!="")&(third_element!=" ")&(second_operator!="")&(second_operator!=" ")&(third_element!="#_select_an_element_#"):
                     try:#detect if is a number
                       a=int(third_element) #was float
                     except:
                       third_element="#_"+third_element+"_#"
+                    functions_list.append(left_element+operator+right_element+second_operator+third_element)
+                  else:
+                    functions_list.append(left_element+operator+right_element)
 
-
-                  functions_list.append(left_element+operator+right_element+second_operator+third_element)
-                except:
-                  logprint("error get func menu",verbose=7)
+                except Exception as e  :
+                  message="error get func menu"
+                  logprint(message,verbose=7,error_tuple=(e,sys.exc_info())) 
 
               try:  
-                l="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
-                o=self.clear_PostData(postvars["select_new_o"][0])
+                left_element_new="#_"+self.clear_PostData(postvars["select_new_l"][0])+"_#"
+                operator_new=self.clear_PostData(postvars["select_operator_new"][0])
+                right_element_new=self.clear_PostData(postvars["select_new_r"][0])
 
-                if o=="==":
-                  o="="
-                r=self.clear_PostData(postvars["select_new_r"][0])
-                try:#detect if is a number
-                  a=int(r) #was float
-                except:
-                  r="#_"+r+"_#"
+                if "second_operator_new" in postvars:
+                  if "select_new_third_element" in postvars:
+                    second_operator_new=self.clear_PostData(postvars["second_operator_new"][0])
+                    third_element_new=self.clear_PostData(postvars["select_new_third_element"][0])
+                  else:
+                    second_operator_new=""
+                    third_element_new=""
 
-                if (l!="#_select_an_element_#")&(r!="#_select_an_element_#"):
-                  functions_list.append(l+o+r)   
-              except:  
-                logprint("error2 get cond menu",verbose=7)
+                if operator_new=="==":
+                  operator_new="="
+                if second_operator_new=="==":
+                  second_operator_new="="
+
+
+                if right_element_new=="variabile_numerica":
+                  if "text_area1new" in postvars:
+                    right_element_new=self.clear_PostData(postvars["text_area1new"][0])
+                  else:
+                    right_element_new=""
+
+
+                if third_element_new=="variabile_numerica":
+                  if "text_area2new" in postvars:
+                    third_element_new=self.clear_PostData(postvars["text_area2new"][0])
+                  else:
+                    third_element_new=""
+
+
+
+
+                if (left_element_new!="#_select_an_element_#")&(right_element_new!="#_select_an_element_#"):
+                  if (third_element_new!="")&(third_element_new!=" ")&(second_operator_new!="")&(second_operator_new!=" ")&(third_element_new!="#_select_an_element_#"):
+
+                    try:#detect if is a number and so it don't need the #__#
+                      a=int(right_element_new) #was float
+                    except:
+                      r="#_"+right_element_new+"_#"
+                    try:#detect if is a number
+                      a=int(third_element_new) #was float
+                    except:
+                      third_element_new="#_"+third_element_new+"_#"
+
+                    functions_list.append(left_element_new+operator_new+right_element_new+second_operator_new+third_element_new) 
+                  else:
+                    functions_list.append(left_element_new+operator_new+right_element_new)     
+                else:
+                  logprint("no new operations found in the post")
+
+
+              except Exception as e  :
+                message="error2 get cond menu"
+                logprint(message,verbose=7,error_tuple=(e,sys.exc_info())) 
+
+
+
 
               scenarioDict[scenario_name]["functionsToRun"]=functions_list
               logprint("functions"+str(functions_list) ) 

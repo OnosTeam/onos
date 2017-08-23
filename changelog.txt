@@ -677,10 +677,12 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Added the support for readOnly filesystem using make_fs_ready_to_write() to remount as rw and 
                 Started fixing the form problems ,bug:when you hit enter key on a form the page continue to the next page..
                   adding a hidden submit button before the others make possible to reload the same page saving the data.
+                Continued fixing the scenario operation bugs, now there is a form that appear when you select variabile_numerica
 
 
+Bug: se si fanno 2 operazioni e poi sulla prima si mette un avariabile numerica sul primo campo salvando si crea un errore.
+Bug: se non si mette un a seconda operazione(+-= ..) al salvataggio si perdono anche altre seconde operazioni
 
-Bug: nel seleziona operazioni scenario se si mette variabile_numerica e si preme enter un operatore diventa:nomeoperatore+"variabile numerica"
 BUg: Evitare che rimanga variabile numerica come variabile...cambiarla con select_element...
 
 Bug: if setted a numeric value like 19 in the condition the value will been then tralsated to 19.0   and it will not be supported from the http://192.168.1.102/mod_scenario/scenario1/   general config...modifying it to 20.0 and click on finish will not work ...
