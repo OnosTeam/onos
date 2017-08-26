@@ -230,7 +230,7 @@
           "ddswef", 
           "dfg"
         ], 
-        "status": 24, 
+        "status": 26, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -273,7 +273,7 @@
           "ccf", 
           "DEFEF"
         ], 
-        "status": 22, 
+        "status": 749, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -491,7 +491,7 @@
           "hhgh", 
           "sdfwe"
         ], 
-        "status": 0, 
+        "status": 12, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -532,7 +532,7 @@
           "dfsa", 
           "scenario1"
         ], 
-        "status": 22, 
+        "status": 29, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -805,7 +805,7 @@
         "delayTime": 66, 
         "enabled": 0, 
         "functionsToRun": [
-          ""
+          "#_day_#=#__#"
         ], 
         "priority": 0, 
         "type_after_run": "0"
@@ -815,12 +815,7 @@
         "delayTime": 0, 
         "enabled": 0, 
         "functionsToRun": [
-          "#_day_#=#_counter1_#", 
-          "#_ddd_body_#=#_hoursvariabile_numerica_#variabile_numerica", 
-          "#_ddd_body_#=#_counter1_#", 
-          "#_ddd_body_#=7variabile_numerica", 
-          "#_gggg_body_#=#_11day_#", 
-          "#_hhh_body_#=12"
+          ""
         ], 
         "priority": 0, 
         "type_after_run": "0"
@@ -830,7 +825,8 @@
         "delayTime": 0, 
         "enabled": 0, 
         "functionsToRun": [
-          "#_day_#=#__#-33"
+          "#_counter1_#=77+774", 
+          "#_onosCenterWifi_#=#_month_#/#_year_#"
         ], 
         "priority": 0, 
         "type_after_run": "0"
@@ -840,7 +836,7 @@
         "delayTime": 0, 
         "enabled": 0, 
         "functionsToRun": [
-          ""
+          "#_counter1_#=#__#"
         ], 
         "priority": 0, 
         "type_after_run": "0"

@@ -3606,6 +3606,9 @@ class MyHandler(BaseHTTPRequestHandler):
               namespace={"current_username":self.current_username,"scenario_to_mod":self.path.split("/")[2],"path":self.path}
               cgi_name="gui/scenario_operations.py" 
               #execfile(cgi_name,globals(),namespace)
+              #logprint(str(namespace))
+              logprint(scenarioDict[namespace["scenario_to_mod"]]["functionsToRun"])
+             
               exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
 
               web_page=namespace["web_page"]
@@ -5285,7 +5288,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 try:
                   left_element="#_"+self.clear_PostData(postvars["select_l"+str(i)][0])+"_#"
                   operator=self.clear_PostData(postvars["select_op"+str(i)][0])
-                  right_element=self.clear_PostData(postvars["select_r"+str(i)][0])
+                  right_element=self.clear_PostData(postvars["select_r"+str(i)][0])  
                   if "second_op"+str(i) in postvars:
                     if "third_element"+str(i) in postvars:
                       second_operator=self.clear_PostData(postvars["second_op"+str(i)][0])   

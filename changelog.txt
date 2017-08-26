@@ -678,9 +678,10 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Started fixing the form problems ,bug:when you hit enter key on a form the page continue to the next page..
                   adding a hidden submit button before the others make possible to reload the same page saving the data.
                 Continued fixing the scenario operation bugs, now there is a form that appear when you select variabile_numerica
+                Bugfix in scenario_operations, now also the first operation textarea is saved.
 
 
-Bug: se si fanno 2 operazioni e poi sulla prima si mette un avariabile numerica sul primo campo salvando si crea un errore.
+
 Bug: se non si mette un a seconda operazione(+-= ..) al salvataggio si perdono anche altre seconde operazioni
 
 BUg: Evitare che rimanga variabile numerica come variabile...cambiarla con select_element...

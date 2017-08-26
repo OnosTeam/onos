@@ -204,7 +204,7 @@ onchange="checkToEnableNumericForm('''+"'"+'''text_area1_'''+str(i)+"'"+''','''+
    				</select>
 			<!--fine select 3 -->
 
-            <input id="text_area1_'''+str(i)+'''" name=text_area1_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea1" type="text" >  	<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input id="text_area1_'''+str(i)+'''" name="text_area1_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea1" type="text" >  	<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 			<!--select4 -->
@@ -219,7 +219,7 @@ onchange="checkToEnableNumericForm('''+"'"+'''text_area1_'''+str(i)+"'"+''','''+
    				</select>
 			<!--fine select 5 -->
             
-            <input id="text_area2_'''+str(i)+'''"  name=text_area2_'''+str(i)+''' style="position: absolute;top: -1000px;" class ="textarea2" type="text"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input id="text_area2_'''+str(i)+'''"  name="text_area2_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea2" type="text"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 
