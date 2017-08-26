@@ -39,6 +39,24 @@ part_to_insert_in_head='''
 	<meta charset="utf-8">
    	<title>Creazione Scenario</title>
 
+<script type="text/javascript">
+
+function checkToEnableNumericForm(text_id,select_id){
+  //alert(document.getElementById(select_id).value);
+  if ( document.getElementById(select_id).value=="variabile_numerica" ){
+  //  alert("a");
+    document.getElementById(text_id).disabled = false;
+  }
+  else{
+  //  alert("b");
+    document.getElementById(text_id).disabled = true;
+  }
+
+}
+
+</script>
+
+
 '''
 
 
@@ -54,7 +72,7 @@ html_object_list_drop_menu=""
 
 system_object_list=[""]
 
-obj_sel=''
+obj_sel='''<option value="variabile_numerica">variabile_numerica</option>'''
 
 
 obj_list=objectDict.keys()
@@ -74,7 +92,7 @@ for object_name in obj_list:# for every object in the list make the html
 
 html_object_list_drop_menu='''<option value="1">ON</option>'''+html_object_list_drop_menu
 html_object_list_drop_menu='''<option value="0">OFF</option>'''+html_object_list_drop_menu
-html_object_list_drop_menu='''<option value="">numeric_value</option>'''+html_object_list_drop_menu
+html_object_list_drop_menu='''<option value="">variabile_numerica</option>'''+html_object_list_drop_menu
 
 initial__obj_sel_dx='''<option value="1">ON</option>
                        <option value="0">OFF</option>
@@ -176,8 +194,10 @@ try:
 			<select id="compara" name="select_op'''+str(i)+'''" >
                     '''+operator_sel+'''
 			</select>
-          <input id="textarea" type="text" name="numeric_value_field'''+str(i)+'''">
-          <select id="listaoggetti" name="select_r'''+str(i)+'''">
+          <input  disabled class="textarea"  id="textarea_'''+str(i)+'''" type="text" name="numeric_value_field'''+str(i)+'''">
+          <select class="listaoggetti" id="select_r'''+str(i)+'''" name="select_r'''+str(i)+'''" onchange="checkToEnableNumericForm('''+"'"+'''textarea_'''+str(i)+"'"+''','''+"'"+'''select_r'''+str(i)+"'"+''')">
+
+
  	         '''+obj_sel_dx+'''
           </select>
 		</div>
@@ -200,8 +220,8 @@ try:
 			<select id="compara" name="select_new_o">
                     '''+operator_sel+'''
   			</select>
-			<input id="textarea" type="text" name="numeric_value_field">
-			<select id="listaoggetti" name="select_new_r">
+			<input disabled id="textarea" type="text" name="numeric_value_field">
+			<select class="listaoggetti" id="select_new_r" name="select_new_r">
 				'''+default_obj_sel_dx+'''
           	</select>
 		</div>

@@ -9,76 +9,6 @@
       }
     }, 
     "objectDictionary": {
-      "4ddd_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "4ddd_body=0", 
-          "1": "4ddd_body=1", 
-          "onoswait": "4ddd_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "4ddd_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "Jf_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "Jf_body=0", 
-          "1": "Jf_body=1", 
-          "onoswait": "Jf_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "Jf_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
       "button0_RouterGA0000": {
         "cmdDict": {
           "0": "", 
@@ -104,10 +34,7 @@
           18
         ], 
         "priority": 0, 
-        "scenarios": [
-          "gg", 
-          "fff"
-        ], 
+        "scenarios": [], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
@@ -142,12 +69,8 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "1234con", 
-          "sdfwe", 
-          "DEFEF"
-        ], 
-        "status": "55", 
+        "scenarios": [], 
+        "status": "3", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -181,12 +104,7 @@
           21
         ], 
         "priority": 0, 
-        "scenarios": [
-          "sss", 
-          "1234con", 
-          "ddd", 
-          "DEFEF"
-        ], 
+        "scenarios": [], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
@@ -221,15 +139,7 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "prova2", 
-          "sss", 
-          "1234con", 
-          "w3", 
-          "ddd", 
-          "ddswef", 
-          "dfg"
-        ], 
+        "scenarios": [], 
         "status": 26, 
         "styleDict": {
           "0": "background-color:green;", 
@@ -265,196 +175,14 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "sss", 
-          "ddd", 
-          "sdfwe", 
-          "ddswef", 
-          "ccf", 
-          "DEFEF"
-        ], 
-        "status": 749, 
+        "scenarios": [], 
+        "status": 1268, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black", 
           "wait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "ddd_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "ddd_body=0", 
-          "1": "ddd_body=1", 
-          "onoswait": "ddd_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "ddd_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "gg_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "gg_body=0", 
-          "1": "gg_body=1", 
-          "onoswait": "gg_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "gg_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "ggd_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "ggd_body=0", 
-          "1": "ggd_body=1", 
-          "onoswait": "ggd_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "ggd_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "gggg_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "gggg_body=0", 
-          "1": "gggg_body=1", 
-          "onoswait": "gggg_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "gggg_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "hhh_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "hhh_body=0", 
-          "1": "hhh_body=1", 
-          "onoswait": "hhh_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "hhh_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
@@ -483,15 +211,8 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "prova2", 
-          "sss", 
-          "1234con", 
-          "ddd", 
-          "hhgh", 
-          "sdfwe"
-        ], 
-        "status": 12, 
+        "scenarios": [], 
+        "status": 21, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -527,12 +248,9 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "prova2", 
-          "1234con", 
-          "dfsa", 
-          "scenario1"
+          "prova"
         ], 
-        "status": 29, 
+        "status": 8, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -567,10 +285,7 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "prova2", 
-          "sdfwe"
-        ], 
+        "scenarios": [], 
         "status": 8, 
         "styleDict": {
           "0": "background-color:green;", 
@@ -606,9 +321,7 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "sdfwe"
-        ], 
+        "scenarios": [], 
         "status": "0", 
         "styleDict": {
           "0": "background-color:green;", 
@@ -616,111 +329,6 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black", 
           "wait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "rrr_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "rrr_body=0", 
-          "1": "rrr_body=1", 
-          "onoswait": "rrr_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "rrr_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "rrrrr_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "rrrrr_body=0", 
-          "1": "rrrrr_body=1", 
-          "onoswait": "rrrrr_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "rrrrr_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "ttttt_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "ttttt_body=0", 
-          "1": "ttttt_body=1", 
-          "onoswait": "ttttt_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "ttttt_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
@@ -749,9 +357,7 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "prova2"
-        ], 
+        "scenarios": [], 
         "status": 2017, 
         "styleDict": {
           "0": "background-color:green;", 
@@ -760,347 +366,31 @@
           "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
-      }, 
-      "zona1_body": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "zona1_body=0", 
-          "1": "zona1_body=1", 
-          "onoswait": "zona1_bodyWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "zona1_body", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [
-          "prova2"
-        ], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
       }
     }, 
     "scenarioDictionary": {
-      "1234con": {
-        "conditions": "(#_day_#==88)&(#_counter1_#==8)&(#_minutes_#==77)&(#_hours_#==6)&(#_d_sensor0_RouterGA0000_#==44)&(#_minutes_#==44)&(#_minutes_#==3)", 
-        "delayTime": 66, 
-        "enabled": 0, 
-        "functionsToRun": [
-          "#_day_#=#__#"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "DEFEF": {
-        "conditions": "(#_counter1_#==#_dayTime_#)&(#_counter1_#==#_d_sensor0_RouterGA0000_#)&(#_select_an_element_#==#_select_an_element_#)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          ""
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "ccf": {
-        "conditions": "(#_dayTime_#==6)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          "#_counter1_#=77+774", 
-          "#_onosCenterWifi_#=#_month_#/#_year_#"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "ddd": {
-        "conditions": "(#_hours_#==66)&(#_dayTime_#==5)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_d_sensor0_RouterGA0000_#==55)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          "#_counter1_#=#__#"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "ddswef": {
-        "conditions": "(#_day_#==6)&(#_dayTime_#==#_dayTime_#)&(#_select_an_element_#==#_select_an_element_#)", 
-        "delayTime": 2, 
-        "enabled": 0, 
-        "functionsToRun": [
-          "#_day_#=6"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "dfg": {
-        "conditions": "(#_day_#==5)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          ""
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "dfsa": {
-        "conditions": "(#_minutes_#==7)&(#_select_an_element_#==#_select_an_element_#)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          "#_dayTime_#=6"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "fff": {
-        "conditions": "(#_button0_RouterGA0000_#==66.0)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          ""
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "gg": {
-        "conditions": "(#_button0_RouterGA0000_#!=#__#)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          ""
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "hhgh": {
-        "conditions": "(#_hours_#==select_an_object)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "hhh": {
-        "conditions": "", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "prova2": {
-        "conditions": "(#_hours_#>#_day_#)&(#_minutes_#==#_month_#)&(#_year_#==#_month_#)&(#_zona1_body_#==#_month_#)&(#_year_#==#_hours_#)&(#_month_#==#_day_#)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "scenario1": {
-        "conditions": "(#_minutes_#==29)", 
+      "prova": {
+        "conditions": "(#_minutes_#==9)&(#_select_an_element_#==#_select_an_element_#)", 
         "delayTime": 0, 
         "enabled": 1, 
         "functionsToRun": [
-          "#_counter1_#=55"
+          "#_counter1_#=#_counter1_#+1"
         ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "sd": {
-        "conditions": "(#_select_an_element_#==select_an_object)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "sdfwe": {
-        "conditions": "(#_counter1_#==9)&(#_dayTime_#==6)&(#_onosCenterWifi_#==4)&(#_onosCenterWifi_#==#_onosCenterWifi_#)&(#_hours_#==66)&(#_dayTime_#==33)&(#_month_#==44)&(#_month_#==66)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          "#_dayTime_#=6", 
-          "#_minutes_#=8", 
-          "#_year_#=9"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "sss": {
-        "conditions": "(#_hours_#==66)&(#_dayTime_#==5)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_day_#==#_d_sensor0_RouterGA0000_#)&(#_d_sensor0_RouterGA0000_#==55)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [
-          ""
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "ttt": {
-        "conditions": "(#_select_an_element_#==select_an_object)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "w3": {
-        "conditions": "(#_day_#==4)", 
-        "delayTime": 0, 
-        "enabled": 0, 
-        "functionsToRun": [], 
         "priority": 0, 
         "type_after_run": "0"
       }
     }, 
     "zoneDictionary": {
-      "4dddcc": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "4ddd_body", 
-          "Jf_body", 
-          "button0_RouterGA0000"
-        ], 
-        "order": 9, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "Jff": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "d_sensor0_RouterGA0000", 
-          "Jf_body"
-        ], 
-        "order": 2, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
       "RouterGA0000": {
         "group": [], 
         "hidden": 0, 
         "objects": [
           "button0_RouterGA0000", 
           "d_sensor0_RouterGA0000", 
-          "onosCenterWifi"
+          "onosCenterWifi", 
+          "counter1"
         ], 
         "order": 0, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "ddd": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "Jf_body", 
-          "button0_RouterGA0000"
-        ], 
-        "order": 11, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "ff": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "counter1"
-        ], 
-        "order": 1, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "gg": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "button0_RouterGA0000", 
-          "counter1"
-        ], 
-        "order": 5, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "ggd": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "Jf_body", 
-          "button0_RouterGA0000"
-        ], 
-        "order": 10, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "gggg": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "counter1", 
-          "d_sensor0_RouterGA0000"
-        ], 
-        "order": 7, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "rrr": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [], 
-        "order": 3, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "rrrrrff": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "Jf_body", 
-          "button0_RouterGA0000"
-        ], 
-        "order": 4, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "sd": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "button0_RouterGA0000", 
-          "counter1"
-        ], 
-        "order": 8, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "tttttss": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "button0_RouterGA0000", 
-          "counter1", 
-          "Jf_body"
-        ], 
-        "order": 6, 
         "owner": "onos_sys", 
         "permissions": "777"
       }

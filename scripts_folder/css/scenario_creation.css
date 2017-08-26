@@ -149,7 +149,7 @@ ul {list-style-type:none;}
 }
 
 
-#textarea{
+.textarea{
 
 	width:20%;
 	height:30px;
@@ -159,7 +159,7 @@ ul {list-style-type:none;}
 
 }
 
-#listaoggetti{
+.listaoggetti{
 
 	width:15%;
 	height:30px;

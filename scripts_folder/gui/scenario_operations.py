@@ -204,7 +204,7 @@ onchange="checkToEnableNumericForm('''+"'"+'''text_area1_'''+str(i)+"'"+''','''+
    				</select>
 			<!--fine select 3 -->
 
-            <input id="text_area1_'''+str(i)+'''" name="text_area1_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea1" type="text" >  	<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input disabled id="text_area1_'''+str(i)+'''" name="text_area1_'''+str(i)+'''"  class ="textarea1" type="text" >  	<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 			<!--select4 -->
@@ -219,7 +219,7 @@ onchange="checkToEnableNumericForm('''+"'"+'''text_area1_'''+str(i)+"'"+''','''+
    				</select>
 			<!--fine select 5 -->
             
-            <input id="text_area2_'''+str(i)+'''"  name="text_area2_'''+str(i)+'''" style="position: absolute;top: -1000px;" class ="textarea2" type="text"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input disabled id="text_area2_'''+str(i)+'''"  name="text_area2_'''+str(i)+'''"  class ="textarea2" type="text"> <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 
@@ -267,11 +267,11 @@ function checkToEnableNumericForm(text_id,select_id){
   //alert(document.getElementById(select_id).value);
   if ( document.getElementById(select_id).value=="variabile_numerica" ){
   //  alert("a");
-    document.getElementById(text_id).style="";
+    document.getElementById(text_id).disabled = false;
   }
   else{
   //  alert("b");
-    document.getElementById(text_id).style="position: absolute;top: -1000px;";
+    document.getElementById(text_id).disabled = true;
   }
 
 }
@@ -350,7 +350,7 @@ html=html+'''
    				</select>
 			<!--fine select 3 -->
 
-      <input id="text_area1new" name="text_area1new" class ="textarea1" type="text" style="position: absolute;top: -1000px;" > 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+      <input disabled id="text_area1new" name="text_area1new" class ="textarea1" type="text"  > 			<!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 			<!--select4 -->
    				<select id ="select_4" class ="select select_4"  name="second_operator_new">
@@ -363,7 +363,7 @@ html=html+'''
                 '''+default_obj_sel_dx2+'''
    				</select>
 			<!--fine select 5 -->
-            <input id="text_area2new" name="text_area2new" class ="textarea2" type="text" style="position: absolute;top: -1000px;" > <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
+            <input disabled id="text_area2new" name="text_area2new" class ="textarea2" type="text" > <!--questa è la textarea che su smartphone ti permette di inserie i numeri con tastiera numerica anzichè qwerty-->
 
 
 
@@ -372,9 +372,9 @@ html=html+'''
 
 
          <!--this button is hidden and will be pressed only when the user press enter key on a input form, will so reload the page saving the data  -->
-        <button id="hidden_button" style="position: absolute;top: -1000px;" class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''">HiddenSubmit</button> 
+        <button id="hidden_button" style="position: absolute;top: -1000px;"  class="submit_button" type="submit" name="save_and_reload_this_page" value="'''+path+'''">HiddenSubmit</button> 
 
-        <button class="submit_button" type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
+        <button class="submit_button"  type="submit" name="scenario_operations_add_submit" value="scenario_operations_add_submit" onclick="checkvalue()">Add function</button>
         
 
 

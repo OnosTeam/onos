@@ -1833,13 +1833,14 @@ def updateDir():
       #with lock_bash_cmd: 
       #  subprocess.call("mkdir "+baseRoomPath+zone, shell=True,close_fds=True)  
 
+      make_fs_ready_to_write()
       try:
         os.stat(baseRoomPath+zone)
       except:
         os.mkdir(baseRoomPath+zone) 
 
       fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
-      make_fs_ready_to_write()
+
       try:
         file0 = open(index, "w")
         file0.write(fileToWrite)
@@ -5134,7 +5135,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   operator=self.clear_PostData(postvars["select_op"+str(i)][0])
                   if operator=="=":
                     operator="=="
-                  #right_element=self.clear_PostData(postvars["select_r"+str(i)][0])
+                  right_element=self.clear_PostData(postvars["select_r"+str(i)][0])
 
                   if "numeric_value_field"+str(i) in postvars:   #if there is a text field with value i will read it
                     right_element_text_value=self.clear_PostData(postvars["numeric_value_field"+str(i)][0])
@@ -5228,9 +5229,14 @@ class MyHandler(BaseHTTPRequestHandler):
                 return         
                                  
               if "condition_mod_add_submit" in postvars:
+                if menu_number<1:
+                  conditions=conditions+"(#_select_an_element_#==#_select_an_element_#)"   
+                else:
+                  conditions=conditions+"&(#_select_an_element_#==#_select_an_element_#)"  
+                scenarioDict[scenario_name]["conditions"]=conditions
 
                 self.send_response(301)
-                self.send_header('Location','/scenario_creation_conditions/'+scenario_name)
+                self.send_header('Location','/scenario_conditions/'+scenario_name)
                 self.end_headers()
                 return              
  
@@ -5845,7 +5851,7 @@ def onlineServerSync():
       return()
 
 #message example :
-#  '#start@#_@onosuser#_@obj_ch#_@obj1#_@objstatus_to_set#_#stop@"      message for online obj changed to objstatus_to_set
+# old  '#start@#_@onosuser#_@obj_ch#_@obj1#_@objstatus_to_set#_#stop@"      message for online obj changed to objstatus_to_set
     try:
       ###json_filtered_msg=re.match(r'#_cmd_.+?_cmd_#',sync_message).group(1)
       #re.search('#_cmd_(.+?)_cmd_#',sync_message).group(1)
