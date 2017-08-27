@@ -1,50 +1,46 @@
-
 <!DOCTYPE html>
+
 <html>
-<head>
-  <link rel="stylesheet" href="../css/login_form.css" type="text/css" media="all" />
-  <meta name="viewport" content="width=device-width" , initial-scale=1, maximum-scale=1"> 
-  <meta charset="utf-8">
-  <title>O.N.O.S</title>
-<script type="text/javascript" language="javascript">function SelectAll(id){    document.getElementById(id).focus();   document.getElementById(id).select();}</script>
-</head>
-<body>
 
-<div id="container-image">
-    <img id="image" src="../img/header.jpg" class="image" />
-</div>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<link rel="stylesheet" href="/css/login.css">
+	<meta charset="utf-8">
+   	<title>Login or Register</title>
 
-<div id="body2">
+    </head>
+    <body>
 
-  <form action="" method="POST"><input type="hidden" name="login_form" value="/login">
+	<div id="box-logo">
+       <img id="logo" src="/img/logo_ONOS.png" class="flex" width="50%" height="50%" />
+	</div>
 
-  
-
-  <div id="container">
-    <h1>Username</h1>
-    <input class="textbox" id="username_form" name="username_form" onclick="SelectAll('username_form')"; type="text" value=""  size="40" maxlength="200" />
+<div class="box-form">
 
 
-  <h1>Password</h1>
-  <input class="textbox" type="password" id="password_form" maxlength="200" size="40" name="password_form"  onfocus="SelectAll('password_form')"; value="" />
+	<div class="title">LOGIN</div>
 
-  </div>
+    <form action="" method="POST"><input type="hidden" name="login_form" value="/login">
 
-
-
-
-
-  
-  <div id="container2">
-    <input  id="log" type="submit" value="LOGIN">
-	<label id="login" for="log">LOGIN</label>
-
-  </div>
+	<div class="subtitle">Username</div>
+	<input type="text" class="textinput" id="username_form" name="username_form" onfocus="this.setSelectionRange(0, this.value.length)" />
+	<div class="subtitle">Password</div>
+	<input type="password" class="textinput" id="password_form" name="password_form" onfocus="this.setSelectionRange(0, this.value.length)" value="" />
+ 	<div></div><!--necessario per evitare che il bottone login si sposti-->
+	<input type="submit" id="submit" class="login-button" name="submit" value="LOGIN"  />
 
 
-
+	</form>
 
 </div>
-</form> 
+
+
+<div class="box-form">
+
+	<div class="adventuretext">Forgotten password ?</div>
+	<div id="register-button"><a href="#">Find password</a></div>
+
+</div>
+
 </body>
 </html>

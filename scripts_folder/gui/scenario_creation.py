@@ -107,7 +107,7 @@ html=html+'''
 		<div class="riga" >
 
 
-			<input class="name_text" name="new_scenario_name" id="new_scenario_name" type="text" onfocus="if(this.value == 	' '''+default_phrase_new_scenario+''' '){ this.value = ''; }" value=' '''+default_phrase_new_scenario+''' '/>
+			<input class="name_text" name="new_scenario_name" id="new_scenario_name" type="text" onfocus="this.setSelectionRange(0, this.value.length)" value=' '''+default_phrase_new_scenario+''' '/>
 		</div>
 	
          '''+library+'''

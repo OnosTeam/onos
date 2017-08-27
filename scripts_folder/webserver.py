@@ -3544,6 +3544,24 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return
 
+            if self.path.endswith("gui/users_list.py"): # render the scenario list 
+              namespace={"current_username":self.current_username}
+              cgi_name="gui/users_list.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13a in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return
+
 
 
             if self.path.endswith("scenarios_list/"): # render the scenario list 
@@ -5490,9 +5508,6 @@ class MyHandler(BaseHTTPRequestHandler):
                 repeated_password=self.clear_PostData(postvars["repeat_password_form"][0])
                 mail=self.clear_PostData(postvars["create_mail_form"][0])
                  
-
-
-
 
                 if (password!=repeated_password): #wrong password entered
    
