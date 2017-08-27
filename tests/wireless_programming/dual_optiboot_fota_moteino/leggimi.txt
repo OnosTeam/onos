@@ -4,7 +4,6 @@ sudo avrdude -p m328p -b 19200 -v -P /dev/ttyUSB0 -c arduino -u -U flash:w:DualO
 
 
 
-
 avendo un arduino isp programmato con bautrate 19200  ..che è lo standard arduino ide vecchio...
 
 

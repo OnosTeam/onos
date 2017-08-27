@@ -1,0 +1,9 @@
+sia OTA.py sia WirelessProgramming.py funzionano con gli stessi programmi dentro ai 2 nodi...forse WirelessProgramming.py è più stabile..
+Il bootloader testato è DualOptiboot_V5.0_atmega328_BlinkD9_SPIdisable.hex
+
+la marca di flash usata è una che ha id: 0x1F65
+
+
+
+
+

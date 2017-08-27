@@ -106,7 +106,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_Wrelay4x
+#define node_type_WreedSaa
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
