@@ -1182,7 +1182,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 #    Every node created automaticly from linux will have a variable obj_address_in_the_node that contain the number of the object #in the node, the first object in a node will have obj_address_in_the_node =0 
 
-52) Need a stucture for mqtt to controll all onos using it...
+52) Need a stucture for mqtt to controll all onos using it... Not implemented
     OnosCenter will subscribe to all the mqtt topics..
     Onos will use the following topics by default  using QoS 0 (because the check will be done using another topic) :
 
@@ -1217,14 +1217,20 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
     If a  node or a scenario or a user from webpage change the status of an webobject then onosCenter will set it using:
       myonos/web_objects/<objectName>/status    using QoS 2
 
-
-
-
    Number temperature "temp [%.1f]" {mqtt="<[publicweatherservice:london-city/temperature:state:default]"}
 Number waterConsumption "consum [%d]" {mqtt="<[mybroker:myHome/watermeter:state:XSLT(parse_water_message.xslt)]"} 
 Switch doorbell "bell [%s]" {mqtt="<[mybroker:myHome/doorbell:command:ON]"}
 Number mfase1 "mfase1 [%.3f]" {mqtt="<[flukso:sensor/9cf3d75543fa82a4662fe70df5bf4fde/gauge:state:REGEX(.*,(.*),.*)]"}
 Number humidity "humidity [%.1f%%] {mqtt="<[broker:weatherstation/readings:state:JS(convertPercent.js):humidity=.*]"}
+
+
+
+53) Need a way to implement ota on radio node.
+   In order to set a node to ota receive loop a special command will be send before starting the ota update.
+   the special message will contain "ot"
+
+
+
 
 
 

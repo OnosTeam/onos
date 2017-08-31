@@ -66,6 +66,7 @@
 #include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <SPI.h>
 #include <RFM69_ATC.h> 
+#include <EEPROM.h>
 #include <OnosMsg.h>
 #include <LowPower.h>
 //*********************************************************************************************
@@ -98,31 +99,14 @@
  
 
 
-#ifdef __AVR_ATmega1284P__
-  #define FLASH_SS      23 // and FLASH SS on D23
-#else
-  #define FLASH_SS      8 // and FLASH SS on D8
-#endif
-
-
 //**************************************Onos Define node **************************************
 
-//#define ota_enabled 1   //enable ota update
-
-#if defined(ota_enabled)
-  #include <RFM69_OTA.h>     //get it here: https://github.com/lowpowerlab/RFM69
-  #include <SPIFlash.h>      //get it here: https://github.com/lowpowerlab/spiflash
-  unsigned long ota_loop_start_time=0;
-  #define ota_timeout 25000  //25 seconds 
-  SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
-
-#endif 
 char serial_number[13]="xxxxxxxxxxxx";
 char numeric_serial[5]="0004";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_WreedSaa
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -167,6 +151,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   uint8_t reed1_status_sent=0;
   uint8_t reed2_status_sent=0;
 
+  byte keep_ADCSRA=ADCSRA; //save the state of the register;
   int temperature_sensor_value=0;
   #define analog_readings 20  //repeated readings  , don't make them more than 20 or there will be overflow
   uint8_t temperature_sensor_value_byte=0;
@@ -175,7 +160,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   int luminosity_sensor_value=0;
   uint8_t luminosity_sensor_value_byte=0;
   int battery_value=0;
-  byte battery_value_byte=0;
+  uint8_t battery_value_byte=0;
 
 #elif defined(node_type_Wrelay4x)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -186,7 +171,6 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define button  4
   #define led     5
   #define syncTime  6
-  #define IS_RFM69HCW    false
 
   #define TOTAL_OBJECTS 7
   #define node_default_timeout 1500
@@ -195,12 +179,6 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define node_default_timeout 1500
 
 #elif defined(node_type_WPlug1vx)
-  // define object numbers to use in the pin configuration warning this is not the pinout numbers
-  #define relay1  0
-  #define button  1
-  #define led     2
-  #define syncTime  3
-  #define TOTAL_OBJECTS 4
   #define node_default_timeout 1500
 
 #elif defined(node_type_WIRbarr0)
@@ -214,8 +192,6 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 
 #if defined(battery_node)   //if the node is a battery node:
-byte keep_ADCSRA=ADCSRA; //save the state of the register;
-
 int stay_awake_period=700 ;   //how long in ms the node will stay awake to receive radio messages.
 unsigned long awake_time=0;
 
@@ -232,6 +208,12 @@ int node_obj_status[number_of_total_objects];
 
 
 //********************************End of Onos objects configuration **************************************
+
+
+
+
+
+
 
 
 
@@ -381,39 +363,10 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     }
 
 #elif defined(node_type_Wrelay4x)
-
-    if (obj_number==0){
+    else if (obj_number==0){
       main_obj_state=status_to_set;
-      digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
-      Serial.println(F("digitalWrite with obj")); 
-      changeObjStatus(led,status_to_set);
+      changeObjStatus(led,!status_to_set);
     }
-    else if(obj_number<4) { //objects from 0 to 3 are relay  
-      digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
-      Serial.println(F("digitalWrite with obj")); 
-    }
-    else if (obj_number==led){
-      digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
-      Serial.println(F("digitalWrite with obj")); 
-    }
-#elif defined(node_type_WPlug1vx)
-
-
-    if (obj_number==0){
-      main_obj_state=status_to_set;
-      digitalWrite(5,status_to_set); // set relay1
-      digitalWrite(6,status_to_set); // set relay2
-      digitalWrite(7,!status_to_set);// reset both relays
-      Serial.println(F("digitalWrite with obj")); 
-      changeObjStatus(led,status_to_set);
-    }
-
-    else if (obj_number==led){
-      digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
-      Serial.println(F("digitalWrite with obj")); 
-    }
-
-
 #endif
 
     else if(obj_number==syncTime){  // if the object sent is syncTime change the sync_timeout with the value received
@@ -475,8 +428,18 @@ void composeSyncMessage(){
   strcat(syncMessage, str_this_node_address);
 
 
+
+  
+
+
+
+
+
+
 #if defined(node_type_WreedSaa)
 //[S_001rsWreedSaa000132Lgx_#]      reeds:3, temperature sensor:2, luminosity sensor:L, battery sensor:g 
+
+
 
 
   node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
@@ -586,62 +549,25 @@ void composeSyncMessage(){
     strcat(syncMessage, "ga");
     strcat(syncMessage, node_fw);
     strcat(syncMessage, serial_number);
+    syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
+    strcat(syncMessage, "_#]");
+    return;
+
   }
   else{
     strcat(syncMessage, "rs");
-    strcat(syncMessage, serial_number);
-
-    syncMessage[strlen(syncMessage)]=reed_sensors_state;   
-
-    syncMessage[strlen(syncMessage)]=temperature_sensor_value_byte;  
-
-    syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
-
-    syncMessage[strlen(syncMessage)]=battery_value; 
   }
 
-
- 
-#elif defined(node_type_Wrelay4x)
-
-  if (this_node_address==254){
-    strcat(syncMessage, "ga");
-    strcat(syncMessage, node_fw);
-    strcat(syncMessage, serial_number);
-  }
-  else{
-  //[S_123r4Wrelay4x00080110x_#]     0110 is the 4 relay status
-    strcat(syncMessage, "r4");
  // strcat(syncMessage, "sy");
- 
-    strcat(syncMessage, serial_number);
+  strcat(syncMessage, serial_number);
 
-    syncMessage[strlen(syncMessage)]=node_obj_status[0]+48;  
-    syncMessage[strlen(syncMessage)]=node_obj_status[1]+48;  
-    syncMessage[strlen(syncMessage)]=node_obj_status[2]+48;  
-    syncMessage[strlen(syncMessage)]=node_obj_status[3]+48;  
-  }
+  syncMessage[strlen(syncMessage)]=reed_sensors_state;   
 
+  syncMessage[strlen(syncMessage)]=temperature_sensor_value_byte;  
 
-#elif defined(node_type_WPlug1vx)
+  syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
 
-  if (this_node_address==254){
-    strcat(syncMessage, "ga");
-    strcat(syncMessage, node_fw);
-    strcat(syncMessage, serial_number);
-  }
-  else{
-  //[S_123r4Wrelay4x00080110x_#]     0110 is the 4 relay status
-    strcat(syncMessage, "ul");
- // strcat(syncMessage, "sy");
- 
-    strcat(syncMessage, serial_number);
-
-    syncMessage[strlen(syncMessage)]=node_obj_status[0]+48;  
-
-  }
-
-
+  syncMessage[strlen(syncMessage)]=battery_value;  
 
 
 
@@ -659,12 +585,20 @@ void composeSyncMessage(){
  // char char_main_obj_state[2];
  // char_main_obj_state[0]=main_obj_state+48;
 
+
+
+
+
   minutes_time_from_turn_on=0;  //time_from_turn_on/60000; //get minutes from milliseconds  todo set it correctly..
+
 
   if( minutes_time_from_turn_on>9999) {//banana todo change it in some way...
     minutes_time_from_turn_on=0;
 
   }
+
+
+
 
 
   memset(tmp_minutes_time_from_turn_on_array,0,sizeof(tmp_minutes_time_from_turn_on_array)); //to clear the array
@@ -695,15 +629,22 @@ void composeSyncMessage(){
     strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
   }
 
+
+
   //snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from float to char array
 
   syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
 
+
   Serial.print(F("composeSyncMessage executed with  status:"));
   Serial.println(main_obj_state);
+
+
   strcat(syncMessage, minutes_time_from_turn_on_array);
 
+
 #endif  //end node_type_WLightSS
+
 
 
 
@@ -715,11 +656,15 @@ void composeSyncMessage(){
     progressive_msg_id=48;  //48 is 0 in ascii
   }
 
+
   syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
   //Serial.println(syncMessage[28]);
   //Serial.println(strlen(syncMessage));
   strcat(syncMessage, "_#]");
   
+
+
+
 
 }
 
@@ -736,6 +681,8 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
     syncMessage[7]='a'; //modify the message
   }
 */
+
+
 
   Serial.println(F(" sendWithRetry sendSyncMessage executed"));
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,tx_timeout)) {
@@ -826,7 +773,7 @@ void getAddressFromGateway(){
 boolean checkAndHandleIncomingRadioMsg(){
 
   if (radio.receiveDone()){
-    
+
     skipRadioRxMsg=skipRadioRxMsg+1;
 
 
@@ -835,7 +782,7 @@ boolean checkAndHandleIncomingRadioMsg(){
     Serial.println(radio.SENDERID);
     Serial.print((char*)radio.DATA);
     Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
-    //CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
+
  
     //check if received message contains Hello World
 
@@ -1073,11 +1020,7 @@ void beginRadio(){
   Serial.println(F(" MHz"));
   Serial.print(F("radio address changed to:"));
   Serial.println(this_node_address);
-
-#if defined(battery_node)   //if the node is a battery node:
   keep_ADCSRA=ADCSRA; //save the state of the register
-
-#endif 
 
 
 }
@@ -1114,55 +1057,71 @@ void handleReed(){//handle the reed sensor
 
 
 
-void handleButton(){//handle the main node button , you can't call this from interrupt because millis() won't work
-
-  Serial.print(F("handleButton() executed "));
+void handleButton(){//handle the main node button
+/*
+  Serial.println(F("handleButton() executed "));
   Serial.print("button_still_same_status:");
   Serial.print(button_still_same_status);
   Serial.print("button_time_same_status:");
   Serial.println(millis()-button_time_same_status);
+*/
 
 
 
 
+/*  if (button_still_same_status==1){ //filter 
+    //button_time_same_status=millis();
+    return;
+  }
+*/
 
-   // Serial.print(F("obj_button pressed"));
-  if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
-      Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
-      noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
-      memset(encript_key,0,sizeof(encript_key)); //to clear the array
-      strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
-      this_node_address=254;//reset the node address
-      first_sync=1;
-      setup();
-      //beginRadio();  //restart radio with the default encript_key  
-      //checkCurrentRadioAddress();  
-      interrupts(); // Enable interrupts 
+  if ((millis()-button_time_same_status)<time_to_change_status){ //filter 
+    return;
+  }
+
+
+  obj_button_pin=node_obj_pinout[button];
+
+  if (digitalRead(obj_button_pin)==0) {
+    Serial.print(F("obj_button pressed"));
+    if (((millis()-button_time_same_status)>time_to_reset_encryption)&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
+        Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
+        noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
+        memset(encript_key,0,sizeof(encript_key)); //to clear the array
+        strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
+        this_node_address=254;//reset the node address
+        first_sync=1;
+        setup();
+        //beginRadio();  //restart radio with the default encript_key  
+
+        //checkCurrentRadioAddress();  
+        interrupts(); // Enable interrupts 
+        button_time_same_status=millis();
+      }
+
+    if (((millis()-button_time_same_status)>time_to_change_status)&&(button_still_same_status==0)){
+      Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
+      changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+      composeSyncMessage();
+      sendSyncMessage(radioRetry+2,radioTxTimeout); 
+      button_still_same_status=1;
       button_time_same_status=millis();
-    }
+      delay(100);//todo change it smaller
 
-  if (((millis()-button_time_same_status)>time_to_change_status)&&(button_still_same_status==0)){
-    Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
-    changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
-    composeSyncMessage();
-    sendSyncMessage(radioRetry+2,radioTxTimeout); 
-    button_still_same_status=1;
-    button_time_same_status=millis();
-    delay(100);//todo change it smaller
+    }
 
   }
 
+
 }
-#if defined(node_type_WreedSaa)
+
 void interrupt1_handler(){
 
-
+#if defined(node_type_WreedSaa)
 
   detachInterrupt(1);
   Serial.println(F("interrupt called"));
-#if defined(battery_node)   //if the node is a battery node:
   ADCSRA=keep_ADCSRA; //resume the status of the register
-#endif
   handleReed();
   reed1_status_sent=node_obj_status[reed1];
   reed2_status_sent=node_obj_status[reed2];
@@ -1175,29 +1134,13 @@ void interrupt1_handler(){
     handleReed();
   }
 
+
+
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
-
-
-
-}
 #endif
 
 
-
-#if defined(ota_enabled)
-void ota_receive_loop(){
-
-  Serial.println(F("ota_receive_loop() executed"));
-
-  ota_loop_start_time=millis()+5000;
-
-  while( (millis()-ota_loop_start_time)>ota_timeout) {
-    CheckForWirelessHEX(radio, flash, false);
-  }
-  ota_loop=0;
-
 }
-#endif
 
 
 void setup() {
@@ -1205,14 +1148,14 @@ void setup() {
 
   node_obj_status[syncTime]=node_default_timeout;
   sync_timeout=node_obj_status[syncTime];
-
-#if defined(node_type_WreedSaa)
   node_obj_status[reed1Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
   node_obj_status[reed2Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
 
+#if defined(node_type_WreedSaa)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"WreedSaa");
   strcat(serial_number,numeric_serial);
+
 
 
   node_obj_pinout[reed1]=3;   // the first  object is the reed1 connected on pin 3 
@@ -1230,47 +1173,24 @@ void setup() {
   pinMode(node_obj_pinout[reed2], INPUT);
   delay(2);
   digitalWrite(node_obj_pinout[reed1],1); //set pullup on reed
-//  digitalwrite(node_obj_pinout[reed2],1);
-  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 
+//  digitalwrite(node_obj_pinout[reed2],1);
 
 #elif defined(node_type_Wrelay4x)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"Wrelay4x");
   strcat(serial_number,numeric_serial);
-  node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
   node_obj_pinout[relay2]=8;  // the second object is the relay 2 connected on pin 8  
   node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
   node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 
   node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
   node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
-  pinMode(node_obj_pinout[relay1], OUTPUT);
-  pinMode(node_obj_pinout[relay2], OUTPUT);
-  pinMode(node_obj_pinout[relay3], OUTPUT);
-  pinMode(node_obj_pinout[relay4], OUTPUT);
-  pinMode(node_obj_pinout[led], OUTPUT);
-  pinMode(node_obj_pinout[button], INPUT);
-
-  digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
-  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
    
 #elif defined(node_type_WLightSS)
   node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
 #elif defined(node_type_WPlug1vx)
-  memset(serial_number,0,sizeof(serial_number)); //to clear the array
-  strcpy(serial_number,"WPlug1vx");
-  strcat(serial_number,numeric_serial);
-  node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
-  node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
-  pinMode(5, OUTPUT); // set relay1
-  pinMode(6, OUTPUT); // set relay2
-  pinMode(7, OUTPUT); // reset relay
-  pinMode(node_obj_pinout[led], OUTPUT);
-  pinMode(node_obj_pinout[button], INPUT);
-
-  digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
-  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
-
+  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
 #elif defined(node_type_WIRbarr0)
   node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
 #elif defined(node_type_WSoilHaa)
@@ -1295,7 +1215,7 @@ void setup() {
 
 
 
-
+  digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
   //while (!Serial); // wait until serial console is open, remove if not tethered to computer
   Serial.begin(SERIAL_BAUD);
@@ -1306,12 +1226,6 @@ void setup() {
   Serial.println(F("Setup -------------------------------------------------"));
   Serial.println(F("Feather RFM69W Receiver"));
 
-#if defined(ota_enabled)
-  if (flash.initialize())
-    Serial.println("SPI Flash Init OK!");
-  else
-    Serial.println("SPI Flash Init FAIL!");
-#endif 
 
 /*  
 
@@ -1338,11 +1252,9 @@ void setup() {
   Blink(node_obj_pinout[led],100,3); 
   digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
 
-
-  interrupts(); 
   composeSyncMessage();
 
-
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
@@ -1355,15 +1267,10 @@ void setup() {
  
 void loop() {
 
-#if defined(node_type_Wrelay4x)
-  if (button_still_same_status==0){ //filter 
 
-    obj_button_pin=node_obj_pinout[button];
-    if (digitalRead(obj_button_pin)==0) { 
-      handleButton();
-    }
-  }
-#endif 
+//  handleButton();
+
+
 
 
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){ //to allow the execution of radio tx , in case there are too many rx query..
@@ -1374,13 +1281,6 @@ void loop() {
 
   }
 
-
-#if defined(ota_enabled)   //if the node is a battery node:
-    ota_loop=1;
-  if (ota_loop==1){
-    ota_receive_loop();
-  }
-#endif 
 
 
   radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();

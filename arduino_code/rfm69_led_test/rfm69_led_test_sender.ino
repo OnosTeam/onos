@@ -147,6 +147,7 @@ uint8_t rx_obj_selected=0;
 volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
 volatile char received_serial_number[13];
 volatile boolean reInitializeRadio=0;
+volatile boolean ota_loop=0; //enable the ota receiver loop
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 

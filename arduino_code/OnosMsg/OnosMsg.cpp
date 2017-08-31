@@ -83,6 +83,13 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       return;
     }
   
+    else if ( received_message_type_of_onos_cmd[0]=='o' && received_message_type_of_onos_cmd[1]=='t' ){
+      ota_loop=1;
+      strcpy(decoded_result,"ok");
+      return;
+    }
+
+
     // [S_123dw04001_#]
     // [S_001dw04001_#]
     // [S_001dw04000_#]
