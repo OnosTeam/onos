@@ -403,9 +403,9 @@ boolean changeObjStatus(char obj_number,int status_to_set){
 
     if (obj_number==0){
       main_obj_state=status_to_set;
-      digitalWrite(5,status_to_set); // set relay1
-      digitalWrite(6,status_to_set); // set relay2
-      digitalWrite(7,!status_to_set);// reset both relays
+      digitalWrite(5,!status_to_set); // set relay1
+      digitalWrite(6,!status_to_set); // set relay2
+      digitalWrite(7,status_to_set);// reset both relays
       Serial.println(F("digitalWrite with obj")); 
       changeObjStatus(led,status_to_set);
     }
@@ -1350,6 +1350,7 @@ void setup() {
 #if defined(node_type_WreedSaa)
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 #elif defined(node_type_WPlug1vx)
+  digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
   attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
 #elif defined(node_type_Wrelay4x)
   attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
