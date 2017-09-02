@@ -112,7 +112,7 @@ html=html+'''
 	
          '''+library+'''
 
-		 <div id="avanti_button"><input type="submit" value="Conferma"> </div>
+		 <input id="avanti_button" type="submit" value="Conferma">
 
          </form>
  '''

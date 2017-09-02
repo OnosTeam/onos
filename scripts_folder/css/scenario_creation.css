@@ -125,6 +125,16 @@ ul {list-style-type:none;}
 
 }
 
+
+.select1{
+
+	height:30px;
+	left:0%;
+	top:5px;
+	position:absolute;
+
+}
+
 .nometesto{
 
 	width:40%;

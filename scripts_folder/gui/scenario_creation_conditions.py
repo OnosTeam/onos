@@ -184,12 +184,12 @@ try:
         conditions_rows=conditions_rows+'''
 
 		<div class="riga_container">
-			<div  class="nometesto">  
-				<select  name="select_l'''+str(i)+'''">
+
+				<select class="select1" name="select_l'''+str(i)+'''">
  
                  '''+obj_sel_sx+'''
                 </select>
-            </div>
+
 
 			<select id="compara" name="select_op'''+str(i)+'''" >
                     '''+operator_sel+'''
