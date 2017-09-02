@@ -22,7 +22,7 @@
                    D5 ----------led
                    D6 ----------1 simple relay
                    D7 ----------1 simple relay
-                   D8 ----------1 simple relay
+                   D8 ----------1 (chip select flash)
                    D9 ----------1 simple relay
                     
 
@@ -66,6 +66,7 @@
 #include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <SPI.h>
 #include <RFM69_ATC.h> 
+#include <EEPROM.h>
 #include <OnosMsg.h>
 #include <LowPower.h>
 //*********************************************************************************************
@@ -105,6 +106,7 @@
 #endif
 
 
+
 //**************************************Onos Define node **************************************
 
 //#define ota_enabled 1   //enable ota update
@@ -122,7 +124,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WreedSaa
+#define node_type_WPlug1vx
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -419,8 +421,6 @@ boolean changeObjStatus(char obj_number,int status_to_set){
     else if(obj_number==syncTime){  // if the object sent is syncTime change the sync_timeout with the value received
       sync_timeout=status_to_set*1000;// get the value in seconds
     }
-
-
 
     node_obj_status[obj_number]=status_to_set;
 
@@ -1175,9 +1175,6 @@ void interrupt1_handler(){
     handleReed();
   }
 
-  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
-
-
 
 }
 #endif
@@ -1214,7 +1211,7 @@ void setup() {
   strcpy(serial_number,"WreedSaa");
   strcat(serial_number,numeric_serial);
 
-
+// OBJECTS PIN DEFINITION__________________________________________________________________
   node_obj_pinout[reed1]=3;   // the first  object is the reed1 connected on pin 3 
   node_obj_pinout[button]=5;  // the second  object is the button  connected on pin 5 
   node_obj_pinout[led]=4;     // the third  object is the led     connected on pin 4
@@ -1223,6 +1220,7 @@ void setup() {
   node_obj_pinout[luminosity_sensor]=A0; 
   node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
   node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
+// END OBJECTS PIN DEFINITION_______________________________________________________________
   pinMode(node_obj_pinout[reed1], INPUT);
   pinMode(node_obj_pinout[button], INPUT);
   pinMode(node_obj_pinout[led], OUTPUT);
@@ -1231,19 +1229,21 @@ void setup() {
   delay(2);
   digitalWrite(node_obj_pinout[reed1],1); //set pullup on reed
 //  digitalwrite(node_obj_pinout[reed2],1);
-  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+
 
 
 #elif defined(node_type_Wrelay4x)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"Wrelay4x");
   strcat(serial_number,numeric_serial);
+// OBJECTS PIN DEFINITION___________________________________________________________________
   node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
-  node_obj_pinout[relay2]=8;  // the second object is the relay 2 connected on pin 8  
+  node_obj_pinout[relay2]=4;  // the second object is the relay 2 connected on pin 8  
   node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
   node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 
   node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
   node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+// END OBJECTS PIN DEFINITION_______________________________________________________________
   pinMode(node_obj_pinout[relay1], OUTPUT);
   pinMode(node_obj_pinout[relay2], OUTPUT);
   pinMode(node_obj_pinout[relay3], OUTPUT);
@@ -1252,16 +1252,19 @@ void setup() {
   pinMode(node_obj_pinout[button], INPUT);
 
   digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
-  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+
    
 #elif defined(node_type_WLightSS)
-  node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+
 #elif defined(node_type_WPlug1vx)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"WPlug1vx");
   strcat(serial_number,numeric_serial);
-  node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
-  node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+// OBJECTS PIN DEFINITION___________________________________________________________________
+  node_obj_pinout[led]=4;     // the object is the led     connected on pin 4
+  node_obj_pinout[button]=3;  // the object is the button  connected on pin 3 
+// END OBJECTS PIN DEFINITION_______________________________________________________________
+
   pinMode(5, OUTPUT); // set relay1
   pinMode(6, OUTPUT); // set relay2
   pinMode(7, OUTPUT); // reset relay
@@ -1269,7 +1272,7 @@ void setup() {
   pinMode(node_obj_pinout[button], INPUT);
 
   digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
-  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+
 
 #elif defined(node_type_WIRbarr0)
   node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
@@ -1343,6 +1346,15 @@ void setup() {
   composeSyncMessage();
 
 
+//enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
+#if defined(node_type_WreedSaa)
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+#elif defined(node_type_WPlug1vx)
+  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+#elif defined(node_type_Wrelay4x)
+  attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+#endif 
+
 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
@@ -1356,6 +1368,14 @@ void setup() {
 void loop() {
 
 #if defined(node_type_Wrelay4x)
+  if (button_still_same_status==0){ //filter 
+
+    obj_button_pin=node_obj_pinout[button];
+    if (digitalRead(obj_button_pin)==0) { 
+      handleButton();
+    }
+  }
+#elif defined(node_type_WPlug1vx)
   if (button_still_same_status==0){ //filter 
 
     obj_button_pin=node_obj_pinout[button];

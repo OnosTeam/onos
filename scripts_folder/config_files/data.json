@@ -7,16 +7,18 @@
         "nodeObjectsDict": {}, 
         "node_serial_number": "RouterGA0000"
       }, 
+      "WPlug1vx0004": {
+        "hwModelName": "WPlug1vx", 
+        "nodeAddress": "007", 
+        "nodeObjectsDict": {
+          "0": "presa_WPlug1vx0004"
+        }, 
+        "node_serial_number": "WPlug1vx0004"
+      }, 
       "Wrelay4x0004": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "254", 
-        "nodeObjectsDict": {
-          "0": "caldaia_Wrelay4x0004", 
-          "1": "router_Wrelay4x0004", 
-          "2": "relay_Wrelay4x0004", 
-          "5": "led_Wrelay4x0004", 
-          "6": "syncTime_Wrelay4x0004"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "Wrelay4x0004"
       }
     }, 
@@ -82,7 +84,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -117,7 +119,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "3", 
+        "status": "5", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -189,7 +191,7 @@
         "scenarios": [
           "vvv"
         ], 
-        "status": 1, 
+        "status": 2, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -225,7 +227,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1437, 
+        "status": 1043, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -261,7 +263,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 23, 
+        "status": 17, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -295,7 +297,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -332,7 +334,7 @@
         "scenarios": [
           "prova"
         ], 
-        "status": 57, 
+        "status": 23, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -414,6 +416,39 @@
         }, 
         "type": "b"
       }, 
+      "presa_WPlug1vx0004": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "presa_WPlug1vx0004=0", 
+          "1": "presa_WPlug1vx0004=1", 
+          "onoswait": "presa_WPlug1vx0004WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WPlug1vx0004", 
+        "notes": " ", 
+        "objname": "presa_WPlug1vx0004", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_out"
+      }, 
       "relay_Wrelay4x0004": {
         "cmdDict": {
           "0": "", 
@@ -438,7 +473,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -471,7 +506,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -504,7 +539,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -582,6 +617,16 @@
           "counter1"
         ], 
         "order": 0, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "WPlug1vx0004": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "presa_WPlug1vx0004"
+        ], 
+        "order": 2, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
