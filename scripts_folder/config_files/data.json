@@ -9,8 +9,10 @@
       }, 
       "WPlug1vx0004": {
         "hwModelName": "WPlug1vx", 
-        "nodeAddress": "004", 
-        "nodeObjectsDict": {}, 
+        "nodeAddress": "007", 
+        "nodeObjectsDict": {
+          "0": "presa_WPlug1vx0004"
+        }, 
         "node_serial_number": "WPlug1vx0004"
       }, 
       "Wrelay4x0004": {
@@ -117,7 +119,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "5", 
+        "status": "10", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -225,7 +227,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1062, 
+        "status": 1360, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -261,7 +263,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 17, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -332,7 +334,7 @@
         "scenarios": [
           "prova"
         ], 
-        "status": 42, 
+        "status": 40, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -438,7 +440,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": "onoswait", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 

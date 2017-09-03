@@ -83,7 +83,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
           logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
           return(-1)
 
-      time.sleep(0.4) 
+    time.sleep(0.4)   #wait a bit between the retry..
 
 
     #if serialCom.uart.ser.isOpen() == False :
@@ -464,20 +464,19 @@ def handle_new_query_to_radio_node_thread(serialCom):
         query_order=time.time()+1 #make the query less important..to allow other queries to run
         if number_of_retry_done>35:  #if greater that n wait a bit
           logprint("sleep a bit because number_of_retry_done>35")
-          time.sleep(0.2)   #need this to allow the serial node to pick up the messages from the radio nodes..
+          time.sleep(0.5)   #need this to allow the serial node to pick up the messages from the radio nodes..
       else:
         query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run   
-        if number_of_retry_done>25:  #if greater that n don't repeat the query.
-          logprint("i retried the query:"+query+"more than 15 times , I giveup",verbose=10)
+        if number_of_retry_done>20:  #if greater that n don't repeat the query.
+          logprint("i retried the query:"+query+"more than 20 times , I giveup",verbose=10)
           continue
 
         if (time.time()-query_time )>500:
           #if more than n seconds has passed since the query was made the first time..don't repeat the query.
-          logprint("i retried the query "+query+"more than 100 seconds , I giveup",verbose=10)
+          logprint("i retried the query "+query+"more than 500 seconds ago , I giveup",verbose=10)
 
           continue
 
-     
       queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
 
     else:##if the query was accepted from the radio/serial node
@@ -495,10 +494,6 @@ def handle_new_query_to_radio_node_thread(serialCom):
       priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":0,"user":user,"priority":priority,"mail_report_list":mail_report_list })
       
 
-
-
-
-  
   node_query_radio_threads_executing=0
   logprint("handle_new_query_to_radio_node_thread closed")
   return()

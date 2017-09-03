@@ -254,7 +254,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     } 
 
 
-   // [S_254sa123Wrelay4x0007_#]     [S_254sa123WreedSaa0004_#] 
+   // [S_254sa123Wrelay4x0007_#]     [S_254sa123WreedSaa0004_#]   [S_254sa123WPlug1vx0004_#]  
 
     else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
 

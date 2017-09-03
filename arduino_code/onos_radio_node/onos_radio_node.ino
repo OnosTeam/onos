@@ -109,7 +109,7 @@
 
 //**************************************Onos Define node **************************************
 
-//#define ota_enabled 1   //enable ota update
+#define ota_enabled 1   //enable ota update
 
 #if defined(ota_enabled)
   #include <RFM69_OTA.h>     //get it here: https://github.com/lowpowerlab/RFM69
@@ -835,9 +835,10 @@ boolean checkAndHandleIncomingRadioMsg(){
     Serial.println(radio.SENDERID);
     Serial.print((char*)radio.DATA);
     Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
-    //CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
- 
-    //check if received message contains Hello World
+
+#if defined(ota_enabled)   //if the node is a battery node:
+    CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
+#endif 
 
     //uint8_t message_copy[rx_msg_lenght+1];
 
