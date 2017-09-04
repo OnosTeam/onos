@@ -1808,13 +1808,13 @@ def updateOneZone(zone):
   return
 
 def updateDir():
-  retval = os.getcwd()
+  #retval = os.getcwd()
   logprint("updateDir()  executed")
 
   for zone  in zoneDict.keys() :  #will be call updateOneZone()   ....onosimprove
     
   
-    index=retval+"/"+baseRoomPath+zone+"/index.html"
+    index=baseRoomPath+zone+"/index.html"
     if os.path.isfile(index):   #if the directory exist don't create it
       logprint(zone+" exist so i don't create it")
       fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
