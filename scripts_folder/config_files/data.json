@@ -9,7 +9,7 @@
       }, 
       "WPlug1vx0004": {
         "hwModelName": "WPlug1vx", 
-        "nodeAddress": "007", 
+        "nodeAddress": "004", 
         "nodeObjectsDict": {
           "0": "presa_WPlug1vx0004"
         }, 
@@ -191,7 +191,7 @@
         "scenarios": [
           "vvv"
         ], 
-        "status": 2, 
+        "status": 4, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -227,7 +227,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1360, 
+        "status": 1426, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -263,7 +263,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 22, 
+        "status": 23, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -334,7 +334,7 @@
         "scenarios": [
           "prova"
         ], 
-        "status": 40, 
+        "status": 46, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 

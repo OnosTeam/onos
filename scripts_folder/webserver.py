@@ -1072,7 +1072,10 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       logprint(message,verbose=9)  
       return(-1)
 
-    
+    if  nodeDict[nodeSerialNumber].getNodeAddress()=="254":
+      message="web_object"+objName+" belongs to a node that has not an address yet, I will not send chobject msg"
+      logprint(message,verbose=9)  
+      return(-1)    
 
     #except:
     #  print "statusToSet "+statusToSet+"can't be converted to a number "
