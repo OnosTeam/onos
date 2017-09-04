@@ -44,7 +44,7 @@
 #define NETWORKID   100
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
 //#define FREQUENCY   RF69_433MHZ
-#define FREQUENCY   RF69_868MHZ
+#define FREQUENCY   RF69_433MHZ
 //#define FREQUENCY     RF69_915MHZ
 //#define FREQUENCY_EXACT 868000000
 #define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!

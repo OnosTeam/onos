@@ -407,7 +407,7 @@ boolean changeObjStatus(char obj_number,int status_to_set){
       digitalWrite(6,!status_to_set); // set relay2
       digitalWrite(7,status_to_set);// reset both relays
       Serial.println(F("digitalWrite with obj")); 
-      changeObjStatus(led,status_to_set);
+      changeObjStatus(led,!status_to_set);
     }
 
     else if (obj_number==led){
