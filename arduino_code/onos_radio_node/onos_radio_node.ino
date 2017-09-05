@@ -835,10 +835,11 @@ boolean checkAndHandleIncomingRadioMsg(){
     Serial.println(radio.SENDERID);
     Serial.print((char*)radio.DATA);
     Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
-
+/*
 #if defined(ota_enabled)   //if the node is a battery node:
     CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
 #endif 
+*/
 
     //uint8_t message_copy[rx_msg_lenght+1];
 
@@ -1398,7 +1399,6 @@ void loop() {
 
 
 #if defined(ota_enabled)   //if the node is a battery node:
-    ota_loop=1;
   if (ota_loop==1){
     ota_receive_loop();
   }

@@ -6145,7 +6145,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
   while (exit==0): 
 
-    time.sleep(1.5)# was 1.5 .. to save cpu load
+    time.sleep(1)# was 1.5 .. to save cpu load
 
 
 
@@ -6157,7 +6157,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
 
 
-    if ( (time.time()-last_node_check) >2 ):   #EVERY 2 SECONDS   todo: make this function..
+    if ( (time.time()-last_node_check) >10 ):   #EVERY 10 SECONDS   todo: make this function..
       #print "threads:",len(threading.enumerate())
       #print "check nodeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
 
@@ -6595,7 +6595,7 @@ def onosBusThread():
   global internet_connection
   time.sleep(5)  #wait for webserver to startup 
   while (exit==0):   #if exit ==1  then close the webserver
-    time.sleep(0.03)    #wait until layerExchangeDataQueue has some element     
+    time.sleep(0.01)    #wait until layerExchangeDataQueue has some element     
     try:
 
 

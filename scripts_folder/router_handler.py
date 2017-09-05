@@ -123,7 +123,7 @@ class RouterHandler:
           
 
 
-   #     except Exception, e:
+   #     except Exception as e:
    #       print "error in opening arduino serial port e:"+str(e.args)
    #       errorQueue.put("error in opening arduino serial port e:"+str(e.args))
    #       self.serialCommunicationIsWorking=0

@@ -171,7 +171,7 @@ class SerialPort:
 
         if self.ser.isOpen() == True :  
           self.ser.flushInput() #flush input buffer, discarding all its contents
-      except Exception, e :
+      except Exception as e :
         message="error can't flush input"
         logprint(message,verbose=5,error_tuple=(e,sys.exc_info())) 
 
@@ -203,7 +203,7 @@ class SerialPort:
 
            # try:
            #   self.ser.flushInput() #flush input buffer, discarding all its contents
-           # except Exception, e :
+           # except Exception as e :
            #   print "can't flush input"+str(e.args) 
            #   errorQueue.put( "can't flush input"+str(e.args) )
           #msgWasWritten=0
@@ -215,14 +215,14 @@ class SerialPort:
              # time.sleep(0.2) #0.02 
              # write_enable=0
              # msgWasWritten=1
-            #except Exception, e :
+            #except Exception as e :
             #  print "can't write to uart"+str(e.args) 
             #  errorQueue.put( "can't write to uart"+str(e.args) )
             #  return()
 
             #try:
             #  self.ser.flushOutput()
-            #except Exception, e :
+            #except Exception as e :
             #  print "can't flush output"+str(e.args) 
             #  errorQueue.put( "can't flush output"+str(e.args) )
 
@@ -244,10 +244,12 @@ class SerialPort:
               try:
                 buf =buf+ self.ser.read(self.ser.inWaiting())   #  self.usbR.read(1)
                 #print byte
-              except:
-                logprint("error in self.ser.read(self.ser.inWaiting()) ")
+              except Exception as e  :
+                message="error in self.ser.read(self.ser.inWaiting()) "
+                logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
                 continue
- 
+
+
 
               if len(buf)>5:
                 #waitTowriteUntilIReceive=1 
@@ -290,14 +292,10 @@ class SerialPort:
               next_buf=buf[cmd_end+3:]
               buf=''              
 
-              logprint("AAAAAAAAAAAAAAAAAAAAAAAApacket 232 cmd input :"+cmd)
+              logprint("Packet 232 cmd input :"+cmd)
 
 
-              if msgWasWritten==1:
-                last_received_packet=cmd
-                msgWasWritten=0 
-                incomingByteAfterWriteAvaible=1 
-                logprint("packet received after the write is :"+last_received_packet)
+
 
 
 
@@ -309,7 +307,12 @@ class SerialPort:
                 self.readed_packets_list.append(cmd)
                 buf=""
                 self.dataAvaible=1 
-                #waitTowriteUntilIReceive=0
+                if msgWasWritten==1:
+                  last_received_packet=cmd
+                  msgWasWritten=0 
+                  incomingByteAfterWriteAvaible=1 
+                  logprint("packet received after the write is :"+last_received_packet)
+
                 continue
 
               elif( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
@@ -333,7 +336,7 @@ class SerialPort:
                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                     continue
 
-                except Exception, e  :               
+                except Exception as e  :               
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
@@ -367,7 +370,7 @@ class SerialPort:
                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                     continue
 
-                except Exception, e  :               
+                except Exception as e  :               
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
                   #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })                 #waitTowriteUntilIReceive=0
@@ -400,7 +403,7 @@ class SerialPort:
                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                     continue
 
-                except Exception, e  :               
+                except Exception as e  :               
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
                   #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })                 #waitTowriteUntilIReceive=0
@@ -412,7 +415,7 @@ class SerialPort:
 
 
               elif( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
-                logprint("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLserial rx cmd="+cmd)
+                logprint("---serial rx cmd="+cmd,verbose=5)
                 try:
 
 
@@ -430,7 +433,7 @@ class SerialPort:
                   continue
 
 
-                except Exception, e  :               
+                except Exception as e  :               
                   message="error receiving serial sync message cmd was :" 
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
 
@@ -438,7 +441,12 @@ class SerialPort:
 
 
 
-
+              else:  # a messege is received but is not started from a node, probably is an answer
+                if msgWasWritten==1:
+                  last_received_packet=cmd
+                  msgWasWritten=0 
+                  incomingByteAfterWriteAvaible=1 
+                  logprint("_Packet received after the write is :"+last_received_packet)
 
 
            # print "serial input="+buf
@@ -513,7 +521,7 @@ class SerialPort:
     #  time.sleep(0.01)
 
     #time.sleep(0.1)
-    rx_after_tx_timeout=time.time()+3  #0.7
+    rx_after_tx_timeout=time.time()+5  #0.7
     while incomingByteAfterWriteAvaible==0:
       if rx_after_tx_timeout<time.time():
         logprint("i exit the loop because of timeout")

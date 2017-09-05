@@ -7,12 +7,18 @@
         "nodeObjectsDict": {}, 
         "node_serial_number": "RouterGA0000"
       }, 
+      "WPlug1vx0001": {
+        "hwModelName": "WPlug1vx", 
+        "nodeAddress": "003", 
+        "nodeObjectsDict": {
+          "0": "presa_WPlug1vx0001"
+        }, 
+        "node_serial_number": "WPlug1vx0001"
+      }, 
       "WPlug1vx0004": {
         "hwModelName": "WPlug1vx", 
         "nodeAddress": "004", 
-        "nodeObjectsDict": {
-          "0": "presa_WPlug1vx0004"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "WPlug1vx0004"
       }, 
       "Wrelay4x0004": {
@@ -191,7 +197,7 @@
         "scenarios": [
           "vvv"
         ], 
-        "status": 4, 
+        "status": 6, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -227,7 +233,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1426, 
+        "status": 34, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -263,7 +269,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 23, 
+        "status": 0, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -334,7 +340,7 @@
         "scenarios": [
           "prova"
         ], 
-        "status": 46, 
+        "status": 34, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -416,6 +422,39 @@
         }, 
         "type": "b"
       }, 
+      "presa_WPlug1vx0001": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "presa_WPlug1vx0001=0", 
+          "1": "presa_WPlug1vx0001=1", 
+          "onoswait": "presa_WPlug1vx0001WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WPlug1vx0001", 
+        "notes": " ", 
+        "objname": "presa_WPlug1vx0001", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "onoswait", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_out"
+      }, 
       "presa_WPlug1vx0004": {
         "cmdDict": {
           "0": "", 
@@ -440,7 +479,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -617,6 +656,16 @@
           "counter1"
         ], 
         "order": 0, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "WPlug1vx0001": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "presa_WPlug1vx0001"
+        ], 
+        "order": 3, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 

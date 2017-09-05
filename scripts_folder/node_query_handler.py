@@ -14,6 +14,34 @@ from conf import *
 
 #import pyserial_port
 
+def check_answer_to_radio_quey(expected_confirm,serialCom):
+  copy_of_readed_packets_list=serialCom.uart.readed_packets_list
+  i=len(serialCom.uart.readed_packets_list)-1 
+  while i>0:  #iterate the list from the last element to the first
+    try:
+      a=copy_of_readed_packets_list[i]          
+      logprint("check of all received answers0 current one was:"+str(a))
+      if a.find(expected_confirm)!=-1 :  #found the answer
+        logprint("I have found the answer I was looking for")
+        while a in serialCom.uart.readed_packets_list:  # remove all the occurences of the answer 
+          serialCom.uart.readed_packets_list.remove(a)  
+        return (a)
+
+      while a=="[S_ertx1_#]" and a in serialCom.uart.readed_packets_list :
+        serialCom.uart.readed_packets_list.remove(a)
+      while a=="[S_nocmd0_#]" and a in serialCom.uart.readed_packets_list:
+        serialCom.uart.readed_packets_list.remove(a)
+   
+      i=i-1 
+
+    except Exception as e  :
+      message="make_query_to_radio_node"
+      logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
+      return(-1)
+
+  return(-1)
+
+
 
 
 def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_already_done):
@@ -29,6 +57,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
   """
   logprint("make_query_to_radio_node executed with number_of_retry_already_done:"+str(number_of_retry_already_done))
   max_retry=1 
+  answer_received=""
   for m in range(0,max_retry):   #retry n times to get the answer from node  
     
     # [S_001dw06001_#]
@@ -49,114 +78,43 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     # [S_ok003sr070811_#]
     expected_confirm="[S_ok"+query[3:end_of_query+3]
      #if data.find("ok"+query[3:end_of_query+3])!=-1:    
-    logprint("expected_confirm:"+expected_confirm)
+    logprint("expected_confirm:"+expected_confirm+"__")
 
+    
     if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
-      copy_of_readed_packets_list=serialCom.uart.readed_packets_list
-
+      
       logprint("current serialCom.uart.readed_packets_list:"+str(serialCom.uart.readed_packets_list))
-
-      i=len(serialCom.uart.readed_packets_list)-1 
-      while i>0:  #iterate the list from the last element to the first
-        try:
-          a=copy_of_readed_packets_list[i]
-                
-          logprint("check of all received answers000000000 current one was:"+str(a))
-
-          if a.find(expected_confirm)!=-1 :  #found the answer
-            while a in serialCom.uart.readed_packets_list:  # remove all the occurences of the answer 
-              serialCom.uart.readed_packets_list.remove(a)  
-            logprint("I have found the answer I was looking for")
-            return (a)
-
-          if a=="[S_ertx1_#]" and a in serialCom.uart.readed_packets_list :
-            serialCom.uart.readed_packets_list.remove(a)
-          
-
-          if a=="[S_nocmd0_#]" and a in serialCom.uart.readed_packets_list:
-            serialCom.uart.readed_packets_list.remove(a)
-   
-          i=i-1 
-
-        except Exception as e  :
-          message="make_query_to_radio_node"
-          logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
-          return(-1)
-
-    time.sleep(0.4)   #wait a bit between the retry..
-
-
-    #if serialCom.uart.ser.isOpen() == False :
-     # print "serial port is not open in make_query_to_radio_node()"
-      #priorityCmdQueue.put( {"cmd":"reconnectSerialPort"}) 
-    # time.sleep(1)  
-      #return(-1)
+      answer_received=check_answer_to_radio_quey(expected_confirm,serialCom)
+      try:  #need this because sometimes it is an int..and some time is null..
+        if answer_received.find(expected_confirm)!=-1 :  #found the answer
+          return(answer_received)
+      except:
+        pass
 
 
     try:  
       data=serialCom.uart.write(query)
-
-      #data=pyserial_port.writeToSerial(query)
     except Exception as e:
       message="error writing to serial port, data to send:"+query+", at:"+getErrorTimeString()
       logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
-    #time.sleep(0.1*m) 
-     # time.sleep(2)  
 
+    if data.find(expected_confirm)!=-1 :  #found the answer
+      while data in serialCom.uart.readed_packets_list:  # remove all the occurences of the answer 
+        serialCom.uart.readed_packets_list.remove(data)  
 
-    if data.find(expected_confirm)!=-1:
       return(data)
 
-    #if data=="error_reception":
-    #  continue
-  
-    
-    
-  
-     # return(1) 
-    #print "expected confirm:"+expected_confirm
-    #print "uart rx list:"
-    #print serialCom.uart.readed_packets_list
+    answer_received=check_answer_to_radio_quey(expected_confirm,serialCom)
+    try:  #need this because sometimes it is an int..and some time is null..
+      if answer_received.find(expected_confirm)!=-1 :  #found the answer
+        return(answer_received)
+    except:
+      pass
+#    time.sleep(0.4)   #wait a bit between the retry..
+
+  logprint("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )
 
 
-
-
-   # with lock_serial_input:
-
-    #for a in serialCom.uart.readed_packets_list.:
-
-    copy_of_readed_packets_list=serialCom.uart.readed_packets_list
-
-    for a in copy_of_readed_packets_list:  #iterate the list from the last element to the first
-      #a=serialCom.uart.readed_packets_list[i]
-
-      logprint("check of all received answers current was:"+str(a))
-      if a.find(expected_confirm)!=-1 :  #found the answer
-        serialCom.uart.readed_packets_list.remove(a)
-        logprint("I have found the answer I was looiking for")
-        return (a)
-
-      try:
-        if a=="[S_ertx1_#]":
-          serialCom.uart.readed_packets_list.remove(a)
-     
-        if a=="[S_nocmd0_#]":
-          serialCom.uart.readed_packets_list.remove(a)
-
-      except:
-        logprint("error serialCom.uart.readed_packets_list.remove(a) ")
-    #print "uart rx list after:"
-    #print serialCom.uart.readed_packets_list
- 
-
-
-    #print "answer received from serial port is wrong:'"+data+"'end_data, trying query the serial node the expected answer was:"+expected_confirm+",the number of try is "+str(m) 
-    #errorQueue.put("answer received from serial port is wrong:'"+data+"', trying query the serial node the expected answer was:'"+expected_confirm+"'the number of try is "+str(m)+" at:" +getErrorTimeString() )    
-    #time.sleep(0.2*m) 
-
-
-  logprint("Great serial error,answer received from serial port was wrong:"+data+"end_data, trying query the serial,node the query was"+query+"the number of try was "+str(max_retry)+" at:" +getErrorTimeString() )  
-             
   return(-1) 
 
 
@@ -482,7 +440,9 @@ def handle_new_query_to_radio_node_thread(serialCom):
     else:##if the query was accepted from the radio/serial node
       node_fw=nodeDict[node_serial_number].getNodeFwVersion()
       #since onos was able to talk to the node I update the LastNodeSync
-      layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+      nodeDict[node_serial_number].updateLastNodeSync(time.time())
+
+      #layerExchangeDataQueue.put( {"cmd":"updateNodeAddress","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
       if cmd=="set_address":
         new_address=status_to_set
