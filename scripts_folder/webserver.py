@@ -224,7 +224,7 @@ def transform_object_to_dict(object_dictionary):
   for b in object_dictionary.keys():
     a=object_dictionary[b]   #bug  return ascii and not unicode?
     name=a.getName()
-    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1(),u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
+    obj_tmp_dict[name]={u"objname":name,u"obj_type":a.getType(),u"obj_status":a.getStatus(),u"obj_style0":a.getStyle0(),u"obj_style1":a.getStyle1(),u"obj_html0":a.getHtml0(),u"obj_html1":a.getHtml1() ,u"obj_htmlwait":a.getHtmlWait() ,u"obj_cmd0":a.getCommand0(),u"obj_cmd1":a.getCommand1(),u"obj_init_cmd":a.getInitCommand(),u"obj_notes":a.getNotes(),u"node_serial_number":a.getHwNodeSerialNumber(),u"obj_Pins":a.getAttachedPinList()}
   return (obj_tmp_dict)  
 
 

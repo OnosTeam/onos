@@ -3,8 +3,8 @@
 
 
 <?php
-
 ini_set('display_errors', 'On');
+error_reporting(E_ALL | E_STRICT);
 $db_folder=realpath('./').'/users_db/';
 
 
@@ -51,6 +51,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 }
 echo "key".$key."<br>";
+
+
+if (!file_exists($db_folder)) {
+mkdir($db_folder);
+}
+
+$user_db_file=$db_folder.".db_users_account";
+if (!file_exists($user_db_file)) {
+
+  $db = new SQLite3($user_db_file);
+  $db->exec("CREATE TABLE onos_user (onos_username VARCHAR(40) PRIMARY KEY,user_password VARCHAR(40),onos_db TEXT )" );
+  $db->close();
+
+  echo "the db file:".$user_db_file."didn't exist , I created it <br>";
+}
+
+
 
 $user_folder_prefix=".dir";
 

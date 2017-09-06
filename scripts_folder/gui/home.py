@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# encoding=utf8
+
 
 from get_top_menu import *   #works because there is sys.path.append(lib_dir2)  in globalVar.py
 

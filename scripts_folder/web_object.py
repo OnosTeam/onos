@@ -331,6 +331,10 @@ class WebObject(object):   # inherit from object python class
     def getHtml1(self):             #return the static html1  of the button
           return(self.html1)
 
+    def getHtmlWait(self):             #return the static html1  of the button
+          return(self.htmlDict[u"onoswait"])
+
+
 
     def setHtml0(self,html0):             #set the static html0  of the button
           self.html0=html0

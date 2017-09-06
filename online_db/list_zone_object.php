@@ -280,14 +280,16 @@ foreach ($zone_objects as $i) {
   $obj_type=$row["obj_type"];
 
   if ($obj_status=="0"){
-    $state_img_src="img/on.png";
+    $state_img_src="img/off.png";
     $obj_next_status="1";
 
   }
   else{
-    $state_img_src="img/off.png";
+    $state_img_src="img/on.png";
     $obj_next_status="0";
    }
+
+
 
 #  echo '<div style="'.$obj_style.'"><a href="change_object_status.php?z='.$zone_name.'&obj='.$obj_name.'&st='.$obj_next_status.'">'.       $obj_html.'</a></div>';
 

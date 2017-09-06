@@ -171,7 +171,7 @@ else:
 online_usersDict={}
 online_first_contact=1  #tell if is the first contact between this router and the online server
 onos_online_key=router_sn  #unique key used by the router to login on the online server 
-onos_online_password="1234"  #password used by the router to login on the online server 
+onos_online_password="qwerty"  #password used by the router to login on the online server 
 onos_online_site_url="http://myonos.com/onos/"  #remote online server url (where the php onos scripts are located)
 
 internet_connection=0  #tell onos if there is internet connection, do not change it..onos will change it if there is internet
