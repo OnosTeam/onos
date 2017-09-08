@@ -109,7 +109,7 @@
 
 //**************************************Onos Define node **************************************
 
-#define ota_enabled 1   //enable ota update
+#define ota_enabled    //enable ota update
 
 #if defined(ota_enabled)
   #include <RFM69_OTA.h>     //get it here: https://github.com/lowpowerlab/RFM69
@@ -124,7 +124,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_WreedSaa
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -161,7 +161,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
   #define TOTAL_OBJECTS 11 //11 because there are 10 elements + a null for the array closing
   #define node_default_timeout 1500 //36000000  //10 minutes of timeout
-  #define battery_node 1            // tell the software to go to sleep to keep battery power. 
+  #define battery_node            // tell the software to go to sleep to keep battery power. 
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
   uint8_t logic_reed1_status=0;
   uint8_t logic_reed2_status=0;
@@ -1200,7 +1200,7 @@ void ota_receive_loop(){
 
 
 void setup() {
-
+  noInterrupts(); // Disable interrupts    //important for lamp node
 
   node_obj_status[syncTime]=node_default_timeout;
   sync_timeout=node_obj_status[syncTime];
@@ -1228,7 +1228,6 @@ void setup() {
   pinMode(node_obj_pinout[led], OUTPUT);
   pinMode(node_obj_pinout[digOut], OUTPUT);
   pinMode(node_obj_pinout[reed2], INPUT);
-  delay(2);
   digitalWrite(node_obj_pinout[reed1],1); //set pullup on reed
 //  digitalwrite(node_obj_pinout[reed2],1);
 
@@ -1291,9 +1290,9 @@ void setup() {
 
 
 //  while (!Serial); // wait until serial console is open, remove if not tethered to computer
-  noInterrupts(); // Disable interrupts    //important for lamp node
 
-//  pinMode(RFM69_RST, OUTPUT);
+
+
 
 
 
@@ -1311,12 +1310,7 @@ void setup() {
   Serial.println(F("Setup -------------------------------------------------"));
   Serial.println(F("Feather RFM69W Receiver"));
 
-#if defined(ota_enabled)
-  if (flash.initialize())
-    Serial.println("SPI Flash Init OK!");
-  else
-    Serial.println("SPI Flash Init FAIL!");
-#endif 
+
 
 /*  
 
@@ -1344,10 +1338,6 @@ void setup() {
   digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
 
 
-  interrupts(); 
-  composeSyncMessage();
-
-
 //enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
 #if defined(node_type_WreedSaa)
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
@@ -1359,11 +1349,26 @@ void setup() {
 #endif 
 
 
+
+
+
+
+
+  interrupts(); 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
   // different seed numbers each time the sketch runs.
   // randomSeed() will then shuffle the random function.
   //randomSeed(analogRead(1));
+
+
+#if defined(ota_enabled)   //warning don't move this part (leave it as last part after enabling interrupts or the arduino will sometimes not boot.
+  if (flash.initialize())
+    Serial.println("SPI Flash Init OK!");
+  else
+    Serial.println("SPI Flash Init FAIL!");
+#endif 
+
 
 
 }
