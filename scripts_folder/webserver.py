@@ -6533,6 +6533,15 @@ def executeQueueFunction(dataExchanged):
       else:
         new_address=getNextFreeAddress(node_serial_number,uart_router_sn,node_fw)
 
+
+
+      current_query_to_radio_nodes_list=queryToRadioNodeQueue.queue
+
+      for a in current_query_to_radio_nodes_list: 
+        if (("sa" in a)&(node_serial_number in a) ):  #there is already a query that want to set a new address to this node 
+          logprint("there is already a query that want to set a new address to this node") 
+          return  
+
       hardware.setAddressToNode(node_serial_number,old_address,new_address) 
       #if result==1:
       #  print "i save the new address in the config memory"
