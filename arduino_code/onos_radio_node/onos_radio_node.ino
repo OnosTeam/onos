@@ -1155,7 +1155,7 @@ void handleButton(){//handle the main node button , you can't call this from int
   }
 
 }
-#if defined(node_type_WreedSaa)
+//#if defined(node_type_WreedSaa)
 void interrupt1_handler(){
 
 
@@ -1176,10 +1176,11 @@ void interrupt1_handler(){
     Serial.println(F("-reed has changed again"));
     handleReed();
   }
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
 
 
 }
-#endif
+//#endif
 
 
 
@@ -1256,7 +1257,7 @@ void setup() {
 
    
 #elif defined(node_type_WLightSS)
-
+  memset(serial_number,0,sizeof(serial_number)); //to clear the array
 #elif defined(node_type_WPlug1vx)
   memset(serial_number,0,sizeof(serial_number)); //to clear the array
   strcpy(serial_number,"WPlug1vx");
@@ -1341,6 +1342,7 @@ void setup() {
 //enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
 #if defined(node_type_WreedSaa)
   attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+  Serial.println("WreedSaa interrupt enabled");
 #elif defined(node_type_WPlug1vx)
   digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
   attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);

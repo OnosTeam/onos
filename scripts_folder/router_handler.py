@@ -675,8 +675,8 @@ class RouterHandler:
       #result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
       #if result ==1:
       #  int_address=int(new_address)
-      #  if int_address not in next_node_free_address_list:
-      #    next_node_free_address_list.append(int_address)
+      #  if int_address not in node_used_addresses_list:
+      #    node_used_addresses_list.append(int_address)
 
       query_time=time.time()
       number_of_retry_done=0

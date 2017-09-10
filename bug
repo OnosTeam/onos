@@ -1,4 +1,8 @@
 
+Se onoscenter sta provando ad assegnare un indirizzo ad un altro indirizzo ad un nodo (che non ha inirizzo 254) ma questo viene resettato , la richiesta verrà ripetuta molte volte mentre il nodo continuerà a chiedere un indirizzo ..entrambi non riusciranno a comunicare..
+
+
+
 se un nodo ha un solo oggetto allora la zona non ne mostra nessuno...
 
 

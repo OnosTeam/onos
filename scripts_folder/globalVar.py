@@ -116,7 +116,7 @@ last_pin_read_time=0
 
 platform=platform.node()
 
-if platform.find("Orange")!=-1: #found uname with orange pi name
+if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1): #found uname with orange pi name
   router_hardware_type="RouterOP"
 
 
@@ -707,7 +707,7 @@ recoverydata_json='''
 
 nodeDict={}
 
-next_node_free_address_list=[1,2]   #list of free node addresses from 2 to 254
+node_used_addresses_list=[0,1,2]   #list of free node addresses from 2 to 254
 usersDict={}
 usersDict["onos_mail_guest"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}
 usersDict["web_interface"]={"pw":"onos","mail_control_password":"onosm","priority":0,"user_mail":"elettronicaopensource@gmail.com"}

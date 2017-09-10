@@ -332,18 +332,19 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
     if len(node_address)==3:  #if is a radio node
       logprint("the node to update is a radio node",verbose=3)
       numeric_address=int(node_address)
-      if numeric_address not in next_node_free_address_list: 
+      if numeric_address not in node_used_addresses_list: 
         logprint("numeric_address not in list,I add it",verbose=1)
-        next_node_free_address_list.append(numeric_address)  
-      else :
+        node_used_addresses_list.append(numeric_address)  
+      else :  #if the node address is already in the used address list
         for node in nodeDict.keys():
           if nodeDict[node].getNodeAddress()==node_address:
             
             if node!=node_sn:  #found another node with the same address! I will therefore assing another one to this node..
-              message="warning I have found another node with the same address,I will therefore assing another one to this node:"+node_sn
-              logprint(message,verbose=5)
+              if nodeDict[node].getNodeActivity()==1:  #if the node with the same address is active
+                message="warning I have found another node with the same address,I will therefore assing another one to this node:"+node_sn
+                logprint(message,verbose=5)
 
-              priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":node_sn,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":node_sn,"nodeAddress":node_address,"nodeFw":node_fw}) 
          
 
       #if node_address !="254": #if the node have already an address
@@ -378,7 +379,7 @@ def getNextFreeAddress(node_sn,uart_router_sn,node_fw):# get the next free addre
 
   logprint("getNextFreeAddress executed with node_sn:"+str(node_sn) )
 
-  #logprint(next_node_free_address_list) 
+  #logprint(node_used_addresses_list) 
   
   #if the node has already an address..reuse it
   node_address=nodeDict[node_sn].getNodeAddress() 
@@ -397,7 +398,7 @@ def getNextFreeAddress(node_sn,uart_router_sn,node_fw):# get the next free addre
 
 
   for number in range(2,254):
-    if number not in next_node_free_address_list:
+    if number not in node_used_addresses_list:
       for node in nodeDict:
         free_address=1
         tmp_address=nodeDict[node].getNodeAddress() 
@@ -409,7 +410,7 @@ def getNextFreeAddress(node_sn,uart_router_sn,node_fw):# get the next free addre
         str_address=str(number)
         while (len(str_address)<3):
           str_address="0"+str_address
-        next_node_free_address_list.append(number)
+        node_used_addresses_list.append(number)
         return(str_address)
 
   for node in nodeDict.keys(): #todo test it!
@@ -6202,8 +6203,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
           node_address=nodeDict[a].getNodeAddress() 
           numeric_address=int(node_address)
-          if numeric_address not in next_node_free_address_list: 
-            next_node_free_address_list.pop()
+          if numeric_address not in node_used_addresses_list: 
+            node_used_addresses_list.pop()
 
           nodeDict[a].setNodeActivity(0)  #set the node as inactive
           message="the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it? difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
