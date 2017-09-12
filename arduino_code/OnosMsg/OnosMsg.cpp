@@ -37,7 +37,6 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
   memset(decoded_result,0,sizeof(decoded_result)); //to clear the array
   strcpy(decoded_result,"[S_err01_#]");
 
- 
 
   if ((received_message[0]=='[')&&(received_message[1]=='S')&&(received_message[2]=='_') ) {
  // the onos cmd was found           [S_001dw06001_#]
@@ -305,7 +304,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       Serial.println(this_node_address);
       reInitializeRadio=1;  //to execute beginRadio()
       interrupts();
-      first_sync=0;
+      //first_sync=0;
         
       return;
     }
@@ -379,7 +378,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
       this_node_address=254;
 #endif
 
-      first_sync=0;
+      //first_sync=0;
         
       return;
     }

@@ -14,7 +14,7 @@
 
 // Your class header here...
 extern int this_node_address;
-extern boolean first_sync;
+//extern boolean first_sync;
 
 extern volatile char str_this_node_address[4];
 extern uint8_t main_obj_selected;

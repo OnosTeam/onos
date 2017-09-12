@@ -124,7 +124,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_WreedSaa
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -160,7 +160,7 @@ char numeric_serial[5]="0004";   // this is the progressive numeric serial numbe
   #define luminosity_sensor 10
 
   #define TOTAL_OBJECTS 11 //11 because there are 10 elements + a null for the array closing
-  #define node_default_timeout 1500 //36000000  //10 minutes of timeout
+  #define node_default_timeout 10000 // keep it like this to make the status update correctly
   #define battery_node            // tell the software to go to sleep to keep battery power. 
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
   uint8_t logic_reed1_status=0;
@@ -319,7 +319,7 @@ uint8_t radioRetryAllarm=100;
 uint8_t radioTxTimeoutAllarm=50;  
 
 # define gateway_address 1
-boolean first_sync=1;
+//boolean first_sync=1;
 int random_time=0;
 
 
@@ -1135,7 +1135,7 @@ void handleButton(){//handle the main node button , you can't call this from int
       memset(encript_key,0,sizeof(encript_key)); //to clear the array
       strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
       this_node_address=254;//reset the node address
-      first_sync=1;
+      //first_sync=1;
       setup();
       //beginRadio();  //restart radio with the default encript_key  
       //checkCurrentRadioAddress();  
@@ -1171,13 +1171,16 @@ void interrupt1_handler(){
   delay(2);
   node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
   node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
-  
+/* 
   if ((reed1_status_sent!=node_obj_status[reed1] ) |(reed2_status_sent!=node_obj_status[reed2] )){ //if the reed has changed status during last transmission
     Serial.println(F("-reed has changed again"));
     handleReed();
   }
-  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+*/
 
+
+  attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+  handleReed();
 
 }
 #endif

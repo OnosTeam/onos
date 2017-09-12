@@ -138,7 +138,7 @@ int received_message_value;
 char decoded_uart_answer[24]="er00_#]";
 volatile char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
-//volatile char filtered_uart_message[rx_msg_lenght+3];
+volatile char filtered_uart_message[rx_msg_lenght+3];
 volatile char filtered_radio_message[rx_msg_lenght+3];
 volatile char syncMessage[syncMessage_lenght];
 volatile char str_this_node_address[4];
@@ -170,11 +170,11 @@ OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
 
 uint8_t radioRetry=3;      //todo: make this changable from serialport
 uint8_t radioTxTimeout=70;  //todo: make this changable from serialport
-
-uint8_t radioPriority=9;
-uint8_t uartPriority=10;
+uint8_t uartPriority=9;
+uint8_t radioPriority=10;
 
 #define default_radioPriority 9
+
 #define default_uartPriority 10
 
 
@@ -418,7 +418,6 @@ boolean checkAndReceiveSerialMsg(){
     //   Serial.println("cmd end found-------------------------------");
       onos_cmd_end_position=counter-2;
 
-/*
       memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
 
       for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
@@ -429,17 +428,12 @@ boolean checkAndReceiveSerialMsg(){
         }
 
       }
-*/
+
 
       //decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
-      
-      OnosMsgHandler.decodeOnosCmd(data_from_serial+onos_cmd_start_position,decoded_uart_answer); 
-//      Serial.print(data_from_serial[onos_cmd_start_position]);
-//      Serial.print(data_from_serial[onos_cmd_start_position+1]);
-//      Serial.print(data_from_serial[onos_cmd_start_position+2]);
+      OnosMsgHandler.decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
       if ( strcmp(decoded_uart_answer,"[S_remote_#]")==0){
-        //ForwardSerialMessageToRadio(filtered_uart_message,received_message_address);
-        ForwardSerialMessageToRadio(data_from_serial+onos_cmd_start_position,received_message_address);
+        ForwardSerialMessageToRadio(filtered_uart_message,received_message_address);
       }
       else {
         sendSerialAnswerFromSerialMsg();
@@ -515,17 +509,16 @@ void sendSerialAnswerFromSerialMsg(){
   if((decoded_uart_answer[0]=='o')&&(decoded_uart_answer[1]=='k')){
       //strcpy(received_message_answer,""); 
     memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array
-    //strcat(decoded_uart_answer,filtered_uart_message);
-    memcpy(&decoded_uart_answer+strlen(decoded_uart_answer),data_from_serial+onos_cmd_start_position,rx_msg_lenght);
+    strcat(decoded_uart_answer,filtered_uart_message);
     Serial.print(F("[S_ok"));
     for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
       if (pointer<3){//to skip the "[S_"  because I have just sent it..
         continue;
       }
-      Serial.print(data_from_serial[onos_cmd_start_position+pointer]);
+      Serial.print(filtered_uart_message[pointer]);
 
-      if ((data_from_serial[onos_cmd_start_position+pointer-1]=='#')&&(data_from_serial[onos_cmd_start_position+pointer]==']')){  
+      if ((filtered_uart_message[pointer-1]=='#')&&(filtered_uart_message[pointer]==']')  ) {//  
         break;
       }
     }   
@@ -548,7 +541,7 @@ void sendSerialAnswerFromSerialMsg(){
   memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array  
   strcpy(decoded_uart_answer,"[S_nocmd2_#]");  
   //strcpy(filtered_uart_message,""); 
-  //memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
+  memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
   //Serial.flush(); //make sure all serial data is clocked out 
   enable_answer_back=0;
 
@@ -879,6 +872,7 @@ sync:
 
 
 restart:
+
 
   if (Serial.available() > 0) {
 
