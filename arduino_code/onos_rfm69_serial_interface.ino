@@ -516,7 +516,7 @@ void sendSerialAnswerFromSerialMsg(){
       //strcpy(received_message_answer,""); 
     memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array
     //strcat(decoded_uart_answer,filtered_uart_message);
-    memcpy(&decoded_uart_answer+strlen(decoded_uart_answer),data_from_serial+onos_cmd_start_position,rx_msg_lenght);
+    memcpy(decoded_uart_answer,data_from_serial+onos_cmd_start_position,rx_msg_lenght);
     Serial.print(F("[S_ok"));
     for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
  
@@ -884,10 +884,10 @@ restart:
 
     if (radioPriority>uartPriority){// to alternate radio and serial reception...
       if (radioPriority>1){
-        radioPriority=radioPriority-2; // -2 gives twice the priority to the other.. 
+        radioPriority=radioPriority-1; // -2 gives twice the priority to the other.. 
       }
-      Serial.print(F("radio_priority"));  
-      Serial.print(radioPriority);
+      //Serial.print(F("radio_priority"));  
+      //Serial.print(radioPriority);
       radioRxCheck(); 
       uartRxCheck(); 
     }
@@ -895,8 +895,8 @@ restart:
       if (uartPriority>1){
         uartPriority=uartPriority-1; 
       }
-      Serial.print(F("uartPriority"));  
-      Serial.print(uartPriority);
+      //Serial.print(F("uartPriority"));  
+      //Serial.print(uartPriority);
       uartRxCheck();  
       radioRxCheck();
     }
