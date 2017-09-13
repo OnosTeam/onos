@@ -680,6 +680,10 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Continued fixing the scenario operation bugs, now there is a form that appear when you select variabile_numerica
                 Bugfix in scenario_operations, now also the first operation textarea is saved.
                 Changed the form input way to block user input from hidden to disable to make it works with ipad
+                Changed serial interface artduino software..
+
+
+todo:mettere priorita oggetti su hardwareModelDict
 
 
 Bug: se non si mette un a seconda operazione(+-= ..) al salvataggio si perdono anche altre seconde operazioni
