@@ -378,7 +378,7 @@ boolean changeObjStatus(char obj_number,int status_to_set){
 
 #if defined(node_type_WreedSaa)
     if ( (obj_number==led)|(obj_number==digOut) ){
-      digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+      digitalWrite(node_obj_pinout[obj_number],!status_to_set); // 
       Serial.println(F("digitalWrite with obj")); 
     }
 

@@ -1237,7 +1237,7 @@ def NodePinToWebObject(node_sn,pin_number,pin_status):#change the webobject stat
           else:#the status is legit with the webobj type
             objName=objectDict[a].getName()                      
             #changeWebObjectStatus(objName,int (pin_status),write_hw_enable) #banana add to queue
-            layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str (pin_status),"write_to_hw":write_hw_enable,"user":"onos_node","priority":99,"mail_report_list":[]})
+            layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str (pin_status),"write_to_hw":write_hw_enable,"user":"onos_node","priority":8,"mail_report_list":[]})
 
             logprint("pin changed from external node")                      
 
@@ -3431,7 +3431,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   status_to_set=not (objectDict[objName].getStatus())
 
 
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":self.current_username,"mail_report_list":[]})  
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":8,"user":self.current_username,"mail_report_list":[]})  
  
 
                 logprint("i set"+objName+" to :"+str(status_to_set) )
@@ -3476,7 +3476,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   logprint("path="+address_bar)
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":99,"user":current_username,"mail_report_list":[]})    
+                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":8,"user":current_username,"mail_report_list":[]})    
 
                   logprint ("i set"+objName+" to :"+str(status_to_set))
 
@@ -6211,7 +6211,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           logprint(message,verbose=6)  
 
           for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
-            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
+            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":10,"mail_report_list":[]}) 
 
           #for b in objectDict.keys():
           #  if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
@@ -6233,7 +6233,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
               if ((current_s=="inactive") or (current_s=="onoswait") ): 
               #  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
                 logprint("the new status will be:"+str(prev_s) )
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":10,"mail_report_list":[]})
                 #set the web_object to the status before the disconnection 
           
           #nodeDict[a].updateLastNodeSync(time.time())
