@@ -880,8 +880,8 @@ restart:
       if (radioPriority>1){
         radioPriority=radioPriority-2; // -2 gives twice the priority to the other.. 
       }
-      Serial.print(F("radio_priority"));  
-      Serial.print(radioPriority);
+      //Serial.print(F("radio_priority"));  
+      //Serial.print(radioPriority);
       radioRxCheck(); 
       uartRxCheck(); 
     }
@@ -889,8 +889,8 @@ restart:
       if (uartPriority>1){
         uartPriority=uartPriority-1; 
       }
-      Serial.print(F("uartPriority"));  
-      Serial.print(uartPriority);
+      //Serial.print(F("uartPriority"));  
+      //Serial.print(uartPriority);
       uartRxCheck();  
       radioRxCheck();
     }
