@@ -424,11 +424,12 @@ class SerialPort:
                   node_fw=cmd[8:12]
                   node_address=cmd[3:6]
 
+                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })              
+
                   if node_address=="254" or node_address=="001" :  #the node is looking for a free address or to a confirm for first contact
                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
                
-                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })               
                   #waitTowriteUntilIReceive=0  
                   continue
 

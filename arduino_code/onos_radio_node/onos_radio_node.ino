@@ -516,11 +516,11 @@ void composeSyncMessage(){
 
   for (uint8_t i=0;i<=analog_readings;i=i+1){
     temperature_sensor_value=temperature_sensor_value+(analogRead(node_obj_pinout[tempSensor])*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius  
-    delay(1);
+    while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
     luminosity_sensor_value= luminosity_sensor_value+analogRead(node_obj_pinout[luminosity_sensor])/4;
-    delay(1);
+    while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
     battery_value=battery_value+analogRead(node_obj_pinout[battery_state])/4;
-    delay(1);
+    while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
   }
   
   temperature_sensor_value=(temperature_sensor_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..

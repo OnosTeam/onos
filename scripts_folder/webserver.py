@@ -339,7 +339,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
         for node in nodeDict.keys():
           if nodeDict[node].getNodeAddress()==node_address:
             
-            if node!=node_sn:  #found another node with the same address! I will therefore assing another one to this node..
+            if node!=node_sn:  #found another node with the same address! I will therefore assign another one to this node..
               if nodeDict[node].getNodeActivity()==1:  #if the node with the same address is active
                 message="warning I have found another node with the same address,I will therefore assing another one to this node:"+node_sn
                 logprint(message,verbose=5)

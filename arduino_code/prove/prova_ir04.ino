@@ -5,7 +5,7 @@
 
 
 
-
+#define numbers_of_readings 10
 int currentSystemState=0;
 
 
@@ -23,10 +23,10 @@ int count=0;
  
 int sensore1 = 1;    //sensore esterno alla camera
 int sensore2 = 0;    //sensore interno alla camera
-int threshold=50;
-int wait_for_other_ir_to_be_oscured=150;
-int delay_between_readings=25; //micro sec
-int delay_between_old_and_new_read=2;
+int threshold=70;
+//int wait_for_other_ir_to_be_oscured=150;
+//int delay_between_readings=25; //micro sec
+//int delay_between_old_and_new_read=2;
 
 
 
@@ -66,13 +66,13 @@ int average_read(int analog_pin){
  // delayMicroseconds(delay_between_readings); 
   int sensor_read=0;
   int j=0;
-  int readings[31];
+  int readings[numbers_of_readings];
   int currentRead=0;
   int bound=130;  
   int previous_values=0;
   int k=0;
   analogRead(analog_pin); 
-  while (j<15){
+  while (j<numbers_of_readings){
    // delayMicroseconds(delay_between_readings); 
 
 
@@ -130,11 +130,11 @@ void getDerivate(){
 
 
   count=0;
-  int sensor1Array[16];
-  int sensor2Array[16];
+  int sensor1Array[numbers_of_readings+1];
+  int sensor2Array[numbers_of_readings+1];
   int r1=0;
   int r2=0;
-  while (count<15){
+  while (count<numbers_of_readings){
     r1=average_read(sensore1);
     r2=average_read(sensore2);
     sensor1Array[count]=r1;
@@ -157,17 +157,15 @@ void getDerivate(){
   sensor1Derivate=0;
   sensor2Derivate=0;
   count=0;
-  while (count<14){
+/*  enable to use derivative
+  while (count<numbers_of_readings){
     sensor1Derivate=sensor1Derivate+sensor1Array[count+1]-sensor1Array[count];
     sensor2Derivate=sensor2Derivate+sensor2Array[count+1]-sensor2Array[count];
 
-    //sensor1Avarage=sensor1Avarage+average_read(sensore1);       
-    //sensor2Avarage=sensor2Avarage+average_read(sensore2); 
-//    delay(delay_between_old_and_new_read);
     count=count+1;
 
   }
-
+*/
 
 
 
@@ -222,7 +220,8 @@ restart:
    
   while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read
   sensor2Value= analogRead(sensore2);   
-
+  while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
+  sensor2Value= (sensor2Value+analogRead(sensore2))/2; 
   
   if (sensor2Value >(sensor2Avarage+threshold)  ){
     Serial.println("if sensor2Value");   
@@ -269,7 +268,7 @@ restart:
 
       }
       else{
-        Serial.println("wait1"); 
+        Serial.println("w1"); 
        //  Serial.println(k);   
       } 
        
@@ -277,8 +276,9 @@ restart:
   }   
   
   while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
-  sensor1Value= analogRead(sensore1);   
-
+  sensor1Value= analogRead(sensore1);  
+  while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read  
+  sensor1Value=(sensor1Value+analogRead(sensore1))/2; 
     
   if (sensor1Value >(sensor1Avarage+threshold)  ){
     Serial.println("if sensor1Value1");  
@@ -295,7 +295,7 @@ restart:
       if (sensor2Value >(sensor2Avarage+threshold)  ){
          
         persone_presenti=persone_presenti+1;  
-        Serial.print("personeeeeeeeeeeeeeeeeeeeeeeeeeeee:");   
+        Serial.print("personeeeeeeeee:");   
         Serial.println(persone_presenti);   
         Serial.print( sensor1Derivate); 
         Serial.print( "     ");   
@@ -323,7 +323,7 @@ restart:
       }
 
       else{
-        Serial.println("wait2"); 
+        Serial.println("w2"); 
          // Serial.println(k);    
 
       }
