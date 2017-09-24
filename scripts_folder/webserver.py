@@ -6536,11 +6536,15 @@ def executeQueueFunction(dataExchanged):
 
 
       current_query_to_radio_nodes_list=queryToRadioNodeQueue.queue
+      # current_query_to_radio_nodes_list example like this (10, '[S_254sa003WreedSaa00041_#]\n', 'WreedSaa0004', 0, 1506273338.843928, 'set_address', '003', 'onos_node', 10, [], 'set_address')
 
       for a in current_query_to_radio_nodes_list: 
-        if (("sa" in a)&(node_serial_number in a) ):  #there is already a query that want to set a new address to this node 
-          logprint("there is already a query that want to set a new address to this node") 
-          return  
+        if len(a)>0:
+          query=a[1]
+          logprint("checking if already queryng this cmd, current check is:"+str(query))
+          if (("sa" in query)&(node_serial_number in query) ):#there is already a query that want to set a new address to this node 
+            logprint("there is already a query that want to set a new address to this node") 
+            return  
 
       hardware.setAddressToNode(node_serial_number,old_address,new_address) 
       #if result==1:

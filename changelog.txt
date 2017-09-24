@@ -681,6 +681,7 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Bugfix in scenario_operations, now also the first operation textarea is saved.
                 Changed the form input way to block user input from hidden to disable to make it works with ipad
                 Changed serial interface artduino software..
+                Bugfix:now onos will check if a set address query is already being tried and it will not try 2 with the same node.
 
 
 todo:mettere priorita oggetti su hardwareModelDict
