@@ -860,33 +860,33 @@ hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["tempSensor"]["obj
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["luminosity_sensor"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["luminosity_sensor"]["object_numbers"]=[10] 
 
-#hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]={}
-#hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]["object_numbers"]=[9]   #
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]["object_numbers"]=[9]   #
 
 # "analog_input" don't need the query part because is only a input and not an output..
 
-#hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]={}
-#hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["object_numbers"]=[4]   #
-#hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["object_numbers"]=[4]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["query"]="do#_objnumber_##_valuelen:1_#"
 
 
-#hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]={}
-#hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]["object_numbers"]=[5]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]["object_numbers"]=[5]   #
 
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]={}
 
-#hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]={}
-#hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[6]   #
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[6]   #
 
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]["object_numbers"]=[7] 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]["query"]="dc#_objnumber_##_valuelen:1_#"
 
-#hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]={}
-#hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["object_numbers"]=[8] 
-#hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["query"]="dc#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]={}
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["object_numbers"]=[8] 
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["query"]="dc#_objnumber_##_valuelen:1_#"
 
 
 

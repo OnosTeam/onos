@@ -6439,34 +6439,36 @@ def executeQueueFunction(dataExchanged):
     try:
       #{obj_number_to_update:obj_value}  
       for a in dataExchanged["objects_to_update"].keys(): # for each obj in the node that is to update.. 
-        logprint("object address in the node="+str(a) )
-        try:
-          objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a))
-          objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
-        except Exception as e: #todo place this somewhere else..
-          hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
-          message="warning in the updateObjFromNode,the object doesnt exist yet"
-          logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
-          msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
-          createNewWebObjFromNode(hwType,node_serial_number) 
+        try: #to prevent the case where a node send an update for a node that is not in the hardwareModelDict
+          logprint("object address in the node="+str(a) )
+          try:
+            objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a))
+            objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
+          except Exception as e: #todo place this somewhere else..
+            hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
+            message="warning in the updateObjFromNode,the object doesnt exist yet"
+            logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
+            msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
+            createNewWebObjFromNode(hwType,node_serial_number) 
+            return()
 
-          return()
-
-        logprint("objName to upade the value:"+objName) 
-        status_to_set=dataExchanged["objects_to_update"][a]
-        write_hw_enable=0
-        usr="onos_node"
-        priority=0
-        mail_list_to_report_to=[]
-      #example of objName: socket0_Plug6way0002
-        logprint("I call changeWebObjectStatus() to update the obj from node update")
-        if status_to_set!=objectDict[objName].getStatus():
-          #print(str((objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)))
-
-          changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
-
+          logprint("objName to update the value:"+objName) 
+          status_to_set=dataExchanged["objects_to_update"][a]
+          write_hw_enable=0
+          usr="onos_node"
+          priority=0
+          mail_list_to_report_to=[]
+          #example of objName: socket0_Plug6way0002
+          logprint("I call changeWebObjectStatus() to update the obj from node update")
+          if status_to_set!=objectDict[objName].getStatus():
+            #print(str((objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)))
+            changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
+        except Exception as e: 
+          message="error in the for loop of updateObjFromNode condition :node="+node_serial_number
+          logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
+          continue #to allow the others object that exist to be updated
     except Exception as e: 
-      message="error in the for loop of updateObjFromNode condition :node="+node_serial_number
+      message="main error in the loop of updateObjFromNode condition :node="+node_serial_number
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
 

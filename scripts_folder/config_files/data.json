@@ -18,6 +18,18 @@
           "10": "luminosity_sensor_WreedSaa0004"
         }, 
         "node_serial_number": "WreedSaa0004"
+      }, 
+      "WreedSaa0005": {
+        "hwModelName": "WreedSaa", 
+        "nodeAddress": "004", 
+        "nodeObjectsDict": {
+          "0": "reed1_WreedSaa0005", 
+          "2": "led_WreedSaa0005", 
+          "3": "tempSensor_WreedSaa0005", 
+          "7": "reed1Logic_WreedSaa0005", 
+          "10": "luminosity_sensor_WreedSaa0005"
+        }, 
+        "node_serial_number": "WreedSaa0005"
       }
     }, 
     "objectDictionary": {
@@ -188,7 +200,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1179, 
+        "status": 1230, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -224,7 +236,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 19, 
+        "status": 20, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -267,6 +279,39 @@
         }, 
         "type": "digital_obj_out"
       }, 
+      "led_WreedSaa0005": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "led_WreedSaa0005=0", 
+          "1": "led_WreedSaa0005=1", 
+          "onoswait": "led_WreedSaa0005WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0005", 
+        "notes": " ", 
+        "objname": "led_WreedSaa0005", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_out"
+      }, 
       "luminosity_sensor_WreedSaa0004": {
         "cmdDict": {
           "0": "", 
@@ -292,6 +337,39 @@
         "priority": 0, 
         "scenarios": [], 
         "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "analog_obj_in"
+      }, 
+      "luminosity_sensor_WreedSaa0005": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "luminosity_sensor_WreedSaa0005=0", 
+          "1": "luminosity_sensor_WreedSaa0005=1", 
+          "onoswait": "luminosity_sensor_WreedSaa0005WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0005", 
+        "notes": " ", 
+        "objname": "luminosity_sensor_WreedSaa0005", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -326,7 +404,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 39, 
+        "status": 30, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -441,6 +519,39 @@
         }, 
         "type": "cfg_obj"
       }, 
+      "reed1Logic_WreedSaa0005": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "reed1Logic_WreedSaa0005=0", 
+          "1": "reed1Logic_WreedSaa0005=1", 
+          "onoswait": "reed1Logic_WreedSaa0005WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0005", 
+        "notes": " ", 
+        "objname": "reed1Logic_WreedSaa0005", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "cfg_obj"
+      }, 
       "reed1_WreedSaa0004": {
         "cmdDict": {
           "0": "", 
@@ -474,6 +585,39 @@
         }, 
         "type": "digital_obj_in"
       }, 
+      "reed1_WreedSaa0005": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "reed1_WreedSaa0005=0", 
+          "1": "reed1_WreedSaa0005=1", 
+          "onoswait": "reed1_WreedSaa0005WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0005", 
+        "notes": " ", 
+        "objname": "reed1_WreedSaa0005", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_in"
+      }, 
       "tempSensor_WreedSaa0004": {
         "cmdDict": {
           "0": "", 
@@ -499,6 +643,39 @@
         "priority": 0, 
         "scenarios": [], 
         "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "analog_obj_in"
+      }, 
+      "tempSensor_WreedSaa0005": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "tempSensor_WreedSaa0005=0", 
+          "1": "tempSensor_WreedSaa0005=1", 
+          "onoswait": "tempSensor_WreedSaa0005WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "WreedSaa0005", 
+        "notes": " ", 
+        "objname": "tempSensor_WreedSaa0005", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -568,6 +745,20 @@
           "reed1Logic_WreedSaa0004"
         ], 
         "order": 1, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "WreedSaa0005": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "tempSensor_WreedSaa0005", 
+          "luminosity_sensor_WreedSaa0005", 
+          "reed1_WreedSaa0005", 
+          "led_WreedSaa0005", 
+          "reed1Logic_WreedSaa0005"
+        ], 
+        "order": 2, 
         "owner": "onos_sys", 
         "permissions": "777"
       }
