@@ -1,7 +1,7 @@
 import csv
 import sys
 
-
+#for now you can use https://plot.ly/create/ to view the csv
 fr = open("in.csv", 'rt')
 
 csv_list=[]
