@@ -1026,8 +1026,39 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
           logprint("I will not set the status because the change is from a node")
           return(-1)
 
-
+    
     objectDict[objName].setStatus(statusToSet)#set the web object status 
+
+
+
+    #if (objectDict[objName].enable_logging==1)and(enable_csv_log==1):
+    if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month")):
+      if statusToSet==True:
+        statusToSet="1"
+      if statusToSet==False:
+        statusToSet="0"
+
+      logprint("I write csv")
+      day=str(datetime.datetime.today().day)
+      month=str(datetime.datetime.today().month)
+      year=str(datetime.datetime.today().year)
+      hours=str(datetime.datetime.today().hour)
+      minutes=str(datetime.datetime.today().minute)
+      seconds=str(datetime.datetime.today().second)
+      timestamp=str(time.time())[0:10]
+      #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
+      row_to_write=[statusToSet,day+'/'+month+'/'+year,hours+'.'+minutes+'.'+seconds,timestamp,user]
+      csv_file_name=csv_folder+'/'+objName+'.csv' 
+      make_fs_ready_to_write()
+      try:
+        with open(csv_file_name, 'a') as f:
+          writer = csv.writer(f)
+          writer.writerow(row_to_write) 
+      except Exception as e:   
+        message="error in the csv write"
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+      make_fs_readonly()   
+
     if (priority!=99):  #if priority == 99 will not write to webobject the new priority
       objectDict[objName].setRequiredPriority(priority) #set the webobject priority
     
@@ -1937,7 +1968,7 @@ def createNewNode(node_sn,node_address,node_fw):
     updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)  
     msg=nodeDict[node_sn].getSetupMsg() 
     updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
-
+    make_fs_ready_to_write()
     try:
       os.stat(baseRoomPath+node_sn)
     except:
@@ -1955,6 +1986,7 @@ def createNewNode(node_sn,node_address,node_fw):
       #print zoneDict
       updateOneZone(node_sn) 
 
+    make_fs_readonly() 
 
   return(msg)
 
@@ -4827,7 +4859,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 if (postvars["obj_current_status"]!=int (objectDict[web_object_name].getStatus())):
 
-                  #objectDict[web_object_name].setStatus(int(postvars["obj_current_status"][0]))
+
                   changeWebObjectStatus(web_object_name,int (postvars["obj_current_status"][0]),1)#banana add to queue
 
 

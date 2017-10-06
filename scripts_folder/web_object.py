@@ -151,7 +151,7 @@ class WebObject(object):   # inherit from object python class
       self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var","cfg_obj","analog_obj_input","analog_obj_out"]#objtype with num values
 
       self.isActive=1 #tell onos if the web_object is connected or not
-
+      self.enable_logging=0 #enable the logging of this webobject status
 
      # os.system("echo classe >> numero_oggetti_classe_webobject.txt")
 
@@ -166,7 +166,8 @@ class WebObject(object):   # inherit from object python class
           with lock_bash_cmd:
             subprocess.call(self.cmdDict[self.status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
       
-
+    def setLogging(self,logging):  # enable or disable the logging of this webobject status
+      self.enable_logging=logging
 
     def setStatus(self,status):  # set the new status and execute the relative command
         result=0 #banana  to remove 
@@ -656,7 +657,7 @@ class WebObject(object):   # inherit from object python class
 
         
     def getObjectDictionary(self):
-      tmp_dict={u"objname":self.object_name,u"type":self.__object_type,u"status":self.status,u"styleDict":self.styleDict,u"htmlDict":self.htmlDict,u"cmdDict":self.cmdDict,u"notes":self.note,u"node_sn":self.HwNodeSerialNumber,u"pins":self.attachedPins,u"scenarios":self.attachedScenarios,u"priority":self.required_priority,u"perm":self.permissions,u"own":self.owner,u"grp":self.group,u"mail_l":self.mail_report_list}
+      tmp_dict={u"objname":self.object_name,u"type":self.__object_type,u"status":self.status,u"styleDict":self.styleDict,u"htmlDict":self.htmlDict,u"cmdDict":self.cmdDict,u"notes":self.note,u"node_sn":self.HwNodeSerialNumber,u"pins":self.attachedPins,u"scenarios":self.attachedScenarios,u"priority":self.required_priority,u"perm":self.permissions,u"own":self.owner,u"grp":self.group,u"mail_l":self.mail_report_list,u"enable_logging":self.enable_logging}
       return(tmp_dict)
     
 

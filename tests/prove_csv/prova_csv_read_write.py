@@ -31,5 +31,5 @@ try:
 finally:
   fw.close()
 
-print open(sys.argv[1], 'rt').read()
+
 

@@ -219,7 +219,7 @@ def importConfig():
     object_owner=tmp_obj_dict[a][u"own"]
     object_group=tmp_obj_dict[a][u"grp"]
     object_mail_report_list=tmp_obj_dict[a][u"mail_l"]
-
+    #object_enable_logging=tmp_obj_dict[a][u"enable_logging"]
 
     if (object_start_status=="inactive"):  #prevent the node to been setted as inactive
       object_start_status=0       

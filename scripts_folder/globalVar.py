@@ -38,7 +38,7 @@ import binascii  #used by weobject class for the permission
 import re  #regular expression
 import smtplib   #used by mail_agent to send mail
 import platform
-
+import csv #used to write csv
 
 # Add vendor directory to module search path
 lib_dir = os.path.join('external_libraries')
@@ -98,6 +98,8 @@ mail_where_to_send_errors="electronicflame@gmail.com"
 hardwareModelDict={}
 
 #read_onos_sensor_enabled=1
+enable_csv_log=1 #enable the csv logging of the objects status(to log a object also the enable_logging of that object must be=1
+
 enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 enable_onosCenter_hw_pins=0 #enable the use of onosCenter local hw pins
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
@@ -120,7 +122,7 @@ if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1): #found uname wi
   router_hardware_type="RouterOP"
 
 
-
+base_cfg_path=""
 
 #if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
 if router_hardware_type=="RouterOP":
@@ -132,8 +134,7 @@ else:
   base_cfg_path=""
   baseRoomPath=os.getcwd()+"/zones/"    #you musn't have spaces on the path..
 
-
-
+csv_folder=base_cfg_path+'csv'
 
 accept_only_from_white_list=0  #if set to 1 the onos cmd will be accepted only from mail in white list
 #will be overwritten by /scripts_folder/config_files/cf.json
