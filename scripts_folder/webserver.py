@@ -1032,6 +1032,8 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
     #if (objectDict[objName].enable_logging==1)and(enable_csv_log==1):
+
+     
     if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month")):
       if statusToSet==True:
         statusToSet="1"
@@ -1045,10 +1047,14 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       hours=str(datetime.datetime.today().hour)
       minutes=str(datetime.datetime.today().minute)
       seconds=str(datetime.datetime.today().second)
+      day_of_week=datetime.datetime.today().weekday()
       timestamp=str(time.time())[0:10]
       #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
-      row_to_write=[statusToSet,day+'/'+month+'/'+year,hours+'.'+minutes+'.'+seconds,timestamp,user]
+      # 255,1507361485,7/10/2017 09:45:58,00,5,node
+      row_to_write=[statusToSet,timestamp,day+'/'+month+'/'+year,hours+':'+minutes+':'+seconds,hours,day_of_week,user]
       csv_file_name=csv_folder+'/'+objName+'.csv' 
+
+      #todo: make this on queue to not wait for disk writing..
       make_fs_ready_to_write()
       try:
         with open(csv_file_name, 'a') as f:
@@ -1058,6 +1064,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         message="error in the csv write"
         logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
       make_fs_readonly()   
+
 
     if (priority!=99):  #if priority == 99 will not write to webobject the new priority
       objectDict[objName].setRequiredPriority(priority) #set the webobject priority
@@ -1553,9 +1560,17 @@ for a in objectDict.keys():#check and remove the not used scenarios from web_obj
 
 
 
-
-
-
+if router_hardware_type=="RouterOP":
+  if router_sn not in list(zoneDict):
+    objectDict["onosCenterWifi"]=newDefaultWebObj("onosCenterWifi")  #turn on or off wifi
+    #objectDict["wifi0_Plug6way0001"]=newDefaultWebObj("wifi0_Plug6way0001")  #turn on or off wifi
+    objectDict["onosCenterWifi"].setCommand0("systemctl start create_ap")
+    objectDict["onosCenterWifi"].setCommand1("systemctl stop create_ap")
+    objectDict["counter1"]=newDefaultWebObj("counter1")  #count
+    zoneDict[router_sn]={"group": [],"hidden": 0,"objects": [],"order": 3,"owner":"onos_sys","permissions": "777"} 
+    zoneDict[router_sn]["objects"].append("OnosCenterWifi")
+    zoneDict[router_sn]["objects"].append("counter1")
+    objectDict["onosCenterWifi"].setStatus("1")   # activate wifi
 
 #objectDict["dayTime"].attachScenario("scenario1")   #banana to remove
 

@@ -120,7 +120,7 @@
 
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0005";   // this is the progressive numeric serial number
+char numeric_serial[5]="0002";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato

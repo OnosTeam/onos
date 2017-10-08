@@ -103,7 +103,7 @@ enable_csv_log=1 #enable the csv logging of the objects status(to log a object a
 enable_usb_serial_port=1 #if setted to 0 disable usb serial port also if supported by the hardware in hardwareModelDict[]
 enable_onosCenter_hw_pins=0 #enable the use of onosCenter local hw pins
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
-router_sn="RouterGA0000"
+router_sn="RouterOP0000"
 uart_router_sn="" #the sn of the node connected to the usb of the pc where onos is run..
 router_hardware_type="RouterGA" #select the type of hardware
 router_hardware_fw_version="5.14"
@@ -569,8 +569,8 @@ recoverydata_json='''
       }, 
       "onosCenterWifi": {
         "cmdDict": {
-          "0": "uci set wireless.radio0.disabled=1&uci commit wireless && wifi", 
-          "1": "uci set wireless.radio0.disabled=0&uci commit wireless && wifi", 
+          "0": "systemctl stop create_ap", 
+          "1": "systemctl start create_ap", 
           "s_cmd": " "
         }, 
         "grp": [
@@ -593,7 +593,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "1", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 

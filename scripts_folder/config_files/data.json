@@ -7,28 +7,22 @@
         "nodeObjectsDict": {}, 
         "node_serial_number": "RouterGA0000"
       }, 
+      "RouterOP0000": {
+        "hwModelName": "RouterOP", 
+        "nodeAddress": "0", 
+        "nodeObjectsDict": {}, 
+        "node_serial_number": "RouterOP0000"
+      }, 
       "WreedSaa0004": {
         "hwModelName": "WreedSaa", 
         "nodeAddress": "003", 
-        "nodeObjectsDict": {
-          "0": "reed1_WreedSaa0004", 
-          "2": "led_WreedSaa0004", 
-          "3": "tempSensor_WreedSaa0004", 
-          "7": "reed1Logic_WreedSaa0004", 
-          "10": "luminosity_sensor_WreedSaa0004"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "WreedSaa0004"
       }, 
       "WreedSaa0005": {
         "hwModelName": "WreedSaa", 
         "nodeAddress": "004", 
-        "nodeObjectsDict": {
-          "0": "reed1_WreedSaa0005", 
-          "2": "led_WreedSaa0005", 
-          "3": "tempSensor_WreedSaa0005", 
-          "7": "reed1Logic_WreedSaa0005", 
-          "10": "luminosity_sensor_WreedSaa0005"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "WreedSaa0005"
       }
     }, 
@@ -39,6 +33,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -74,6 +69,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -109,6 +105,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -144,6 +141,7 @@
           "1": " ", 
           "s_cmd": " "
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -164,7 +162,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 24, 
+        "status": 8, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -180,6 +178,7 @@
           "1": " ", 
           "s_cmd": " "
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -200,7 +199,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1230, 
+        "status": 1159, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -216,6 +215,7 @@
           "1": " ", 
           "s_cmd": " "
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -236,7 +236,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 20, 
+        "status": 19, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -252,6 +252,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -270,7 +271,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -285,6 +286,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -303,7 +305,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -318,6 +320,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -351,6 +354,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -369,7 +373,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -384,6 +388,7 @@
           "1": " ", 
           "s_cmd": " "
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -404,7 +409,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 30, 
+        "status": 19, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -420,6 +425,7 @@
           "1": " ", 
           "s_cmd": " "
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -440,7 +446,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 9, 
+        "status": 10, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -452,10 +458,11 @@
       }, 
       "onosCenterWifi": {
         "cmdDict": {
-          "0": "uci set wireless.radio0.disabled=1&uci commit wireless && wifi", 
-          "1": "uci set wireless.radio0.disabled=0&uci commit wireless && wifi", 
+          "0": "systemctl stop create_ap", 
+          "1": "systemctl start create_ap", 
           "s_cmd": " "
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -476,7 +483,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "1", 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -492,6 +499,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -510,7 +518,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -525,6 +533,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -543,7 +552,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -558,6 +567,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -576,7 +586,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": true, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -591,6 +601,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -609,7 +620,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -624,6 +635,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -657,6 +669,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -675,7 +688,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -690,6 +703,7 @@
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -731,6 +745,16 @@
           "d_sensor0_RouterGA0000"
         ], 
         "order": 0, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
+      "RouterOP0000": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "onosCenterWifi"
+        ], 
+        "order": 3, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 

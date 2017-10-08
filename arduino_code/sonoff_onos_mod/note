@@ -4,3 +4,40 @@ I have modyfied only 2 files :
 sonoff.ino
 
 user_config.h
+
+
+the hardware model is selected changing:
+
+#define MODULE                 SONOFF_BASIC // [Module] Select default model
+
+to one of this found on sonoff_template.h:
+
+  SONOFF_BASIC,
+  SONOFF_RF,
+  SONOFF_SV,
+  SONOFF_TH,
+  SONOFF_DUAL,
+  SONOFF_POW,
+  SONOFF_4CH,
+  S20,
+  SLAMPHER,
+  SONOFF_TOUCH,
+  SONOFF_LED,
+  CH1,
+  CH4,
+  MOTOR,
+  ELECTRODRAGON,
+  EXS_RELAY,
+  WION,
+  WEMOS,
+  SONOFF_DEV,
+  H801,
+  SONOFF_SC,
+  SONOFF_BN,
+  MAXMODULE
+
+
+For now only SONOFF_BASIC is supported
+
+
+

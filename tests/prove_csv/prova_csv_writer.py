@@ -2,7 +2,7 @@ import csv
 import sys
 import time
 import datetime
-#for now you can use https://plot.ly/create/ to view the csv
+#for now you can use https://plot.ly/create/  or  http://app.rawgraphs.io/  to view the csv
 
 day=str(datetime.datetime.today().day)
 month=str(datetime.datetime.today().month)

@@ -1230,8 +1230,16 @@ Number humidity "humidity [%.1f%%] {mqtt="<[broker:weatherstation/readings:state
    the special message will contain "ot"
 
 
+54) Mi serve un metodo per salvare i dati dei valori degli oggetti:
+   Il metodo scelto e' il csv, la struttura sarà:
+     valore oggetto
+     timestamp
+     data e ora espressa in "7/10/2017 09:45:58"
+     ore del giorno espresse in "00"
+     giorno della settimana espresso in numero dove 0 è lunedì
+     username che ha effettuato il cambiamento dell'oggetto.
+     255,1507361485,7/10/2017 09:45:58,00,5,node
 
-
-
-
+     questo occupa circa: 48 byte salvati 2 volte ogni minuto--> 48*2*60*24*365--> 50457600 bytes circa 50 MB
+     ogni carattere occupa circa un megabyte all'anno ..
 

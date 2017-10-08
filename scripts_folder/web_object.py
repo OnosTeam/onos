@@ -188,7 +188,13 @@ class WebObject(object):   # inherit from object python class
             #os.system(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &') 
           if self.cmdDict[status]!="":
             with lock_bash_cmd:
-              subprocess.call(self.cmdDict[status]+'> logs/cmd1.log 2>&1 &', shell=True,close_fds=True)
+              try:
+                message=subprocess.check_output(self.cmdDict[status], shell=True,close_fds=True) 
+                logprint(message)
+              except Exception as e: 
+                message="error executing bash cmd"
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                
         if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
           self.previous_status=self.status 
 

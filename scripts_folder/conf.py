@@ -251,14 +251,8 @@ def importConfig():
 
 importConfig()
 
-objectDict["onosCenterWifi"]=newDefaultWebObj("onosCenterWifi")  #turn on or off wifi
-#objectDict["wifi0_Plug6way0001"]=newDefaultWebObj("wifi0_Plug6way0001")  #turn on or off wifi
-objectDict["onosCenterWifi"].setCommand0("uci set wireless.radio0.disabled=1&uci commit wireless && wifi")
-objectDict["onosCenterWifi"].setCommand1("uci set wireless.radio0.disabled=0&uci commit wireless && wifi")
 
-objectDict["counter1"]=newDefaultWebObj("counter1")  #count
 
-#zoneDict[router_sn]["objects"].append("OnosCenterWifi")
 
 
 
