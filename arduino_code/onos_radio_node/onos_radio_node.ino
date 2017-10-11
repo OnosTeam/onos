@@ -120,7 +120,7 @@
 
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0002";   // this is the progressive numeric serial number
+char numeric_serial[5]="0003";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
@@ -1221,9 +1221,9 @@ void setup() {
   node_obj_pinout[reed1]=3;   // the first  object is the reed1 connected on pin 3 
   node_obj_pinout[button]=5;  // the second  object is the button  connected on pin 5 
   node_obj_pinout[led]=4;     // the third  object is the led     connected on pin 4
-  node_obj_pinout[tempSensor]=A1;   // the forth object is the temperature sensor connected on analog pin 1  
-  node_obj_pinout[battery_state]=A2;   // the 9th object is the battery state connected on analog pin 0  
-  node_obj_pinout[luminosity_sensor]=A0; 
+  node_obj_pinout[tempSensor]=A0;   // the forth object is the temperature sensor connected on analog pin 1  
+  node_obj_pinout[battery_state]=A1;   // the 9th object is the battery state connected on analog pin 0  
+  node_obj_pinout[luminosity_sensor]=A2; 
   node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
   node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
 // END OBJECTS PIN DEFINITION_______________________________________________________________

@@ -6594,8 +6594,12 @@ def executeQueueFunction(dataExchanged):
           if (("sa" in query)&(node_serial_number in query) ):#there is already a query that want to set a new address to this node 
             logprint("there is already a query that want to set a new address to this node") 
             return  
-
-      hardware.setAddressToNode(node_serial_number,old_address,new_address) 
+      try:
+        hardware.setAddressToNode(node_serial_number,old_address,new_address) 
+      except Exception as e:
+        message="error in setAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+"I will try to reconnect serialport"
+        logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
+        layerExchangeDataQueue.put( {"cmd":"reconnectSerialPort"})  
       #if result==1:
       #  print "i save the new address in the config memory"
 
