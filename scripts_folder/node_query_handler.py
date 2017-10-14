@@ -280,7 +280,6 @@ def make_query_to_tcp_node(node_serial_number,query,query_expected_answer,objNam
         received_answer=received_answer+resp 
         #if (time.time()> (time_start+wait_timeout) ):
         #  print "timeout waiting for answer from node....................................................................."
-        #  errorQueue.put("timeout waiting for answer from node, the query was:"+query)  
         #  break
 
         if received_answer.find("_#]")!=-1:

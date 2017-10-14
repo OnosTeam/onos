@@ -504,9 +504,9 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
     except Exception as e :
       message="no objects found in the scenario_functions or scenario_functions fully analyzed" 
       logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-      #errorQueue.put("no objects found in the scenario_functions or scenario_functions fully analyzed "+" e:"+str(e.args)) 
+
       break
-        #errorQueue.put("error00 in the scenario operation search ,scenario_functions: "+scenario_functions)
+
 
     if objname is None:
       logprint ("error002 in the scenario operation search ,nonetype "+scenario_functions,verbose=9)
@@ -549,7 +549,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
       
     except : #ended the simple objects status
 
-      #errorQueue.put("no objects found in the scenario_conditions or scenario_conditions fully analyzed "+" e:"+str(e.args)) 
+
       try:
         objname_prev=re.search(r"#p_.+?_#",scenario_conditions).group(0)[3:-2]
       except Exception as e :         #no previus object status found , serch terminated
@@ -557,7 +557,7 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
         message="no objects found in the scenario_conditions or scenario_conditions fully analyzed,conditions:"+scenario_conditions
         logprint(message,verbose=2,error_tuple=(e,sys.exc_info()) )
         break
-        #errorQueue.put("error00 in the scenario operation search ,scenario_conditions: "+scenario_conditions)
+
 
 
     if objname is None:
@@ -686,14 +686,14 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
 #      scenario_math=re.sub(r'#_.+?_#',lambda x: str(objectDict[x.group(0)[2:-2]].getStatus()),scenario_math)
 #    except:
 #      print "error the webobject does not exist in the dict, i close the scenario scenario_math check"
-#      errorQueue.put("error2 the webobject does not exist in the dict, i close the scenario check: scenario_math:"+scenario_math)
+
 #      return()
 
 #    try:# and all the #p_webobjectname_# with the previous webobject status value
 #      scenario_math=re.sub(r'#p_.+?_#',lambda x: str(objectDict[x.group(0)[3:-2]].getPreviousStatus()),scenario_math)
 #    except :
 #      print "error the webobject does not exist in the dict, i close the scenario scenario_math check"
-#      errorQueue.put("error3 the webobject does not exist in the dict, i close the scenario check: #scenario_math:"+scenario_math)
+
 #      return()
 
 
@@ -704,7 +704,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
 #        mathResultValue=str(eval(scenario_math))   #calculating the math expression from scenario_math
 #      except:
 #        print "error in eval(scenario_math) ,scenario_math="+str(scenario_math)
-#        errorQueue.put("error in eval(scenario_math) ,scenario_math="+str(scenario_math))
+
 #    else:
 #      mathResultValue=""
 
@@ -752,7 +752,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         except:
           logprint("no objects found in the function_to_run  or function_to_run fully analyzed ")
           break
-          #errorQueue.put("error00 in the scenario operation search ,scenario_conditions: "+scenario_conditions)
+
 
         if objname is None:
           logprint("error003 in the scenario operation search ,nonetype "+f,verbose=7)
@@ -772,7 +772,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
       #  f=re.sub(r'#_.+?_#',lambda x: str(objectDict[x.group(0)[2:-2]].getStatus()),f)
       #except KeyError:
       #  print "error0 the webobject does not exist in the dict, i close the scenario check,operation:"+f
-      #  errorQueue.put(" error0 the webobject does not exist in the dict, i close the scenario check,operation:"+f)
+
       #  return()
 
       try:# replcace all the #p_webobjectname_# with the previous webobject status value
@@ -947,10 +947,6 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
 
-#  if (obj_previous_status==statusToSet): #&(write_to_hardware==1) :  #the obj status didn't change
-#    print "the webobject "+objName+"has already the status value you want to set "
-#    errorQueue.put("the webobject "+objName+" has already the status value you want to set ")
-#    return(1)
 
   logprint("write_to_hardware="+str(write_to_hardware) )
   #print "attached pin0 ="+str(objectDict[objName].getAttachedPinList())+";"    
@@ -1118,7 +1114,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     #except:
     #  print "statusToSet "+statusToSet+"can't be converted to a number "
-    #  errorQueue.put("statusToSet "+statusToSet+"can't be converted to a number, obj:"+objName)
+
 
 
 
@@ -2692,7 +2688,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(web_page) 
               except:
                 logprint("error2 in send_header ")
-                errorQueue.put( "error2 in send_header ")  
+
               return
             
 
@@ -2784,8 +2780,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 
                 #except:
                 #  print "error objName not in the dict "
-                #  errorQueue.put("error objName not in the dict " )  
-                #  msg="error objName not in the dict " 
+
+
 
                 #banana to add also the status check 
                 try:
@@ -3333,13 +3329,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 #    except Exception as e  :
                 #      pass
                 #      print "error in send_header  r_onos_s 2"+" e:"+str(e.args)  
-                #      errorQueue.put("error in send_header  r_onos_s 2"+" e:"+str(e.args) )  
+
                        
 
                  #except Exception as e  :
                  #   pass
                  #   print "error in send_header r_onos_s 3"+" e:"+str(e.args)     
-                 #   errorQueue.put("error in send_header r_onos_s 3"+" e:"+str(e.args)   )  
+
                  # return
 
               #else:        #never  executed for now
@@ -3355,7 +3351,7 @@ class MyHandler(BaseHTTPRequestHandler):
               #  except Exception as e  :
               #    pass
               #    print "error in send_header r_onos_s 4 "+" e:"+str(e.args)   
-              #    errorQueue.put( "error in send_header r_onos_s 4 "+" e:"+str(e.args))  
+
   
               return
 
@@ -3365,7 +3361,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 
               html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
-              logprint("html_filename=",html_filename)
+              logprint("html_filename="+html_filename)
 
 
               try:              
@@ -3410,7 +3406,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 #x=(string.find(self.path,"/")) 
                 
                 html_filename=re.search('/(.+?).html',self.path).group(1)+".html"
-                logprint("html_filename=",html_filename)
+                logprint("html_filename="+html_filename)
                 #end_file_name=string.find(self.path,".html")+5
 
                 #print "addressbar1= "+self.path
@@ -4334,7 +4330,7 @@ class MyHandler(BaseHTTPRequestHandler):
           except Exception as e  :
             pass
             logprint("error in send_header "+" e:"+str(e.args))     
-            errorQueue.put("error in send_header "+" e:"+str(e.args)  )
+
             
           logprint("postvars="+str(postvars.items())+" data_received,len data= "+str(len(postvars.keys()[0] ) ) )  
     
@@ -5138,7 +5134,7 @@ class MyHandler(BaseHTTPRequestHandler):
                  # except Exception as e  :
                 
                   #  print "error in mod_scenario form post parse  "+" e:"+str(e.args)  
-                   # errorQueue.put( "error in mod_scenario form post parse "+" e:"+str(e.args))
+
 
 
                   #scenarioDict[scenario_name]={"enabled":0,"type_after_run":"0","conditions":"0","functionsToRun":[],"delayTime":0,"priority":0}
@@ -5765,7 +5761,7 @@ def onlineServerSync():
  #     urllib2.urlopen("http://www.google.com")  
  #   except:
  #     print "no internet connection"
- #     errorQueue.put("no internet connection" )  
+
       #time.sleep(30) #wait 60 seconds
 #      return
      
@@ -5916,8 +5912,8 @@ def onlineServerSync():
       onlineServerSyncThreadIsrunning=0
       return()
 
-#message example :
-# old  '#start@#_@onosuser#_@obj_ch#_@obj1#_@objstatus_to_set#_#stop@"      message for online obj changed to objstatus_to_set
+
+#   message for online obj changed to objstatus_to_set
     try:
       ###json_filtered_msg=re.match(r'#_cmd_.+?_cmd_#',sync_message).group(1)
       #re.search('#_cmd_(.+?)_cmd_#',sync_message).group(1)
@@ -5945,7 +5941,7 @@ def onlineServerSync():
 
     except Exception as e  :
       message="sync_message decoding error,sync_message:"
-      logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
+      logprint(message,verbose=5,error_tuple=(e,sys.exc_info())) 
     onlineServerSyncThreadIsrunning=0
     return()
 
@@ -6377,7 +6373,13 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           
           error_text=""
           while not errorQueue.empty():
-            error_text =error_text+";;;\n"+str(errorQueue.get())
+            error_dict=errorQueue.get()
+            verbose=error_dict["verbose"]
+            print("verbose="+str(verbose))
+            if verbose>mail_verbose_level:
+              print("verbose>5")
+              error_text =error_text+";;;\n"+platform+"OnosCenter:"+router_sn+":"+str(error_dict["msg"])
+
             #errorQueue.task_done()
           if (len (error_text) > 0):
             mailQueue.put({"mail_address":mail_where_to_send_errors,"mailText":error_text,"mailSubject":"onos_errors_report"})
@@ -6738,9 +6740,10 @@ def onosBusThread():
             #os.system('''ntpd -q -p 0.openwrt.pool.ntp.org''') #update from online time
             try:
               with lock_bash_cmd:
-                subprocess.check_output('''ntpd -q -p 0.openwrt.pool.ntp.org''', shell=True,close_fds=True)
+                subprocess.call('''ntpd -q -p 0.openwrt.pool.ntp.org''', shell=True,close_fds=True)
+                subprocess.check_output('''ntpq -p''', shell=True,close_fds=True)
             except:
-              logprint("error executing ntpd, maybe ntpd is not installed..",verbose=8) 
+              logprint("error executing ntpq -p , maybe ntpd or ntpq are not installed..",verbose=8) 
 
 
             changeWebObjectStatus("hours",datetime.datetime.today().hour,0)

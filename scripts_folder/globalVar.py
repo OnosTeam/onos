@@ -91,6 +91,7 @@ error_log_name="erros.log"
 log_enable=0   #enable the log file size check ,not implemented...
 check_log_len_time=datetime.datetime.today().minute
 mail_error_log_enable=1  #enable onos to send mail when an error happens
+mail_verbose_level=5 #the error must have a greater verbose level than mail_verbose_level to be sent via mail
 error_log_mail_frequency=30  #seconds between a error check and another
 last_error_check_time=0
 mail_where_to_send_errors="electronicflame@gmail.com"
@@ -1051,7 +1052,7 @@ def logprint(message,verbose=1,error_tuple=None):
     syslog.syslog(message)  
     print (message)
     if debug==1 or verbose>1:
-      errorQueue.put(message)  
+      errorQueue.put({"msg":message,"verbose":verbose})  
       #os.system('echo "'+message+'" >> log.txt')
 
 
@@ -1146,7 +1147,7 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
     return([])
   if pin_mode not in hardwareModelDict[hwName]["pin_mode"].keys(): #if the type  doesn't exist in the hardware model 
     #print "the hardware type "+pin_mode+" doesn't exist in this hardware model"+hwName
-    #errorQueue.put("the hardware type "+pin_mode+" doesn't exist in this hardware model"+hwName )
+
     return([])
  # else:
  #   print ( "the hardware type "+pin_mode+" Exist in this hardware model")

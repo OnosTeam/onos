@@ -628,7 +628,7 @@ class WebObject(object):   # inherit from object python class
     def checkRequiredPriority(self,agent_priority):  #retutn -1 if the priority the agent has is les than required
       if agent_priority<self.required_priority:
         #print "error ,required priority is "+str(self.required_priority)
-        #errorQueue.put("error ,required priority is "+str(self.required_priority) ) 
+
         return(-1)
       else:
         return(1)

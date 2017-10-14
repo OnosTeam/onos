@@ -251,7 +251,7 @@ def importConfig():
 
 importConfig()
 
-
+logprint("OnosCenter Started!!!",verbose=10)
 
 
 

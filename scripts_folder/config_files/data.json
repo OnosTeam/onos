@@ -1,12 +1,6 @@
 {
   "dictionaries": {
-    "nodeDictionary": {
-      "RouterGA0000": {
-        "hwModelName": "RouterGA", 
-        "nodeAddress": "0", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "RouterGA0000"
-      }, 
+    "nodeDictionary": { 
       "RouterOP0000": {
         "hwModelName": "RouterOP", 
         "nodeAddress": "0", 
@@ -27,42 +21,6 @@
       }
     }, 
     "objectDictionary": {
-      "button0_RouterGA0000": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "button0_RouterGA0000=0", 
-          "1": "button0_RouterGA0000=1", 
-          "onoswait": "button0_RouterGA0000WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "RouterGA0000", 
-        "notes": " ", 
-        "objname": "button0_RouterGA0000", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          18
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_output"
-      }, 
       "counter1": {
         "cmdDict": {
           "0": "", 
@@ -98,43 +56,7 @@
           "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
-      }, 
-      "d_sensor0_RouterGA0000": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "d_sensor0_RouterGA0000=0", 
-          "1": "d_sensor0_RouterGA0000=1", 
-          "onoswait": "d_sensor0_RouterGA0000WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "RouterGA0000", 
-        "notes": " ", 
-        "objname": "d_sensor0_RouterGA0000", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          21
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_input"
-      }, 
+      },
       "day": {
         "cmdDict": {
           "0": " ", 
@@ -735,19 +657,7 @@
       }
     }, 
     "scenarioDictionary": {}, 
-    "zoneDictionary": {
-      "RouterGA0000": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "onosCenterWifi", 
-          "button0_RouterGA0000", 
-          "d_sensor0_RouterGA0000"
-        ], 
-        "order": 0, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
+    "zoneDictionary": { 
       "RouterOP0000": {
         "group": [], 
         "hidden": 0, 

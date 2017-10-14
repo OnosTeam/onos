@@ -125,7 +125,7 @@ class RouterHandler:
 
    #     except Exception as e:
    #       print "error in opening arduino serial port e:"+str(e.args)
-   #       errorQueue.put("error in opening arduino serial port e:"+str(e.args))
+
    #       self.serialCommunicationIsWorking=0
 
     
@@ -332,7 +332,7 @@ class RouterHandler:
 
       if (self.total_in_pin<1) :#there is no input pin to read
         logprint ("there is no input pin to read",verbose=6)
-        errorQueue.put("there is no input pin to read")
+
         return(-1)
 
       #time.sleep(3)  #wait for the webserver
@@ -831,7 +831,7 @@ class RouterHandler:
           if (output_type=="sr_relay"):
             if (len(pinList)!=2):
               logprint("error number of pins !=2")
-              errorQueue.put("error number of pins !=2  in router_handler" ) 
+
               return(-1)
 
 

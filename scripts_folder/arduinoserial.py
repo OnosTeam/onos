@@ -205,7 +205,7 @@ class SerialPort:
            #   self.ser.flushInput() #flush input buffer, discarding all its contents
            # except Exception as e :
            #   print "can't flush input"+str(e.args) 
-           #   errorQueue.put( "can't flush input"+str(e.args) )
+
           #msgWasWritten=0
 
           #if write_enable==1:
@@ -217,14 +217,14 @@ class SerialPort:
              # msgWasWritten=1
             #except Exception as e :
             #  print "can't write to uart"+str(e.args) 
-            #  errorQueue.put( "can't write to uart"+str(e.args) )
+
             #  return()
 
             #try:
             #  self.ser.flushOutput()
             #except Exception as e :
             #  print "can't flush output"+str(e.args) 
-            #  errorQueue.put( "can't flush output"+str(e.args) )
+
 
           #waitTowriteUntilIReceive=0
           self.port_was_opened=1
@@ -246,7 +246,11 @@ class SerialPort:
                 #print byte
               except Exception as e  :
                 message="error in self.ser.read(self.ser.inWaiting()) "
-                logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+                if (str(e.args) ).find("readiness")!=-1:   # if the error is :device reports readiness to read but returned no data is lower priority 
+                  verbose=5
+                else:
+                  verbose=8
+                logprint(message,verbose,error_tuple=(e,sys.exc_info()))  
                 continue
 
 
