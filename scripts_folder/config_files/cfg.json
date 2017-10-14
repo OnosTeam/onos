@@ -1,7 +1,7 @@
 {
   "conf_options_dictionary": {
     "accept_only_from_white_list": 0, 
-    "enable_mail_output_service": 0, 
+    "enable_mail_output_service": 1, 
     "enable_mail_service": 0, 
     "enable_onos_auto_update": "yes", 
     "logTimeout": 15, 

@@ -14,6 +14,7 @@
 """
 
 from globalVar import logprint
+import sys
 
 #onos_mail_account="electronicflame@gmail.com"
 #onos_mail_pw='password'

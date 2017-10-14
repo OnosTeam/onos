@@ -5958,7 +5958,7 @@ def onlineServerSync():
 def mailOutputHandler():
   global errorQueue
   global mailOutputHandler_is_running
-
+  global onos_mail_conf
   mailOutputHandler_is_running=1
   logprint("mailOutputHandler thread executed")
 
@@ -5973,7 +5973,7 @@ def mailOutputHandler():
     mailSubject=mail_to_send["mailSubject"]
     mail_sent=sendMail(mail_address,mailText,mailSubject,onos_mail_conf,smtplib,string)
     if mail_sent!=1 : #mail error , onos was not able to send the mail and will try again
-      logprint("error cant send mail"+mail_sent,verbose=8)
+      logprint("error cant send mail"+str(mail_sent),verbose=8)
      
       mailQueue.put(mail_to_send)  #read the mail to the queue for further try
       #mailQueue.put({"mail_address":mail_address,"mailText":mailText,"mailSubject":mailSubject})
@@ -6154,6 +6154,7 @@ def mailCheckThread():
 
 
 def internetCheckConnection():
+  logprint("internetCheckConnection() executed")
   internet_state=0
   try:
     urllib2.urlopen("http://www.google.com")  

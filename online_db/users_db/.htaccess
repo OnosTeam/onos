@@ -1,0 +1,8 @@
+<Files ~ "\.d">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<FilesMatch "\.d">
+Deny from all
+</FilesMatch>

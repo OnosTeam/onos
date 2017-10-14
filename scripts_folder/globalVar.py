@@ -735,9 +735,9 @@ usersDict.update(online_usersDict) #insert the online users in the local diction
 
 node_password_dict={} # dictionary where the key is the node_serial_number and the value is the node password
 
-#onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"x+beta1234","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
+#onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"onosbeta1234","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
 
-nos_mail_conf={"mail_account":"onos.beta@yahoo.com","pw":"mailbeta1234","smtp_port":"587","smtp_server":"smtp.mail.yahoo.com","mail_imap":"imap.mail.yahoo.com"}
+onos_mail_conf={"mail_account":"onos.beta@yahoo.com","pw":"mailbeta1234","smtp_port":"587","smtp_server":"smtp.mail.yahoo.com","mail_imap":"imap.mail.yahoo.com"}
 
 
 #gmail problem solving:
