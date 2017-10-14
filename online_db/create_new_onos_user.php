@@ -3,7 +3,6 @@
 
 
 <?php
-ini_set('display_errors', 'On');
 $db_folder=realpath('./').'/users_db/';
 
 
