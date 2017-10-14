@@ -938,160 +938,161 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
   logprint("changeWebObjectStatus executed with obj="+objName)
 
-  if objName not in objectDict.keys(): #if the web object does not exist exit
-    logprint("error the webobject does NOT exist in the dictionary objectDict ",verbose=9)
+  
+  try:
 
-    return(-1)
+    if objName not in objectDict.keys(): #if the web object does not exist exit
+      logprint("error the webobject does NOT exist in the dictionary objectDict ",verbose=9)
+      return(-1)
 
-  obj_previous_status=objectDict[objName].getStatus()
-
-
-
-
-  logprint("write_to_hardware="+str(write_to_hardware) )
-  #print "attached pin0 ="+str(objectDict[objName].getAttachedPinList())+";"    
-  global nodeDict 
+    obj_previous_status=objectDict[objName].getStatus()
 
 
+    logprint("write_to_hardware="+str(write_to_hardware) )
+    #print "attached pin0 ="+str(objectDict[objName].getAttachedPinList())+";"    
+    global nodeDict 
 
-  #print "24444444444444444444444444444444444444444444444444444444444",objectDict[objName].getMailReport()
-  mail_report_list=mail_report_list+objectDict[objName].getMailReport() #summ the 2 list
 
 
-  mail_report_list=list(set(mail_report_list))   #removes duplicates
-  #print "2222222222222222222222222222222222222222222222222222222222222",mail_report_list
+    #print "24444444444444444444444444444444444444444444444444444444444",objectDict[objName].getMailReport()
+    mail_report_list=mail_report_list+objectDict[objName].getMailReport() #summ the 2 list
 
-  if objectDict[objName].checkRequiredPriority(priority)==1:   #check priority 
-    logprint("priority ok")
-  else:
+
+    mail_report_list=list(set(mail_report_list))   #removes duplicates
+    #print "2222222222222222222222222222222222222222222222222222222222222",mail_report_list
+
+    if objectDict[objName].checkRequiredPriority(priority)==1:   #check priority 
+      logprint("priority ok")
+    else:
 
     #obj_previous_status=objectDict[objName].getStatus()
-    mailText=compose_error_mail("so_priority",objName)
-    mailSubject="onos_report_error"+objName
-    for m in mail_report_list:
-      #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
-      mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
-
-    logprint("error ,required priority is "+str(objectDict[objName].required_priority()),verbose=10)
- 
-
-    return(-1)
-
-  if objectDict[objName].checkPermissions(user,"x",priority):   #check permission  
-    logprint("permission ok, i set the obj")
-  else:
-    #obj_previous_status=objectDict[objName].getStatus()
-    mailText=compose_error_mail("so_permissions",objName)
-    mailSubject="onos_report_error"+objName
-    for m in mail_report_list:
-      #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
-      mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
-
-    logprint("error Permissions not sufficent to change"+objName+",required required permission is "+str(objectDict[objName].getPermissions()),verbose=10 )
-
-    return(-1)
-
-
-
-
-
-
-#  global objectDict  #banana  to remove?
-
-
-  if ( objectDict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
-
-    logprint("no pin attached to this webobject , I change its status")
-    if objectDict[objName].getType() not in ["digital_obj_out","analog_obj_out","cfg_obj"]:
-      write_to_hardware=0
-
-
-
-
-
-  if (write_to_hardware==0):
-
-    logprint("i change the webobject status")
-
-
-    if objectDict[objName].getStatus()=="onoswait":
-      if (user=="onos_node"):
-        if (objectDict[objName].getType() in objectDict[objName].general_out_group):
-          logprint("[objName].getType() :"+objectDict[objName].getType())
-          logprint("general_out_group:"+str(objectDict[objName].general_out_group))
-          logprint("I will not set the status because the change is from a node")
-          return(-1)
-
-    
-    objectDict[objName].setStatus(statusToSet)#set the web object status 
-
-
-
-    #if (objectDict[objName].enable_logging==1)and(enable_csv_log==1):
-
-     
-    if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month")):
-      if statusToSet==True:
-        statusToSet="1"
-      if statusToSet==False:
-        statusToSet="0"
-
-      logprint("I write csv")
-      day=str(datetime.datetime.today().day)
-      month=str(datetime.datetime.today().month)
-      year=str(datetime.datetime.today().year)
-      hours=str(datetime.datetime.today().hour)
-      minutes=str(datetime.datetime.today().minute)
-      seconds=str(datetime.datetime.today().second)
-      day_of_week=datetime.datetime.today().weekday()
-      timestamp=str(time.time())[0:10]
-      #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
-      # 255,1507361485,7/10/2017 09:45:58,00,5,node
-      row_to_write=[statusToSet,timestamp,day+'/'+month+'/'+year,hours+':'+minutes+':'+seconds,hours,day_of_week,user]
-      csv_file_name=csv_folder+'/'+objName+'.csv' 
-
-      #todo: make this on queue to not wait for disk writing..
-      make_fs_ready_to_write()
-      try:
-        with open(csv_file_name, 'a') as f:
-          writer = csv.writer(f)
-          writer.writerow(row_to_write) 
-      except Exception as e:   
-        message="error in the csv write"
-        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-      make_fs_readonly()   
-
-
-    if (priority!=99):  #if priority == 99 will not write to webobject the new priority
-      objectDict[objName].setRequiredPriority(priority) #set the webobject priority
-    
-
-    if len(mail_report_list)>0:
-      logprint("mail_report,"+objName+" changed to "+str(statusToSet) )
-
-      mailText="onos_report_message,"+objName+",changed to:"+str(statusToSet)
-      mailSubject="onos_report_about"+objName
+      mailText=compose_error_mail("so_priority",objName)
+      mailSubject="onos_report_error"+objName
       for m in mail_report_list:
         #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
         mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
 
+      logprint("error ,required priority is "+str(objectDict[objName].getRequiredPriority()),verbose=10)
+ 
 
-    scenarios_list=[]
-    scenarios_list=objectDict[objName].getListAttachedScenarios()  #get the list of scenarios where there is a reference to this webobject
-    logprint("scenarios_list:"+str(scenarios_list) )
-    for tmp_scenario in scenarios_list:
-      logprint("scenario name:"+tmp_scenario)
-      #banana to add to queue
-      layerExchangeDataQueue.put( {"cmd":"scen_check","scenarioName":tmp_scenario})
-      #checkwebObjectScenarios(tmp_scenario)
+      return(-1)
+
+    if objectDict[objName].checkPermissions(user,"x",priority):   #check permission  
+      logprint("permission ok, i set the obj")
+    else:
+      #obj_previous_status=objectDict[objName].getStatus()
+      mailText=compose_error_mail("so_permissions",objName)
+      mailSubject="onos_report_error"+objName
+      for m in mail_report_list:
+        #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
+        mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
+
+      logprint("error Permissions not sufficent to change"+objName+",required required permission is "+str(objectDict[objName].getPermissions()),verbose=10 )
+
+      return(-1)
 
 
-    return(1)
+
+
+
+
+   #  global objectDict  #banana  to remove?
+
+
+    if ( objectDict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
+
+      logprint("no pin attached to this webobject , I change its status")
+      if objectDict[objName].getType() not in ["digital_obj_out","analog_obj_out","cfg_obj"]:
+        write_to_hardware=0
+
+
+
+
+
+    if (write_to_hardware==0):
+
+      logprint("i change the webobject status")
+
+
+      if objectDict[objName].getStatus()=="onoswait":
+        if (user=="onos_node"):
+          if (objectDict[objName].getType() in objectDict[objName].general_out_group):
+            logprint("[objName].getType() :"+objectDict[objName].getType())
+            logprint("general_out_group:"+str(objectDict[objName].general_out_group))
+            logprint("I will not set the status because the change is from a node")
+            return(-1)
+
+    
+      objectDict[objName].setStatus(statusToSet)#set the web object status 
+
+
+
+      #if (objectDict[objName].enable_logging==1)and(enable_csv_log==1):
+
+     
+      if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month")):
+        if statusToSet==True:
+          statusToSet="1"
+        if statusToSet==False:
+          statusToSet="0"
+
+        logprint("I write csv")
+        day=str(datetime.datetime.today().day)
+        month=str(datetime.datetime.today().month)
+        year=str(datetime.datetime.today().year)
+        hours=str(datetime.datetime.today().hour)
+        minutes=str(datetime.datetime.today().minute)
+        seconds=str(datetime.datetime.today().second)
+        day_of_week=datetime.datetime.today().weekday()
+        timestamp=str(time.time())[0:10]
+        #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
+        # 255,1507361485,7/10/2017 09:45:58,00,5,node
+        row_to_write=[statusToSet,timestamp,day+'/'+month+'/'+year,hours+':'+minutes+':'+seconds,hours,day_of_week,user]
+        csv_file_name=csv_folder+'/'+objName+'.csv' 
+
+        #todo: make this on queue to not wait for disk writing..
+        make_fs_ready_to_write()
+        try:
+          with open(csv_file_name, 'a') as f:
+            writer = csv.writer(f)
+            writer.writerow(row_to_write) 
+        except Exception as e:   
+          message="error in the csv write"
+          logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+        make_fs_readonly()   
+
+
+      if (priority!=99):  #if priority == 99 will not write to webobject the new priority
+        objectDict[objName].setRequiredPriority(priority) #set the webobject priority
+    
+
+      if len(mail_report_list)>0:
+        logprint("mail_report,"+objName+" changed to "+str(statusToSet) )
+
+        mailText="onos_report_message,"+objName+",changed to:"+str(statusToSet)
+        mailSubject="onos_report_about"+objName
+        for m in mail_report_list:
+          #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
+          mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
+
+
+      scenarios_list=[]
+      scenarios_list=objectDict[objName].getListAttachedScenarios()  #get the list of scenarios where there is a reference to this webobject
+      logprint("scenarios_list:"+str(scenarios_list) )
+      for tmp_scenario in scenarios_list:
+        logprint("scenario name:"+tmp_scenario)
+        #banana to add to queue
+        layerExchangeDataQueue.put( {"cmd":"scen_check","scenarioName":tmp_scenario})
+        #checkwebObjectScenarios(tmp_scenario)
+
+
+      return(1)
 
 
  
-
-
+  except Exception as e:   
+    message="error in changeWebObjectStatus first part"
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
 
  #if write_to_hardware==1 then
