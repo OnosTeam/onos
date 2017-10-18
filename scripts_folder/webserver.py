@@ -6509,7 +6509,7 @@ def executeQueueFunction(dataExchanged):
           status_to_set=dataExchanged["objects_to_update"][a]
           write_hw_enable=0
           usr="onos_node"
-          priority=0
+          priority=99  #this priority will always be able to change the object status but will not change the object required priority 
           mail_list_to_report_to=[]
           #example of objName: socket0_Plug6way0002
           logprint("I call changeWebObjectStatus() to update the obj from node update")
