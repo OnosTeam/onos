@@ -38,21 +38,21 @@ enum emul_t  {EMUL_NONE, EMUL_WEMO, EMUL_HUE, EMUL_MAX};
 
 
 //onosmod
-#define ONOS_OTA_URL                "http://192.168.1.102/sonoffOTA/"   // [OtaUrl]
+#define ONOS_OTA_URL                "http://192.168.101.1/sonoffOTA/"   // [OtaUrl]
 //#define ONOS_OTA_URL                "http://94.177.171.250/elettronicaopensource.com/sonoffOTA/"   // [OtaUrl]
 //#define ONOS_DEFAULT_PASSWORD  "onosBestHome9999"  changed in user_config.h
 boolean first_sync=1;
 unsigned long sync_time=0;
 unsigned long send_address_timeout=500; //milliseconds
 //unsigned long *send_address_timeout_pointer=&send_address_timeout;
-char url0[80]= "http://192.168.1.102/";
+//char url0[80]= "http://192.168.101.1/";
 char node_fw[]="5.28";
 char syncMessage[71];
 char progressive_msg_id=48;
 char main_obj_state=0;
 char serial_number[13]="Sonoff1P0000";  // todo read it from sysCfg.friendlyname[0]  in order to be able to change it from setup..
 char hardware_type[9]="Sonoff1P";
-char onosCenterIp[27]="http://192.168.1.102/_____";
+char onosCenterIp[27]="http://192.168.101.1/____";
 //char url[80]="http://192.168.1.102/_____cmd=sa&sn=Sonoff1P0001&f=5.28__";
 
 //onosmod
@@ -2667,7 +2667,7 @@ boolean sendCurrentIp(){// send the current ip to OnosCenter   onosmod
   boolean returnStatus=1;
 
 
-  // http://192.168.1.102/_____onos_cmd=sy&sn=ProminiA0002&fw=5.28&ip=192.168.0.6__
+  // http://192.168.101.1/_____onos_cmd=sy&sn=ProminiA0002&fw=5.28&ip=192.168.0.6__
 
 
   if(WiFi.status() == WL_CONNECTED) {
@@ -2677,7 +2677,7 @@ boolean sendCurrentIp(){// send the current ip to OnosCenter   onosmod
   // We now create a URI for the request
 
 /*
-    url = "http://192.168.1.102/___onos_cmd=sy&sn=";
+    url = "http://192.168.101.1/___onos_cmd=sy&sn=";
     //url += sysCfg.friendlyname[0];
     url += "&fw=";
     url += fw_version;

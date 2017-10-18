@@ -1,0 +1,15 @@
+
+https://github.com/arendst/Sonoff-Tasmota/wiki/Troubleshooting
+
+
+https://github.com/espressif/esptool
+
+
+sudo python setup.py install
+
+
+poi per cancellare le config di tasmota dare (premere il pulsante fincè si alimenta sonoff..come in programmazione):
+sudo esptool.py --port /dev/ttyUSB0 erase_region 0x0F4000 0x008000
+
+poi riprogrammare con firmware tasmota
+

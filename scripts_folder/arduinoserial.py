@@ -248,6 +248,8 @@ class SerialPort:
                 message="error in self.ser.read(self.ser.inWaiting()) "
                 if (str(e.args) ).find("readiness")!=-1:   # if the error is :device reports readiness to read but returned no data is lower priority 
                   verbose=5
+                elif((str(e.args) ).find("temporarily")!=-1):
+                  verbose=5
                 else:
                   verbose=8
                 logprint(message,verbose,error_tuple=(e,sys.exc_info()))  

@@ -972,7 +972,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         #sendMail(m,mailtext,mailSubject,onos_mail_conf,smtplib,string)
         mailQueue.put({"mail_address":m,"mailText":mailText,"mailSubject":mailSubject})
 
-      logprint("error ,required priority is "+str(objectDict[objName].getRequiredPriority()),verbose=10)
+      logprint("error ,this user:"+user+"has not the required priority,for this object:"+objName+",required priority is "+str(objectDict[objName].getRequiredPriority()),verbose=10)
  
 
       return(-1)
@@ -1621,7 +1621,7 @@ def findZoneName(path,roomDictionary):
       room=address_list[1]    
       return(room)
     else: 
-      logprint("no room name found")
+      logprint("no zone name found in path:"+path,verbose=9)
       return (-1) #no room found
 
   return(-1)
@@ -1638,21 +1638,23 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 
 
   logprint("modPage()  executed with zone:"+str(zone))
+  tmp_pag=htmlPag
+  try:
   #if zone in zoneDictionary:
-  zoneObjList=zoneDictionary[zone]["objects"]
+    zoneObjList=zoneDictionary[zone]["objects"]
   #else:
   #  logprint("zone not in the system"+ str(zone) )
   #  zoneObjList=[]
   #  return(htmlPag)
-  tmp_pag=htmlPag
 
-  if zone+'_body' in WebObjectdictionary.keys():
-    try:
-      onos_automatic_body_style=''' body {'''+WebObjectdictionary[zone+'_body'].getStyle()+'''}'''
-    except:
+
+    if zone+'_body' in WebObjectdictionary.keys():
+      try:
+        onos_automatic_body_style=''' body {'''+WebObjectdictionary[zone+'_body'].getStyle()+'''}'''
+      except:
+        onos_automatic_body_style=' '
+    else:
       onos_automatic_body_style=' '
-  else:
-    onos_automatic_body_style=' '
 
 
     #print "no  body obj found in zone"+zone
@@ -1661,43 +1663,41 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
 
 
   #zoneObjList.sort()
-  for obj in zoneObjList :
-    onos_automatic_css_style=onos_automatic_css_style+'''#'''+obj+'''{'''+WebObjectdictionary[obj].getStyle()+'''}'''
-
-    
+    for obj in zoneObjList :
+      onos_automatic_css_style=onos_automatic_css_style+'''#'''+obj+'''{'''+WebObjectdictionary[obj].getStyle()+'''}'''
 
      #print "zone+body="+zone+'_body'
-    if string.find(obj,zone+"_body")!=-1:#skip to display the body obj
-      continue   
+      if string.find(obj,zone+"_body")!=-1:#skip to display the body obj
+        continue   
     #print 'obj='+obj      
-    status=WebObjectdictionary[obj].getStatus() 
-    onos_automatic_local_style='''style="'''+WebObjectdictionary[obj].getStyle()+'''"'''     
-    if (status==0)|(status=="0"): #banana to implement  a method to allow analog status
-      status_to_set="1"
-      img_html='''<!--start_img'''+obj+'''--><img class="flex" src="/img/on.png" class="image" />  <!--end_img'''+obj+'''-->'''
-    else:
-      status_to_set="0"
-      img_html='''<!--start_img'''+obj+'''--><img class="flex" src="/img/off.png" class="image" />  <!--end_img'''+obj+'''-->'''
+      status=WebObjectdictionary[obj].getStatus() 
+      onos_automatic_local_style='''style="'''+WebObjectdictionary[obj].getStyle()+'''"'''     
+      if (status==0)|(status=="0"): #banana to implement  a method to allow analog status
+        status_to_set="1"
+        img_html='''<!--start_img'''+obj+'''--><img class="flex" src="/img/on.png" class="image" />  <!--end_img'''+obj+'''-->'''
+      else:
+        status_to_set="0"
+        img_html='''<!--start_img'''+obj+'''--><img class="flex" src="/img/off.png" class="image" />  <!--end_img'''+obj+'''-->'''
 
-    onos_automatic_object_html=WebObjectdictionary[obj].getHtml()
-    onos_automatic_object_id=''' id="'''+obj+'''" '''
+      onos_automatic_object_html=WebObjectdictionary[obj].getHtml()
+      onos_automatic_object_id=''' id="'''+obj+'''" '''
 
-    objType=WebObjectdictionary[obj].getType() 
-    if objType in ("b","sb","digital_obj_out","cfg_obj","sr_relay","digital_output"):  #banana to use group and to update the online php server with digital_obj...
-      onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
-      onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
-      onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
+      objType=WebObjectdictionary[obj].getType() 
+      if objType in ("b","sb","digital_obj_out","cfg_obj","sr_relay","digital_output"):  #banana to use group and to update the online php server with digital_obj...
+        onos_automatic_object_href='''href="?'''+obj+'''='''+status_to_set+'''"'''
+        onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
+        onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
 
-    elif objType in  ("analog_obj_in","numeric_var","digital_obj_in","servo_output","analog_output"):  #banana to use group and to update the onlyne php server with digital_obj...
-      onos_automatic_object_href='''href="#"'''
-      onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
-      onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
+      elif objType in  ("analog_obj_in","numeric_var","digital_obj_in","servo_output","analog_output"):  #banana to use group and to update the onlyne php server with digital_obj...
+        onos_automatic_object_href='''href="#"'''
+        onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
+        onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
 
 
-    else:
-      onos_automatic_object_href=''
-      onos_automatic_object= '''<a id="'''+obj+'''" > '''+onos_automatic_object_html+'''</a>'''
-      onos_automatic_object_a=''
+      else:
+        onos_automatic_object_href=''
+        onos_automatic_object= '''<a id="'''+obj+'''" > '''+onos_automatic_object_html+'''</a>'''
+        onos_automatic_object_a=''
 
 
  
@@ -1706,39 +1706,42 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
     #current_time_minutes=(int(strftime("%M", gmtime()))+time_gap+(int(strftime("%H", gmtime())))*60)%60
     #tmp_pag=tmp_pag.replace('''<!--onos_system_time-->''',str(current_time_hours)+":"+str(current_time_minutes)+":"+str(time.timezone),1)
 
-    tmp_pag=tmp_pag.replace('''<!--onos_system_time-->''',str(time.localtime()[3])+":"+str(time.localtime()[4]),1)
+      tmp_pag=tmp_pag.replace('''<!--onos_system_time-->''',str(time.localtime()[3])+":"+str(time.localtime()[4]),1)
 
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_local_style-->''',onos_automatic_local_style, 1)
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object-->''',onos_automatic_object, 1)
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_a-->''',onos_automatic_object_a, 1) 
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_id-->''',onos_automatic_object_id, 1) 
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_href-->''',onos_automatic_object_href, 1) 
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_html-->''',onos_automatic_object_html, 1) 
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_local_style-->''',onos_automatic_local_style, 1)
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object-->''',onos_automatic_object, 1)
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_a-->''',onos_automatic_object_a, 1) 
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_id-->''',onos_automatic_object_id, 1) 
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_href-->''',onos_automatic_object_href, 1) 
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_html-->''',onos_automatic_object_html, 1) 
 
-    tmp_pag=tmp_pag.replace('''<!--start_img'''+obj+'''--><img class="flex" src="/img/on.png" class="image" />  <!--end_img'''+obj+'''-->''',img_html, 1)     
-    tmp_pag=tmp_pag.replace('''<!--start_img'''+obj+'''--><img class="flex" src="/img/off.png" class="image" />  <!--end_img'''+obj+'''-->''',img_html, 1)     
+      tmp_pag=tmp_pag.replace('''<!--start_img'''+obj+'''--><img class="flex" src="/img/on.png" class="image" />  <!--end_img'''+obj+'''-->''',img_html, 1)     
+      tmp_pag=tmp_pag.replace('''<!--start_img'''+obj+'''--><img class="flex" src="/img/off.png" class="image" />  <!--end_img'''+obj+'''-->''',img_html, 1)     
 
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object='''+obj+'''-->''',onos_automatic_object)  
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_href='''+obj+'''-->''',onos_automatic_object_href)  
-    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_html='''+obj+'''-->''',onos_automatic_object_html) 
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object='''+obj+'''-->''',onos_automatic_object)  
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_href='''+obj+'''-->''',onos_automatic_object_href)  
+      tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_html='''+obj+'''-->''',onos_automatic_object_html) 
  
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_body_style-->''',onos_automatic_body_style, 1)    
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_meta-->''',onos_automatic_meta);
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_javascript-->''',onos_automatic_javascript)
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_css_style-->''',onos_automatic_css_style)
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_body_style-->''',onos_automatic_body_style, 1)    
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_meta-->''',onos_automatic_meta);
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_javascript-->''',onos_automatic_javascript)
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_css_style-->''',onos_automatic_css_style)
 
 
 # remove the unused reference
 
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_local_style-->''',' ')
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_object-->''',' ') 
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_id-->''',' ')
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_href-->''',' ')  
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_html-->''',' ')  
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_local_style-->''',' ')
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object-->''',' ') 
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_id-->''',' ')
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_href-->''',' ')  
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_html-->''',' ')  
 
-  tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_a-->''','''style="visibility: hidden"''') #hide the unused <a>
-  #because there are more request than the number of webobject in the zone ,hide the html for the empty ones..
+    tmp_pag=tmp_pag.replace('''<!--onos_automatic_object_a-->''','''style="visibility: hidden"''') #hide the unused <a>
+    #because there are more request than the number of webobject in the zone ,hide the html for the empty ones..
 
+  except Exception as e: 
+    message="error executing modPage with zone:"+str(zone)
+    logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
   return (tmp_pag)
 
@@ -2640,7 +2643,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-     # pag='<html><head><style type="text/css">.text{font-size:110%} .title{color: red;font-size:120%}'+style+'</style></head><body><form action="" method="POST"><input type="hidden" name="mod_object" value="'+self.path+'"><table border="1" style="width:100%"><tr><td><div class="title"> Web Object Name: </div><br/><input type="text" name="obj_name"  value="'+name+'"  size="50" style="width:100%"><br/><br/></td><td><div class="title">Web Object Notes: </div><br/><input type="text" name="obj_notes"  value="'+notes+'"  size="50"  style="width:100%"><br/><br/></td></tr><tr><td><div class="title"> Web Object Type </div><ul><input type="radio" name="obj_type" value="b" '+type_b+'>Normal Button</ul><ul><input type="radio" name="obj_type" value="sb" '+type_sb+'>Static Button</ul><ul><input type="radio" name="obj_type"value="l" '+type_l+' >Web Label</ul><br/><br/><br/></td><td><div class="title"> Web Object Current Status </div><ul><input type="radio" name="obj_current_status" value="0" '+current_status0+'  >0</ul><ul><input type="radio" name="obj_current_status" value="1" '+current_status1+' >1</ul><br/> <a id="'+name+'"  href="/?'+name+'='+status_link+'">'+html_obj+'</a> <br/><xmp ><a id="'+name+'"  href="/?'+name+'='+status_link+'">'+html_obj+'</a></xmp >  <br/></td></tr><br/><tr><td class="title">First Web Object Style &nbsp;</td><td class="title">Second Web Object Style</td></tr><tr><td>  <textarea name="obj_style0" cols=1 rows=15 style="width:100%" >'+style0+'</textarea></td> <td>    <textarea name="obj_style1" cols=1 rows=15 style="width:100%">'+style1+'</textarea></td></tr><tr><td> <div class="title">First Web Object Html </div> Html displayed on web page when the web object status is 0</td><td><div class="title">Second Web Object Html</div>Html displayed on web page when the web object status is 1</td></tr><tr><td> <textarea name="obj_html0" cols=1 rows=15 style="width:100%">'+html0+'</textarea></td> <td>    <textarea name="obj_html1" cols=1 rows=15 style="width:100%">'+html1+'</textarea></td> </tr><tr> <td><div class="title">First Web Object Command</div>Bash command executed when the web object status changes from 1 to 0 </td><td><div class="title">Second Web Object Command</div>Bash command executed when the web object status changes from 0 to 1 </td> </tr><tr> <td> <textarea name="obj_cmd0" cols=1 rows=5 style="width:100%">'+command0+'</textarea></td> <td>    <textarea name="obj_cmd1" cols=1 rows=5 style="width:100%">'+command1+'</textarea></td> </tr><tr><table border="1" style="width:100%"><tr><td style="width:15%" ><div class="title" > Web Object Init Command</div>Command executed once only when you start the webserver</td> <td>    <textarea name="obj_init_cmd" cols=1 rows=5 style="width:100%">'+init_command+'</textarea></td></tr></table></tr></table></div><br/><br/><br/> <input type="submit" value="Submit"><input type="reset" value="Reset"></form></body></html>'
 
 
       return(ModObjFormPage)
@@ -4299,7 +4301,7 @@ class MyHandler(BaseHTTPRequestHandler):
             return
                 
         except Exception as e  :
-            message="Generic error in Get method"
+            message="Generic error in Get method,the path was:"+self.path
             self.send_error(404,'File Not Found: %s' % self.path)
             logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
 
@@ -6376,9 +6378,9 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           while not errorQueue.empty():
             error_dict=errorQueue.get()
             verbose=error_dict["verbose"]
-            print("verbose="+str(verbose))
+            #print("verbose="+str(verbose))
             if verbose>mail_verbose_level:
-              print("verbose>5")
+              #print("verbose>5")
               error_text =error_text+";;;\n"+platform+"OnosCenter:"+router_sn+":"+str(error_dict["msg"])
 
             #errorQueue.task_done()

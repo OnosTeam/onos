@@ -321,14 +321,14 @@ class WebObject(object):   # inherit from object python class
         return (self.object_name+u"="+str(self.status)) #for analog type
           
           
-    def getOtherHtml(self):             #return the opposite  html  respect the actual  of the web object ,obsolete
-        if (self.status==1)|(self.status=="1"):
-          return(self.html0)
-        if (self.status=="onoswait"):
-          return(self.htmlDict[u"onoswait"]) 
-        if (self.status==0)|(self.status=="0"):
-          return(self.html1)
-        return (str(self.status)) #for analog type
+    #def getOtherHtml(self):             #return the opposite  html  respect the actual  of the web object ,obsolete
+    #    if (self.status==1)|(self.status=="1"):
+    #      return(self.html0)
+    #    if (self.status=="onoswait"):
+    #      return(self.htmlDict[u"onoswait"]) 
+    #    if (self.status==0)|(self.status=="0"):
+    #      return(self.html1)
+    #    return (str(self.status)) #for analog type
 
 
     def getHtml0(self):             #return the static html0  of the button

@@ -39,5 +39,14 @@ to one of this found on sonoff_template.h:
 
 For now only SONOFF_BASIC is supported
 
+you have to change also platformio.ini  here to use another hardware:
+
+; Uncomment one of the lines below to build/upload only one environment
+env_default = sonoff
+;env_default = sonoff-touch-4ch-bnsz
+;env_default = sonoff-minimal
+;env_default = sonoff-ds18x20
+
+
 
 

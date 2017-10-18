@@ -35,17 +35,17 @@
 
 // -- Wifi ----------------------------------------
 #define WIFI_IP_ADDRESS        "0.0.0.0"         // [IpAddress1] Set to 0.0.0.0 for using DHCP or IP address
-#define WIFI_GATEWAY           "192.168.2.254"   // {IpAddress2] If not using DHCP set Gateway IP address
+#define WIFI_GATEWAY           "192.168.101.1"   // {IpAddress2] If not using DHCP set Gateway IP address
 #define WIFI_SUBNETMASK        "255.255.255.0"   // [IpAddress3] If not using DHCP set Network mask
-#define WIFI_DNS               "192.168.2.27"    // [IpAddress4] If not using DHCP set DNS IP address (might be equal to WIFI_GATEWAY)
+#define WIFI_DNS               "192.168.101.16"    // [IpAddress4] If not using DHCP set DNS IP address (might be equal to WIFI_GATEWAY)
 
-#define STA_SSID1              "OpenWrt"      // onosmod [Ssid1] Wifi SSID  onosmod
-#define STA_PASS1              "123454678"    // onosmod [Password1] Wifi password   onosmod
-#define STA_SSID2              "OpenWrt"      // onosmod [Ssid2] Optional alternate AP Wifi SSID
-#define STA_PASS2              "123454678"    // onosmod[Password2] Optional alternate AP Wifi password
-#define WIFI_CONFIG_TOOL       WIFI_WPSCONFIG    // [WifiConfig] Default tool if wifi fails to connect
+#define STA_SSID1              "onoscenter"      // onosmod [Ssid1] Wifi SSID  onosmod
+#define STA_PASS1              "12345678"    // onosmod [Password1] Wifi password   onosmod
+#define STA_SSID2              "onoscenter"      // onosmod [Ssid2] Optional alternate AP Wifi SSID
+#define STA_PASS2              "12345678"    // onosmod[Password2] Optional alternate AP Wifi password
+#define WIFI_CONFIG_TOOL       WIFI_RETRY    // [WifiConfig] Default tool if wifi fails to connect
                                                  //   (WIFI_RESTART, WIFI_SMARTCONFIG, WIFI_MANAGER, WIFI_WPSCONFIG, WIFI_RETRY)
-                                                 
+
 // -- Syslog --------------------------------------
 #define SYS_LOG_HOST           "domus1"          // [LogHost] (Linux) syslog host
 #define SYS_LOG_PORT           514               // [LogPort] default syslog UDP port
@@ -156,7 +156,7 @@
 
 //#define USE_DS18x20                              // Optional using OneWire library for multiple DS18B20 and/or DS18S20 (+2k code)
 
-//#define USE_I2C                                  // onosmod(//) I2C using library wire (+10k code, 0.2k mem) - Disable by // 
+//#define USE_I2C                                  // onosmod(//) I2C using library wire (+10k code, 0.2k mem) - Disable by //
   #define USE_BH1750                             // Add I2C code for BH1750 sensor
   #define USE_BMP                                // Add I2C code for BMP/BME280 sensor
   #define USE_HTU                                // Add I2C code for HTU21/SI7013/SI7020/SI7021 sensor
@@ -165,14 +165,14 @@
 //#define USE_IR_REMOTE                            // onosmod(//) Send IR remote commands using library IRremoteESP8266 and//  code, 0.3k mem)
 //  #define USE_IR_HVAC                            // Support for HVAC system using IR (+2k code)
 
-//#define USE_WS2812                               //onosmod(//) WS2812 Led string using library NeoPixelBus (+8k code, +1k mem) - 
+//#define USE_WS2812                               //onosmod(//) WS2812 Led string using library NeoPixelBus (+8k code, +1k mem) -
   #define USE_WS2812_CTYPE     1                 // WS2812 Color type (0 - RGB, 1 - GRB)
 //  #define USE_WS2812_DMA                         // DMA supports only GPIO03 (= Serial RXD) (+1k mem)
                                                  //   When USE_WS2812_DMA is enabled expect Exceptions on Pow
 
 /*********************************************************************************************\
  * Compile a minimal version if upgrade memory gets tight ONLY TO BE USED FOR UPGRADE STEP 1!
- *   To be used as step 1 during upgrade. 
+ *   To be used as step 1 during upgrade.
  *   Step 2 is re-compile with option BE_MINIMAL commented out.
  *   !!! Needed for next release of Arduino/ESP8266 (+22k code, +2k mem) !!!
 \*********************************************************************************************/
@@ -190,4 +190,3 @@
 #if (ARDUINO < 10610)
   #error "This software is supported with Arduino IDE starting from 1.6.10 and ESP8266 Release 2.3.0"
 #endif
-
