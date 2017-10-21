@@ -1,12 +1,6 @@
 {
   "dictionaries": {
     "nodeDictionary": { 
-      "RouterOP0000": {
-        "hwModelName": "RouterOP", 
-        "nodeAddress": "0", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "RouterOP0000"
-      }, 
       "WreedSaa0004": {
         "hwModelName": "WreedSaa", 
         "nodeAddress": "003", 
@@ -378,43 +372,6 @@
         }, 
         "type": "b"
       }, 
-      "onosCenterWifi": {
-        "cmdDict": {
-          "0": "systemctl stop create_ap", 
-          "1": "systemctl start create_ap", 
-          "s_cmd": " "
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "onosCenterWifi=0", 
-          "1": "onosCenterWifi=1", 
-          "onoswait": "onosCenterWifiWAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "onosCenterWifi", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "1", 
-        "styleDict": {
-          "0": "background-color:green;", 
-          "1": "background-color:red;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
       "reed1Logic_WreedSaa0004": {
         "cmdDict": {
           "0": "", 
@@ -658,16 +615,6 @@
     }, 
     "scenarioDictionary": {}, 
     "zoneDictionary": { 
-      "RouterOP0000": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "onosCenterWifi"
-        ], 
-        "order": 3, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
       "WreedSaa0004": {
         "group": [], 
         "hidden": 0, 

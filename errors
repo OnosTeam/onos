@@ -1,22 +1,20 @@
 
 
-prova1
-
-
-sync_message decoding error,sync_messageok1okokreal_password:1234onos_password_oktime sync2016:05:12:21:18:34 e:("'NoneType' object has no attribute 'group'",)
-
-
-
-
-
-
-
-
-
+orangepizeroOnosCenter:RouterOP0000:scenario_to_mod;;;
+orangepizeroOnosCenter:RouterOP0000:select:;;;
+orangepizeroOnosCenter:RouterOP0000:select2:;;;
+orangepizeroOnosCenter:RouterOP0000:functionsToRun=;;;
+orangepizeroOnosCenter:RouterOP0000:select:;;;
+orangepizeroOnosCenter:RouterOP0000:select2:;;;
+orangepizeroOnosCenter:RouterOP0000:functionsToRun=;;;
+orangepizeroOnosCenter:RouterOP0000:error5 opening the file,local address bar =/scenario_toggle/wifiOff/index.html, e:(2, 'No such file or directory')<type 'exceptions.IOError'>webserver.py at line:4269;;;
+orangepizeroOnosCenter:RouterOP0000:no zone name found in path:/scenario_toggle/wifiOff/;;;
+orangepizeroOnosCenter:RouterOP0000:error executing modPage with zone:-1, e:(-1,)<type 'exceptions.KeyError'>webserver.py at line:1644
 
 
 
 
 
+orangepizeroOnosCenter:RouterOP0000:Generic error in Get method,the path was:/favicon.ico, e:(2, 'No such file or directory')<type 'exceptions.IOError'>webserver.py at line:3014
 
 

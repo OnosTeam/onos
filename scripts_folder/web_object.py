@@ -402,6 +402,12 @@ class WebObject(object):   # inherit from object python class
           return(self.cmdDict["1"])
 
 
+    def setCommandDict(self,commandDict):             #set the static command0  of the button
+          #logprint("set cmd dict")
+          self.cmdDict=commandDict
+          return(1)
+
+
     def replaceAttachedScenario(self,previous_scenario_name,new_scenario_name):             #attaches a scenario to this webobject 
       if previous_scenario_name in self.attachedScenarios:
         self.attachedScenarios.remove(previous_scenario_name)

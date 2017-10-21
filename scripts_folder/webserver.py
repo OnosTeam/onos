@@ -996,7 +996,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
 
-   #  global objectDict  #banana  to remove?
+
 
 
     if ( objectDict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
@@ -1272,7 +1272,7 @@ def NodePinToWebObject(node_sn,pin_number,pin_status):#change the webobject stat
           else:#the status is legit with the webobj type
             objName=objectDict[a].getName()                      
             #changeWebObjectStatus(objName,int (pin_status),write_hw_enable) #banana add to queue
-            layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str (pin_status),"write_to_hw":write_hw_enable,"user":"onos_node","priority":8,"mail_report_list":[]})
+            layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":str (pin_status),"write_to_hw":write_hw_enable,"user":"onos_node","priority":0,"mail_report_list":[]})
 
             logprint("pin changed from external node")                      
 
@@ -1422,8 +1422,12 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
               else:
                 new_obj_name=b+"_"+node_sn  
+                if node_sn==router_sn:
+                  if b=="onosCenterWifi":
+                    new_obj_name="onosCenterWifi"
       
               logprint ("new object name="+new_obj_name)
+
               #print ("object_address_in_the_node:"+str(type(object_address_in_the_node)))
               nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
 
@@ -1435,6 +1439,8 @@ def createNewWebObjFromNode(hwType0,node_sn):
               if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
                 logprint("added new webobj from node")        
                 objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
+                if "bash_cmd" in hardwareModelDict[hwType0]["object_list"][a][b]:
+                  objectDict[new_obj_name].setCommandDict(hardwareModelDict[hwType0]["object_list"][a][b]["bash_cmd"])
               else:
                 logprint("warning001  the object "+new_obj_name+" already exist in the objectDict") 
         logprint("now the object dict of the node:"+str(objectDict.keys()))
@@ -1948,10 +1954,11 @@ def createNewNode(node_sn,node_address,node_fw):
     if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
       logprint("added node_hw from query :"+hwType)
 
-      createNewWebObjFromNode(hwType,node_sn)
+
       #if((len(node_sn)>0)&((node_sn)!=" ")): 
       hardware_node_model=hardwareModelDict[hwType]  
       nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
+      createNewWebObjFromNode(hwType,node_sn)
 
       if node_sn not in node_password_dict:
  
@@ -3477,7 +3484,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   status_to_set=not (objectDict[objName].getStatus())
 
 
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":8,"user":self.current_username,"mail_report_list":[]})  
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":0,"user":self.current_username,"mail_report_list":[]})  
  
 
                 logprint("i set"+objName+" to :"+str(status_to_set) )
@@ -3522,7 +3529,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   logprint("path="+address_bar)
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":8,"user":current_username,"mail_report_list":[]})    
+                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":0,"user":current_username,"mail_report_list":[]})    
 
                   logprint ("i set"+objName+" to :"+str(status_to_set))
 
@@ -6258,7 +6265,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           logprint(message,verbose=6)  
 
           for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
-            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":10,"mail_report_list":[]}) 
+            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
           #for b in objectDict.keys():
           #  if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
@@ -6280,7 +6287,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
               if ((current_s=="inactive") or (current_s=="onoswait") ): 
               #  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
                 logprint("the new status will be:"+str(prev_s) )
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":10,"mail_report_list":[]})
+                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
                 #set the web_object to the status before the disconnection 
           
           #nodeDict[a].updateLastNodeSync(time.time())
