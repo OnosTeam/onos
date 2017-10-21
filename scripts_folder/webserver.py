@@ -993,11 +993,20 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
 
 
+    try:
+      nodeSerialNumber=objectDict[objName].getHwNodeSerialNumber()
+      logprint("nodeSerialNumbernodeSerialNumber:"+str(nodeSerialNumber))
+#hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["options"]=["no_write_to_hw"]
+      if "no_write_to_hw" in hardwareModelDict[nodeSerialNumber[0:8]]["object_list"][objectDict[objName].getType()][objName]["options"]:
+        logprint("no pin attached to this webobject from hardwareModelDict  , I change its status")
+        write_to_hardware=0
 
+    except:
+      pass
 
-
-
-
+    if objectDict[objName].getType() in ("string_var","numeric_var"):
+      logprint("no pin attached to this webobject because is only a variable , I change its status")
+      write_to_hardware=0
 
     if ( objectDict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
 

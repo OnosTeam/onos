@@ -768,12 +768,13 @@ hardwareModelDict["RouterOP"]["pin_mode"]["digital_input"]={}
 hardwareModelDict["RouterOP"]["parameters"]["bash_pin_enable"]=1
 hardwareModelDict["RouterOP"]["parameters"]["serial_port_enable"]=1  #not yet implemented
 hardwareModelDict["RouterOP"]["object_list"]= {}
-hardwareModelDict["RouterOP"]["object_list"]["string_var"]={}
-hardwareModelDict["RouterOP"]["object_list"]["string_var"]["onosCenterWifi"]={}
-hardwareModelDict["RouterOP"]["object_list"]["string_var"]["onosCenterWifi"]["object_numbers"]=[0]   #
-hardwareModelDict["RouterOP"]["object_list"]["string_var"]["onosCenterWifi"]["bash_cmd"]={}
-hardwareModelDict["RouterOP"]["object_list"]["string_var"]["onosCenterWifi"]["bash_cmd"]["0"]="systemctl stop create_ap"
-hardwareModelDict["RouterOP"]["object_list"]["string_var"]["onosCenterWifi"]["bash_cmd"]["1"]="systemctl start create_ap"
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]={}
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]={}
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["object_numbers"]=[0]   #
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]={}
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["0"]="systemctl stop create_ap"
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["1"]="systemctl start create_ap"
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["options"]=["no_write_to_hw"]
 
 hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":"never"}
 hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
@@ -963,8 +964,8 @@ hardwareModelDict["RouterRB"]["pin_mode"]["sr_relay"]={"socket":[(11,17),(18,22)
 # serial_input     : serial input  , allow to read  a serial port
 #end old
 
-# numeric_var:   containing a numeric float variable 
-# string_var :   containing a utf8 string variable 
+# numeric_var:   containing a numeric float variable,not used inside arduino nodes because onos will not send query for this type..
+# string_var :   containing a utf8 string variable,not used inside arduino nodes because onos will not send query for this type..
 
 
 # special_pin      : handled on the node arduino firmware side
