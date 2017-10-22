@@ -1,61 +1,19 @@
 {
   "dictionaries": {
-    "nodeDictionary": { 
-      "WreedSaa0004": {
-        "hwModelName": "WreedSaa", 
-        "nodeAddress": "003", 
+    "nodeDictionary": {
+      "RouterOP0000": {
+        "hwModelName": "RouterOP", 
+        "nodeAddress": "0", 
         "nodeObjectsDict": {}, 
-        "node_serial_number": "WreedSaa0004"
-      }, 
-      "WreedSaa0005": {
-        "hwModelName": "WreedSaa", 
-        "nodeAddress": "004", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "WreedSaa0005"
+        "node_serial_number": "RouterOP0000"
       }
     }, 
     "objectDictionary": {
-      "counter1": {
+      "day": {
         "cmdDict": {
           "0": "", 
           "1": "", 
           "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "counter1=0", 
-          "1": "counter1=1", 
-          "onoswait": "counter1WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "counter1", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:green;", 
-          "1": "background-color:red;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      },
-      "day": {
-        "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
         }, 
         "enable_logging": 0, 
         "grp": [
@@ -78,21 +36,20 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 8, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
       "dayTime": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
         "enable_logging": 0, 
         "grp": [
@@ -115,21 +72,20 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1159, 
+        "status": 909, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
       "hours": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
         "enable_logging": 0, 
         "grp": [
@@ -152,157 +108,20 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 19, 
+        "status": 15, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
-      "led_WreedSaa0004": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "led_WreedSaa0004=0", 
-          "1": "led_WreedSaa0004=1", 
-          "onoswait": "led_WreedSaa0004WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0004", 
-        "notes": " ", 
-        "objname": "led_WreedSaa0004", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
-      }, 
-      "led_WreedSaa0005": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "led_WreedSaa0005=0", 
-          "1": "led_WreedSaa0005=1", 
-          "onoswait": "led_WreedSaa0005WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0005", 
-        "notes": " ", 
-        "objname": "led_WreedSaa0005", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
-      }, 
-      "luminosity_sensor_WreedSaa0004": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "luminosity_sensor_WreedSaa0004=0", 
-          "1": "luminosity_sensor_WreedSaa0004=1", 
-          "onoswait": "luminosity_sensor_WreedSaa0004WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0004", 
-        "notes": " ", 
-        "objname": "luminosity_sensor_WreedSaa0004", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "analog_obj_in"
-      }, 
-      "luminosity_sensor_WreedSaa0005": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "luminosity_sensor_WreedSaa0005=0", 
-          "1": "luminosity_sensor_WreedSaa0005=1", 
-          "onoswait": "luminosity_sensor_WreedSaa0005WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0005", 
-        "notes": " ", 
-        "objname": "luminosity_sensor_WreedSaa0005", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "analog_obj_in"
-      }, 
       "minutes": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
         "enable_logging": 0, 
         "grp": [
@@ -325,21 +144,20 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 19, 
+        "status": 9, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
       "month": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
         "enable_logging": 0, 
         "grp": [
@@ -367,16 +185,15 @@
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
-      "reed1Logic_WreedSaa0004": {
+      "onosCenterWifi": {
         "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
+          "0": "systemctl stop create_ap", 
+          "1": "systemctl start create_ap", 
+          "s_cmd": "systemctl start create_ap"
         }, 
         "enable_logging": 0, 
         "grp": [
@@ -384,197 +201,27 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "reed1Logic_WreedSaa0004=0", 
-          "1": "reed1Logic_WreedSaa0004=1", 
-          "onoswait": "reed1Logic_WreedSaa0004WAIT"
+          "0": "onosCenterWifi=0", 
+          "1": "onosCenterWifi=1", 
+          "onoswait": "onosCenterWifiWAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "WreedSaa0004", 
+        "node_sn": "RouterOP0000", 
         "notes": " ", 
-        "objname": "reed1Logic_WreedSaa0004", 
+        "objname": "onosCenterWifi", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": "0", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "cfg_obj"
-      }, 
-      "reed1Logic_WreedSaa0005": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "reed1Logic_WreedSaa0005=0", 
-          "1": "reed1Logic_WreedSaa0005=1", 
-          "onoswait": "reed1Logic_WreedSaa0005WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0005", 
-        "notes": " ", 
-        "objname": "reed1Logic_WreedSaa0005", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "cfg_obj"
-      }, 
-      "reed1_WreedSaa0004": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "reed1_WreedSaa0004=0", 
-          "1": "reed1_WreedSaa0004=1", 
-          "onoswait": "reed1_WreedSaa0004WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0004", 
-        "notes": " ", 
-        "objname": "reed1_WreedSaa0004", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_in"
-      }, 
-      "reed1_WreedSaa0005": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "reed1_WreedSaa0005=0", 
-          "1": "reed1_WreedSaa0005=1", 
-          "onoswait": "reed1_WreedSaa0005WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0005", 
-        "notes": " ", 
-        "objname": "reed1_WreedSaa0005", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_in"
-      }, 
-      "tempSensor_WreedSaa0004": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "tempSensor_WreedSaa0004=0", 
-          "1": "tempSensor_WreedSaa0004=1", 
-          "onoswait": "tempSensor_WreedSaa0004WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0004", 
-        "notes": " ", 
-        "objname": "tempSensor_WreedSaa0004", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "analog_obj_in"
-      }, 
-      "tempSensor_WreedSaa0005": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "tempSensor_WreedSaa0005=0", 
-          "1": "tempSensor_WreedSaa0005=1", 
-          "onoswait": "tempSensor_WreedSaa0005WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0005", 
-        "notes": " ", 
-        "objname": "tempSensor_WreedSaa0005", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "analog_obj_in"
+        "type": "digital_obj_out"
       }, 
       "year": {
         "cmdDict": {
@@ -614,32 +261,14 @@
       }
     }, 
     "scenarioDictionary": {}, 
-    "zoneDictionary": { 
-      "WreedSaa0004": {
+    "zoneDictionary": {
+      "RouterOP0000": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "tempSensor_WreedSaa0004", 
-          "luminosity_sensor_WreedSaa0004", 
-          "reed1_WreedSaa0004", 
-          "led_WreedSaa0004", 
-          "reed1Logic_WreedSaa0004"
+          "onosCenterWifi"
         ], 
-        "order": 1, 
-        "owner": "onos_sys", 
-        "permissions": "777"
-      }, 
-      "WreedSaa0005": {
-        "group": [], 
-        "hidden": 0, 
-        "objects": [
-          "tempSensor_WreedSaa0005", 
-          "luminosity_sensor_WreedSaa0005", 
-          "reed1_WreedSaa0005", 
-          "led_WreedSaa0005", 
-          "reed1Logic_WreedSaa0005"
-        ], 
-        "order": 2, 
+        "order": 0, 
         "owner": "onos_sys", 
         "permissions": "777"
       }

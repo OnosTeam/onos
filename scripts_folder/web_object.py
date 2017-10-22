@@ -47,7 +47,10 @@ class WebObject(object):   # inherit from object python class
 
 
     def __init__(self,name,obj_type="b",start_status="0",styleDictionary={},htmlDictionary={},cmdDictionary={},note=" ",hardware_pin=[9999],HwNodeSerialNumber=0,spareDict={}):
+
+      logprint("init of object executed")
       self.__object_type=obj_type
+
       self.__style0="background-color:red ;"
       self.__style1="background-color:green ;"
       self.styleDict={u"0":self.__style0,u"1":self.__style1,u"onoswait":"background-color:grey ;color black","default_s":"background-color:red ;color black"}
@@ -56,18 +59,14 @@ class WebObject(object):   # inherit from object python class
       self.__style1=self.styleDict[u"0"]
       #self.style_wait=self.styleDict[u"onoswait"] #banana to remove
 
+
       self.htmlDict={u"0":name+"=0",u"1":name+"=1"} 
-
       self.htmlDict.update(htmlDictionary)
-
       self.html0=self.htmlDict["0"]     
       self.html1=self.htmlDict["1"] 
       self.htmlDict[u"onoswait"]=name+u"WAIT" 
       #self.html_wait=name+u"WAIT"  
       self.html_error=name+u"has status_not_valid"
-
-
-
 
 
       self.cmdDict={u"0":"",u"1":"",u"s_cmd":""}

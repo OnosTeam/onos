@@ -1381,163 +1381,6 @@ def updateNodeInputStatusFromReg(node_sn,register):  # deprecated
 
 
 
-def createNewWebObjFromNode(hwType0,node_sn):
-  """
-  | Given an hardware type and a node serial number it will create a new zone and the webobjects in that zone .
-  |
-  |
-  """
-
-  #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
-  logprint("createNewWebObjFromNode executed with node_sn:"+node_sn+"and hwType0:"+hwType0)
-  global zoneDict
-  global objectDict
-  logprint(hardwareModelDict.keys())
-  if hwType0 in hardwareModelDict.keys():  #if the type exist in the hardwareModelDict
-#hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"][0]
-    logprint("I will create a new "+hwType0+" node ")
-
-#hardwareModelDict["onosPlug6way"]={"max_pin":12,"hardware_type":"arduino_2009","pin_mode":{"sr_relay":{"socket":[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)]}  }    }
-
-    if "object_list" in  hardwareModelDict[hwType0]:
-
-      try:#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]#see globalVar.py
-        list_of_different_object_type=hardwareModelDict[hwType0]["object_list"].keys() #get a list of different obj  
-        for a in list_of_different_object_type: 
- # a will be for example "digital_obj_out" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3] 
-          objType=a  
-
-
-          for b in hardwareModelDict[hwType0]["object_list"][a].keys():
-# b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
-
-            progressive_number=0
-            logprint ("""hardwareModelDict[hwType0]["object_list"][a]""")
-            logprint (str(hardwareModelDict[hwType0]["object_list"][a])) 
-
-            logprint ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
-            logprint (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
-
-            for c in hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:
-# c will be for example 2 from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
-
-              object_address_in_the_node=c
-
-              new_obj_name=b+"_"+node_sn 
-
-              if len (hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]) >1: #there is more than 1 object with this name
-                new_obj_name=b+str(progressive_number)+"_"+node_sn   
-                progressive_number=progressive_number+1
-
-              else:
-                new_obj_name=b+"_"+node_sn  
-                if node_sn==router_sn:
-                  if b=="onosCenterWifi":
-                    new_obj_name="onosCenterWifi"
-      
-              logprint ("new object name="+new_obj_name)
-
-              #print ("object_address_in_the_node:"+str(type(object_address_in_the_node)))
-              nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
-
-              if new_obj_name not in (zoneDict[node_sn]["objects"]):
-                zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
-              else:
-                logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
-      
-              if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
-                logprint("added new webobj from node")        
-                objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
-                if "bash_cmd" in hardwareModelDict[hwType0]["object_list"][a][b]:
-                  objectDict[new_obj_name].setCommandDict(hardwareModelDict[hwType0]["object_list"][a][b]["bash_cmd"])
-              else:
-                logprint("warning001  the object "+new_obj_name+" already exist in the objectDict") 
-        logprint("now the object dict of the node:"+str(objectDict.keys()))
-
-      except Exception as e:
-        message="error createNewWebObjFromNode in the object part"
-        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-
-
-
-
-    try:# todo test if this part still works ..
-
-
-      list_of_different_pin_type=hardwareModelDict[hwType0]["pin_mode"].keys() #get a list of different obj 
-      logprint("list_of_different_pin_type:"+str(list_of_different_pin_type))
-
-
-    
-      for a in list_of_different_pin_type:
-        #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]
-        # so the first a will be "digital_obj_out"
-        objType=a 
-        i=0
-
-
-        for b in hardwareModelDict[hwType0]["pin_mode"][a]:
-          #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj_out"]
-          #print hardwareModelDict[hwType0]["pin_mode"][a][b]
-          #so the first b will be "relay"
-        
-          list_of_different_webobject_names=hardwareModelDict[hwType0]["pin_mode"][a][b]
-         
-          progressive_number=0
-          for c in list_of_different_webobject_names: 
-                     
-            logprint (c)
-            #now i'm inside the last dictionary  
-            #c will be for example (0,1)  and then (2) from{"plug":[(0,1)],"plug2":[(2)]}
-            #in this example there aren't other webobject names...
-
-
-            if type(c) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
-              c=[c]
-
-            #note_to_myself now probably the sr_relay will not work anymore...
-            
-            new_obj_name=b+str(i)+"_"+node_sn  #progressive_number
-            progressive_number=progressive_number+1   
-            logprint("new_obj_name:"+new_obj_name)   
-            logprint("zoneDict:"+str(zoneDict))       
-            if new_obj_name not in (zoneDict[node_sn]["objects"]):
-              zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
-            else:
-              logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
-      
-            if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
-              logprint("added new webobj from node")      
-              objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn,c)
-            else:
-              logprint("warning001  the object "+new_obj_name+" already exist in the objectDict")
-         
-        
-    except Exception as e:
-      message="error createNewWebObjFromNode in the pin part"
-      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-
-
-
-  else:
-    logprint("no hardware of this type in hardwareModelDict",verbose=10)
-
-
-  if node_sn in zoneDict:
-    updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
-
-
-
-  return()
-
-
-
-
-
-
-
-
-
 
 
 for a in objectList :                # append to dictionary all the web object
@@ -1926,6 +1769,190 @@ def updateDir():
 
 
 
+def createNewNodeFolder(node_sn):
+
+    #updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
+    make_fs_ready_to_write()
+    try:
+      os.stat(baseRoomPath+node_sn)
+    except:
+      os.mkdir(baseRoomPath+node_sn)  
+
+    try:
+      text_file = open(baseRoomPath+node_sn+"/index.html", "w")
+      text_file.write(getRoomHtml(node_sn,objectDict,"",zoneDict))
+      text_file.close()
+    except Exception as e: 
+      message= "error creating new node index file  "+node_sn+" e:"+str(e.args)
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+      os.chmod(baseRoomPath+node_sn, 0o777)
+      logprint("create a new zone"+node_sn)
+      #print zoneDict
+      updateOneZone(node_sn) 
+
+    make_fs_readonly() 
+    return
+
+
+
+
+def createNewWebObjFromNode(hwType0,node_sn):
+  """
+  | Given an hardware type and a node serial number it will create a new zone and the webobjects in that zone .
+  |
+  |
+  """
+
+  #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
+  logprint("createNewWebObjFromNode executed with node_sn:"+node_sn+"and hwType0:"+hwType0)
+  global zoneDict
+  global objectDict
+  logprint(hardwareModelDict.keys())
+  if hwType0 in hardwareModelDict.keys():  #if the type exist in the hardwareModelDict
+#hardwareModelDict["onosPlug6way"]["pin_mode"]["sr_relay"][0]
+    logprint("I will create a new "+hwType0+" node ")
+
+#hardwareModelDict["onosPlug6way"]={"max_pin":12,"hardware_type":"arduino_2009","pin_mode":{"sr_relay":{"socket":[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)]}  }    }
+
+    if "object_list" in  hardwareModelDict[hwType0]:
+
+      try:#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]#see globalVar.py
+        list_of_different_object_type=hardwareModelDict[hwType0]["object_list"].keys() #get a list of different obj  
+        for a in list_of_different_object_type: 
+ # a will be for example "digital_obj_out" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3] 
+          objType=a  
+
+
+          for b in hardwareModelDict[hwType0]["object_list"][a].keys():
+# b will be for example "relay" from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
+
+            progressive_number=0
+            logprint ("""hardwareModelDict[hwType0]["object_list"][a]""")
+            logprint (str(hardwareModelDict[hwType0]["object_list"][a])) 
+
+            logprint ("""hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:""")
+            logprint (str(hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"])) 
+
+            for c in hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]:
+# c will be for example 2 from hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2,3]
+
+              object_address_in_the_node=c
+
+              new_obj_name=b+"_"+node_sn 
+
+              if len (hardwareModelDict[hwType0]["object_list"][a][b]["object_numbers"]) >1: #there is more than 1 object with this name
+                new_obj_name=b+str(progressive_number)+"_"+node_sn   
+                progressive_number=progressive_number+1
+
+              else:
+                new_obj_name=b+"_"+node_sn  
+                if node_sn==router_sn:
+                  if b=="onosCenterWifi":
+                    new_obj_name="onosCenterWifi"
+      
+              logprint ("new object name="+new_obj_name)
+
+              if node_sn not in list(zoneDict):
+                zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+                createNewNodeFolder(node_sn)
+
+              nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
+                
+              if new_obj_name not in (zoneDict[node_sn]["objects"]):
+                zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
+              else:
+                logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
+      
+              if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
+                logprint("added new webobj from node")        
+                objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
+                if "bash_cmd" in hardwareModelDict[hwType0]["object_list"][a][b]:
+                  objectDict[new_obj_name].setCommandDict(hardwareModelDict[hwType0]["object_list"][a][b]["bash_cmd"])
+              else:
+                logprint("warning001  the object "+new_obj_name+" already exist in the objectDict") 
+        logprint("now the object dict of the node:"+str(objectDict.keys()))
+
+      except Exception as e:
+        message="error createNewWebObjFromNode in the object part"
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
+
+
+
+    try:# todo test if this part still works ..
+
+
+      list_of_different_pin_type=hardwareModelDict[hwType0]["pin_mode"].keys() #get a list of different obj 
+      logprint("list_of_different_pin_type:"+str(list_of_different_pin_type))
+
+
+    
+      for a in list_of_different_pin_type:
+        #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]
+        # so the first a will be "digital_obj_out"
+        objType=a 
+        i=0
+
+
+        for b in hardwareModelDict[hwType0]["pin_mode"][a]:
+          #now i'm inside #for example  hardwareModelDict["Wrelay4x"]["pin_mode"]["digital_obj_out"]
+          #print hardwareModelDict[hwType0]["pin_mode"][a][b]
+          #so the first b will be "relay"
+        
+          list_of_different_webobject_names=hardwareModelDict[hwType0]["pin_mode"][a][b]
+         
+          progressive_number=0
+          for c in list_of_different_webobject_names: 
+                     
+            logprint (c)
+            #now i'm inside the last dictionary  
+            #c will be for example (0,1)  and then (2) from{"plug":[(0,1)],"plug2":[(2)]}
+            #in this example there aren't other webobject names...
+
+
+            if type(c) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
+              c=[c]
+
+            #note_to_myself now probably the sr_relay will not work anymore...
+            
+            new_obj_name=b+str(i)+"_"+node_sn  #progressive_number
+            progressive_number=progressive_number+1   
+            logprint("new_obj_name:"+new_obj_name)   
+            logprint("zoneDict:"+str(zoneDict))       
+            if new_obj_name not in (zoneDict[node_sn]["objects"]):
+              zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
+            else:
+              logprint("warning000 the object "+new_obj_name+" already exist in the zoneDict ") 
+      
+            if new_obj_name not in  objectDict.keys():  #if the object does not exist yet, create it: 
+              logprint("added new webobj from node")      
+              objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn,c)
+            else:
+              logprint("warning001  the object "+new_obj_name+" already exist in the objectDict")
+         
+        
+    except Exception as e:
+      message="error createNewWebObjFromNode in the pin part"
+      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+
+
+
+  else:
+    logprint("no hardware of this type in hardwareModelDict",verbose=10)
+
+
+  if node_sn in zoneDict:
+    updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
+
+
+
+  return()
+
+
+
+
+
+
 
 
 
@@ -1942,7 +1969,7 @@ def createNewNode(node_sn,node_address,node_fw):
 
   #createNewWebObjFromNode(hwType,node_sn)
 
-  if (node_sn in nodeDict.keys()): #&(force_recreate==0):
+  if node_sn in list(nodeDict): #&(force_recreate==0):
     logprint("found node in the dict")
 
     #nodeDict[node_sn].setNodeAddress(node_address)
@@ -1960,7 +1987,7 @@ def createNewNode(node_sn,node_address,node_fw):
 
      #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
 
-    if (hwType in hardwareModelDict.keys()):  #if the hardware is in the list 
+    if hwType in hardwareModelDict.keys():  #if the hardware is in the list 
       logprint("added node_hw from query :"+hwType)
 
 
@@ -1985,7 +2012,7 @@ def createNewNode(node_sn,node_address,node_fw):
       
 
         #if the room doesn't exist yet ...then:
-  if (node_sn in zoneDict.keys()):
+  if node_sn in list(zoneDict):
     logprint("the node:"+node_sn+" already exist in the zoneDict") 
   else:
     # if (node_sn+"_body" in objectDict.keys()):
@@ -1994,30 +2021,11 @@ def createNewNode(node_sn,node_address,node_fw):
     #   objectDict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
     #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
     zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
-
+    createNewNodeFolder(node_sn)
     createNewWebObjFromNode(hwType,node_sn)
     updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)  
     msg=nodeDict[node_sn].getSetupMsg() 
-    updateOneZone(node_sn)  #update the index.html file in the folder named as the zone..
-    make_fs_ready_to_write()
-    try:
-      os.stat(baseRoomPath+node_sn)
-    except:
-      os.mkdir(baseRoomPath+node_sn)  
 
-    try:
-      text_file = open(baseRoomPath+node_sn+"/index.html", "w")
-      text_file.write(getRoomHtml(node_sn,objectDict,"",zoneDict))
-      text_file.close()
-    except Exception as e: 
-      message= "error creating new node index file  "+node_sn+" e:"+str(e.args)
-      logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-      os.chmod(baseRoomPath+node_sn, 0o777)
-      logprint("create a new zone"+node_sn)
-      #print zoneDict
-      updateOneZone(node_sn) 
-
-    make_fs_readonly() 
 
   return(msg)
 

@@ -195,37 +195,47 @@ def importConfig():
   
   #message="node_password_dict at start="+str(node_password_dict)
   #logprint(message,verbose=3) 
- 
-  for a in tmp_obj_dict.keys():  #for each object in the file
-    object_html_name=a
-    object_type=tmp_obj_dict[a][u"type"]
-    object_start_status=tmp_obj_dict[a][u"status"]
-    object_styleDict=tmp_obj_dict[a][u"styleDict"]
-    object_style0=object_styleDict[u"0"]
-    object_style1=object_styleDict[u"1"]
-    object_htmlDict=tmp_obj_dict[a][u"htmlDict"]
-    object_html0=object_htmlDict[u"0"]
-    object_html1=object_htmlDict[u"1"]
-    object_cmdDict= tmp_obj_dict[a][u"cmdDict"]
-    object_command0=object_cmdDict[u"0"]
-    object_command1=object_cmdDict[u"1"]
-    object_init_command=object_cmdDict[u"s_cmd"]
-    object_notes=tmp_obj_dict[a][u"notes"]
-    object_hardware_pins=tmp_obj_dict[a][u"pins"]
-    object_node_serial_number=tmp_obj_dict[a][u"node_sn"]
-    object_scenarios=tmp_obj_dict[a][u"scenarios"]
-    object_priority=tmp_obj_dict[a][u"priority"]
-    object_permission=tmp_obj_dict[a][u"perm"]
-    object_owner=tmp_obj_dict[a][u"own"]
-    object_group=tmp_obj_dict[a][u"grp"]
-    object_mail_report_list=tmp_obj_dict[a][u"mail_l"]
-    #object_enable_logging=tmp_obj_dict[a][u"enable_logging"]
+  try:
+    for a in tmp_obj_dict.keys():  #for each object in the file
 
-    if (object_start_status=="inactive"):  #prevent the node to been setted as inactive
-      object_start_status=0       
+      try:
+        object_html_name=a
+        object_type=tmp_obj_dict[a][u"type"]
+        object_start_status=tmp_obj_dict[a][u"status"]
+        object_styleDict=tmp_obj_dict[a][u"styleDict"]
+        object_style0=object_styleDict[u"0"]
+        object_style1=object_styleDict[u"1"]
+        object_htmlDict=tmp_obj_dict[a][u"htmlDict"]
+        object_html0=object_htmlDict[u"0"]
+        object_html1=object_htmlDict[u"1"]
+        object_cmdDict= tmp_obj_dict[a][u"cmdDict"]
+        object_command0=object_cmdDict[u"0"]
+        object_command1=object_cmdDict[u"1"]
+        object_init_command=object_cmdDict[u"s_cmd"]
+        object_notes=tmp_obj_dict[a][u"notes"]
+        object_hardware_pins=tmp_obj_dict[a][u"pins"]
+        object_node_serial_number=tmp_obj_dict[a][u"node_sn"]
+        object_scenarios=tmp_obj_dict[a][u"scenarios"]
+        object_priority=tmp_obj_dict[a][u"priority"]
+        object_permission=tmp_obj_dict[a][u"perm"]
+        object_owner=tmp_obj_dict[a][u"own"]
+        object_group=tmp_obj_dict[a][u"grp"]
+        object_mail_report_list=tmp_obj_dict[a][u"mail_l"]
+        #object_enable_logging=tmp_obj_dict[a][u"enable_logging"]
 
-    objectList.append(WebObject(object_html_name,object_type,object_start_status,object_styleDict,object_htmlDict,object_cmdDict,object_notes,object_hardware_pins,object_node_serial_number,{u"scenarios":object_scenarios,u"priority":object_priority,u"perm":object_permission,u"own":object_owner,u"grp":object_group,u"mail_l":object_mail_report_list}))
-    #create a new webobject with the data collected from the file and append it to objectList
+      except Exception as e: 
+        message="error in Dict reference in importConfig() can't import all cfg.json of:"+a
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+
+      if (object_start_status=="inactive"):  #prevent the node to been setted as inactive
+        object_start_status=0       
+
+      objectList.append(WebObject(object_html_name,object_type,object_start_status,object_styleDict,object_htmlDict,object_cmdDict,object_notes,object_hardware_pins,object_node_serial_number,{u"scenarios":object_scenarios,u"priority":object_priority,u"perm":object_permission,u"own":object_owner,u"grp":object_group,u"mail_l":object_mail_report_list}))
+      #create a new webobject with the data collected from the file and append it to objectList
+
+  except Exception as e: 
+    message="error in importConfig() can't import all cfg.json "
+    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
 
 
 

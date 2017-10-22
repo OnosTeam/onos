@@ -106,7 +106,7 @@ enable_onosCenter_hw_pins=0 #enable the use of onosCenter local hw pins
 reconnect_serial_port_enable=0 #this will be equal to time.time() when the serial port has to be reconnected 
 router_sn="RouterOP0000"
 uart_router_sn="" #the sn of the node connected to the usb of the pc where onos is run..
-router_hardware_type="RouterGA" #select the type of hardware
+router_hardware_type="RouterOP" #select the type of hardware
 router_hardware_fw_version="5.14"
 gui_webserver_port=80
 service_webserver_port=81
@@ -123,6 +123,7 @@ if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1): #found uname wi
   router_hardware_type="RouterOP"
   enable_usb_serial_port=1
 else: #disable serial port
+  router_hardware_type="RouterPC"
   enable_usb_serial_port=0
 
 base_cfg_path=""
@@ -277,125 +278,21 @@ recoverydata_json='''
 {
   "dictionaries": {
     "nodeDictionary": {
-      "RouterGA0000": {
-        "hwModelName": "RouterGA", 
+      "RouterOP0000": {
+        "hwModelName": "RouterOP", 
         "nodeAddress": "0", 
         "nodeObjectsDict": {}, 
-        "node_serial_number": "RouterGA0000"
+        "node_serial_number": "RouterOP0000"
       }
     }, 
     "objectDictionary": {
-      "button0_RouterGA0000": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "button0_RouterGA0000=0", 
-          "1": "button0_RouterGA0000=1", 
-          "onoswait": "button0_RouterGA0000WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "RouterGA0000", 
-        "notes": " ", 
-        "objname": "button0_RouterGA0000", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          18
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_output"
-      }, 
-      "counter1": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "counter1=0", 
-          "1": "counter1=1", 
-          "onoswait": "counter1WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": 9999, 
-        "notes": " ", 
-        "objname": "counter1", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:green;", 
-          "1": "background-color:red;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "b"
-      }, 
-      "d_sensor0_RouterGA0000": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "d_sensor0_RouterGA0000=0", 
-          "1": "d_sensor0_RouterGA0000=1", 
-          "onoswait": "d_sensor0_RouterGA0000WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "RouterGA0000", 
-        "notes": " ", 
-        "objname": "d_sensor0_RouterGA0000", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [
-          21
-        ], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "0", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_input"
-      }, 
       "day": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -416,22 +313,22 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "18", 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
       "dayTime": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -452,22 +349,22 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "1259", 
+        "status": 882, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
       "hours": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -488,22 +385,22 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "20", 
+        "status": 14, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
-      },  
+      }, 
       "minutes": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -524,22 +421,22 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "59", 
+        "status": 42, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
       "month": {
         "cmdDict": {
-          "0": " ", 
-          "1": " ", 
-          "s_cmd": " "
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -560,13 +457,12 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "6", 
+        "status": 10, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
       }, 
@@ -574,8 +470,9 @@ recoverydata_json='''
         "cmdDict": {
           "0": "systemctl stop create_ap", 
           "1": "systemctl start create_ap", 
-          "s_cmd": " "
+          "s_cmd": "systemctl start create_ap"
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -586,32 +483,30 @@ recoverydata_json='''
           "onoswait": "onosCenterWifiWAIT"
         }, 
         "mail_l": [], 
-        "node_sn": 9999, 
+        "node_sn": "RouterOP0000", 
         "notes": " ", 
         "objname": "onosCenterWifi", 
         "own": "onos_admin", 
         "perm": "111111111", 
-        "pins": [
-          9999
-        ], 
+        "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "1", 
+        "status": "0", 
         "styleDict": {
-          "0": "background-color:green;", 
-          "1": "background-color:red;", 
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black", 
-          "wait": "background-color:grey ;color black"
+          "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "b"
-      },  
+        "type": "digital_obj_out"
+      }, 
       "year": {
         "cmdDict": {
           "0": "", 
           "1": "", 
           "s_cmd": ""
         }, 
+        "enable_logging": 0, 
         "grp": [
           "web_interface", 
           "onos_mail_guest"
@@ -632,7 +527,7 @@ recoverydata_json='''
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "2017", 
+        "status": 2017, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -644,13 +539,11 @@ recoverydata_json='''
     }, 
     "scenarioDictionary": {}, 
     "zoneDictionary": {
-      "RouterGA0000": {
+      "RouterOP0000": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "onosCenterWifi", 
-          "button0_RouterGA0000", 
-          "d_sensor0_RouterGA0000"
+          "onosCenterWifi"
         ], 
         "order": 0, 
         "owner": "onos_sys", 
@@ -776,17 +669,9 @@ hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["1"]="systemctl start create_ap"
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["options"]=["no_write_to_hw"]
 
-hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"gl.inet_only","pin_mode":{},"parameters":{},"timeout":"never"}
-hardwareModelDict["RouterGL"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
-hardwareModelDict["RouterGL"]["parameters"]["bash_pin_enable"]=1
-hardwareModelDict["RouterGL"]["parameters"]["serial_port_enable"]=0   #not yet implemented
-
-
-hardwareModelDict["RouterGA"]={"hwName":"RouterGA","max_pin":5,"hardware_type":"gl.inet_with_arduino2009","pin_mode":{},"parameters":{},"timeout":"never"}
-hardwareModelDict["RouterGA"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
-hardwareModelDict["RouterGA"]["pin_mode"]["digital_output"]={"button":[(18)]}
-hardwareModelDict["RouterGL"]["parameters"]["bash_pin_enable"]=1
-hardwareModelDict["RouterGL"]["parameters"]["serial_port_enable"]=1   #not yet implemented
+hardwareModelDict["RouterPC"]={"hwName":"RouterPC","max_pin":0,"hardware_type":"pc","pin_mode":{},"parameters":{},"timeout":"never"}
+hardwareModelDict["RouterPC"]["parameters"]["bash_pin_enable"]=1
+hardwareModelDict["RouterPC"]["parameters"]["serial_port_enable"]=1   #not yet implemented
 
 hardwareModelDict["ProminiS"]={"hwName":"ProminiS","max_pin":13,"hardware_type":"arduino2009_serial","pin_mode":{},"timeout":360}
 hardwareModelDict["ProminiS"]["pin_mode"]["sr_relay"]={"socket":[(20,19)]}
