@@ -3581,23 +3581,21 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if self.path.endswith(".json"):
-                f = open(curdir + sep + self.path) #self.path has /test.html
-                tmpF=f.read()
-                f.close()
-#note that this potentially makes every file on your computer readable by the internet
-                try:
-                  self.send_response(200)
-                  self.send_header('Content-Disposition: attachment',	'filename="config_files/data.json"')
-                  self.send_header('Content-Type: application/octet-stream','text/json' )
-                  self.end_headers()
-                  self.wfile.write(tmpF)
-                except Exception as e  :
-                  message="error12 in send_header "    
-                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-                  pass
-                f.close()
-                return
+            if self.path.endswith("config_files/data.json"):
+              with open(base_cfg_path+"config_files/data.json") as file_to_read: # Use file to refer to the file object
+                tmpF=file_to_read.read()
+              #logprint(base_cfg_path+"config_files/data.json",verbose=6)
+              try:
+                self.send_response(200)
+                self.send_header('Content-Disposition: attachment',	'filename="'+base_cfg_path+'config_files/data.json"')
+                self.send_header('Content-Type: application/octet-stream','text/json' )
+                self.end_headers()
+                self.wfile.write(tmpF)
+              except Exception as e  :
+                message="error12 in send_header "    
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                pass
+              return
                 
   
             if self.path.endswith("gui/new_user.py"): # render  
@@ -3989,9 +3987,10 @@ class MyHandler(BaseHTTPRequestHandler):
               logprint("JSON RESTORED TO DEFAULT")
               #os.system('cp -f config_files/default.json config_files/data.json')
              # with lock_bash_cmd:               
-             #   subprocess.check_output('cp -f config_files/default.json config_files/data.json', shell=True,close_fds=True)    
-              shutil.copyfile("config_files/default.json", "config_files/data.json")
-
+             #   subprocess.check_output('cp -f config_files/default.json config_files/data.json', shell=True,close_fds=True)   
+              make_fs_ready_to_write() 
+              shutil.copyfile(base_cfg_path+"config_files/default.json",base_cfg_path+"config_files/data.json")
+              make_fs_readonly()
               try:              
                 b1 = open('setup/restored_configuration.html','r')    
                 web_page=b1.read()    
@@ -4407,8 +4406,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 message="error28 in send_header " 
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
+
+              make_fs_ready_to_write()
               try:
-                file0 = open('config_files/data.json', "w")
+                file0 = codecs.open(base_cfg_path+"config_files/data.json","w","utf8")     #utf8 is a type of  encoding for unicode strings
                 file0.write(upfilecontent[0])
                 file0.close()
                 global exit
@@ -4417,6 +4418,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 message="error importing json from user"
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 self.wfile.write("<HTML>error importing file<BR><BR>");
+
+              make_fs_readonly()
             else:
               self.wfile.write("<HTML>error importing file<BR><BR>");
 

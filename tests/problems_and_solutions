@@ -1243,3 +1243,12 @@ Number humidity "humidity [%.1f%%] {mqtt="<[broker:weatherstation/readings:state
      questo occupa circa: 48 byte salvati 2 volte ogni minuto--> 48*2*60*24*365--> 50457600 bytes circa 50 MB
      ogni carattere occupa circa un megabyte all'anno ..
 
+
+55) Il punto 19) Onos has to work from internet  va bene ma è un problema dover cambiare grafica ogni volta alla parte locale e a quella online , ho bisogno che le 2 parti usino gli stessi script per creare la grafica.
+    Per fare questo conviene usare script in python che verranno eseguiti dal webserver apache per la versione online e da webserver python per la versione locale.
+    Inoltre in entrambe le versione i dizionari devono essere passati agli script da esterno in modo da poter usare lo stesso codice per entrambe le versioni.
+
+
+
+
+
