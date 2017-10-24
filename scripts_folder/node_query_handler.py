@@ -14,7 +14,7 @@ from conf import *
 
 #import pyserial_port
 
-def check_answer_to_radio_quey(expected_confirm,serialCom):
+def check_answer_to_radio_query(expected_confirm,serialCom):
   copy_of_readed_packets_list=serialCom.uart.readed_packets_list
   i=len(serialCom.uart.readed_packets_list)-1 
   while i>0:  #iterate the list from the last element to the first
@@ -35,7 +35,7 @@ def check_answer_to_radio_quey(expected_confirm,serialCom):
       i=i-1 
 
     except Exception as e  :
-      message="make_query_to_radio_node"
+      message="error in check_answer_to_radio_query()  "
       logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
       return(-1)
 
@@ -84,7 +84,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     if number_of_retry_already_done!=0:  #look if the node has already answer the previous query..
       
       logprint("current serialCom.uart.readed_packets_list:"+str(serialCom.uart.readed_packets_list))
-      answer_received=check_answer_to_radio_quey(expected_confirm,serialCom)
+      answer_received=check_answer_to_radio_query(expected_confirm,serialCom)
       try:  #need this because sometimes it is an int..and some time is null..
         if answer_received.find(expected_confirm)!=-1 :  #found the answer
           return(answer_received)
@@ -104,7 +104,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
       return(data)
 
-    answer_received=check_answer_to_radio_quey(expected_confirm,serialCom)
+    answer_received=check_answer_to_radio_query(expected_confirm,serialCom)
     try:  #need this because sometimes it is an int..and some time is null..
       if answer_received.find(expected_confirm)!=-1 :  #found the answer
         return(answer_received)

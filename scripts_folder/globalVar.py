@@ -739,6 +739,8 @@ hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["syncTime"]["query"]="ac
 
 
 hardwareModelDict["WreedSaa"]={"hwName":"WreedSaa","max_pin":13,"hardware_type":"arduino_promini","pin_mode":{},"object_list":{},"parameters":{},"query":{},"timeout":360}
+hardwareModelDict["WreedSaa"]["parameters"]={}
+hardwareModelDict["WreedSaa"]["parameters"]["battery_node"]=1
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]["object_numbers"]=[0]   #

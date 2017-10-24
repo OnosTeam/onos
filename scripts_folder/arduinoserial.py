@@ -309,7 +309,7 @@ class SerialPort:
               if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i received a confirm from the node
                 
                 #with lock_serial_input:              
-                #serial_incomingBuffer=buf
+                  #serial_incomingBuffer=buf
                 self.readed_packets_list.append(cmd)
                 buf=""
                 self.dataAvaible=1 
@@ -492,8 +492,9 @@ class SerialPort:
   
 
   def removeFromPackets_list(self,packet):
-    if packet in self.readed_packets_list:
-      self.readed_packets_list.remove(packet) 
+    with lock_serial_input:  
+      if packet in self.readed_packets_list:
+        self.readed_packets_list.remove(packet) 
 
 
 #  def portWrite(self,data):

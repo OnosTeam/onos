@@ -1247,8 +1247,9 @@ Number humidity "humidity [%.1f%%] {mqtt="<[broker:weatherstation/readings:state
 55) Il punto 19) Onos has to work from internet  va bene ma è un problema dover cambiare grafica ogni volta alla parte locale e a quella online , ho bisogno che le 2 parti usino gli stessi script per creare la grafica.
     Per fare questo conviene usare script in python che verranno eseguiti dal webserver apache per la versione online e da webserver python per la versione locale.
     Inoltre in entrambe le versione i dizionari devono essere passati agli script da esterno in modo da poter usare lo stesso codice per entrambe le versioni.
+    Si può fare un try except e se i dizioniari non sono passati tramite il metodo allora lo script se li prende da un file sqlite
 
-
-
+56) mi serviva un modo per non fare mandare le query ai nodi a batteria quando si riconnettono: 
+      aggiunto parametro ... hardwareModelDict["WreedSaa"]["parameters"]["battery_node"]=1
 
 

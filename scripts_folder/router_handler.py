@@ -511,7 +511,7 @@ class RouterHandler:
 
 
         except Exception as e  :
-          message="error in query_placeholder replacing the query from NodeHwModelName"
+          message="error in query_placeholder replacing the query from NodeHwModelName for node:"+remoteNodeHwModelName
           logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
 
  

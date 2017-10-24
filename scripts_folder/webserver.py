@@ -6301,12 +6301,23 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
               logprint("objectDict[b].getHwNodeSerialNumber():"+str(objectDict[b].getHwNodeSerialNumber()) )
               #if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
-              logprint("webobject:"+b+"returned active",verbose=5)
+              logprint("webobject:"+b+"returned active",verbose=6)
               prev_s=objectDict[b].getPreviousStatus() 
               current_s=objectDict[b].getStatus()
+
+              node_HwModel=nodeDict[a].getNodeHwModel()
+              logprint("node_HwModel:"+node_HwModel,verbose=6)  
+              message="list(hardwareModelDict[node_HwModel][parameters]:"+str(list(hardwareModelDict[node_HwModel]["parameters"]))
+              logprint(message,verbose=5)  
+              if "parameters" in list(hardwareModelDict[node_HwModel]):
+                if "battery_node" in list(hardwareModelDict[node_HwModel]["parameters"]):
+                  if hardwareModelDict[node_HwModel]["parameters"]["battery_node"]==1:
+                    message="I will not ask the node to set its status after reconnection since this node is a battery sensors"
+                    logprint(message,verbose=5) 
+                    continue 
               if ((current_s=="inactive") or (current_s=="onoswait") ): 
               #  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
-                logprint("the new status will be:"+str(prev_s) )
+                logprint("the new status will be:"+str(prev_s),verbose=6 )
                 priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
                 #set the web_object to the status before the disconnection 
           
@@ -6365,16 +6376,17 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
         if hardware.serialCommunicationIsWorking==1:
           #print str(hardware.serial_communication.uart)
-          if len (hardware.serial_communication.uart.readed_packets_list)>0:
-            logprint("there is an incoming data on serial port buffer"+str(hardware.serial_communication.uart.readed_packets_list))
+          with lock_serial_input:
+            if len (hardware.serial_communication.uart.readed_packets_list)>0:
+              logprint("there is an incoming data on serial port buffer"+str(hardware.serial_communication.uart.readed_packets_list))
 
-            if hardware.serial_communication.uart.readed_packets_list[0]=="[S_ertx1_#]":
-              hardware.serial_communication.uart.readed_packets_list.pop(0)  
+              if hardware.serial_communication.uart.readed_packets_list[0]=="[S_ertx1_#]":
+                hardware.serial_communication.uart.readed_packets_list.pop(0)  
 
-            elif hardware.serial_communication.uart.readed_packets_list[0]=="[S_nocmd0_#]":
-              hardware.serial_communication.uart.readed_packets_list.pop(0)  
+              elif hardware.serial_communication.uart.readed_packets_list[0]=="[S_nocmd0_#]":
+                hardware.serial_communication.uart.readed_packets_list.pop(0)  
      
-            with lock_serial_input:
+              
               if len (hardware.serial_communication.uart.readed_packets_list)>20: #if the list became long cut the first 4 elements
                 hardware.serial_communication.uart.readed_packets_list.pop(0)  
                 hardware.serial_communication.uart.readed_packets_list.pop(0) 
@@ -6389,7 +6401,10 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
       if enable_usb_serial_port==1:
         message="serial port not working correctly2"
-        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+        verbose=10
+        if (str(e.args) ).find("list index out of range")!=-1:   # if the error is :list index out of range is lower priority 
+          verbose=5
+        logprint(message,verbose,error_tuple=(e,sys.exc_info()))
       else:
         pass
 
