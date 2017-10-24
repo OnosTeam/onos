@@ -6522,13 +6522,13 @@ def executeQueueFunction(dataExchanged):
     node_fw=dataExchanged["nodeFw"]
     if node_serial_number not in nodeDict.keys():
       message="error node_sn:"+node_serial_number+" not in nodeDict"
-      logprint(message,verbose=6)
+      logprint(message,verbose=5)
       priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
       return
 
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,node_fw)
     node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
-    logprint(str(dataExchanged["objects_to_update"].keys())+"end data_exanged")
+    logprint(str(list(dataExchanged["objects_to_update"]))+"end data_exanged",verbose=3)
 
 
     try:

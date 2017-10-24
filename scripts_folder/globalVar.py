@@ -723,7 +723,11 @@ hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["router"]["query
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[2]#see arduino code at :"define object numbers to use in the pin configuration"
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["query"]="do#_objnumber_##_valuelen:1_#"
-hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+#hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay2"]={}
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay2"]["object_numbers"]=[3]   #
+hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["relay2"]["query"]="do#_objnumber_##_valuelen:1_#"
+
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[5]   #
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["led"]["query"]="do#_objnumber_##_valuelen:1_#"
