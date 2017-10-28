@@ -2685,7 +2685,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self.current_username="nobody"
-        logprint("current_url:"+self.path+":end_url")
+        #logprint("current_url:"+self.path+":end_url")
 
         try:
 
@@ -6293,7 +6293,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           #    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
         else:#now the node is connected
-          if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #the node was not connected but now it is
+          if (nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2)and nodeDict[a].getNodeAddress()!="254" : #the node was not connected but now it is
             nodeDict[a].setNodeActivity(1)  #set the node as active
             message="The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
             logprint(message,verbose=5)
@@ -6423,7 +6423,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             #print("verbose="+str(verbose))
             if verbose>mail_verbose_level:
               #print("verbose>5")
-              error_text =error_text+";;;\n"+platform+"OnosCenter:"+router_sn+":"+str(error_dict["msg"])
+              error_text =error_text+";;;\n"+":"+router_sn+"at"+platform+str(error_dict["msg"])
 
             #errorQueue.task_done()
           if (len (error_text) > 0):
