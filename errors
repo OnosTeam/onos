@@ -1,4 +1,7 @@
 
+orangepizeroOnosCenter:RouterOP0000:error in check_answer_to_radio_query()  , e:('list.remove(x): x not in list',)<type 'exceptions.ValueError'>node_query_handler.py at line:31;;;
+orangepizeroOnosCenter:RouterOP0000:error in check_answer_to_radio_query()  , e:('list index out of range',)<type 'exceptions.IndexError'>node_query_handler.py at line:22
+
 
 orangepizeroOnosCenter:RouterOP0000:scenario_to_mod;;;
 orangepizeroOnosCenter:RouterOP0000:select:;;;

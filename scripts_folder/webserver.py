@@ -6380,10 +6380,10 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
             if len (hardware.serial_communication.uart.readed_packets_list)>0:
               logprint("there is an incoming data on serial port buffer"+str(hardware.serial_communication.uart.readed_packets_list))
 
-              if hardware.serial_communication.uart.readed_packets_list[0]=="[S_ertx1_#]":
+              if "[S_er]" in hardware.serial_communication.uart.readed_packets_list[0]:
                 hardware.serial_communication.uart.readed_packets_list.pop(0)  
 
-              elif hardware.serial_communication.uart.readed_packets_list[0]=="[S_nocmd0_#]":
+              elif "[S_nocmd" in hardware.serial_communication.uart.readed_packets_list[0]:
                 hardware.serial_communication.uart.readed_packets_list.pop(0)  
      
               

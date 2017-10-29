@@ -298,7 +298,7 @@ class SerialPort:
               next_buf=buf[cmd_end+3:]
               buf=''              
 
-              logprint("Packet 232 cmd input :"+cmd)
+              logprint("Packet 232 cmd input :"+cmd+"cmd[3]cmd[4]="+cmd[3]+cmd[4])
 
 
 
@@ -306,11 +306,12 @@ class SerialPort:
 
 
 
-              if( (cmd[2]=="o")&(cmd[3]=="k") ): # S_ok003dw060005_#  i received a confirm from the node
+              if( (cmd[3]=="o")&(cmd[4]=="k") ): # [S_ok003dw060005_#]  i received a confirm from the node
                 
                 #with lock_serial_input:              
                   #serial_incomingBuffer=buf
                 self.readed_packets_list.append(cmd)
+
                 buf=""
                 self.dataAvaible=1 
                 if msgWasWritten==1:
@@ -447,25 +448,26 @@ class SerialPort:
                 continue 
 
 
-
               else:  # a messege is received but is not started from a node, probably is an answer
-                if msgWasWritten==1:
-                  last_received_packet=cmd
-                  msgWasWritten=0 
-                  incomingByteAfterWriteAvaible=1 
-                  logprint("_Packet received after the write is :"+last_received_packet)
-
+                if( (cmd[2]=="n")&(cmd[3]=="o") )or (cmd[2]=="e")&(cmd[3]=="r") : #[S_nocmd1_#][S_nocmd2_#][S_ertx1_#][S_er0_status_#]er_ac_status_#]er_ac_obj_number_#]er_dc_obj_number_#]er_do_status_#]er1_sn er2_sn_#]
+                  self.readed_packets_list.append(cmd)
+                  buf=""
+                  self.dataAvaible=1 
+                  if msgWasWritten==1:
+                    last_received_packet=cmd
+                    msgWasWritten=0 
+                    incomingByteAfterWriteAvaible=1 
+                    logprint("_Packet received after the write is :"+last_received_packet)
+                  continue  
 
            # print "serial input="+buf
 
               #with lock_serial_input:              
               serial_incomingBuffer=cmd
               self.readed_packets_list.append(cmd)
-
               self.dataAvaible=1 
-
               logprint("incoming buffer="+serial_incomingBuffer)
-            else: #cmd not found
+            else: #cmd not found   if len(buf)>5: false
               tmp_buf=buf.decode("utf8","replace")
               tmp_buf.encode("ascii","replace")
               logprint("incoming buffer="+tmp_buf)
@@ -505,6 +507,8 @@ class SerialPort:
     global incomingByteAfterWriteAvaible
     global msgWasWritten
     global last_received_packet
+
+    logprint("serial write executed with:"+data)
     #self.ser.flushOutput()
     #while self.ser.inWaiting()>0:
     #  time.sleep(0.01)
@@ -529,10 +533,10 @@ class SerialPort:
     #  time.sleep(0.01)
 
     #time.sleep(0.1)
-    rx_after_tx_timeout=time.time()+5  #0.7
+    rx_after_tx_timeout=time.time()+8  #0.7
     while incomingByteAfterWriteAvaible==0:
       if rx_after_tx_timeout<time.time():
-        logprint("i exit the loop because of timeout")
+        logprint("i exit the loop  serial write because of timeout,the message i wanted to send was:"+data,verbose=6)
         return("void") 
 
     logprint ("i exit the loop because i received a message after I have write one")

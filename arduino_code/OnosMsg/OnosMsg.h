@@ -42,7 +42,7 @@ class OnosMsg {
 
   private:
 
-    volatile char received_message_type_of_onos_cmd[3];
+    volatile char received_msg_cmd_type[3];
     volatile int received_message_value;
     volatile int received_message_first_pin_used;
     volatile int received_message_second_pin_used;

@@ -252,7 +252,7 @@ class RouterHandler:
       try:
         self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
         self.serialCommunicationIsWorking=self.serial_communication.working
-        self.serial_communication.uart.write("[S_begin_#]")
+        self.serial_communication.uart.write("[S_001begin_#]\n")
         self.serialCommunicationIsWorking=1
       except Exception as e  :
         message="error in the init of serial port check if is it connected"
@@ -263,19 +263,25 @@ class RouterHandler:
 
       timeout=time.time()+70
       if self.serialCommunicationIsWorking==1:
-        while self.serial_communication.uart.ser.inWaiting()<1:
-          received_answer=self.serial_communication.uart.write("[S_begin_#]\n")
-          if time.time()>timeout:
-            logprint("arduino is not answering on serial port")
-            logprint("I will retry other time till "+str(time.time()+" < "+str(timeout)))
-            self.serialCommunicationIsWorking=0
-            break
+        retry_start_cmd=0
+        serial_problem=1
+        while retry_start_cmd < 25:
+
+          received_answer=self.serial_communication.uart.write("[S_001begin_#]\n")
           if "[S_" in received_answer:
              self.serialCommunicationIsWorking=1
+             serial_problem=0
              logprint("arduino answered on serial port")
              break
+          retry_start_cmd=retry_start_cmd+1
+          logprint("serial_write begin retry number:"+str(retry_start_cmd))
 
-         
+        self.serial_communication.uart.readed_packets_list.remove(received_answer)  
+        if serial_problem==1:
+          logprint("arduino is not answering on serial port")
+          logprint("I will retry other time till "+str(time.time()+" < "+str(timeout)))
+          self.serialCommunicationIsWorking=0
+
 
 
 

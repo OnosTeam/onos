@@ -42,11 +42,11 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
  // the onos cmd was found           [S_001dw06001_#]
 
 
-    strcpy(decoded_result,"[S_cmdRx_cmd_not_found_#]");               
+    strcpy(decoded_result,"[S_er_cmdRxnotfound_#]");               
 
 
-    received_message_type_of_onos_cmd[0]=received_message[6];
-    received_message_type_of_onos_cmd[1]=received_message[7];
+    received_msg_cmd_type[0]=received_message[6];
+    received_msg_cmd_type[1]=received_message[7];
 
     received_message_address=(received_message[3]-48)*100+(received_message[4]-48)*10+(received_message[5]-48)*1;
 
@@ -70,13 +70,13 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     //[S_123ga5.24WPlugAvx000810000x_#]
 
        
-    if ( received_message_type_of_onos_cmd[0]=='g' && received_message_type_of_onos_cmd[1]=='a' ){
+    if ( received_msg_cmd_type[0]=='g' && received_msg_cmd_type[1]=='a' ){
 
       strcpy(decoded_result,"ok");
       return; 
     }
 
-    else if ( received_message_type_of_onos_cmd[0]=='u' && received_message_type_of_onos_cmd[1]=='l' ){
+    else if ( received_msg_cmd_type[0]=='u' && received_msg_cmd_type[1]=='l' ){
 
       strcpy(decoded_result,"ok");
       return;
@@ -84,7 +84,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
     //[S_123otx_#
-    else if ( received_message_type_of_onos_cmd[0]=='o' && received_message_type_of_onos_cmd[1]=='t' ){
+    else if ( received_msg_cmd_type[0]=='o' && received_msg_cmd_type[1]=='t' ){
       ota_loop=1;
       strcpy(decoded_result,"ok");
       return;
@@ -95,7 +95,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     // [S_001dw04001_#]
     // [S_001dw04000_#]
     // [S_254dw04000_#]
-    else if ( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='w' ){
+    else if ( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='w' ){
 
       received_message_value=received_message[12]-48;
       if (received_message_value>1){ 
@@ -118,7 +118,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     }
     
     //[S_001aw06125_#]
-    else if( received_message_type_of_onos_cmd[0]=='a' && received_message_type_of_onos_cmd[1]=='w' ){
+    else if( received_msg_cmd_type[0]=='a' && received_msg_cmd_type[1]=='w' ){
  
       received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
 
@@ -137,7 +137,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
  
     //[S_001sr04051_#] 
-    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='r' ){
+    else if( received_msg_cmd_type[0]=='s' && received_msg_cmd_type[1]=='r' ){
 
       received_message_value=received_message[12]-48;      
 
@@ -167,7 +167,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
     }
 
     //[S_001ac06125_#]    #configuration analog object
-    else if( received_message_type_of_onos_cmd[0]=='a' && received_message_type_of_onos_cmd[1]=='c' ){
+    else if( received_msg_cmd_type[0]=='a' && received_msg_cmd_type[1]=='c' ){
  
       received_message_value=(received_message[10]-48)*100+(received_message[11]-48)*10+(received_message[12]-48)*1;
 
@@ -195,7 +195,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
     //[S_001dc001x_#]    #configuration digital object
-    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='c' ){
+    else if( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='c' ){
  
       received_message_value=int(received_message[10]-48);
 
@@ -226,7 +226,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
     //[S_123do001x_#]    # digital object controll
-    else if( received_message_type_of_onos_cmd[0]=='d' && received_message_type_of_onos_cmd[1]=='o' ){
+    else if( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='o' ){
  
       received_message_value=(received_message[10]-48);
 
@@ -257,7 +257,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
    // [S_254sa123Wrelay4x0007_#]     [S_254sa123WreedSaa0004_#]   [S_254sa123WPlug1vx0004_#]  
 
-    else if( received_message_type_of_onos_cmd[0]=='s' && received_message_type_of_onos_cmd[1]=='a' ){
+    else if( received_msg_cmd_type[0]=='s' && received_msg_cmd_type[1]=='a' ){
 
       received_message_value=(received_message[8]-48)*100+(received_message[9]-48)*10+(received_message[10]-48);
 
@@ -317,7 +317,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
 
-    else if( received_message_type_of_onos_cmd[0]=='c' && received_message_type_of_onos_cmd[1]=='e' ){
+    else if( received_msg_cmd_type[0]=='c' && received_msg_cmd_type[1]=='e' ){
 
 
       //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
@@ -380,6 +380,17 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
       //first_sync=0;
         
+      return;
+    }
+
+    //[S_001begin_#]
+    else if( received_msg_cmd_type[0]=='b' && received_msg_cmd_type[1]=='e'){
+      if( received_message[6]=='b' && received_message[7]=='e' && received_message[8]=='g' && received_message[9]=='i' && received_message[10]=='n'){
+        strcpy(decoded_result,"ok");
+      }
+      else{
+        strcpy(decoded_result,"err_beg");
+      }
       return;
     }
 

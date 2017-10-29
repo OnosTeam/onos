@@ -27,9 +27,9 @@ def check_answer_to_radio_query(expected_confirm,serialCom):
           serialCom.uart.readed_packets_list.remove(a)  
         return (a)
 
-      while a=="[S_ertx1_#]" and a in serialCom.uart.readed_packets_list :
+      while "[S_er" in a and a in serialCom.uart.readed_packets_list :
         serialCom.uart.readed_packets_list.remove(a)
-      while a=="[S_nocmd0_#]" and a in serialCom.uart.readed_packets_list:
+      while "[S_nocmd" in a and a in serialCom.uart.readed_packets_list:
         serialCom.uart.readed_packets_list.remove(a)
    
       i=i-1 
