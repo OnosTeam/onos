@@ -1,4 +1,33 @@
 
+
+
+started httpserver...
+hardwareHandlerThread() executed
+internetCheckConnection() executed
+Exception in thread Thread-4:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "/usr/lib/python2.7/threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "webserver.py", line 6241, in hardwareHandlerThread
+    if (hardware.serialCommunicationIsWorking==0)&(reconnect_serial_port_enable==0):
+NameError: global name 'hardware' is not defined
+
+
+obj_name=presa_WPlug1vx0003
+obj_type=digital_obj_out
+pins_to_set_digital_obj:[]
+len pins_to_set=0
+statusToSet_digital_obj:0
+nodeSerialNumber_digital_obj:WPlug1vx0003
+obj_type_digital_obj:digital_obj_out
+('WPlug1vx0003', [], [0], <hw_node.HwNode instance at 0xb65fe788>, 'presa_WPlug1vx0003', 'onoswait', 0, 'digital_obj_out', 'nobody', 0, [])
+the webobject:presa_WPlug1vx0003 doesn't exist,or others error happened, e:("global name 'hardware' is not defined",)<type 'exceptions.NameError'>webserver.py at line:1227
+
+
+
+
 Se onoscenter sta provando ad assegnare un indirizzo ad un altro indirizzo ad un nodo (che non ha inirizzo 254) ma questo viene resettato , la richiesta verrà ripetuta molte volte mentre il nodo continuerà a chiedere un indirizzo ..entrambi non riusciranno a comunicare..
 
 

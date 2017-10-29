@@ -182,6 +182,7 @@ onos_online_site_url="http://myonos.com/onos/"  #remote online server url (where
 
 internet_connection=0  #tell onos if there is internet connection, do not change it..onos will change it if there is internet
 
+serial_answer_readyQueue=Queue.Queue()
 
 queryToNetworkNodeQueue=Queue.Queue()
 
@@ -206,8 +207,8 @@ errorQueue=Queue.Queue()  # this queue will contain all the error happened
 lock_bash_cmd= threading.Lock()
 
 lock_serial_input=threading.Lock()
-waitToReceiveUntilIRead=0  #stop the incoming uart reading until the data has been readed
-waitTowriteUntilIReceive=0 
+
+
 
 
 lock1_current_node_handler_dict= threading.Lock()  #lock to access current_node_handler_list
@@ -219,10 +220,6 @@ query_to_node_dict={} # this dictionary will  have the node_serial_number as key
 #example :   query_to_node_dict={'Plug6way0001':[{"address":address,"query":query,"objName":objName,"status_to_set":status_to_set,"user":user,"priority":priority,"mail_report_list":mail_report_list]}
 #to access it:  query_to_node_dict['Plug6way0001'][0]["address"]  to get the  first address  
 
-
-last_received_packet="" # used in arduinoSerial.py  
-data_to_write="" # used in arduinoSerial.py 
-write_to_serial_packet_ready=0 # used in arduinoSerial.py 
 
 
 

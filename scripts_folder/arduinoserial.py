@@ -63,16 +63,12 @@ import serial
 write_enable=0
 
 
-global last_received_packet
-global data_to_write
-global incomingByteAfterWriteAvaible
-global serial_incomingBuffer
-global waitTowriteUntilIReceive
-
-msgWasWritten=0
 
 
-serial_incomingBuffer=""  
+
+
+
+
 #hwNodeDict[0]=hw_node.HwNode("base","arduino_2009",0)  #make the first node , the base station  one
 
 
@@ -129,7 +125,7 @@ class SerialPort:
 
 
     
-    serial_incomingBuffer=''
+
     self.removeFromInBuffer=''
 
     
@@ -152,12 +148,7 @@ class SerialPort:
   def read_data(self):   # thread  function
       '''Outputs data from serial port to sys.stdout.'''
 
-      global last_received_packet
-      global data_to_write
-      global incomingByteAfterWriteAvaible
-      global waitTowriteUntilIReceive
       global write_enable
-      global msgWasWritten
       logprint("read_data thread executed")
  
 
@@ -197,50 +188,19 @@ class SerialPort:
           
 
 
-
-
-
-
-           # try:
-           #   self.ser.flushInput() #flush input buffer, discarding all its contents
-           # except Exception as e :
-           #   print "can't flush input"+str(e.args) 
-
-          #msgWasWritten=0
-
-          #if write_enable==1:
-           # try:
-            #  self.ser.write(data_to_write)
-             # print "i have wrote to serial port data_to_write:::::::::::::::::::::::::::::::"+data_to_write
-             # time.sleep(0.2) #0.02 
-             # write_enable=0
-             # msgWasWritten=1
-            #except Exception as e :
-            #  print "can't write to uart"+str(e.args) 
-
-            #  return()
-
-            #try:
-            #  self.ser.flushOutput()
-            #except Exception as e :
-            #  print "can't flush output"+str(e.args) 
-
-
-          #waitTowriteUntilIReceive=0
           self.port_was_opened=1
           buf=''
           next_buf=''
           while (self.exit==0):
-            byte=''
-            buf=next_buf
-            next_buf=''
-            time.sleep(0.01) 
-
             if self.ser.inWaiting()<1:   #skip if there is no incoming data
               time.sleep(0.01) 
               continue
             else: 
 ##################################################################
+              byte=''
+              buf=next_buf
+              next_buf=''
+
               try:
                 buf =buf+ self.ser.read(self.ser.inWaiting())   #  self.usbR.read(1)
                 #print byte
@@ -258,7 +218,7 @@ class SerialPort:
 
 
               if len(buf)>5:
-                #waitTowriteUntilIReceive=1 
+
                 if ( (buf.find("[S_")!=-1)&(buf.find("_#]")!=-1) ): #there is a full onos command packet
                   logprint("end of serial packet:_#] ")
                   break 
@@ -282,7 +242,6 @@ class SerialPort:
 
             buf=buf.replace("\n", "")  #to remove \n
             buf=buf.replace("\r", "")  #to remove \r
-
             buf=buf.replace("\x00", "")  #to remove \n
 
 
@@ -297,28 +256,17 @@ class SerialPort:
               cmd=buf[cmd_start:cmd_end+3]
               next_buf=buf[cmd_end+3:]
               buf=''              
-
               logprint("Packet 232 cmd input :"+cmd+"cmd[3]cmd[4]="+cmd[3]+cmd[4])
 
 
-
-
-
-
-
               if( (cmd[3]=="o")&(cmd[4]=="k") ): # [S_ok003dw060005_#]  i received a confirm from the node
-                
+                serial_answer_readyQueue.put(cmd)  
                 #with lock_serial_input:              
-                  #serial_incomingBuffer=buf
                 self.readed_packets_list.append(cmd)
-
                 buf=""
-                self.dataAvaible=1 
-                if msgWasWritten==1:
-                  last_received_packet=cmd
-                  msgWasWritten=0 
-                  incomingByteAfterWriteAvaible=1 
-                  logprint("packet received after the write is :"+last_received_packet)
+                #self.dataAvaible=1 
+
+
 
                 continue
 
@@ -348,7 +296,7 @@ class SerialPort:
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
                 #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
-                #waitTowriteUntilIReceive=0
+
                 continue
 
 
@@ -380,7 +328,7 @@ class SerialPort:
                 except Exception as e  :               
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
-                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })                 #waitTowriteUntilIReceive=0
+                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }
 
                 continue
 
@@ -413,7 +361,7 @@ class SerialPort:
                 except Exception as e  :               
                   message="error receiving serial sync message cmd was :"+cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
-                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })                 #waitTowriteUntilIReceive=0
+                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }
 
                 continue
 
@@ -437,7 +385,7 @@ class SerialPort:
                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
 
                
-                  #waitTowriteUntilIReceive=0  
+
                   continue
 
 
@@ -452,21 +400,16 @@ class SerialPort:
                 if( (cmd[2]=="n")&(cmd[3]=="o") )or (cmd[2]=="e")&(cmd[3]=="r") : #[S_nocmd1_#][S_nocmd2_#][S_ertx1_#][S_er0_status_#]er_ac_status_#]er_ac_obj_number_#]er_dc_obj_number_#]er_do_status_#]er1_sn er2_sn_#]
                   self.readed_packets_list.append(cmd)
                   buf=""
-                  self.dataAvaible=1 
-                  if msgWasWritten==1:
-                    last_received_packet=cmd
-                    msgWasWritten=0 
-                    incomingByteAfterWriteAvaible=1 
-                    logprint("_Packet received after the write is :"+last_received_packet)
+                  serial_answer_readyQueue.put(cmd)  
                   continue  
 
            # print "serial input="+buf
 
               #with lock_serial_input:              
-              serial_incomingBuffer=cmd
+
               self.readed_packets_list.append(cmd)
               self.dataAvaible=1 
-              logprint("incoming buffer="+serial_incomingBuffer)
+              logprint("incoming buffer="+cmd)
             else: #cmd not found   if len(buf)>5: false
               tmp_buf=buf.decode("utf8","replace")
               tmp_buf.encode("ascii","replace")
@@ -504,85 +447,30 @@ class SerialPort:
 #    self.usbW.write(data)
 
   def write(self, data):#test..
-    global incomingByteAfterWriteAvaible
-    global msgWasWritten
-    global last_received_packet
 
+
+    startTime=time.time()
     logprint("serial write executed with:"+data)
-    #self.ser.flushOutput()
-    #while self.ser.inWaiting()>0:
-    #  time.sleep(0.01)
+
     #self.ser.flushOutput()
     self.ser.flush()
-    #if self.ser.flush()()>0: #if there is something on the output buffer wait a bit
-    #time.sleep(0.01) 
-    #  print("wait for self.ser.out_waiting self.ser.out_waitingself.ser.out_waitingself.ser.out_waiting")
-
-    
-    #start_time=time.time()
-    #while waitTowriteUntilIReceive==1:
-
-    #  if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
-    #    print "rx after write timeout0"
-    #time.sleep(0.01) 
-    incomingByteAfterWriteAvaible=0 
     self.ser.write(data)   
-    msgWasWritten=1
     self.ser.flush()
-    #while self.ser.inWaiting()<5:
-    #  time.sleep(0.01)
+    logprint("time spent writing:"+str(time.time()-startTime)) 
 
-    #time.sleep(0.1)
-    rx_after_tx_timeout=time.time()+8  #0.7
-    while incomingByteAfterWriteAvaible==0:
+    rx_after_tx_timeout=time.time()+2  #0.7
+
+    while serial_answer_readyQueue.empty():
       if rx_after_tx_timeout<time.time():
         logprint("i exit the loop  serial write because of timeout,the message i wanted to send was:"+data,verbose=6)
+        logprint("time spent:"+str(time.time()-startTime)) 
         return("void") 
-
-    logprint ("i exit the loop because i received a message after I have write one")
-    answer=last_received_packet
-    last_received_packet=''
-    return(answer)
-
-
-
-
-
-  def write2(self, data): #deprecated
-    global write_enable
-    global last_received_packet
-    global data_to_write
-    global incomingByteAfterWriteAvaible
-    data_to_write=data
-
-
-    write_enable=1
-    last_received_packet=""
-
-                #self.portWrite(data_to_write)
-    #self.usbW.write(data_to_write+'\n')
-    #os.system("echo "+data_to_write+" >> "+self.port) 
-    #self.ser.write(data_to_write)
-
-    incomingByteAfterWriteAvaible=0
-    logprint("data_to_write:"+data_to_write)
- 
-    start_time=time.time()
-    while incomingByteAfterWriteAvaible==1:
-      time.sleep(0.01) 
-
-      if (time.time()>(start_time+0.5) ):#2 #timeout to exit the loop
-        logprint("rx after write timeout0")
-        incomingByteAfterWriteAvaible=0
-        return("error_reception")
     
-   
-    return(last_received_packet)
+    answer=serial_answer_readyQueue.get()
+    logprint ("i exit the loop because i received a message after I have write one")
+    logprint("time spent:"+str(time.time()-startTime))
 
-
-
-
-
+    return(answer)
 
 
 

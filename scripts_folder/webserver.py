@@ -6220,7 +6220,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
   while (exit==0): 
 
-    time.sleep(1)# was 1.5 .. to save cpu load
+    time.sleep(0.01)# was 1.5 .. to save cpu load
 
 
 
