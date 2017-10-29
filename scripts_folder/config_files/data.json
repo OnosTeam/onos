@@ -10,18 +10,7 @@
       "WreedSaa0003": {
         "hwModelName": "WreedSaa", 
         "nodeAddress": "000", 
-        "nodeObjectsDict": {
-          "0": "reed1_WreedSaa0003", 
-          "2": "led_WreedSaa0003", 
-          "3": "tempSensor_WreedSaa0003", 
-          "4": "digOut_WreedSaa0003", 
-          "5": "reed2_WreedSaa0003", 
-          "6": "syncTime_WreedSaa0003", 
-          "7": "reed1Logic_WreedSaa0003", 
-          "8": "reed2Logic_WreedSaa0003", 
-          "9": "battery_state_WreedSaa0003", 
-          "10": "luminosity_sensor_WreedSaa0003"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "WreedSaa0003"
       }
     }, 
@@ -51,7 +40,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 216, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -87,7 +76,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 23, 
+        "status": 29, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -123,7 +112,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1341, 
+        "status": 1362, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -157,7 +146,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -230,7 +219,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -264,7 +253,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 219, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -300,7 +289,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 21, 
+        "status": 42, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -404,7 +393,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -438,7 +427,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": true, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -472,7 +461,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -506,7 +495,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": false, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -540,7 +529,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "onoswait", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -574,7 +563,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 20, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 

@@ -1,2 +1,3 @@
-1,1508667670,22/10/2017,12:21:10,12,6,nobody
-0,1508667693,22/10/2017,12:21:33,12,6,nobody
+statusToSet,timestamp,day/month/year,hours:minutes:seconds,hours,day_of_week,user
+0,1509313980,29/10/2017,22:53:0,22,6,casa
+1,1509314048,29/10/2017,22:54:8,22,6,casa

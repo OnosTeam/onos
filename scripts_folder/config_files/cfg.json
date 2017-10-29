@@ -38,6 +38,12 @@
         "priority": 0, 
         "pw": "12345678", 
         "user_mail": "elettronicaopensource@gmail.com"
+      }, 
+      "prova3": {
+        "mail_control_password": "1234", 
+        "priority": 0, 
+        "pw": "1234", 
+        "user_mail": "provamail"
       }
     }, 
     "scenarios_enable": 1, 

@@ -1039,7 +1039,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       #if (objectDict[objName].enable_logging==1)and(enable_csv_log==1):
 
      
-      if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month")):
+      if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month","year")):
         if statusToSet==True:
           statusToSet="1"
         if statusToSet==False:
@@ -1056,12 +1056,18 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         timestamp=str(time.time())[0:10]
         #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
         # 255,1507361485,7/10/2017 09:45:58,00,5,node
+        
         row_to_write=[statusToSet,timestamp,day+'/'+month+'/'+year,hours+':'+minutes+':'+seconds,hours,day_of_week,user]
         csv_file_name=csv_folder+'/'+objName+'.csv' 
 
         #todo: make this on queue to not wait for disk writing..
         make_fs_ready_to_write()
         try:
+          if os.path.isfile(csv_file_name)!=1:  #if the file does not exist yet write the first row
+            init_row=["statusToSet","timestamp","day/month/year","hours:minutes:seconds","hours","day_of_week","user"]
+            with open(csv_file_name, 'a') as f:
+              writer = csv.writer(f)
+              writer.writerow(init_row) 
           with open(csv_file_name, 'a') as f:
             writer = csv.writer(f)
             writer.writerow(row_to_write) 
@@ -5577,7 +5583,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
             elif "new_user_form" in postvars:#if the current page is /create_user.html  because "new_user_form"  is the hidden form name
             #  <form action="" method="POST"><input type="hidden" name="new_user_form" value="">
-
+              global internet_connection
+              logprint("internet_connection:"+str(internet_connection))
               pag=""
               if ((postvars["create_user_form"]!=" ")&(postvars["create_password_form"]!=" ")&(postvars["repeat_password_form"]!=" ")):
                 username=self.clear_PostData(postvars["create_user_form"][0])
@@ -5585,14 +5592,11 @@ class MyHandler(BaseHTTPRequestHandler):
                 repeated_password=self.clear_PostData(postvars["repeat_password_form"][0])
                 mail=self.clear_PostData(postvars["create_mail_form"][0])
                  
-
                 if (password!=repeated_password): #wrong password entered
-   
                   message="error the two passwords entered are not the same, please retype"
                   logprint(message,verbose=9)
                   cgi_name="gui/new_user.py"
-
-                  namespace={} 
+                  namespace={"message":message} 
                   web_page=""
                   #execfile(cgi_name,locals(),namespace)  #execute external script 
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)                 
@@ -5609,8 +5613,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   message="error internet connection lost while creating onos online user, please connect onos center to internet"
                   logprint(message,verbose=9)
                   cgi_name="gui/new_user.py"
-
-                  namespace={} 
+                  namespace={"message":message} 
                   web_page=""
                   #execfile(cgi_name,locals(),namespace)  #execute external script 
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -5623,29 +5626,18 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-
-
-
-
-                if (username not in usersDict.keys()):  #if the username does not alredy exist in the local dictionary
-                  
-
-  
+                if (username not in usersDict.keys()):  #if the username does not alredy exist in the local dictionary 
                   site_query=onos_online_site_url+"create_new_onos_user.php"
                   params = {'username':username, 'onos_key':onos_online_key,"user_pass":password,"onos_password":onos_online_password}     
                   try :
-
                     f=url_request_manager.request_encode_body('POST',site_query,params,timeout=Timeout(total=20))
                     result=f.data
                     logprint(result)
-
                   except Exception as e  :
-
                     message="server online query to create new user failed,please check connection and retry"+" e:"+str(e.args)
                     logprint(message,verbose=10)
                     cgi_name="gui/new_user.py"
-
-                    namespace={} 
+                    namespace={"message":message} 
                     web_page=""
                     #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
                     exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -5658,12 +5650,10 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                   if (result.find("syntax error")!=-1)or (result.find("error_")!=-1):
-   
                     message="error in the server answer while creating onos online user, please retry"
                     logprint(message,verbose=10)
                     cgi_name="gui/new_user.py"
-
-                    namespace={} 
+                    namespace={"message":message} 
                     web_page=""
                     #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py   
                     exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)              
@@ -5674,17 +5664,14 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.wfile.write(web_page) 
                     return
 
-                  if (result.find("#_onos_online_user_created")!=-1): #the username was created in the online server
-                  
+                  if (result.find("#_onos_online_user_created")!=-1): #the username was created in the online server    
                     usersDict[username]={"pw":password,"mail_control_password":password,"priority":0,"user_mail":mail}
-
-                    updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
-                    
-                    message="username created in the online server and in the onos server"
+                    conf_options["online_usersDict"][username]=usersDict[username]
+                    updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options)                    
+                    message="username created successfully in the online server and in the onos server"
                     logprint(message,verbose=5)
                     cgi_name="gui/new_user.py"
-
-                    namespace={} 
+                    namespace={"message":message} 
                     web_page=""
                     #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py
                     exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -5694,13 +5681,12 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(web_page) 
 
-
                   else:  #username already used on online server  
 
                     message="error the username is already used in the online server,please choose another username and retry,result:"+result
                     logprint(message,verbose=10)
                     cgi_name="gui/new_user.py"
-                    namespace={} 
+                    namespace={"message":message} 
                     web_page=""
                     #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py  
                     exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)                
@@ -5715,7 +5701,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   message="error the username is already used in the onosCenter,please choose another username and retry"
                   logprint(message,verbose=10)
                   cgi_name="gui/new_user.py"
-                  namespace={} 
+                  namespace={"message":message} 
                   web_page=""
                   #execfile(cgi_name,locals(),namespace)  #execute external script /gui/new_user.py   
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)             
@@ -5725,11 +5711,7 @@ class MyHandler(BaseHTTPRequestHandler):
                   self.end_headers()
                   self.wfile.write(web_page) 
                   return
-
-
-
-      
-
+  
 
             elif "post0" in postvars:
               logprint("received post0:"+str(postvars["post0"][0]) )  #  print the first post variable
@@ -6200,6 +6182,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   global last_error_check_time
   global last_internet_check
   global reconnect_serial_port_enable
+  global internet_connection
   read_pin=1   #banana
   #time.sleep(5)  #wait for webserver to startup 
   logprint("hardwareHandlerThread() executed")
@@ -6378,12 +6361,12 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           #print str(hardware.serial_communication.uart)
           with lock_serial_input:
             if len (hardware.serial_communication.uart.readed_packets_list)>0:
-              logprint("there is an incoming data on serial port buffer"+str(hardware.serial_communication.uart.readed_packets_list))
+              logprint("serialport buffer"+str(hardware.serial_communication.uart.readed_packets_list))
 
               if "[S_er]" in hardware.serial_communication.uart.readed_packets_list[0]:
                 hardware.serial_communication.uart.readed_packets_list.pop(0)  
 
-              elif "[S_nocmd" in hardware.serial_communication.uart.readed_packets_list[0]:
+              if "[S_nocmd" in hardware.serial_communication.uart.readed_packets_list[0]:
                 hardware.serial_communication.uart.readed_packets_list.pop(0)  
      
               
