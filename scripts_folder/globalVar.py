@@ -182,7 +182,7 @@ onos_online_site_url="http://myonos.com/onos/"  #remote online server url (where
 
 internet_connection=0  #tell onos if there is internet connection, do not change it..onos will change it if there is internet
 
-serial_answer_readyQueue=Queue.Queue()
+serial_answer_readyQueue=Queue.Queue()  #used in arduinoserial
 
 queryToNetworkNodeQueue=Queue.Queue()
 

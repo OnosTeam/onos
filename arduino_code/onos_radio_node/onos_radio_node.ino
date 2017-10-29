@@ -969,6 +969,8 @@ void checkCurrentRadioAddress(){
   if(reInitializeRadio==1){
     beginRadio();
     reInitializeRadio=0;
+    composeSyncMessage();
+    sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
   }
 
 

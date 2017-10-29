@@ -12,7 +12,7 @@
       "Sonoff1P0001": "onosBestHome9999", 
       "Sonoff1P0002": "onosBestHome9999"
     }, 
-    "online_server_enable": 0, 
+    "online_server_enable": 1, 
     "online_usersDict": {
       "RouterGA0000": {
         "mail_control_password": "1234", 
