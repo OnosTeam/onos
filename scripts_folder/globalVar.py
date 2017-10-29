@@ -662,8 +662,9 @@ hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]={}
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["object_numbers"]=[0]   #
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]={}
-hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["0"]="systemctl stop create_ap"
-hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["1"]="systemctl start create_ap"
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["0"]="ifdown wlan1"
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["1"]="ifup wlan1"
+hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["s_cmd"]="ifup wlan1"
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["options"]=["no_write_to_hw"]
 
 hardwareModelDict["RouterPC"]={"hwName":"RouterPC","max_pin":0,"hardware_type":"pc","pin_mode":{},"parameters":{},"timeout":"never"}

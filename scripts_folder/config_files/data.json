@@ -347,9 +347,9 @@
       }, 
       "onosCenterWifi": {
         "cmdDict": {
-          "0": "systemctl stop create_ap", 
-          "1": "systemctl start create_ap", 
-          "s_cmd": "systemctl start create_ap"
+          "0": "ifdown wlan1", 
+          "1": "ifup wlan1", 
+          "s_cmd": "ifup wlan1"
         }, 
         "enable_logging": 0, 
         "grp": [

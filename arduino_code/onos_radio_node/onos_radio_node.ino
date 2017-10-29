@@ -153,14 +153,14 @@ char numeric_serial[5]="0003";   // this is the progressive numeric serial numbe
   #define tempSensor   3
   #define digOut  4
   #define reed2   5
-  #define syncTime  6
+  #define syncTimeout  6
   #define reed1Logic  7
   #define reed2Logic  8
   #define battery_state 9
   #define luminosity_sensor 10
 
   #define TOTAL_OBJECTS 11 //11 because there are 10 elements + a null for the array closing
-  #define node_default_timeout 10000 // keep it like this to make the status update correctly
+  #define node_default_timeout 10 // seconds
   #define battery_node            // tell the software to go to sleep to keep battery power. 
   uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
   uint8_t logic_reed1_status=0;
@@ -187,29 +187,29 @@ char numeric_serial[5]="0003";   // this is the progressive numeric serial numbe
   #define relay4  3
   #define button  4
   #define led     5
-  #define syncTime  6
+  #define syncTimeout  6
   #define IS_RFM69HCW    false
 
   #define TOTAL_OBJECTS 7
-  #define node_default_timeout 1500
+  #define node_default_timeout 15  //seconds
  
 #elif defined(node_type_WLightSS)
-  #define node_default_timeout 1500
+  #define node_default_timeout 15
 
 #elif defined(node_type_WPlug1vx)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
   #define relay1  0
   #define button  1
   #define led     2
-  #define syncTime  3
+  #define syncTimeout  3
   #define TOTAL_OBJECTS 4
-  #define node_default_timeout 60000
+  #define node_default_timeout 360
 
 #elif defined(node_type_WIRbarr0)
-  #define node_default_timeout 1500
+  #define node_default_timeout 15
 
 #elif defined(node_type_WSoilHaa)
-  #define node_default_timeout 1500
+  #define node_default_timeout 15
 
 
 #endif 
@@ -247,7 +247,9 @@ RFM69_ATC radio;
 boolean radio_enabled=1;
 
 unsigned long sync_time=0;
+unsigned long *get_sync_time=&sync_time;
 unsigned long sync_timeout=node_default_timeout;
+
 
 
 char node_fw[]="5.27";
@@ -418,7 +420,7 @@ boolean changeObjStatus(char obj_number,int status_to_set){
 
 #endif
 
-    else if(obj_number==syncTime){  // if the object sent is syncTime change the sync_timeout with the value received
+    else if(obj_number==syncTimeout){  // if the object sent is syncTimeout change the sync_timeout with the value received
       sync_timeout=status_to_set*1000;// get the value in seconds
     }
 
@@ -748,7 +750,7 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150){
   }
 
   radio.receiveDone(); //put radio in RX mode
-  sync_time=millis();
+  *get_sync_time=millis();
 }
 
 
@@ -912,7 +914,7 @@ boolean checkAndHandleIncomingRadioMsg(){
         if (radio.ACKRequested()){
           radio.sendACK();
           Serial.println(F(" - ACK sent"));
-          sync_time=millis();
+          *get_sync_time=millis();
         }
         //interrupts(); // Enable interrupts
       return(1); 
@@ -998,11 +1000,12 @@ void checkCurrentRadioAddress(){
   }
   else{
     //random_time=1500;//random(1500,2500);
-    if ((millis()-sync_time)>sync_timeout){ //every 1500/2500 ms
+    if ((millis()-*get_sync_time)>sync_timeout){ //every 1500/2500 ms
    
-      composeSyncMessage();
+
 
 #if defined(battery_node) // defined(node_type_WreedSaa)
+      composeSyncMessage();
       sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
       //sync_time=millis();
       //  I put the node to sleep
@@ -1022,7 +1025,7 @@ void checkCurrentRadioAddress(){
       ADCSRA=keep_ADCSRA; //resume the status of the register
       composeSyncMessage();
       sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
-      //sync_time=millis();
+      //sync_time=millis(); changed in in sendSyncMessage
 
       awake_time=millis();
       Serial.println(F("w for possible messages"));
@@ -1036,7 +1039,7 @@ void checkCurrentRadioAddress(){
       Serial.println(F("not a battery node part executed"));
       composeSyncMessage();
       sendSyncMessage(radioRetry,radioTxTimeout);
-      //sync_time=millis();
+      //sync_time=millis(); changed in in sendSyncMessage
 
 #endif  //end  if defined(battery_node)
 
@@ -1208,8 +1211,8 @@ void ota_receive_loop(){
 void setup() {
   noInterrupts(); // Disable interrupts    //important for lamp node
 
-  node_obj_status[syncTime]=node_default_timeout;
-  sync_timeout=node_obj_status[syncTime];
+  node_obj_status[syncTimeout]=node_default_timeout;
+  sync_timeout=node_obj_status[syncTimeout]*1000;
 
 #if defined(node_type_WreedSaa)
   node_obj_status[reed1Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
