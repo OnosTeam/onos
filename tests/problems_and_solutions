@@ -934,6 +934,25 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
     After that the script will remove the directory onos_update and run the main webserver.
     if you power off before all the files are moved the directory will be still there and at the next reboot onos will 
     try to update itself again!
+    if the folder "onos_update" doesn't exist update_check.py will download the online fw version json.
+    This file may contain a special firmware folder just for this onos center serial number, in that case the firmaware downloaded will be from that folder .
+    Every operation will be written on a csv log in the online server.
+
+    To make a new update avaible the procedure execute the script generate_update.sh:
+    Put all the files that are in the folder generated_update in www.myonos.com/onos/updates/RouterOP/
+
+    Where RouterOP is the type of router hardware type get from the first part of onosCenter serial number like RouterOP0000  
+
+
+    the fw_version.txt standard is: {"fw":"5.81","hw":"RouterOP","files":"226"}
+    but if you want to update only a specific serial number...you can use this format:
+    {"fw":"5.29","hw":"RouterOP","files":"226","RouterOP0000":{"c_fw":"5.8","c_hw":"RouterOP","c_files":"226","c_folder":"RouterOP0000"} }
+    Note that you will need to create a folder online called as the specific serial number, in this example:RouterOP0000
+      so the path should be: www.myonos.com/onos/updates/RouterOP/RouterOP0000/
+    That folder should contain the same files produced by generate_update.sh
+   
+    In the future it will be possible to mount an external usb disk in /bin/onos/onos_update  to make the ugrade offline...   
+
 
 
 

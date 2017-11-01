@@ -118,25 +118,27 @@ last_pin_read_time=0
 
 
 platform=platform.node()
-
-if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1): #found uname with orange pi name
-  router_hardware_type="RouterOP"
-  enable_usb_serial_port=1
-else: #disable serial port
-  router_hardware_type="RouterPC"
-  enable_usb_serial_port=0
-
 base_cfg_path=""
 
 #if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
-if router_hardware_type=="RouterOP":
-  discovered_running_hardware=router_hardware_type
+if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1)or(platform.find("RouterOP")!=-1): #found uname with orange pi name or RouterOP
+  router_sn=platform[0:12]  #get the serial number from /etc/hostname  
+  router_hardware_type="RouterOP"
+  enable_usb_serial_port=1
   base_cfg_path="/bin/onos/scripts_folder/"
   baseRoomPath="/bin/onos/scripts_folder/zones/"
-else:
-  discovered_running_hardware="pc"  #the hardware has not IO pins
+
+else: #disable serial port
+  router_sn=platform[0:12]  #get the serial number from /etc/hostname  
+  router_hardware_type="RouterPC"
+  enable_usb_serial_port=0
   base_cfg_path=""
   baseRoomPath=os.getcwd()+"/zones/"    #you musn't have spaces on the path..
+
+
+
+
+
 
 csv_folder=base_cfg_path+'csv'
 

@@ -1729,7 +1729,7 @@ def updateDir():
     
   
     index=baseRoomPath+zone+"/index.html"
-    if os.path.isfile(index):   #if the directory exist don't create it
+    if os.path.isfile(index):   #if the file exist don't create it
       logprint(zone+" exist so i don't create it")
       fileToWrite=getRoomHtml(zone,objectDict,"",zoneDict)
       make_fs_ready_to_write()
