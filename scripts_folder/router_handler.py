@@ -266,7 +266,7 @@ class RouterHandler:
         retry_start_cmd=0
         serial_problem=1
         received_answer=""
-        while retry_start_cmd < 25:
+        while retry_start_cmd < 10:
 
           received_answer=self.serial_communication.uart.write("[S_001begin_#]\n")
           if "[S_" in received_answer:
@@ -283,7 +283,7 @@ class RouterHandler:
           pass
         if serial_problem==1:
           logprint("arduino is not answering on serial port")
-          logprint("I will retry other time till "+str(time.time()+" < "+str(timeout)))
+          logprint("I will retry other time till "+str(time.time())+" < "+str(timeout) )
           self.serialCommunicationIsWorking=0
 
 

@@ -200,7 +200,7 @@ def compareText(a,b): #return true if a==b
 def sortZonesByOrderNumber():
   logprint ("sortZonesByOrderNumber() executed")
   zone_list=[]
-  logprint("zoneDict:"+str(zoneDict),verbose=1)
+  #logprint("zoneDict:"+str(zoneDict),verbose=1)
  
 
   for a in range (0,len(zoneDict.keys())):
@@ -5755,8 +5755,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):  # i don't know if 
 
 
 
-def onlineServerSync():
-  logprint("onlineServerSync() excuted")
+def onlineServerSync(): 
+  logprint("onlineServerSync() excuted with:"+onos_online_key)
   global onlineServerSyncThreadIsrunning
   global online_first_contact
   global online_usersDict
@@ -5921,6 +5921,13 @@ def onlineServerSync():
     except Exception as e  :
       message="error contacting the online server to get sync message"
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
+      onlineServerSyncThreadIsrunning=0
+      return()
+
+
+    if "Unable to open database" in sync_message:
+      message="onlineServerSync() sync_message error:probably the onos_online_key:"+onos_online_key+"is not valid in the online server"
+      logprint(message,verbose=8) 
       onlineServerSyncThreadIsrunning=0
       return()
 
@@ -6183,6 +6190,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   global last_internet_check
   global reconnect_serial_port_enable
   global internet_connection
+  last_serial_error_report_time=0 #this is used to not full all the messages with serial error 
   read_pin=1   #banana
   #time.sleep(5)  #wait for webserver to startup 
   logprint("hardwareHandlerThread() executed")
@@ -6314,7 +6322,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         last_server_sync_time=time.time()
         logprint("i started the online server sync service")
         try:
-          w4 = threading.Thread(target=onlineServerSync)
+          w4 = threading.Thread(target=onlineServerSync)  #todo make this a process..
           w4.daemon = True  #make the thread a daemon thread
           w4.start()
         except Exception as e :
@@ -6378,7 +6386,9 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
         else:
           hardware.serialCommunicationIsWorking==0
-          logprint("serial port not working correctly",verbose=9)  
+          if  (  (time.time()-last_serial_error_report_time)>30 ) :  # to not full all the messages with serial error message
+            logprint("serial port not working correctly",verbose=9) 
+            last_serial_error_report_time=time.time()
 
     except Exception as e:
 

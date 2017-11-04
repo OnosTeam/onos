@@ -127,9 +127,9 @@ else: # there is enough free memory
   #os.system('''rm -rf '''+base_path+'''scripts_folder/!(cgi|zone|config_files|zones|globalVar.py)''')
 
 
-  print ('''ls -1 '''+base_path+'''scripts_folder/ | grep -v "cgi\|zone\|config_files\|zones\|globalVar.py" | xargs rm -rf ''')
+  print ('''ls -1 '''+base_path+'''scripts_folder/ | grep -v "cgi\|config_files" | xargs rm -rf ''')
   #os.system('''cd '''+base_path+'''scripts_folder/''')
-  os.system('''cd '''+base_path+'''scripts_folder/ && ls -1 | grep -v "cgi\|zone\|config_files\|zones\|globalVar.py" | xargs rm -rf ''')
+  os.system('''cd '''+base_path+'''scripts_folder/ && ls -1 | grep -v "cgi\|config_files" | xargs rm -rf ''')
 
 
   print ('''cp -r -n'''+tmp_dir+'''downloaded_fw/scripts_folder/* '''+base_path+'''scripts_folder/''')
