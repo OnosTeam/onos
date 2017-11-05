@@ -22,7 +22,8 @@ while [ true ]
 
 do  nice -n -19 python time_zone.py 
     #nice -n -16 python ../update_check.py  #check for update
-    nice -n -19 python webserver.py
+    chrt --rr 30 python webserver.py
+    #nice -n -19 python webserver.py
 
     echo "python closed for 2 sec"
     sleep 2

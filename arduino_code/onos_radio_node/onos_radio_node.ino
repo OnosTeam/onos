@@ -336,7 +336,7 @@ int timeout_to_turn_off=0;//0=disabled    600; //10 hours    todo   add the poss
 
 uint8_t skipRadioRxMsg=0;
 uint8_t skipRadioRxMsgThreshold=5;
-boolean radio_msg_to_decode_is_avaible=0;
+
 
 volatile char main_obj_state=0;
 //int old_main_obj_state=5;
@@ -827,16 +827,14 @@ void getAddressFromGateway(){
 
 boolean checkAndHandleIncomingRadioMsg(){
 
-  if (radio.receiveDone()){
-    
-    skipRadioRxMsg=skipRadioRxMsg+1;
+   
+  skipRadioRxMsg=skipRadioRxMsg+1;
 
-
-    //print message received to serial
-    Serial.print(F(" id:"));
-    Serial.println(radio.SENDERID);
-    Serial.print((char*)radio.DATA);
-    Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
+  //print message received to serial
+  Serial.print(F(" id:"));
+  Serial.println(radio.SENDERID);
+  Serial.print((char*)radio.DATA);
+  Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
 /*
 #if defined(ota_enabled)   //if the node is a battery node:
     CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
@@ -849,113 +847,102 @@ boolean checkAndHandleIncomingRadioMsg(){
     //memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
 
     //Serial.println(radio.SENDERID);
-    if (radio.TARGETID!=this_node_address){
-      Serial.println(F("[S_er9_radioAddress_#]"));
-      return(0); // todo: implement a forward of the message? 
-    }
+  if (radio.TARGETID!=this_node_address){
+    Serial.println(F("[S_er9_radioAddress_#]"));
+    return(0); // todo: implement a forward of the message? 
+  }
 
-    Serial.print(F("msg_start:"));
+  Serial.print(F("msg_start:"));
+  onos_cmd_start_position=-99;  
+  onos_cmd_end_position=-99;  
+  //strcpy(filtered_radio_message,"");
+  memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
 
-    onos_cmd_start_position=-99;  
-    onos_cmd_end_position=-99;  
-
-      //strcpy(filtered_radio_message,"");
-    memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
-
-    Serial.println(radio.TARGETID);
+  Serial.println(radio.TARGETID);
     
-    if (radio.TARGETID!=this_node_address){
-      Serial.println(F("[S_er9_radioAddress_#]"));
-      return(0); // todo: implement a forward of the message? 
-    }
+  if (radio.TARGETID!=this_node_address){
+    Serial.println(F("[S_er9_radioAddress_#]"));
+    return(0); // todo: implement a forward of the message? 
+  }
     
 
-    //for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
+  //for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
 
-    for (counter = 0; counter <= radio.DATALEN; counter++) {
-      filtered_radio_message[counter]=radio.DATA[counter];
-      //  Serial.println(filtered_radio_message[counter]);
+  for (counter = 0; counter <= radio.DATALEN; counter++) {
+    filtered_radio_message[counter]=radio.DATA[counter];
+    //  Serial.println(filtered_radio_message[counter]);
 
     //[S_001dw06001_#]
-      if (counter<2){
-        continue;
-      }
-      if ( (filtered_radio_message[counter-2]=='[')&&(filtered_radio_message[counter-1]=='S')&&(filtered_radio_message[counter]=='_')  ){//   
-       // Serial.println("cmd start found-------------------------------");
-        onos_cmd_start_position=counter-2;
-      }
-
-
-      if( (filtered_radio_message[counter-2]=='_')&&(filtered_radio_message[counter-1]=='#')&&(filtered_radio_message[counter]==']')  ){//   
-        //  Serial.println("cmd end found-------------------------------");
-        onos_cmd_end_position=counter-2;
-        break;// now the message has ended
-      }
-
-
+    if (counter<2){
+      continue;
+    }
+    if ( (filtered_radio_message[counter-2]=='[')&&(filtered_radio_message[counter-1]=='S')&&(filtered_radio_message[counter]=='_')  ){//   
+      // Serial.println("cmd start found-------------------------------");
+      onos_cmd_start_position=counter-2;
     }
 
 
-    Serial.println(F(":msg_stop"));
+    if( (filtered_radio_message[counter-2]=='_')&&(filtered_radio_message[counter-1]=='#')&&(filtered_radio_message[counter]==']')  ){//   
+        //  Serial.println("cmd end found-------------------------------");
+      onos_cmd_end_position=counter-2;
+      break;// now the message has ended
+    }
 
 
-    if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
-
-      Serial.println(F("onos cmd  found-------------------------------"));
-      //noInterrupts(); // Disable interrupts    //important for lamp node 
-      //decodeOnosCmd(filtered_radio_message);
-      OnosMsgHandler.decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
+  }
 
 
+  Serial.println(F(":msg_stop"));
 
 
-      if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')){//if the message was ok...
+  if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+
+    Serial.println(F("onos cmd  found-------------------------------"));
+    //noInterrupts(); // Disable interrupts    //important for lamp node 
+    //decodeOnosCmd(filtered_radio_message);
+    OnosMsgHandler.decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
+
+
+    if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')){//if the message was ok...
       //check if sender wanted an ACK
-        if (radio.ACKRequested()){
-          radio.sendACK();
-          Serial.println(F(" - ACK sent"));
-          *get_sync_time=millis();
-        }
-        //interrupts(); // Enable interrupts
-      return(1); 
-
+      if (radio.ACKRequested()){
+        radio.sendACK();
+        Serial.println(F(" - ACK sent"));
+        *get_sync_time=millis();
       }
-      else{
-        Serial.print(F("error in message decode i will not send the ACK,i found:"));
-        uint8_t k=0;
-        while (k<decoded_radio_answer_lenght){
-          if (decoded_radio_answer[k]==0){
-            break;
-          } 
-          Serial.print(decoded_radio_answer[k]);
-          k=k+1;
+      //interrupts(); // Enable interrupts
+    return(1); 
+
+    }
+    else{
+      Serial.print(F("error in message decode i will not send the ACK,i found:"));
+      uint8_t k=0;
+      while (k<decoded_radio_answer_lenght){
+        if (decoded_radio_answer[k]==0){
+          break;
         } 
+        Serial.print(decoded_radio_answer[k]);
+        k=k+1;
+      } 
 
-        Serial.println();
-        return(0); 
+      Serial.println();
+      return(0); 
 
-       // checkCurrentRadioAddress(); //if the mesage received is wrong i will check and send a address request if needed becausethe onos gateway will wait a moment after the tranmission failure.
+      // checkCurrentRadioAddress(); //if the mesage received is wrong i will check and send a address request if needed becausethe onos gateway will wait a moment after the tranmission failure.
 
         //interrupts(); // Enable interrupts 
-      }
+    }
 
     //interrupts(); // Enable interrupts
     
-    }
-    else{
-      strcpy(decoded_radio_answer,"nocmd0_#]");
-      Serial.print(F("error in message nocmd0_#]"));
-      Serial.print(onos_cmd_start_position);
-      Serial.println(onos_cmd_end_position);
-      return(0); 
-    }
-
-  
-    
-
-  }// end if (radio.receiveDone())
-
-
+  }
+  else{
+    strcpy(decoded_radio_answer,"nocmd0_#]");
+    Serial.print(F("error in message nocmd0_#]"));
+    Serial.print(onos_cmd_start_position);
+    Serial.println(onos_cmd_end_position);
+    return(0); 
+  }
 
 
 }
@@ -1030,7 +1017,10 @@ void checkCurrentRadioAddress(){
       awake_time=millis();
       Serial.println(F("w for possible messages"));
       while ((millis()-awake_time)>stay_awake_period ){
-        radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+        if (radio.receiveDone()){
+          checkAndHandleIncomingRadioMsg();
+        }
+
       }
       Serial.println(F("end wait"));
 
@@ -1419,9 +1409,9 @@ void loop() {
   }
 #endif 
 
-
-  radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
-
+  if (radio.receiveDone()){
+    checkAndHandleIncomingRadioMsg();
+  }
 
 radioTx:
  
