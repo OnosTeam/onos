@@ -1,1 +1,1 @@
-{"fw":"5.99","hw":"RouterOP","files":"226","RouterOP0000":{"c_fw":"6.00","c_hw":"RouterOP","c_files":"226","c_folder":"RouterOP0000"} }
+{"fw":"5.30","hw":"RouterOP","files":"226"}

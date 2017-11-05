@@ -1068,6 +1068,8 @@ def getListPinsConfigByHardwareModel(hwName,pin_mode):
   return(pin_list) 
 
 
+
+#https://unix.stackexchange.com/questions/22465/script-to-check-for-read-only-filesystem
 def make_fs_ready_to_write():  # enable the linux filesystem to write to disk ,if onos is running on orangePi
   if router_hardware_type=="RouterOP":
     subprocess.call('mount -o remount,rw /', shell=True,close_fds=True)

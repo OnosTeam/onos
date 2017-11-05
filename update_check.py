@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import sys,os,os.path,urllib,urllib2,re,platform
+import sys,os,os.path,urllib,urllib2,re,platform,subprocess
 import json
 from send_to_php_log import *
 
@@ -27,6 +27,7 @@ if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1)or(platform.find(
   enable_usb_serial_port=1
   base_cfg_path="/bin/onos/scripts_folder/"
   baseRoomPath="/bin/onos/scripts_folder/zones/"
+  subprocess.call('mount -o remount,rw /', shell=True,close_fds=True) #mount filesystem as rw
 
 else: #disable serial port
   base_path=""
@@ -253,6 +254,10 @@ def download_update_script(base_path,online_fw_folder_url,update_dir,file_update
     logprint(md5_update_script_code)
     logprint("vs")
     logprint(file_md5code)
+    msg="errMd5"
+    s_mail="1"
+    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+
     return(0)
  
  
@@ -295,7 +300,7 @@ if not (float(current_local_fw)<float(current_downloaded_fw)):
 
 if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current_downloaded_fw)):  #if the script exist and is not corrupted and the new fw version is newer than the current one
   logprint("the script exist and is not corrupted and the new fw version is newer than the current one")
-  namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder":online_fw_folder}    
+  namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder":online_fw_folder,"router_hardware_type":router_hardware_type}    
   try:
     global_file = open(base_path+"scripts_folder/globalVar.py",'r')  
     text=global_file.read()
@@ -303,16 +308,16 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
     onos_online_server_url=re.search('onos_online_site_url="(.+?)"',text).group(1)  #find the domain from globalVar.py
 
   except Exception as e:     
-    message="error0 opening scripts_folder/globalVar.pye"
+    message="error0 opening scripts_folder/globalVar.py"
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-    onos_online_server_url=default_online_server_url
-   
-
-
+    onos_online_server_url="http://myonos.com/onos/"  #remote online server url (where the php onos scripts are located)
+    msg="errG"
+    s_mail="1"
+    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
 
   logprint("execute file:"+file_update_path)
   try:    
-    namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder_url":"local"} 
+    namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder_url":"local","router_hardware_type":router_hardware_type} 
     execfile(file_update_path,globals(),namespace) #execute the python script
 
     current_local_fw_dict=get_fw_hw_from_file(base_path)
@@ -346,7 +351,7 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
           logprint("0new updater script downloaded")
           logprint("execute file:"+file_update_path)
           try: 
-            namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder_url":online_fw_folder_url}    
+            namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder_url":online_fw_folder_url,"router_hardware_type":router_hardware_type}    
             execfile(file_update_path,globals(),namespace) #execute the python script
 
             current_local_fw_dict=get_fw_hw_from_file(base_path)
@@ -367,6 +372,8 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
           msg="err0"
           s_mail="1"
           send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+          if router_hardware_type=="RouterOP":
+              subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
           quit()
         else:
           try_number=try_number-1
@@ -404,7 +411,7 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
       logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
       current_local_fw="3.15"
-      current_hw="glinet"
+      current_hw="RouterOP"
       current_files_number="0"
       onos_online_server_url=default_online_server_url
     #free_ram_space=float((re.search('tmpfs(.+?)\n',os.popen("df").read()).group(1)).split()[2]) #get free ram space in kbytes
@@ -430,7 +437,7 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
           logprint("1new updater script downloaded")
           logprint("execute file:"+file_update_path)
           try: 
-            namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder":online_update_folder}    
+            namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder":online_update_folder,"router_hardware_type":router_hardware_type}    
             execfile(file_update_path,globals(),namespace) #execute the python script
             current_local_fw_dict=get_fw_hw_from_file(base_path)
             current_local_fw=current_local_fw_dict["current_local_fw"]
@@ -452,6 +459,8 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
           msg="err1"
           s_mail="1"
           send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+          if router_hardware_type=="RouterOP":
+              subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
           quit()
         else:
           try_number=try_number-1
@@ -466,5 +475,6 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
     logprint("config disable automatic update")  
 
 
-
+if router_hardware_type=="RouterOP":
+  subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
 

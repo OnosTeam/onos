@@ -3,7 +3,12 @@
 mkdir generated_update/
 mkdir generated_update/scripts_folder
 
-cp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) generated_update/scripts_folder/
+
+cd scripts_folder/
+cp -r $(ls  | grep -v -e docs -e generated_update -e .pyc  )  ../generated_update/scripts_folder/
+
+#cp -r scripts_folder/* generated_update/scripts_folder/
+cd ..
 cp fw_version.txt generated_update/fw_version.txt
 cp online_db/updates/onos_update.pya generated_update/onos_update.pya
 

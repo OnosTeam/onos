@@ -336,9 +336,9 @@
       }, 
       "onosCenterWifi": {
         "cmdDict": {
-          "0": "ifdown wlan1", 
-          "1": "ifup wlan1", 
-          "s_cmd": "ifup wlan1"
+          "0": "ifdown wlan0", 
+          "1": "ifup wlan0", 
+          "s_cmd": "ifup wlan0"
         }, 
         "enable_logging": 0, 
         "grp": [
