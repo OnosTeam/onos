@@ -1272,3 +1272,49 @@ Number humidity "humidity [%.1f%%] {mqtt="<[broker:weatherstation/readings:state
       aggiunto parametro ... hardwareModelDict["WreedSaa"]["parameters"]["battery_node"]=1
 
 
+
+
+57) devo separare la grafica dal core, usando javascript:
+
+Struttura msg json :
+
+dati che javascript manderà per fare una query:
+
+Query_address : locale oppure remoto  per decidere se a rispondere sarà il server locale o quello php.
+
+Username e password: per decidere se si hanno accesso ai dati richiesti
+
+Onos_key: per determinare a quale onoscenter si sta parlando...(nel caso sia il webserver remoto php..)
+
+Tipo di richieste: Un dizionario con le richieste da fare, a cui il webserver risponderà..
+
+
+Esempio di richiesta:
+{"query_address":"192.168.101.1","username":"marco","password":"1234",onosKey:"RouterOp0001","query_cmd":{"c1":"getZone","c2":"getMsgBox"}}
+
+Il webserver risponderà con un dizionario json con il risultato della richiesta ad esempio per la richiesta degli oggetti di una zona:
+
+{msg:{"zoneName":current_zone,"list_of_objects":{"obj1":{"status":"1","html":html ...altri dati di ciascun oggetto},"obj2":{dati di ciascun oggetto}      }  }  }
+
+Se non si hanno i permessi risponderà {"msg":{"c1":"pE" ,"c2":"pE"}}
+
+Altrimenti risponderà ad esempio così:
+
+{"msg:{"c1":"risposta al comando c1","c2"="risposta al comando c2"}}
+
+
+Per inviare dati form:
+Query_address : locale oppure remoto  per decidere se a rispondere sarà il server locale o quello php.
+username e password: per decidere se si hanno accesso ai dati richiesti
+
+Onos_key: per determinare a quale onoscenter si sta parlando...(nel caso sia il webserver remoto php..)
+
+Nome_form_pagina: per mandare al webserver il tipo di dati che si stanno mandando (il nome della pagina in cui ci si trova)
+
+
+Per connessione protetta vedere:
+https://moz.com/blog/enabling-https-without-sacrificing-web-performance
+https://letsencrypt.org/about/
+
+
+

@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<script type="text/javascript" language="javascript">
+
+// to send post data see https://stackoverflow.com/questions/24468459/sending-a-json-to-server-and-retrieving-a-json-in-return-without-jquery 
+
+
+function makeGetQuery(url){
+  console.log("url:"+url);
+  var xmlHttp;
+//var oldHtml=" ";
+  try{	
+    xmlHttp=new XMLHttpRequest();// Firefox, Opera 8.0+, Safari
+  }
+  catch (e){
+    try{
+      xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); // Internet Explorer
+    }
+    catch (e){
+      try{
+        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      catch (e){
+        alert("No AJAX!?");
+        return('{"msg":"c_error"}');
+      }
+    }
+  }
+
+  xmlHttp.onreadystatechange=function(){
+
+    if(xmlHttp.readyState==4){
+      return(xmlHttp.responseText);       
+    }
+  }
+
+
+//(new Date()).getTime()   is in order to have every time a different request , to bypass cache
+var d = new Date();
+var n = d.getSeconds();
+xmlHttp.open("GET",url+n,true);   //false for synchronous connection
+xmlHttp.timeout = 30000; // Set timeout to 30 seconds (30000 milliseconds)
+xmlHttp.ontimeout = function () {return('{"msg":"c_error"}');}
+xmlHttp.send(null);
+return('{"msg":"f_error"}')
+
+}
+
+
+
+
+
+
+function GetObjectsInAZone(zone,onos_url,username,password){
+  var query_url=onos_url+"/jscmd.py?c=gzol&z="+zone+"&u="+username+"&p="+password;
+  //gzol---> get zone object list
+
+  var answer_received=makeGetQuery(query_url);
+
+  console.log("answer_received:"+answer_received);
+  
+  //var answer_received='{"msg":{"zoneName":"WreedSaa0003","list_of_objects":["obj1","obj2","OBJ3"]  } }';
+  try{
+    var json_decoded_answer=JSON.parse(answer_received);
+  }
+  catch (e){
+    console.log("err0");
+    console.log(answer_received);
+    var json_decoded_answer={"msg":"c_error"}
+  }
+
+
+  if ((json_decoded_answer.msg=="pE")|(json_decoded_answer.msg=="c_error")){// if there is an error in the answer from server..
+    return("error:"+json_decoded_answer.msg);
+  }
+
+  if (json_decoded_answer.msg.zoneName!=zone){// if there is an error in the answer from server..
+    console.log("error_wrong_zone_received:");
+    console.log(json_decoded_answer.msg.zoneName);
+    console.log(zone);
+    return("error_wrong_zone_received:"+json_decoded_answer.msg.zoneName);
+  }
+
+  return(json_decoded_answer.msg.list_of_objects);
+
+}
+
+</script>
+
+
+  </head>
+<body>
+
+Ciao gli oggetti nella zona sono:
+
+<div id="modifyThisWithJavascript"> obj</div>
+
+<script type="text/javascript" language="javascript">
+  var username="marco";
+  var password="1234";
+
+  var html="";
+  var list_of_object=GetObjectsInAZone("WreedSaa0003","localhost",username,password);
+
+  if (list_of_object.indexOf("error")!=-1){// se c'e' un errore scrivilo nel html...
+    html="errore:"+list_of_object; 
+  }
+  else{
+//scorre tutta la lista dei nomi oggetto e li aggiunge all'html
+    for (var i = 0; i < Object.keys(list_of_object).length; i++) { 
+      html=html+list_of_object[i];
+      html=html+"<br>"
+    }
+  }
+//riscrive le proprietà del div di ID:"modifyThisWithJavascript" inserendo l'html generato
+  document.getElementById('modifyThisWithJavascript').innerHTML=html;  
+
+</script>
+
+</body>
+
+
+</html>
+   
+

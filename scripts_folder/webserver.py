@@ -3293,7 +3293,23 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
+            if self.path.find("jscmd.py")!=-1: # render the scenario list 
+              namespace={"current_username":self.current_username,"current_path":self.path}
+              cgi_name="gui/jscmd.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
 
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/json')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13J in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return 
 
 
 
@@ -3602,6 +3618,11 @@ class MyHandler(BaseHTTPRequestHandler):
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 pass
               return
+
+             
+
+
+
                 
   
             if self.path.endswith("gui/new_user.py"): # render  

@@ -11,7 +11,7 @@ global current_hw
 
 
 
-default_online_server_url="http://www.myonos.com/onos/"
+default_online_server_url="https://www.myonos.com/onos/"
 
 
 platform=platform.node()

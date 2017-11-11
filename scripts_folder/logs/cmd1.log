@@ -1,1 +1,1 @@
-ifdown: interface wlan1 not configured
+ifdown: interface wlan0 not configured

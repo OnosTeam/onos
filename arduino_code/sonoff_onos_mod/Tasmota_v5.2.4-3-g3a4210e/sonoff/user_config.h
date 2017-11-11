@@ -39,9 +39,9 @@
 #define WIFI_SUBNETMASK        "255.255.255.0"   // [IpAddress3] If not using DHCP set Network mask
 #define WIFI_DNS               "192.168.101.16"    // [IpAddress4] If not using DHCP set DNS IP address (might be equal to WIFI_GATEWAY)
 
-#define STA_SSID1              "onoscenter"      // onosmod [Ssid1] Wifi SSID  onosmod
+#define STA_SSID1              "onos"      // onosmod [Ssid1] Wifi SSID  onosmod
 #define STA_PASS1              "12345678"    // onosmod [Password1] Wifi password   onosmod
-#define STA_SSID2              "onoscenter"      // onosmod [Ssid2] Optional alternate AP Wifi SSID
+#define STA_SSID2              "onos"      // onosmod [Ssid2] Optional alternate AP Wifi SSID
 #define STA_PASS2              "12345678"    // onosmod[Password2] Optional alternate AP Wifi password
 #define WIFI_CONFIG_TOOL       WIFI_RETRY    // [WifiConfig] Default tool if wifi fails to connect
                                                  //   (WIFI_RESTART, WIFI_SMARTCONFIG, WIFI_MANAGER, WIFI_WPSCONFIG, WIFI_RETRY)

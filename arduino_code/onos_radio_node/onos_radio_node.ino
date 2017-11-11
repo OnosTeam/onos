@@ -120,11 +120,11 @@
 
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0003";   // this is the progressive numeric serial number
+char numeric_serial[5]="0001";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_Wrelay4x
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -191,7 +191,7 @@ char numeric_serial[5]="0003";   // this is the progressive numeric serial numbe
   #define IS_RFM69HCW    false
 
   #define TOTAL_OBJECTS 7
-  #define node_default_timeout 15  //seconds
+  #define node_default_timeout 30  //seconds
  
 #elif defined(node_type_WLightSS)
   #define node_default_timeout 15
@@ -804,7 +804,7 @@ void getAddressFromGateway(){
       Serial.print(F("radio tx failed, I retry"));
       random_time=10;//random(10,radioTxTimeout*3);
       tryed_times=tryed_times+1;
-      delay(15);
+      delay(200);
       //LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
       //ADCSRA=keep_ADCSRA; //resume the status of the register
 
@@ -967,9 +967,9 @@ void checkCurrentRadioAddress(){
 
   if (this_node_address==254){// i have not the proper address yet..
 
-    random_time=4000;//random(4000,5000);
+    random_time=10000;//random(4000,5000);
  
-    if ((millis()-*get_address_timeout_pointer)>random_time){ //every 4000/5000 ms
+    if ((millis()-*get_address_timeout_pointer)>random_time){ //every 10000/5000 ms
 
 #if defined(DEVMODE)
       Serial.print(F("get_address_timeout>time:"));
