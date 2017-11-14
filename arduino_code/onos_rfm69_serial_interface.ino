@@ -88,7 +88,7 @@
 #define RFM69_RST     9
  
  
-#define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
+#define ATC_RSSI      -30   //power signal from -30(stronger) to -95(weaker) 
 #define targetRSSI    -40
  
 //#define remote_node   //tell the compiler that this is a remote node

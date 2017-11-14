@@ -25,6 +25,8 @@
 
 from conf import *           # import parameter from conf.py  which will read the data from the  json 
 from mail_agent import *
+import signal
+
 
 global scenarioDict
 global objectDict
@@ -2130,8 +2132,8 @@ class MyHandler(BaseHTTPRequestHandler):
     #global roomDict
     
 
-    def log_message(self, format, *args):  #remove the print of each request..comment this method to make it print..
-      return
+    #def log_message(self, format, *args):  # print self.path) remove the print of each request..comment this method to make it print..
+    #  return
 
 
 
@@ -3321,7 +3323,7 @@ class MyHandler(BaseHTTPRequestHandler):
               
               global oldpag
               global nothing_changed
-              logprint("r_onos_s found0")
+              #logprint("r_onos_s found0")
                  #   global  old_zoneDict
                  #   global  old_objectDict
                  #   global  old_web_page
@@ -6390,7 +6392,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
           #print str(hardware.serial_communication.uart)
           with lock_serial_input:
             if len (hardware.serial_communication.uart.readed_packets_list)>0:
-              logprint("serialport buffer"+str(hardware.serial_communication.uart.readed_packets_list))
+              #logprint("serialport buffer"+str(hardware.serial_communication.uart.readed_packets_list))
 
               if "[S_er]" in hardware.serial_communication.uart.readed_packets_list[0]:
                 hardware.serial_communication.uart.readed_packets_list.pop(0)  
@@ -7003,23 +7005,59 @@ def nodeTcpServer():
         logprint("connection not created 4")
 
 
+class TimeoutError(Exception):
+    """
+    | Class used to generate a new error type, the TimeoutError. 
+    |
+    |
+    """
+
+    message="Error timeout in the webserver loop"
+    logprint(message,verbose=8)     
+    pass
+
+
+class timeout:
+    """
+    | Class that handle the timeout of the webserver loop. 
+    |
+    |
+    """
+    def __init__(self, seconds=1, error_message='TimeoutError'):
+        self.seconds = seconds
+        self.error_message = error_message
+    def handle_timeout(self, signum, frame):
+        raise TimeoutError(self.error_message)
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
+
+
+
+
 def run_while_true(server_class=BaseHTTPServer.HTTPServer,
                    handler_class=RequestHandler):
     """
-    This assumes that keep_running() is a function of no arguments which
-    is tested initially and after each request.  If its return value
-    is true, the server continues.
+    | This assumes that keep_running() is a function of no arguments which 
+    | is tested initially and after each request.  If its return value 
+    | is true, the server continues.
+    |  
+    |
     """
+
     server_address = ('', gui_webserver_port)
     httpd = server_class(server_address, MyHandler)
 
     while exit==0:   #if exit ==1  then close the webserver
 
-#main loop of the webserver
+      #main loop of the webserver
       #print "main webserver "
 
       try:
-        httpd.handle_request() 
+        with timeout(seconds=15):  #if the code takes more than x seconds to run raise an error and continue the loop 
+          httpd.handle_request() 
       except Exception as e:
         message="something went wrong on main Webserver handler "   
         logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))     

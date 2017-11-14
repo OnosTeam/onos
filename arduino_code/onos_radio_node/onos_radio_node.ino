@@ -91,7 +91,7 @@
 #define RFM69_RST     9
 
 
-#define ATC_RSSI      -75   //power signal from -30(stronger) to -95(weaker) 
+#define ATC_RSSI      -30   //power signal from -30(stronger) to -95(weaker) 
 #define targetRSSI    -40
 
 #define remote_node   //tell the compiler that this is a remote node
@@ -128,10 +128,10 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
-#define node_type_WLightSS
-#define node_type_WPlug1vx
-#define node_type_WIRbarr0
-#define node_type_WSoilHaa
+#define node_type_WLightSS  not implemented
+#define node_type_WPlug1vx  
+#define node_type_WIRbarr0  not implemented
+#define node_type_WSoilHaa  not implemented
 */                  
 
 
@@ -188,7 +188,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   #define button  4
   #define led     5
   #define syncTimeout  6
-  #define IS_RFM69HCW    false
+ // #define IS_RFM69HCW    false
 
   #define TOTAL_OBJECTS 7
   #define node_default_timeout 30  //seconds
