@@ -2681,14 +2681,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-
-
-
-
-
-  
-
-
  
 
     def do_GET(self):
@@ -3570,7 +3562,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                   logprint("path="+address_bar)
                   #changeWebObjectStatus(objectName,status_to_set,1)  #banana to add usr,priority,mail_list_to_report_to
-                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":0,"user":current_username,"mail_report_list":[]})    
+                  priorityCmdQueue.put( {"cmd":"setSts","webObjectName":objName,"status_to_set":status_to_set,"write_to_hw":1,"priority":0,"user":self.current_username,"mail_report_list":[]})    
 
                   logprint ("i set"+objName+" to :"+str(status_to_set))
 
@@ -6938,7 +6930,7 @@ def nodeTcpServer():
                   if received_message.startswith("[S_001sy?") :  
                     cmd_start=msg.find("[S_")
                     cmd_end=msg.find("[S_")
-                    cmd=buf[cmd_start:cmd_end+3]     
+                    cmd=msg[cmd_start:cmd_end+3]     
                     node_sn=cmd[12:24]   
                     node_fw=cmd[8:12]
                     logprint("node_sn"+node_sn+"node_fw"+node_fw+"nodeip"+str(node_ip ))
@@ -7034,7 +7026,23 @@ class timeout:
     def __exit__(self, type, value, traceback):
         signal.alarm(0)
 
-
+#class Timeout1():
+#    """Timeout class using ALARM signal."""
+#    class Timeout1(Exception):
+#        pass
+# 
+#    def __init__(self,sec):
+#        self.sec = sec
+# 
+#    def __enter__(self):
+#        signal.signal(signal.SIGALRM, self.raise_timeout)
+#        signal.alarm(self.sec)
+# 
+#    def __exit__(self, *args):
+#        signal.alarm(0)    # disable alarm
+# 
+#    def raise_timeout(self, *args):
+#        raise Timeout1.Timeout1()
 
 
 def run_while_true(server_class=BaseHTTPServer.HTTPServer,
@@ -7056,8 +7064,9 @@ def run_while_true(server_class=BaseHTTPServer.HTTPServer,
       #print "main webserver "
 
       try:
-        with timeout(seconds=15):  #if the code takes more than x seconds to run raise an error and continue the loop 
+        with timeout(30):  #if the code takes more than x seconds to run raise an error and continue the loop 
           httpd.handle_request() 
+
       except Exception as e:
         message="something went wrong on main Webserver handler "   
         logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))     
@@ -7097,7 +7106,7 @@ def main():
 
         hardware.close()
         exit=1
-        server.socket.close()
+        #server.socket.close()
 
 if __name__ == '__main__':
     main()

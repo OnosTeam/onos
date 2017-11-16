@@ -11,8 +11,9 @@ global current_hw
 
 
 
-default_online_server_url="https://www.myonos.com/onos/"
-
+default_online_server_url="https://myonos.com/onos/"
+onos_online_server_url=default_online_server_url
+url_php=onos_online_server_url+"updates/mail_update.php"
 
 platform=platform.node()
 base_cfg_path=""
@@ -123,7 +124,7 @@ def get_fw_hw_in_onos_update_folder(base_path):
       message="the directory/file update do not exist or are corrupted"
       logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
       msg="err_wrong_files_in_update_dir"
-      send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+      send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
       current_downloaded_fw="0"
       current_downloaded_hw="glinet"
       downloaded_files_number="0"
@@ -132,7 +133,7 @@ def get_fw_hw_in_onos_update_folder(base_path):
       current_downloaded_files_number="0"
 
   else: #the  "onos_update" folder doesn not exist 
-    logprint('the  '+base_path+"onos_update"+' folder doesn not exist ')
+    logprint('the  '+base_path+"onos_update"+' folder does not exist ')
     current_downloaded_fw="0"
     current_downloaded_hw="glinet"
     downloaded_files_number="0"
@@ -164,7 +165,7 @@ def get_online_fw_hw(version_url,current_hw,current_local_fw,router_sn):
     logprint("at:"+url_fw_version)
     
     response = urllib2.urlopen(url_fw_version)
-    #the url will be like: http://www.myonos.com/onos/updates/glinet/fw_version.txt
+    #the url will be like: https://myonos.com/onos/updates/glinet/fw_version.txt
     version_txt=response.read()  #now i got the txt file 
     online_version_dict=json.loads(version_txt)  
 
@@ -176,7 +177,7 @@ def get_online_fw_hw(version_url,current_hw,current_local_fw,router_sn):
 
       url_fw_version=version_url+'updates/'+current_hw+'/'+folder+'/fw_version.txt'
       response = urllib2.urlopen(url_fw_version)
-      #the url will be like: http://www.myonos.com/onos/updates/glinet/fw_version.txt
+      #the url will be like: https://myonos.com/onos/updates/glinet/fw_version.txt
       version_txt=response.read()  #now i got the txt file 
       online_version_dict={}
       online_version_dict=json.loads(version_txt)  
@@ -206,7 +207,7 @@ def get_online_fw_hw(version_url,current_hw,current_local_fw,router_sn):
 
     msg="errv0_hw_folder_missing"
     s_mail="1"
-    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
 
     online_fw="0"
     online_hw="glinet"
@@ -256,7 +257,7 @@ def download_update_script(base_path,online_fw_folder_url,update_dir,file_update
     logprint(file_md5code)
     msg="errMd5"
     s_mail="1"
-    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
 
     return(0)
  
@@ -280,7 +281,7 @@ current_files_number=current_local_fw_dict["current_files_number"]
 
 msg="ck0"
 s_mail="0"
-send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
 
 fw_hw_in_onos_update_folder_dict=get_fw_hw_in_onos_update_folder(base_path)
 
@@ -300,24 +301,34 @@ if not (float(current_local_fw)<float(current_downloaded_fw)):
 
 if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current_downloaded_fw)):  #if the script exist and is not corrupted and the new fw version is newer than the current one
   logprint("the script exist and is not corrupted and the new fw version is newer than the current one")
-  namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder":online_fw_folder,"router_hardware_type":router_hardware_type}    
+ 
   try:
     global_file = open(base_path+"scripts_folder/globalVar.py",'r')  
     text=global_file.read()
     global_file.close()
     onos_online_server_url=re.search('onos_online_site_url="(.+?)"',text).group(1)  #find the domain from globalVar.py
-
+    onos_online_server_url=onos_online_server_url.strip("www")  #remove the ww part
+    url_php=onos_online_server_url+"updates/mail_update.php"
   except Exception as e:     
     message="error0 opening scripts_folder/globalVar.py"
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-    onos_online_server_url="http://myonos.com/onos/"  #remote online server url (where the php onos scripts are located)
+    onos_online_server_url="https://myonos.com/onos/"  #remote online server url (where the php onos scripts are located)
+    url_php=onos_online_server_url+"updates/mail_update.php"
     msg="errG"
     s_mail="1"
-    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
 
   logprint("execute file:"+file_update_path)
   try:    
-    namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder_url":"local","router_hardware_type":router_hardware_type} 
+    namespace={
+              "current_hw":current_hw,
+              "base_path":base_path,
+              "current_local_fw":current_local_fw,
+              "online_fw_folder":online_update_folder,
+              "router_hardware_type":router_hardware_type,
+              "server_url":onos_online_server_url
+              }
+
     execfile(file_update_path,globals(),namespace) #execute the python script
 
     current_local_fw_dict=get_fw_hw_from_file(base_path)
@@ -325,7 +336,7 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
     current_hw=current_local_fw_dict["current_hw"]
     msg="0upOk"
     s_mail="1"
-    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+    send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
   
   except Exception as e:     
     message="error0 execfile(file_path,globals(),namespace) #executing the python script  "
@@ -351,7 +362,15 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
           logprint("0new updater script downloaded")
           logprint("execute file:"+file_update_path)
           try: 
-            namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder_url":online_fw_folder_url,"router_hardware_type":router_hardware_type}    
+            namespace={
+                      "current_hw":current_hw,
+                      "base_path":base_path,
+                      "current_local_fw":current_local_fw,
+                      "online_fw_folder":online_update_folder,
+                      "router_hardware_type":router_hardware_type,
+                      "server_url":onos_online_server_url
+                      }
+
             execfile(file_update_path,globals(),namespace) #execute the python script
 
             current_local_fw_dict=get_fw_hw_from_file(base_path)
@@ -359,7 +378,7 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
             current_hw=current_local_fw_dict["current_hw"]
             msg="1upOk"
             s_mail="1"
-            send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+            send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
             break #if there is no errors break the loop
 
           except Exception as e:     
@@ -371,7 +390,7 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
           logprint("update failed")
           msg="err0"
           s_mail="1"
-          send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+          send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
           if router_hardware_type=="RouterOP":
               subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
           quit()
@@ -404,7 +423,8 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
       global_file.close()
   
       onos_online_server_url=re.search('onos_online_site_url="(.+?)"',text).group(1)  #find the domain from globalVar.py
-
+      onos_online_server_url=onos_online_server_url.strip("www")  #remove the ww part
+      url_php=onos_online_server_url+"updates/mail_update.php"
 
     except Exception as e:     
       message="error opening scripts_folder/globalVar.py "
@@ -414,6 +434,8 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
       current_hw="RouterOP"
       current_files_number="0"
       onos_online_server_url=default_online_server_url
+      onos_online_server_url=onos_online_server_url.strip("www")  #remove the ww part
+      url_php=onos_online_server_url+"updates/mail_update.php"
     #free_ram_space=float((re.search('tmpfs(.+?)\n',os.popen("df").read()).group(1)).split()[2]) #get free ram space in kbytes
 
     
@@ -437,14 +459,22 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
           logprint("1new updater script downloaded")
           logprint("execute file:"+file_update_path)
           try: 
-            namespace={"current_hw":current_hw,"base_path":base_path,"current_local_fw":current_local_fw,"online_fw_folder":online_update_folder,"router_hardware_type":router_hardware_type}    
+            namespace={
+                       "current_hw":current_hw,
+                       "base_path":base_path,
+                       "current_local_fw":current_local_fw,
+                       "online_fw_folder":online_update_folder,
+                       "router_hardware_type":router_hardware_type,
+                       "server_url":onos_online_server_url
+                      }
+
             execfile(file_update_path,globals(),namespace) #execute the python script
             current_local_fw_dict=get_fw_hw_from_file(base_path)
             current_local_fw=current_local_fw_dict["current_local_fw"]
             current_hw=current_local_fw_dict["current_hw"]
             msg="upgOk"
             s_mail="1"
-            send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+            send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
 
             break #if there is no errors break the loop
 
@@ -458,7 +488,7 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
           logprint("update failed")
           msg="err1"
           s_mail="1"
-          send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+          send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
           if router_hardware_type=="RouterOP":
               subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
           quit()
@@ -469,7 +499,7 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
 
 
     else: # onos is already updated
-      logprint("onos is already updated, current_local_fw:"+current_local_fw+",online_fw:"+online_fw)
+      logprint("onos:"+router_hardware_type+" is already updated, current_local_fw:"+current_local_fw+",online_fw:"+online_fw)
 
   else:
     logprint("config disable automatic update")  

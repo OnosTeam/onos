@@ -1,0 +1,4 @@
+sudo pylint  --disable=all --enable=E webserver.py
+
+
+

@@ -10,29 +10,34 @@ import os,re,tarfile,time,subprocess
 tmp_dir="/tmp/onos_update/"
 
 
-print("current_hw:"+current_hw)
-print("base_path:"+base_path)   #/bin/onos/  or ""
-print("current_local_fw"+current_local_fw)
-print("online_fw_folder_url:"+online_fw_folder_url)   #get from the update_check.py that execute this script
-print ("router_hardware_type:"+router_hardware_type)
-print("os.getcwd():"+os.getcwd())
+logprint("current_hw:"+current_hw)
+logprint("base_path:"+base_path)   # /bin/onos/  or ""
+logprint("current_local_fw"+current_local_fw)
+logprint("online_fw_folder_url:"+online_fw_folder_url)   # get from the update_check.py that execute this script
+logprint("server_url:"+online_fw_folder_url) 
+logprint("router_hardware_type:"+router_hardware_type)
+logprint("os.getcwd():"+os.getcwd())
+logprint("server_url:"+server_url)  # get from the update_check.py that execute this script
+
+url_php=server_url+"updates/mail_update.php"
 
 msg="ex0"
 s_mail="1"
-send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
+
 
 free_ram_space=0
 try:
   free_ram_space=float((re.search('tmpfs(.+?)\n',os.popen("df").read().split("/tmp ")[0]).group(1)).split()[2]) #get free ram space in kbytes
 except :
-  print "error , cannot read free memory with df cmd"
+  logprint("error , cannot read free memory with df cmd")
 
 
 if (free_ram_space < 4000): #if there are not at least 4 mbyte of free space in ram ...
-  print "error the hardware has not enaught free ram space"
+  logprint("error the hardware has not enaught free ram space")
   msg="errRam"
   s_mail="1"
-  send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+  send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
   quit()
 else: # there is enough free memory
   #os.system("touch va.txt")
@@ -40,7 +45,7 @@ else: # there is enough free memory
 
 
   if online_fw_folder_url=="local":  #the files are already in the onos_update/ folder
-    print("local folder used for update")
+    logprint("local folder used for update")
     try:
       md5_file = open("onos_update/md5sum_tar.txt",'r')  
       md5_code=(md5_file.read()).strip()   #get the string and delete the \n
@@ -48,17 +53,17 @@ else: # there is enough free memory
 
       file_md5code=os.popen("md5sum onos_update/scripts_folder.tar.gz").read().split(" ")[0] 
       if md5_code!=file_md5code:
-        print("0 update failed,corrupted tar")
+        logprint("0 update failed,corrupted tar")
         msg="errlocal"
         s_mail="0"
-        send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+        send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
         os.system("rm -f onos_update/")  # delete the folder so next time it will be redownloaded by update_check.py
         quit()
     except Exception as e:     
       message="error, maybe there is not internet connection"
-      print(message)
-      print(e)
-      print(sys.exc_info())
+      logprint(message)
+      logprint(e)
+      logprint(sys.exc_info())
 
  
 
@@ -68,11 +73,11 @@ else: # there is enough free memory
       #tar_file= urllib2.urlopen(onos_online_server_url+'updates/'+current_hw+'/scripts_folder.tar.gz').read() 
       md5sum_tar_url=online_fw_folder_url+'''/md5sum_tar.txt '''
       scripts_folder_tar_url=online_fw_folder_url+'''/scripts_folder.tar.gz'''
-      print("i download md5sum_tar from:"+md5sum_tar_url) 
+      logprint("i download md5sum_tar from:"+md5sum_tar_url) 
 
-      print("i download scripts_folder_tar from:"+scripts_folder_tar_url) 
+      logprint("i download scripts_folder_tar from:"+scripts_folder_tar_url) 
 
-      print("rm -rf "+tmp_dir)
+      logprint("rm -rf "+tmp_dir)
       try:
         subprocess.call("rm -rf "+tmp_dir, shell=True,close_fds=True)
       except:
@@ -95,7 +100,7 @@ else: # there is enough free memory
             print "update failed,corrupted tar"
             msg="errUpMd5"
             s_mail="0"
-            send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail)
+            send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
             quit()
           else:
             try_number=try_number-1
@@ -111,8 +116,8 @@ else: # there is enough free memory
       #tar_file.close()
       #fo.close()  
       except Exception, e :
-        print "some error happened in the scripts_folder.tar.gz download"  
-        print e.args
+        logprint("some error happened in the scripts_folder.tar.gz download")  
+        logprint(e.args)
         try_number=try_number-1
 
 
@@ -134,20 +139,20 @@ else: # there is enough free memory
   #os.system('''rm -rf '''+base_path+'''scripts_folder/!(cgi|zone|config_files|zones|globalVar.py)''')
 
   
-  print ('''ls -1 '''+base_path+'''scripts_folder/ | grep -v "cgi\|config_files" | xargs rm -rf ''')
+  logprint ('''ls -1 '''+base_path+'''scripts_folder/ | grep -v "csv\|cgi\|config_files" | xargs rm -rf ''')
   #os.system('''cd '''+base_path+'''scripts_folder/''')
   #os.system('''cd '''+base_path+'''scripts_folder/ && ls -1 | grep -v "cgi\|config_files" | xargs rm -rf ''')
 
-  subprocess.call('''ls -1 '''+base_path+'''scripts_folder/ | grep -v "cgi\|config_files" | xargs rm -rf ''', shell=True,close_fds=True)
+  subprocess.call('''ls -1 '''+base_path+'''scripts_folder/ | grep -v "csv\|cgi\|config_files" | xargs rm -rf ''', shell=True,close_fds=True)
 
-  print ('''cp -r -n'''+tmp_dir+'''downloaded_fw/scripts_folder/* '''+base_path+'''scripts_folder/''')
+  logprint ('''cp -r -n'''+tmp_dir+'''downloaded_fw/scripts_folder/* '''+base_path+'''scripts_folder/''')
 
   subprocess.call('''cp -r -n '''+tmp_dir+'''downloaded_fw/scripts_folder/* '''+base_path+'''scripts_folder/''', shell=True,close_fds=True)
-  print "clear directories"
+  logprint("clear directories")
 
   if online_fw_folder_url!="local":
     fw_version_url=online_fw_folder_url+'''/fw_version.txt''' 
-    print("I get fw_version.txt from:"+fw_version_url)
+    logprint("I get fw_version.txt from:"+fw_version_url)
     subprocess.call('''wget -O '''+base_path+'''fw_version.txt '''+fw_version_url, shell=True,close_fds=True)
     time.sleep(10)
     subprocess.call('''rm -rf '''+base_path+'''onos_update''', shell=True,close_fds=True)
@@ -165,7 +170,7 @@ else: # there is enough free memory
 #the folder is scripts_folder/arduino_update/
 hex_arduino_update_path=base_path+"scripts_folder/arduino_update/onos_rfm69_serial_interface.hex"
 
-print("os.getcwd():"+os.getcwd())
+logprint("os.getcwd():"+os.getcwd())
 if os.path.isfile(hex_arduino_update_path):  #if the directory and the file exist...
   if router_hardware_type=="RouterOP": #serial port is s2 in this hw
     flash_cmd='''avrdude -v -p atmega328p -c arduino -P /dev/ttyS2 -b 115200 -D -U flash:w:'''+hex_arduino_update_path+''':i'''
@@ -177,10 +182,10 @@ if os.path.isfile(hex_arduino_update_path):  #if the directory and the file exis
     subprocess.call(flash_cmd, shell=True,close_fds=True)
 
   else:
-    print("hw not supported for arduino update")
+    logprint("hw not supported for arduino update")
 
 else:
-  print("no file to update the arduino with")
+  logprint("no file to update the arduino with")
 
 
 

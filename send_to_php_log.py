@@ -1,20 +1,5 @@
 
 import os,sys,urllib,urllib2,syslog
-def send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail):
-
-
-  #http://myonos.com/onos/updates/mail_update.php?sn=RouterOP0000&fw=5.23&msg=check
-  try:
-    #call http://myonos.com/onos/updates/mail_update.php to send a message
-    url = 'http://myonos.com/onos/updates/mail_update.php'
-    data = urllib.urlencode({'sn' : router_sn,'hw':current_hw,'fw':current_local_fw,'msg':msg,'pw':'abcdefghi4321','s_mail':s_mail})
-    req = urllib2.Request(url, data)
-    response = urllib2.urlopen(req)
-    #urllib2.urlopen("http://myonos.com/onos/updates/mail_update.php?sn="+router_sn+"&fw="+current_local_fw+"&msg="+msg)
-  except Exception as e:     
-    message="error sending message to php script "
-    print(str((e,sys.exc_info()) ) )
-    print e.args 
 
 
 
@@ -48,4 +33,24 @@ def logprint(message,verbose=1,error_tuple=None):
     print(message)
 
  
+def send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php='''https://myonos.com/onos/updates/mail_update.php'''):
+  
+  """
+  |Contact an online php script (mail_update.php) to write the message on the server log
+  |
+
+  """
+  #url_php = '''https://myonos.com/onos/updates/mail_update.php'''
+  logprint("executed send_to_php_log with url:"+url_php+"|")
+  # http://myonos.com/onos/updates/mail_update.php?sn=RouterOP0000&fw=5.23&msg=check
+  try:
+    #call http://myonos.com/onos/updates/mail_update.php to send a message
+    data = urllib.urlencode({'sn' : router_sn,'hw':current_hw,'fw':current_local_fw,'msg':msg,'pw':'abcdefghi4321','s_mail':s_mail})
+    req = urllib2.Request(url_php, data)
+    response = urllib2.urlopen(req)
+    #urllib2.urlopen("http://myonos.com/onos/updates/mail_update.php?sn="+router_sn+"&fw="+current_local_fw+"&msg="+msg)
+  except Exception as e:     
+    message="error sending message to php script "
+    print(str((e,sys.exc_info()) ) )
+    print e.args 
 
