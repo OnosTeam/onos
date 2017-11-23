@@ -115,7 +115,7 @@ else: # there is enough free memory
       #fo.write(tar_file)
       #tar_file.close()
       #fo.close()  
-      except Exception, e :
+      except Exception as e :
         logprint("some error happened in the scripts_folder.tar.gz download")  
         logprint(e.args)
         try_number=try_number-1
@@ -178,8 +178,11 @@ if os.path.isfile(hex_arduino_update_path):  #if the directory and the file exis
 
 #sudo avrdude -p atmega328p -C avrdude_gpio.conf -c pi_1 -v -U flash:w:scripts_folder/arduino_update/onos_rfm69_serial_interface.hex:i
 
-
-    subprocess.call(flash_cmd, shell=True,close_fds=True)
+    try:
+      subprocess.call(flash_cmd, shell=True,close_fds=True)
+    except Exception as e :
+      logprint("some error happened in the arduino flashing")  
+      logprint(e.args)
 
   else:
     logprint("hw not supported for arduino update")

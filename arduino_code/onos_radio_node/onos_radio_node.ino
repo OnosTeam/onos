@@ -828,7 +828,7 @@ void getAddressFromGateway(){
 boolean checkAndHandleIncomingRadioMsg(){
 
    
-  skipRadioRxMsg=skipRadioRxMsg+1;
+  
 
   //print message received to serial
   Serial.print(F(" id:"));
@@ -960,6 +960,7 @@ void checkCurrentRadioAddress(){
     reInitializeRadio=0;
     composeSyncMessage();
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
+    // TODO: add return();  ?
   }
 
 
@@ -1017,7 +1018,9 @@ void checkCurrentRadioAddress(){
       awake_time=millis();
       Serial.println(F("w for possible messages"));
       while ((millis()-awake_time)>stay_awake_period ){
+        //TODO: put if(millis()-awake_time)<stay_awake_period )--->sleep   in the main loop...
         if (radio.receiveDone()){
+          skipRadioRxMsg=skipRadioRxMsg+1;
           checkAndHandleIncomingRadioMsg();
         }
 
@@ -1410,6 +1413,7 @@ void loop() {
 #endif 
 
   if (radio.receiveDone()){
+    skipRadioRxMsg=skipRadioRxMsg+1;
     checkAndHandleIncomingRadioMsg();
   }
 

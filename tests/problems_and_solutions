@@ -1317,4 +1317,7 @@ https://moz.com/blog/enabling-https-without-sacrificing-web-performance
 https://letsencrypt.org/about/
 
 
+58) The nodes need to receive the timeout time from OnosCenter :
+    The best way is to send the timeout value inside the set address msg, this way i can be sure that every node has the correct timeout
+
 

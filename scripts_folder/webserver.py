@@ -7069,7 +7069,7 @@ def run_while_true(server_class=BaseHTTPServer.HTTPServer,
 
       except Exception as e:
         message="something went wrong on main Webserver handler "   
-        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))     
+        logprint(message,verbose=0,error_tuple=(e,sys.exc_info()))     
 
 def main():
     global exit
