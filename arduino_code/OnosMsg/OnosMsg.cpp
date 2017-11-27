@@ -40,32 +40,23 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
   if ((received_message[0]=='[')&&(received_message[1]=='S')&&(received_message[2]=='_') ) {
  // the onos cmd was found           [S_001dw06001_#]
-
-
-    strcpy(decoded_result,"[S_er_cmdRxnotfound_#]");               
-
-
-    received_msg_cmd_type[0]=received_message[6];
-    received_msg_cmd_type[1]=received_message[7];
-
+                  
     received_message_address=(received_message[3]-48)*100+(received_message[4]-48)*10+(received_message[5]-48)*1;
-
-
-         
 
     if (received_message_address!=this_node_address) {//onos command for a remote arduino node
       strcpy(decoded_result,"[S_remote_#]");
-
 /*
-
-
       Serial.print(F("serial_number222:")); 
       Serial.print(serial_number);
       Serial.println(F("end")); 
 */
       return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
     }
-
+    
+    strcpy(decoded_result,"[S_er_cmdRNotfound_#]"); 
+    
+    received_msg_cmd_type[0]=received_message[6];
+    received_msg_cmd_type[1]=received_message[7];
 
     //[S_123ga5.24WPlugAvx000810000x_#]
 
@@ -398,7 +389,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result){
 
 
 
- } // end of if message start with onos_   
+ } // end of if message start with [S_ 
 
 
 

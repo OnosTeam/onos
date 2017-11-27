@@ -195,13 +195,14 @@ volatile char main_obj_state=0;
 
 uint8_t skipUartRxMsg=0;
 
+/*
 int freeRam () 
 {
   extern int __heap_start, *__brkval; 
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
-
+*/
 
 boolean changeObjStatus(char obj_number,int status_to_set){
 
@@ -238,25 +239,14 @@ void composeSyncMessage(){
   str_this_node_address[0]='0';
   str_this_node_address[1]='0';
   str_this_node_address[2]='0';
-  if (this_node_address>99){
-    str_this_node_address[0]=(this_node_address/100)+48;
-    tmp_number=this_node_address%100;
-    str_this_node_address[1]=(tmp_number/10)+48;
-    tmp_number=this_node_address%10; 
-    str_this_node_address[2]=tmp_number+48;
-
-  }
-
-  else if (this_node_address>9){
-    str_this_node_address[1]=(tmp_number/10)+48;
-    tmp_number=this_node_address%10; 
-    str_this_node_address[2]=tmp_number+48;
-
-  }
-  else{ 
-    str_this_node_address[2]=this_node_address+48;
-  }
   
+  str_this_node_address[0]=(this_node_address/100)+48;
+  tmp_number=this_node_address%100;
+  str_this_node_address[1]=(tmp_number/10)+48;
+  tmp_number=tmp_number%10; 
+  str_this_node_address[2]=tmp_number+48;    
+  
+
 
   //strcpy(syncMessage, "");
   memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
@@ -297,7 +287,7 @@ void makeSyncMessage(){
   //[S_001sy3.05ProminiS0001_#] 
   
 
-  for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+  for (pointer = 0; pointer < sizeof(syncMessage); pointer++) {
     Serial.print(syncMessage[pointer]);
     if (pointer<2){
       continue;
@@ -414,17 +404,23 @@ boolean checkAndReceiveSerialMsg(){
     }
 
 
-    if( (data_from_serial[counter-2]=='_')&&(data_from_serial[counter-1]=='#')&&(data_from_serial[counter]==']')&&(onos_cmd_start_position!=-99) ){//   onos cmd found
+    if( (data_from_serial[counter-2]=='_')&&(data_from_serial[counter-1]=='#')
+                                          &&(data_from_serial[counter]==']')
+                                          &&(onos_cmd_start_position!=-99) ){//   onos cmd found
     //   Serial.println("cmd end found-------------------------------");
       onos_cmd_end_position=counter-2;
 
       memset(filtered_uart_message,0,sizeof(filtered_uart_message)); //to clear the array
 
-      for (pointer = 0; pointer <= rx_msg_lenght; pointer++) {
+      for (pointer = 0; pointer < sizeof(filtered_uart_message); pointer++) {
         filtered_uart_message[pointer]=data_from_serial[onos_cmd_start_position+pointer];
           //Serial.println(filtered_uart_message[pointer]);
-        if ((filtered_uart_message[pointer-1]=='#')&&(filtered_uart_message[pointer]==']')  ) {//  
-          break;
+        if (pointer > 0)
+        {    
+          if ((filtered_uart_message[pointer-1]=='#')&&(filtered_uart_message[pointer]==']')  ) 
+            {//  
+              break;
+            }
         }
 
       }
