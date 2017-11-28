@@ -1,0 +1,15 @@
+dist: trusty
+sudo: required
+
+addons:
+  sonarcloud:
+    organization: onosadmin-github
+    token:
+      secure: 02a2a89e177677a76992fa0d6e359d3ab9b06404
+jdk:
+  - oraclejdk8
+script:
+  - sonar-scanner
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
