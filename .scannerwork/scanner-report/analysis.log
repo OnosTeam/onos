@@ -1,0 +1,149 @@
+Environment variables:
+  - COLORTERM=mate-terminal
+  - DISPLAY=:0.0
+  - HOME=/root
+  - JAVA_HOME=//jre
+  - LANG=it_IT.UTF-8
+  - LOGNAME=root
+  - LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:
+  - MAIL=/var/mail/root
+  - NLSPATH=/usr/dt/lib/nls/msg/%L/%N.cat
+  - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  - PWD=/media/data/progetti/web_interface/onos_versions/onos_5.29
+  - SHELL=/bin/bash
+  - SUDO_COMMAND=/bin/sonar-scanner -Dsonar.projectKey=onos-sonarcloud -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=onosadmin-github -Dsonar.login=02a2a89e177677a76992fa0d6e359d3ab9b06404 -X
+  - SUDO_GID=1000
+  - SUDO_UID=1000
+  - SUDO_USER=marco
+  - TERM=xterm
+  - USER=root
+  - USERNAME=root
+  - XAUTHORITY=/home/marco/.Xauthority
+  - XFILESEARCHPATH=/usr/dt/app-defaults/%L/Dt
+System properties:
+  - awt.toolkit=sun.awt.X11.XToolkit
+  - file.encoding=UTF-8
+  - file.encoding.pkg=sun.io
+  - file.separator=/
+  - java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment
+  - java.awt.headless=true
+  - java.awt.printerjob=sun.print.PSPrinterJob
+  - java.class.path=//lib/sonar-scanner-cli-3.0.3.778.jar
+  - java.class.version=52.0
+  - java.endorsed.dirs=/jre/lib/endorsed
+  - java.ext.dirs=/jre/lib/ext:/usr/java/packages/lib/ext
+  - java.home=/jre
+  - java.io.tmpdir=/tmp
+  - java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+  - java.runtime.name=Java(TM) SE Runtime Environment
+  - java.runtime.version=1.8.0_121-b13
+  - java.specification.name=Java Platform API Specification
+  - java.specification.vendor=Oracle Corporation
+  - java.specification.version=1.8
+  - java.vendor=Oracle Corporation
+  - java.vendor.url=http://java.oracle.com/
+  - java.vendor.url.bug=http://bugreport.sun.com/bugreport/
+  - java.version=1.8.0_121
+  - java.vm.info=mixed mode
+  - java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+  - java.vm.specification.name=Java Virtual Machine Specification
+  - java.vm.specification.vendor=Oracle Corporation
+  - java.vm.specification.version=1.8
+  - java.vm.vendor=Oracle Corporation
+  - java.vm.version=25.121-b13
+  - line.separator=
+
+  - os.arch=amd64
+  - os.name=Linux
+  - os.version=3.16.0-4-amd64
+  - path.separator=:
+  - project.home=/media/data/progetti/web_interface/onos_versions/onos_5.29
+  - scanner.home=/
+  - sun.arch.data.model=64
+  - sun.boot.class.path=/jre/lib/resources.jar:/jre/lib/rt.jar:/jre/lib/sunrsasign.jar:/jre/lib/jsse.jar:/jre/lib/jce.jar:/jre/lib/charsets.jar:/jre/lib/jfr.jar:/jre/classes
+  - sun.boot.library.path=/jre/lib/amd64
+  - sun.cpu.endian=little
+  - sun.cpu.isalist=
+  - sun.io.unicode.encoding=UnicodeLittle
+  - sun.java.command=org.sonarsource.scanner.cli.Main -Dsonar.projectKey=onos-sonarcloud -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=onosadmin-github -Dsonar.login=02a2a89e177677a76992fa0d6e359d3ab9b06404 -X
+  - sun.java.launcher=SUN_STANDARD
+  - sun.jnu.encoding=UTF-8
+  - sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+  - sun.os.patch.level=unknown
+  - user.country=IT
+  - user.dir=/media/data/progetti/web_interface/onos_versions/onos_5.29
+  - user.home=/root
+  - user.language=it
+  - user.name=root
+  - user.timezone=Europe/Rome
+SonarQube plugins:
+  - CVS 1.0 (scmcvs)
+  - Bitbucket Authentication for SonarQube 1.0 (authbitbucket)
+  - Branch 1.0.0.507 (branch)
+  - SonarQube :: Plugins :: SCM :: SVN 1.6.0.860 (scmsvn)
+  - Billing 1.2.0.492 (billing)
+  - SonarPLSQL 3.1.0.1464 (plsql)
+  - SonarC# 6.6.0.3969 (csharp)
+  - SonarJava 4.15.0.12310 (java)
+  - Web 2.5.0.476 (web)
+  - Flex 2.3 (flex)
+  - SonarXML 1.4.3.1027 (xml)
+  - SonarTS 1.1.0.1079 (typescript)
+  - SonarVB 4.1.0.156 (vbnet)
+  - SonarSwift 3.1.0.2067 (swift)
+  - GitHub 1.4.2.1027 (github)
+  - SonarCFamily 5.0.0.9359 (cpp)
+  - SonarPython 1.8.0.1496 (python)
+  - GitHub Authentication for SonarQube 1.3 (authgithub)
+  - Mercurial 1.1.1 (scmmercurial)
+  - SonarTSQL 1.1.0.2177 (tsql)
+  - SonarJS 3.3.0.5702 (javascript)
+  - License 3.2.0.1163 (license)
+  - SonarQube :: Plugins :: SCM :: Git 1.3.0.869 (scmgit)
+  - HA 1.0.0.55 (ha)
+  - SonarPHP 2.11.0.2485 (php)
+  - Developer 1.0.0.240 (developer)
+  - SonarABAP 3.5.0.1080 (abap)
+  - SVG Badges 3.0.1 (status)
+Global properties:
+  - email.from=noreply@sonarcloud.io
+  - email.prefix=[SonarCloud]
+  - sonar.auth.bitbucket.enabled=true
+  - sonar.auth.github.allowUsersToSignUp=true
+  - sonar.auth.github.enabled=true
+  - sonar.core.id=AVdllfqQ9IFRWI6U49y8
+  - sonar.core.serverBaseURL=https://sonarcloud.io
+  - sonar.core.startTime=2017-11-14T07:57:14+0100
+  - sonar.cpd.cross_project=false
+  - sonar.dbcleaner.daysBeforeDeletingClosedIssues=730
+  - sonar.dbcleaner.weeksBeforeDeletingAllSnapshots=480
+  - sonar.dbcleaner.weeksBeforeKeepingOnlyOneSnapshotByMonth=4
+  - sonar.dbcleaner.weeksBeforeKeepingOnlyOneSnapshotByWeek=1
+  - sonar.leak.period=30
+  - sonar.lf.aboutText=<div class="boxed-group" style="border: none; border-radius: 3px;">
+  <div class="boxed-group-inner clearfix" style="padding: 30px; border-radius: 3px; border: #e6e6e6 1px solid; background: #f3f3f3;">
+    <div style="overflow: hidden; line-height: 1.5; font-size: 16px;">
+      <p>
+Analyze your open source and private projects on SonarCloud.
+Select your <a href="https://about.sonarcloud.io">plan</a> and start improving. 
+      </p>
+    </div>
+  </div>
+</div>
+  - sonar.lf.enableGravatar=true
+  - sonar.lf.logoUrl=https://about.sonarcloud.io/images/SonarCloud-white-210px.png
+  - sonar.lf.logoWidthPx=105
+  - sonar.organizations.anyoneCanCreate=true
+  - sonar.organizations.createPersonalOrg=true
+  - sonar.plsql.file.suffixes=sql,tab,pkb
+  - sonar.tsql.file.suffixes=.tsql
+Settings for module: onos-sonarcloud
+  - sonar.host.url=https://sonarcloud.io
+  - sonar.login=******
+  - sonar.organization=onosadmin-github
+  - sonar.projectBaseDir=/media/data/progetti/web_interface/onos_versions/onos_5.29
+  - sonar.projectKey=onos-sonarcloud
+  - sonar.sourceEncoding=UTF-8
+  - sonar.sources=.
+  - sonar.verbose=true
+  - sonar.working.directory=/media/data/progetti/web_interface/onos_versions/onos_5.29/.scannerwork

@@ -929,14 +929,17 @@ boolean checkAndHandleIncomingRadioMsg(){
     }
     else{
       Serial.print(F("error in message decode i will not send the ACK,i found:"));
-      uint8_t k=0;
-      while (k<decoded_radio_answer_lenght){
-        if (decoded_radio_answer[k]==0){
-          break;
+      //  uint8_t k=0;
+      //  while (k<decoded_radio_answer_lenght)
+      for (uint8_t k=0; k<decoded_radio_answer_lenght; k++)
+        {
+          if (decoded_radio_answer[k]==0)
+            {
+              break;
+            } 
+          Serial.print(decoded_radio_answer[k]);
+         // k=k+1;
         } 
-        Serial.print(decoded_radio_answer[k]);
-        k=k+1;
-      } 
 
       Serial.println();
       return(0); 

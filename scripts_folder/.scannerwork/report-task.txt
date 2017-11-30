@@ -1,0 +1,7 @@
+organization=onosadmin-github
+projectKey=onos-sonarcloud
+serverUrl=https://sonarcloud.io
+serverVersion=6.7.0.33301
+dashboardUrl=https://sonarcloud.io/dashboard/index/onos-sonarcloud
+ceTaskId=AWAEzR-G1Q5aQJmOIT7e
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWAEzR-G1Q5aQJmOIT7e

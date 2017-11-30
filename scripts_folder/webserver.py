@@ -243,6 +243,26 @@ def transform_object_to_dict_to_backup(object_dictionary):
 
 
 
+def writeCsvFile(csv_file_name, init_row, row_to_write):
+    
+    # todo: make this on queue to not wait for disk writing..
+    make_fs_ready_to_write()
+    try:
+        if os.path.isfile(csv_file_name)!=1:  #if the file does not exist yet write the first row
+            with open(csv_file_name, 'a') as f:
+                writer = csv.writer(f)
+                writer.writerow(init_row) 
+            with open(csv_file_name, 'a') as f:
+                writer = csv.writer(f)
+                writer.writerow(row_to_write) 
+    except Exception as e:   
+        message="error in the csv write"
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+        make_fs_readonly()       
+
+
+
+
 def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
 
   logprint("updateJson executed")
@@ -329,6 +349,30 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 #        prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
 #        logprint("the new status will be:"+str(prev_s) )
 #        layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"0","write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
+
+    global debug
+    if debug > 0:  # if debug is active ..
+        
+        day=str(datetime.datetime.today().day)
+        month=str(datetime.datetime.today().month)
+        year=str(datetime.datetime.today().year)
+        hours=str(datetime.datetime.today().hour)
+        minutes=str(datetime.datetime.today().minute)
+        seconds=str(datetime.datetime.today().second)
+        day_of_week=datetime.datetime.today().weekday()
+        timestamp=str(time.time())[0:10]
+    
+        row_to_write=[]
+        
+        csv_file_name=csv_folder+'/'+node_sn+'.csv' 
+    
+        init_row=["nodeSn","timestamp","day/month/year",
+                  "hours:minutes:seconds","address","last_sync"]
+        
+        previous_sync_time=nodeDict[node_sn].getLastNodeSync()
+        row_to_write=[node_sn, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
+                      node_address, previous_sync_time ]            
+        writeCsvFile(csv_file_name, init_row, row_to_write)  
 
 
     if len(node_address)==3:  #if is a radio node
@@ -1059,24 +1103,16 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
         # 255,1507361485,7/10/2017 09:45:58,00,5,node
         
-        row_to_write=[statusToSet,timestamp,day+'/'+month+'/'+year,hours+':'+minutes+':'+seconds,hours,day_of_week,user]
         csv_file_name=csv_folder+'/'+objName+'.csv' 
 
-        #todo: make this on queue to not wait for disk writing..
-        make_fs_ready_to_write()
-        try:
-          if os.path.isfile(csv_file_name)!=1:  #if the file does not exist yet write the first row
-            init_row=["statusToSet","timestamp","day/month/year","hours:minutes:seconds","hours","day_of_week","user"]
-            with open(csv_file_name, 'a') as f:
-              writer = csv.writer(f)
-              writer.writerow(init_row) 
-          with open(csv_file_name, 'a') as f:
-            writer = csv.writer(f)
-            writer.writerow(row_to_write) 
-        except Exception as e:   
-          message="error in the csv write"
-          logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-        make_fs_readonly()   
+        init_row=["statusToSet","timestamp","day/month/year",
+                  "hours:minutes:seconds","hours","day_of_week","user"]
+
+        row_to_write=[statusToSet, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
+                      hours, day_of_week, user]
+        
+        writeCsvFile(csv_file_name, init_row, row_to_write)
+
 
 
       if (priority!=99):  #if priority == 99 will not write to webobject the new priority
@@ -3181,7 +3217,23 @@ class MyHandler(BaseHTTPRequestHandler):
                 return
 
 
+            if (self.path.endswith(".csv"))|(self.path.endswith(".CSV")):
 
+                
+                try:
+                  with open(os.getcwd() + self.path, 'rb') as f:       
+                    readedFile=f.read()
+#note that this potentially makes every file on your computer readable by the internet                    
+                  self.send_response(200)
+                  self.send_header('Content-type',        'text/html')
+                  self.send_header('Cache-Control',        'max-age=1')  #set the cache of the image to a long time to prevent background image flipping
+                  self.end_headers()
+                  self.wfile.write(readedFile)
+                except Exception as e  :
+                  message="errorCSV in send_header file: "+os.getcwd()+ self.path
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+                  pass
+                return
 
 
 
@@ -3287,7 +3339,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if self.path.find("jscmd.py")!=-1: # render the scenario list 
+            if self.path.find("jscmd.py")!=-1:  
               namespace={"current_username":self.current_username,"current_path":self.path}
               cgi_name="gui/jscmd.py" 
               #execfile(cgi_name,globals(),namespace)
@@ -3306,6 +3358,25 @@ class MyHandler(BaseHTTPRequestHandler):
               return 
 
 
+
+            if self.path.find("gui/csv_list")!=-1: # render the csv list 
+              logprint("")
+              namespace={"current_username":self.current_username,"current_path":self.path,"csv_path":"/csv/"}
+              cgi_name="gui/csv_list.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13k in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return 
 
 
             #/RouterGL0001/index.html?=r_onos_s12
