@@ -245,22 +245,26 @@ def transform_object_to_dict_to_backup(object_dictionary):
 
 def writeCsvFile(csv_file_name, init_row, row_to_write):
     
+    logprint("writeCsvFile executed with csv_file_name="+csv_file_name)
+
+    
     # todo: make this on queue to not wait for disk writing..
     make_fs_ready_to_write()
     try:
         if os.path.isfile(csv_file_name)!=1:  #if the file does not exist yet write the first row
-            with open(csv_file_name, 'a') as f:
+            with open(csv_file_name, 'ab') as f:
                 writer = csv.writer(f)
                 writer.writerow(init_row) 
-            with open(csv_file_name, 'a') as f:
-                writer = csv.writer(f)
-                writer.writerow(row_to_write) 
+                #  writer.writerow([])  #  empty line after first line
+        with open(csv_file_name, 'ab') as f:
+              writer = csv.writer(f)
+              writer.writerow(row_to_write) 
     except Exception as e:   
         message="error in the csv write"
         logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
-        make_fs_readonly()       
+    make_fs_readonly()       
 
-
+    return()
 
 
 def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
@@ -334,6 +338,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
   logprint("updateNodeAddress() executed with node_sn:"+node_sn,verbose=3)
   try: #if (node_sn in nodeDict.keys()):
 
+    previous_sync_time=time.time()-nodeDict[node_sn].getLastNodeSync()
 
     nodeDict[node_sn].updateLastNodeSync(time.time())
 #    if nodeDict[node_sn].getNodeActivity()==0 or nodeDict[node_sn].getNodeActivity()==2: #the node was not connected but now it is
@@ -351,7 +356,8 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 #        layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"0","write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
 
     global debug
-    if debug > 0:  # if debug is active ..
+    
+    if 1 > 0:  # if debug > 0:   if debug is active ..
         
         day=str(datetime.datetime.today().day)
         month=str(datetime.datetime.today().month)
@@ -364,12 +370,11 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
     
         row_to_write=[]
         
-        csv_file_name=csv_folder+'/'+node_sn+'.csv' 
+        csv_file_name=csv_folder+'/0Debug_'+node_sn+'.csv' 
     
         init_row=["nodeSn","timestamp","day/month/year",
                   "hours:minutes:seconds","address","last_sync"]
         
-        previous_sync_time=nodeDict[node_sn].getLastNodeSync()
         row_to_write=[node_sn, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
                       node_address, previous_sync_time ]            
         writeCsvFile(csv_file_name, init_row, row_to_write)  

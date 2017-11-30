@@ -7,9 +7,9 @@ csv_folder=csv_path
 
 logprint("csv_list  executed:"+current_path)
 
-part_to_insert_in_head='''<link rel="stylesheet" href="css/zone-list.css">
+part_to_insert_in_head='''<link rel="stylesheet" href="/css/csv_list.css">
 
-   	<title>Zone list</title>
+   	<title>Csv list</title>
 '''.encode('ascii','ignore')
 
 
@@ -20,7 +20,11 @@ file_list = os.listdir(os.getcwd()+"/csv")
 html = menu
 
 for file_name in file_list:
-    html = html + '''<a href="'''+csv_folder+file_name+''' ">'''+file_name+''' </a> <br> '''
+    html = html +'''<div class="riga" >'''
+    html = html + '''    <a href="'''+csv_folder+file_name+''' "><div class="zone-name col1">'''+file_name+'''</div></a> <br> '''
+    html = html + '''</div>'''    
+    
+        
 
 end_html = '''</body></html>'''          
-web_page = html
+web_page = html + end_html
