@@ -257,6 +257,7 @@ char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 //char init_encript_key[17]=INITENCRYPTKEY;
 int this_node_address=254; //i start with 254
 
+int number_of_radio_get_address_try=0;
 
 unsigned long get_address_timeout=0;
 
@@ -377,7 +378,7 @@ boolean changeObjStatus(char obj_number,int status_to_set)
 	Serial.print(F("changeObjStatus executed with  status:"));
 	Serial.println(status_to_set);
 	
-	if (obj_number!=button){ //will not change the status to the button...
+	if (obj_number==button){ //will not change the status to the button...
 		return(0);
 	}
 	
@@ -786,6 +787,16 @@ void getAddressFromGateway()
 	Serial.println(F(":end")); 
 	
 	tryed_times=0;
+	number_of_radio_get_address_try=number_of_radio_get_address_try+1;
+	Serial.print(F("number_of_radio_get_address_try:")); 
+	Serial.println(number_of_radio_get_address_try); 
+
+	if(number_of_radio_get_address_try>30){
+		number_of_radio_get_address_try=0;
+		beginRadio();  //ro reset radio module..because maybe is not working..
+	}
+	
+	
 	while (tryed_times < radioRetry ){
 		Serial.println(F("r loopStart"));
 		
