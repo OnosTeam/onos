@@ -265,6 +265,39 @@ def writeCsvFile(csv_file_name, init_row, row_to_write):
     make_fs_readonly()       
 
     return()
+    
+    
+    
+if 1 > 0:  # if debug > 0:   if debug is active ..
+    
+    for node_sn in list(nodeDict):
+        """
+        | For each node i will write the start time in the csv
+        |
+        |
+        """
+        
+        node_address = nodeDict[node_sn].getNodeAddress()
+        day = str(datetime.datetime.today().day)
+        month = str(datetime.datetime.today().month)
+        year = str(datetime.datetime.today().year)
+        hours = str(datetime.datetime.today().hour)
+        minutes = str(datetime.datetime.today().minute)
+        seconds = str(datetime.datetime.today().second)
+        day_of_week = datetime.datetime.today().weekday()
+        timestamp = str(time.time())[0:10]
+    
+        row_to_write = []
+        
+        csv_file_name = csv_folder+'/0Debug_'+node_sn+'.csv'     
+        
+        init_row = ["nodeSn", "timestamp", "day/month/year", 
+        "hours:minutes:seconds", "address", "last_sync"]
+        previous_sync_time = "onos_system_started"
+            
+        row_to_write = [node_sn, timestamp, day +'/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
+                          node_address, previous_sync_time ]     
+        writeCsvFile(csv_file_name, init_row, row_to_write)     
 
 
 def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
@@ -1077,8 +1110,8 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       if objectDict[objName].getStatus()=="onoswait":
         if (user=="onos_node"):
           if (objectDict[objName].getType() in objectDict[objName].general_out_group):
-            logprint("[objName].getType() :"+objectDict[objName].getType())
-            logprint("general_out_group:"+str(objectDict[objName].general_out_group))
+            logprint("[objName].getType() :" + objectDict[objName].getType())
+            logprint("general_out_group:" + str(objectDict[objName].general_out_group))
             logprint("I will not set the status because the change is from a node")
             return(-1)
 
@@ -1090,32 +1123,32 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       #if (objectDict[objName].enable_logging==1)and(enable_csv_log==1):
 
      
-      if (enable_csv_log==1)and(objName not in ("minutes","dayTime","hours","day","month","year")):
+      if (enable_csv_log==1)and(objName not in ("minutes", "dayTime", "hours", "day", "month", "year")):
         if statusToSet==True:
           statusToSet="1"
         if statusToSet==False:
           statusToSet="0"
 
         logprint("I write csv")
-        day=str(datetime.datetime.today().day)
-        month=str(datetime.datetime.today().month)
-        year=str(datetime.datetime.today().year)
-        hours=str(datetime.datetime.today().hour)
-        minutes=str(datetime.datetime.today().minute)
-        seconds=str(datetime.datetime.today().second)
-        day_of_week=datetime.datetime.today().weekday()
-        timestamp=str(time.time())[0:10]
+        day = str(datetime.datetime.today().day)
+        month = str(datetime.datetime.today().month)
+        year = str(datetime.datetime.today().year)
+        hours = str(datetime.datetime.today().hour)
+        minutes = str(datetime.datetime.today().minute)
+        seconds = str(datetime.datetime.today().second)
+        day_of_week = datetime.datetime.today().weekday()
+        timestamp = str(time.time())[0:10]
         #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
         # 255,1507361485,7/10/2017 09:45:58,00,5,node
         
-        csv_file_name=csv_folder+'/'+objName+'.csv' 
+        csv_file_name = csv_folder + '/' + objName + '.csv' 
 
-        init_row=["statusToSet","timestamp","day/month/year",
-                  "hours:minutes:seconds","hours","day_of_week","user"]
+        init_row = ["statusToSet", "timestamp", "day/month/year", 
+                  "hours:minutes:seconds", "hours", "day_of_week", "user"]
 
-        row_to_write=[statusToSet, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
+        row_to_write = [statusToSet, timestamp, day + '/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
                       hours, day_of_week, user]
-        
+
         writeCsvFile(csv_file_name, init_row, row_to_write)
 
 

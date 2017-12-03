@@ -141,7 +141,7 @@ else: # disable serial port
 
 
 
-csv_folder=base_cfg_path+'csv'
+csv_folder=base_cfg_path+'csv/'
 
 accept_only_from_white_list=0  # if set to 1 the onos cmd will be accepted only from mail in white list
 # will be overwritten by /scripts_folder/config_files/cf.json
