@@ -72,6 +72,8 @@
 #include <EEPROM.h>
 #include <OnosMsg.h>
 #include <LowPower.h>
+#include <avr/wdt.h>
+
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
@@ -112,17 +114,17 @@
 
 //**************************************Onos Define node **************************************
 
-#define ota_enabled    //enable ota update
+//#define ota_enabled    //enable ota update
 
 #if defined(ota_enabled)
 	#include <RFM69_OTA.h>     //get it here: https://github.com/lowpowerlab/RFM69
 	#include <SPIFlash.h>      //get it here: https://github.com/lowpowerlab/spiflash
 	unsigned long ota_loop_start_time=0;
-	#define ota_timeout 25000  //25 seconds 
+	unsigned long  ota_timeout=25000;  //25 seconds 
 	SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0099";   // this is the progressive numeric serial number
+char numeric_serial[5]="0001";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
@@ -218,7 +220,7 @@ char numeric_serial[5]="0099";   // this is the progressive numeric serial numbe
 #if defined(battery_node)   //if the node is a battery node:
 	volatile byte keep_ADCSRA=ADCSRA; //save the state of the register;
 	
-	int stay_awake_period=700 ;   //how long in ms the node will stay awake to receive radio messages.
+	unsigned long stay_awake_period=700 ;   //how long in ms the node will stay awake to receive radio messages.
 	unsigned long awake_time=0;
 
 #endif 
@@ -267,6 +269,8 @@ unsigned long *get_address_timeout_pointer=&get_address_timeout;
 volatile unsigned long button_time_same_status=0;
 
 volatile boolean button_still_same_status=1; 
+
+
 
 /*
 WPlugAvx node parameter:
@@ -323,7 +327,7 @@ uint8_t radioTxTimeoutAllarm=50;
 
 # define gateway_address 1
 //boolean first_sync=1;
-int random_time=0;
+unsigned long random_time=0;
 
 
 unsigned long time_continuos_on=0;
@@ -793,7 +797,12 @@ void getAddressFromGateway()
 
 	if(number_of_radio_get_address_try>30){
 		number_of_radio_get_address_try=0;
-		beginRadio();  //ro reset radio module..because maybe is not working..
+		//to reset  module..because maybe is not working..
+		wdt_enable(WDTO_15MS);  // reset arduino 
+		while(1)
+		{
+		}		
+		
 	}
 	
 	
@@ -1395,7 +1404,7 @@ void loop()
 	}
 	
 	
-	#if defined(ota_enabled)   //if the node is a battery node:
+	#if defined(ota_enabled)  
 	if (ota_loop==1){
 		ota_receive_loop();
 	}

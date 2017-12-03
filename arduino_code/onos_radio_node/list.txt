@@ -1,0 +1,1432 @@
+onos_radio_node.ino:2: trailing whitespace
+onos_radio_node.ino:3: trailing whitespace
+onos_radio_node.ino:19: trailing whitespace
+onos_radio_node.ino:24: trailing whitespace
+onos_radio_node.ino:30: trailing whitespace
+onos_radio_node.ino:35: too many consecutive empty lines
+onos_radio_node.ino:46: trailing whitespace
+onos_radio_node.ino:47: trailing whitespace
+onos_radio_node.ino:48: trailing whitespace
+onos_radio_node.ino:49: trailing whitespace
+onos_radio_node.ino:50: trailing whitespace
+onos_radio_node.ino:51: trailing whitespace
+onos_radio_node.ino:52: trailing whitespace
+onos_radio_node.ino:53: trailing whitespace
+onos_radio_node.ino:54: trailing whitespace
+onos_radio_node.ino:55: trailing whitespace
+onos_radio_node.ino:56: trailing whitespace
+onos_radio_node.ino:57: trailing whitespace
+onos_radio_node.ino:58: trailing whitespace
+onos_radio_node.ino:61: trailing whitespace
+onos_radio_node.ino:62: trailing whitespace
+onos_radio_node.ino:68: trailing whitespace
+onos_radio_node.ino:71: trailing whitespace
+onos_radio_node.ino:82: trailing whitespace
+onos_radio_node.ino:89: trailing whitespace
+onos_radio_node.ino:92: trailing whitespace
+onos_radio_node.ino:99: trailing whitespace
+onos_radio_node.ino:104: trailing whitespace
+onos_radio_node.ino:106: too many consecutive empty lines
+onos_radio_node.ino:108: horizontal tab used
+onos_radio_node.ino:110: horizontal tab used
+onos_radio_node.ino:114: too many consecutive empty lines
+onos_radio_node.ino:120: horizontal tab used
+onos_radio_node.ino:121: horizontal tab used
+onos_radio_node.ino:122: horizontal tab used
+onos_radio_node.ino:123: trailing whitespace
+onos_radio_node.ino:123: horizontal tab used
+onos_radio_node.ino:124: horizontal tab used
+onos_radio_node.ino:124: line is longer than 100 characters
+onos_radio_node.ino:125: trailing whitespace
+onos_radio_node.ino:136: trailing whitespace
+onos_radio_node.ino:139: trailing whitespace
+onos_radio_node.ino:145: too many consecutive empty lines
+onos_radio_node.ino:147: line is longer than 100 characters
+onos_radio_node.ino:150: too many consecutive empty lines
+onos_radio_node.ino:153: horizontal tab used
+onos_radio_node.ino:154: horizontal tab used
+onos_radio_node.ino:155: horizontal tab used
+onos_radio_node.ino:156: horizontal tab used
+onos_radio_node.ino:157: horizontal tab used
+onos_radio_node.ino:158: horizontal tab used
+onos_radio_node.ino:159: horizontal tab used
+onos_radio_node.ino:160: horizontal tab used
+onos_radio_node.ino:161: horizontal tab used
+onos_radio_node.ino:162: horizontal tab used
+onos_radio_node.ino:163: horizontal tab used
+onos_radio_node.ino:164: horizontal tab used
+onos_radio_node.ino:165: horizontal tab used
+onos_radio_node.ino:166: horizontal tab used
+onos_radio_node.ino:167: horizontal tab used
+onos_radio_node.ino:168: trailing whitespace
+onos_radio_node.ino:168: horizontal tab used
+onos_radio_node.ino:169: horizontal tab used
+onos_radio_node.ino:170: horizontal tab used
+onos_radio_node.ino:171: horizontal tab used
+onos_radio_node.ino:172: horizontal tab used
+onos_radio_node.ino:173: horizontal tab used
+onos_radio_node.ino:174: horizontal tab used
+onos_radio_node.ino:175: horizontal tab used
+onos_radio_node.ino:176: horizontal tab used
+onos_radio_node.ino:177: horizontal tab used
+onos_radio_node.ino:177: line is longer than 100 characters
+onos_radio_node.ino:178: horizontal tab used
+onos_radio_node.ino:179: horizontal tab used
+onos_radio_node.ino:180: horizontal tab used
+onos_radio_node.ino:181: horizontal tab used
+onos_radio_node.ino:182: horizontal tab used
+onos_radio_node.ino:183: horizontal tab used
+onos_radio_node.ino:184: horizontal tab used
+onos_radio_node.ino:185: horizontal tab used
+onos_radio_node.ino:187: horizontal tab used
+onos_radio_node.ino:188: horizontal tab used
+onos_radio_node.ino:189: horizontal tab used
+onos_radio_node.ino:190: trailing whitespace
+onos_radio_node.ino:190: horizontal tab used
+onos_radio_node.ino:191: horizontal tab used
+onos_radio_node.ino:192: horizontal tab used
+onos_radio_node.ino:193: horizontal tab used
+onos_radio_node.ino:194: horizontal tab used
+onos_radio_node.ino:195: horizontal tab used
+onos_radio_node.ino:196: horizontal tab used
+onos_radio_node.ino:197: horizontal tab used
+onos_radio_node.ino:198: horizontal tab used
+onos_radio_node.ino:199: horizontal tab used
+onos_radio_node.ino:201: horizontal tab used
+onos_radio_node.ino:204: horizontal tab used
+onos_radio_node.ino:205: horizontal tab used
+onos_radio_node.ino:206: horizontal tab used
+onos_radio_node.ino:207: horizontal tab used
+onos_radio_node.ino:208: horizontal tab used
+onos_radio_node.ino:209: horizontal tab used
+onos_radio_node.ino:210: horizontal tab used
+onos_radio_node.ino:213: horizontal tab used
+onos_radio_node.ino:216: horizontal tab used
+onos_radio_node.ino:217: trailing whitespace
+onos_radio_node.ino:221: horizontal tab used
+onos_radio_node.ino:222: horizontal tab used
+onos_radio_node.ino:223: horizontal tab used
+onos_radio_node.ino:223: line is longer than 100 characters
+onos_radio_node.ino:223: semicolon is isolated from other tokens
+onos_radio_node.ino:224: horizontal tab used
+onos_radio_node.ino:226: trailing whitespace
+onos_radio_node.ino:228: semicolon is isolated from other tokens
+onos_radio_node.ino:230: trailing whitespace
+onos_radio_node.ino:231: trailing whitespace
+onos_radio_node.ino:234: too many consecutive empty lines
+onos_radio_node.ino:238: line is longer than 100 characters
+onos_radio_node.ino:241: too many consecutive empty lines
+onos_radio_node.ino:244: trailing whitespace
+onos_radio_node.ino:248: too many consecutive empty lines
+onos_radio_node.ino:271: trailing whitespace
+onos_radio_node.ino:277: line is longer than 100 characters
+onos_radio_node.ino:286: line is longer than 100 characters
+onos_radio_node.ino:287: line is longer than 100 characters
+onos_radio_node.ino:289: trailing whitespace
+onos_radio_node.ino:294: line is longer than 100 characters
+onos_radio_node.ino:300: trailing whitespace
+onos_radio_node.ino:301: trailing whitespace
+onos_radio_node.ino:315: line is longer than 100 characters
+onos_radio_node.ino:319: line is longer than 100 characters
+onos_radio_node.ino:323: trailing whitespace
+onos_radio_node.ino:329: trailing whitespace
+onos_radio_node.ino:330: trailing whitespace
+onos_radio_node.ino:344: line is longer than 100 characters
+onos_radio_node.ino:354: too many consecutive empty lines
+onos_radio_node.ino:355: trailing whitespace
+onos_radio_node.ino:373: trailing whitespace
+onos_radio_node.ino:375: trailing whitespace
+onos_radio_node.ino:376: trailing whitespace
+onos_radio_node.ino:377: trailing whitespace
+onos_radio_node.ino:383: comma should be followed by whitespace
+onos_radio_node.ino:386: horizontal tab used
+onos_radio_node.ino:387: horizontal tab used
+onos_radio_node.ino:388: horizontal tab used
+onos_radio_node.ino:389: horizontal tab used
+onos_radio_node.ino:390: horizontal tab used
+onos_radio_node.ino:390: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:391: horizontal tab used
+onos_radio_node.ino:391: closing curly bracket not in the same line or column
+onos_radio_node.ino:392: horizontal tab used
+onos_radio_node.ino:394: horizontal tab used
+onos_radio_node.ino:395: horizontal tab used
+onos_radio_node.ino:396: trailing whitespace
+onos_radio_node.ino:396: horizontal tab used
+onos_radio_node.ino:396: comma should be followed by whitespace
+onos_radio_node.ino:396: negation operator used in its short form
+onos_radio_node.ino:397: trailing whitespace
+onos_radio_node.ino:397: horizontal tab used
+onos_radio_node.ino:398: horizontal tab used
+onos_radio_node.ino:398: closing curly bracket not in the same line or column
+onos_radio_node.ino:400: horizontal tab used
+onos_radio_node.ino:402: horizontal tab used
+onos_radio_node.ino:403: horizontal tab used
+onos_radio_node.ino:404: horizontal tab used
+onos_radio_node.ino:404: line is longer than 100 characters
+onos_radio_node.ino:404: comma should be followed by whitespace
+onos_radio_node.ino:404: negation operator used in its short form
+onos_radio_node.ino:405: trailing whitespace
+onos_radio_node.ino:405: horizontal tab used
+onos_radio_node.ino:406: horizontal tab used
+onos_radio_node.ino:406: comma should be followed by whitespace
+onos_radio_node.ino:407: horizontal tab used
+onos_radio_node.ino:407: closing curly bracket not in the same line or column
+onos_radio_node.ino:408: trailing whitespace
+onos_radio_node.ino:408: horizontal tab used
+onos_radio_node.ino:408: keyword 'if' not followed by a single space
+onos_radio_node.ino:409: horizontal tab used
+onos_radio_node.ino:409: line is longer than 100 characters
+onos_radio_node.ino:409: comma should be followed by whitespace
+onos_radio_node.ino:409: negation operator used in its short form
+onos_radio_node.ino:410: trailing whitespace
+onos_radio_node.ino:410: horizontal tab used
+onos_radio_node.ino:411: horizontal tab used
+onos_radio_node.ino:411: closing curly bracket not in the same line or column
+onos_radio_node.ino:412: horizontal tab used
+onos_radio_node.ino:413: trailing whitespace
+onos_radio_node.ino:413: horizontal tab used
+onos_radio_node.ino:413: comma should be followed by whitespace
+onos_radio_node.ino:414: trailing whitespace
+onos_radio_node.ino:414: horizontal tab used
+onos_radio_node.ino:415: horizontal tab used
+onos_radio_node.ino:415: closing curly bracket not in the same line or column
+onos_radio_node.ino:416: horizontal tab used
+onos_radio_node.ino:417: trailing whitespace
+onos_radio_node.ino:417: horizontal tab used
+onos_radio_node.ino:418: horizontal tab used
+onos_radio_node.ino:419: horizontal tab used
+onos_radio_node.ino:420: horizontal tab used
+onos_radio_node.ino:421: horizontal tab used
+onos_radio_node.ino:421: comma should be followed by whitespace
+onos_radio_node.ino:421: negation operator used in its short form
+onos_radio_node.ino:422: horizontal tab used
+onos_radio_node.ino:422: comma should be followed by whitespace
+onos_radio_node.ino:422: negation operator used in its short form
+onos_radio_node.ino:423: horizontal tab used
+onos_radio_node.ino:423: comma should be followed by whitespace
+onos_radio_node.ino:424: trailing whitespace
+onos_radio_node.ino:424: horizontal tab used
+onos_radio_node.ino:425: horizontal tab used
+onos_radio_node.ino:425: comma should be followed by whitespace
+onos_radio_node.ino:425: negation operator used in its short form
+onos_radio_node.ino:426: horizontal tab used
+onos_radio_node.ino:426: closing curly bracket not in the same line or column
+onos_radio_node.ino:427: horizontal tab used
+onos_radio_node.ino:428: horizontal tab used
+onos_radio_node.ino:429: trailing whitespace
+onos_radio_node.ino:429: horizontal tab used
+onos_radio_node.ino:429: comma should be followed by whitespace
+onos_radio_node.ino:430: trailing whitespace
+onos_radio_node.ino:430: horizontal tab used
+onos_radio_node.ino:431: horizontal tab used
+onos_radio_node.ino:431: closing curly bracket not in the same line or column
+onos_radio_node.ino:432: horizontal tab used
+onos_radio_node.ino:433: horizontal tab used
+onos_radio_node.ino:434: horizontal tab used
+onos_radio_node.ino:436: horizontal tab used
+onos_radio_node.ino:436: line is longer than 100 characters
+onos_radio_node.ino:436: keyword 'if' not followed by a single space
+onos_radio_node.ino:437: horizontal tab used
+onos_radio_node.ino:438: horizontal tab used
+onos_radio_node.ino:438: closing curly bracket not in the same line or column
+onos_radio_node.ino:439: horizontal tab used
+onos_radio_node.ino:440: horizontal tab used
+onos_radio_node.ino:441: horizontal tab used
+onos_radio_node.ino:442: horizontal tab used
+onos_radio_node.ino:442: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:445: too many consecutive empty lines
+onos_radio_node.ino:446: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:453: horizontal tab used
+onos_radio_node.ino:454: horizontal tab used
+onos_radio_node.ino:455: horizontal tab used
+onos_radio_node.ino:456: horizontal tab used
+onos_radio_node.ino:457: horizontal tab used
+onos_radio_node.ino:457: comma should be followed by whitespace
+onos_radio_node.ino:457: comma should be followed by whitespace
+onos_radio_node.ino:458: horizontal tab used
+onos_radio_node.ino:459: horizontal tab used
+onos_radio_node.ino:460: horizontal tab used
+onos_radio_node.ino:461: horizontal tab used
+onos_radio_node.ino:462: horizontal tab used
+onos_radio_node.ino:463: horizontal tab used
+onos_radio_node.ino:464: horizontal tab used
+onos_radio_node.ino:465: trailing whitespace
+onos_radio_node.ino:465: horizontal tab used
+onos_radio_node.ino:466: trailing whitespace
+onos_radio_node.ino:466: horizontal tab used
+onos_radio_node.ino:467: horizontal tab used
+onos_radio_node.ino:468: horizontal tab used
+onos_radio_node.ino:469: horizontal tab used
+onos_radio_node.ino:470: horizontal tab used
+onos_radio_node.ino:471: horizontal tab used
+onos_radio_node.ino:472: horizontal tab used
+onos_radio_node.ino:473: horizontal tab used
+onos_radio_node.ino:474: trailing whitespace
+onos_radio_node.ino:474: horizontal tab used
+onos_radio_node.ino:475: horizontal tab used
+onos_radio_node.ino:476: horizontal tab used
+onos_radio_node.ino:477: horizontal tab used
+onos_radio_node.ino:478: horizontal tab used
+onos_radio_node.ino:479: horizontal tab used
+onos_radio_node.ino:480: horizontal tab used
+onos_radio_node.ino:481: horizontal tab used
+onos_radio_node.ino:482: horizontal tab used
+onos_radio_node.ino:483: trailing whitespace
+onos_radio_node.ino:483: horizontal tab used
+onos_radio_node.ino:484: horizontal tab used
+onos_radio_node.ino:485: horizontal tab used
+onos_radio_node.ino:486: horizontal tab used
+onos_radio_node.ino:487: trailing whitespace
+onos_radio_node.ino:487: horizontal tab used
+onos_radio_node.ino:488: horizontal tab used
+onos_radio_node.ino:489: horizontal tab used
+onos_radio_node.ino:490: horizontal tab used
+onos_radio_node.ino:491: horizontal tab used
+onos_radio_node.ino:492: trailing whitespace
+onos_radio_node.ino:492: horizontal tab used
+onos_radio_node.ino:493: horizontal tab used
+onos_radio_node.ino:494: horizontal tab used
+onos_radio_node.ino:495: horizontal tab used
+onos_radio_node.ino:496: horizontal tab used
+onos_radio_node.ino:497: horizontal tab used
+onos_radio_node.ino:498: horizontal tab used
+onos_radio_node.ino:499: horizontal tab used
+onos_radio_node.ino:500: horizontal tab used
+onos_radio_node.ino:500: too many consecutive empty lines
+onos_radio_node.ino:501: horizontal tab used
+onos_radio_node.ino:502: horizontal tab used
+onos_radio_node.ino:503: horizontal tab used
+onos_radio_node.ino:503: comma should be followed by whitespace
+onos_radio_node.ino:503: comma should be followed by whitespace
+onos_radio_node.ino:504: horizontal tab used
+onos_radio_node.ino:505: horizontal tab used
+onos_radio_node.ino:506: horizontal tab used
+onos_radio_node.ino:507: horizontal tab used
+onos_radio_node.ino:508: trailing whitespace
+onos_radio_node.ino:508: horizontal tab used
+onos_radio_node.ino:508: line is longer than 100 characters
+onos_radio_node.ino:509: horizontal tab used
+onos_radio_node.ino:510: horizontal tab used
+onos_radio_node.ino:511: horizontal tab used
+onos_radio_node.ino:512: horizontal tab used
+onos_radio_node.ino:513: horizontal tab used
+onos_radio_node.ino:514: horizontal tab used
+onos_radio_node.ino:515: horizontal tab used
+onos_radio_node.ino:516: horizontal tab used
+onos_radio_node.ino:517: horizontal tab used
+onos_radio_node.ino:518: horizontal tab used
+onos_radio_node.ino:519: horizontal tab used
+onos_radio_node.ino:520: horizontal tab used
+onos_radio_node.ino:521: horizontal tab used
+onos_radio_node.ino:521: line is longer than 100 characters
+onos_radio_node.ino:522: horizontal tab used
+onos_radio_node.ino:523: horizontal tab used
+onos_radio_node.ino:524: horizontal tab used
+onos_radio_node.ino:525: horizontal tab used
+onos_radio_node.ino:526: trailing whitespace
+onos_radio_node.ino:526: horizontal tab used
+onos_radio_node.ino:527: horizontal tab used
+onos_radio_node.ino:527: closing curly bracket not in the same line or column
+onos_radio_node.ino:528: horizontal tab used
+onos_radio_node.ino:529: trailing whitespace
+onos_radio_node.ino:529: horizontal tab used
+onos_radio_node.ino:530: horizontal tab used
+onos_radio_node.ino:530: closing curly bracket not in the same line or column
+onos_radio_node.ino:531: horizontal tab used
+onos_radio_node.ino:532: trailing whitespace
+onos_radio_node.ino:532: horizontal tab used
+onos_radio_node.ino:533: horizontal tab used
+onos_radio_node.ino:533: closing curly bracket not in the same line or column
+onos_radio_node.ino:534: horizontal tab used
+onos_radio_node.ino:535: trailing whitespace
+onos_radio_node.ino:535: horizontal tab used
+onos_radio_node.ino:536: horizontal tab used
+onos_radio_node.ino:536: closing curly bracket not in the same line or column
+onos_radio_node.ino:537: horizontal tab used
+onos_radio_node.ino:538: horizontal tab used
+onos_radio_node.ino:539: horizontal tab used
+onos_radio_node.ino:540: horizontal tab used
+onos_radio_node.ino:541: horizontal tab used
+onos_radio_node.ino:541: line is longer than 100 characters
+onos_radio_node.ino:542: horizontal tab used
+onos_radio_node.ino:543: horizontal tab used
+onos_radio_node.ino:544: trailing whitespace
+onos_radio_node.ino:544: horizontal tab used
+onos_radio_node.ino:544: line is longer than 100 characters
+onos_radio_node.ino:545: trailing whitespace
+onos_radio_node.ino:545: horizontal tab used
+onos_radio_node.ino:545: semicolon is isolated from other tokens
+onos_radio_node.ino:545: full block {} expected in the control structure
+onos_radio_node.ino:546: horizontal tab used
+onos_radio_node.ino:546: line is longer than 100 characters
+onos_radio_node.ino:547: trailing whitespace
+onos_radio_node.ino:547: horizontal tab used
+onos_radio_node.ino:547: semicolon is isolated from other tokens
+onos_radio_node.ino:547: full block {} expected in the control structure
+onos_radio_node.ino:548: horizontal tab used
+onos_radio_node.ino:549: trailing whitespace
+onos_radio_node.ino:549: horizontal tab used
+onos_radio_node.ino:549: semicolon is isolated from other tokens
+onos_radio_node.ino:549: full block {} expected in the control structure
+onos_radio_node.ino:550: horizontal tab used
+onos_radio_node.ino:550: closing curly bracket not in the same line or column
+onos_radio_node.ino:551: horizontal tab used
+onos_radio_node.ino:552: horizontal tab used
+onos_radio_node.ino:552: line is longer than 100 characters
+onos_radio_node.ino:553: horizontal tab used
+onos_radio_node.ino:554: horizontal tab used
+onos_radio_node.ino:555: horizontal tab used
+onos_radio_node.ino:556: trailing whitespace
+onos_radio_node.ino:556: horizontal tab used
+onos_radio_node.ino:557: horizontal tab used
+onos_radio_node.ino:557: closing curly bracket not in the same line or column
+onos_radio_node.ino:558: horizontal tab used
+onos_radio_node.ino:559: horizontal tab used
+onos_radio_node.ino:560: horizontal tab used
+onos_radio_node.ino:561: trailing whitespace
+onos_radio_node.ino:561: horizontal tab used
+onos_radio_node.ino:562: horizontal tab used
+onos_radio_node.ino:563: horizontal tab used
+onos_radio_node.ino:564: horizontal tab used
+onos_radio_node.ino:565: horizontal tab used
+onos_radio_node.ino:566: horizontal tab used
+onos_radio_node.ino:567: horizontal tab used
+onos_radio_node.ino:568: trailing whitespace
+onos_radio_node.ino:568: horizontal tab used
+onos_radio_node.ino:569: horizontal tab used
+onos_radio_node.ino:570: horizontal tab used
+onos_radio_node.ino:571: horizontal tab used
+onos_radio_node.ino:572: horizontal tab used
+onos_radio_node.ino:573: horizontal tab used
+onos_radio_node.ino:574: horizontal tab used
+onos_radio_node.ino:575: horizontal tab used
+onos_radio_node.ino:575: line is longer than 100 characters
+onos_radio_node.ino:576: horizontal tab used
+onos_radio_node.ino:577: trailing whitespace
+onos_radio_node.ino:577: horizontal tab used
+onos_radio_node.ino:578: horizontal tab used
+onos_radio_node.ino:578: closing curly bracket not in the same line or column
+onos_radio_node.ino:579: horizontal tab used
+onos_radio_node.ino:580: horizontal tab used
+onos_radio_node.ino:580: line is longer than 100 characters
+onos_radio_node.ino:581: horizontal tab used
+onos_radio_node.ino:582: horizontal tab used
+onos_radio_node.ino:583: horizontal tab used
+onos_radio_node.ino:584: horizontal tab used
+onos_radio_node.ino:585: trailing whitespace
+onos_radio_node.ino:585: horizontal tab used
+onos_radio_node.ino:586: horizontal tab used
+onos_radio_node.ino:586: closing curly bracket not in the same line or column
+onos_radio_node.ino:587: horizontal tab used
+onos_radio_node.ino:588: horizontal tab used
+onos_radio_node.ino:589: horizontal tab used
+onos_radio_node.ino:590: horizontal tab used
+onos_radio_node.ino:591: horizontal tab used
+onos_radio_node.ino:592: horizontal tab used
+onos_radio_node.ino:593: horizontal tab used
+onos_radio_node.ino:594: horizontal tab used
+onos_radio_node.ino:595: horizontal tab used
+onos_radio_node.ino:596: horizontal tab used
+onos_radio_node.ino:597: horizontal tab used
+onos_radio_node.ino:598: horizontal tab used
+onos_radio_node.ino:599: horizontal tab used
+onos_radio_node.ino:600: horizontal tab used
+onos_radio_node.ino:601: horizontal tab used
+onos_radio_node.ino:602: horizontal tab used
+onos_radio_node.ino:603: horizontal tab used
+onos_radio_node.ino:604: horizontal tab used
+onos_radio_node.ino:605: horizontal tab used
+onos_radio_node.ino:606: horizontal tab used
+onos_radio_node.ino:607: horizontal tab used
+onos_radio_node.ino:608: horizontal tab used
+onos_radio_node.ino:609: horizontal tab used
+onos_radio_node.ino:610: horizontal tab used
+onos_radio_node.ino:611: horizontal tab used
+onos_radio_node.ino:612: horizontal tab used
+onos_radio_node.ino:612: closing curly bracket not in the same line or column
+onos_radio_node.ino:613: horizontal tab used
+onos_radio_node.ino:614: horizontal tab used
+onos_radio_node.ino:615: horizontal tab used
+onos_radio_node.ino:616: horizontal tab used
+onos_radio_node.ino:617: trailing whitespace
+onos_radio_node.ino:617: horizontal tab used
+onos_radio_node.ino:618: horizontal tab used
+onos_radio_node.ino:619: trailing whitespace
+onos_radio_node.ino:619: horizontal tab used
+onos_radio_node.ino:620: horizontal tab used
+onos_radio_node.ino:621: trailing whitespace
+onos_radio_node.ino:621: horizontal tab used
+onos_radio_node.ino:622: horizontal tab used
+onos_radio_node.ino:623: trailing whitespace
+onos_radio_node.ino:623: horizontal tab used
+onos_radio_node.ino:624: horizontal tab used
+onos_radio_node.ino:624: closing curly bracket not in the same line or column
+onos_radio_node.ino:625: trailing whitespace
+onos_radio_node.ino:625: horizontal tab used
+onos_radio_node.ino:626: horizontal tab used
+onos_radio_node.ino:627: trailing whitespace
+onos_radio_node.ino:627: horizontal tab used
+onos_radio_node.ino:628: horizontal tab used
+onos_radio_node.ino:629: horizontal tab used
+onos_radio_node.ino:630: horizontal tab used
+onos_radio_node.ino:631: horizontal tab used
+onos_radio_node.ino:632: horizontal tab used
+onos_radio_node.ino:632: closing curly bracket not in the same line or column
+onos_radio_node.ino:633: horizontal tab used
+onos_radio_node.ino:634: horizontal tab used
+onos_radio_node.ino:635: horizontal tab used
+onos_radio_node.ino:636: horizontal tab used
+onos_radio_node.ino:637: horizontal tab used
+onos_radio_node.ino:638: trailing whitespace
+onos_radio_node.ino:638: horizontal tab used
+onos_radio_node.ino:639: trailing whitespace
+onos_radio_node.ino:639: horizontal tab used
+onos_radio_node.ino:640: trailing whitespace
+onos_radio_node.ino:640: horizontal tab used
+onos_radio_node.ino:641: trailing whitespace
+onos_radio_node.ino:641: horizontal tab used
+onos_radio_node.ino:642: horizontal tab used
+onos_radio_node.ino:642: closing curly bracket not in the same line or column
+onos_radio_node.ino:643: horizontal tab used
+onos_radio_node.ino:644: horizontal tab used
+onos_radio_node.ino:645: trailing whitespace
+onos_radio_node.ino:645: horizontal tab used
+onos_radio_node.ino:646: horizontal tab used
+onos_radio_node.ino:647: horizontal tab used
+onos_radio_node.ino:648: horizontal tab used
+onos_radio_node.ino:649: horizontal tab used
+onos_radio_node.ino:650: horizontal tab used
+onos_radio_node.ino:650: closing curly bracket not in the same line or column
+onos_radio_node.ino:651: horizontal tab used
+onos_radio_node.ino:652: horizontal tab used
+onos_radio_node.ino:653: horizontal tab used
+onos_radio_node.ino:654: horizontal tab used
+onos_radio_node.ino:655: horizontal tab used
+onos_radio_node.ino:656: horizontal tab used
+onos_radio_node.ino:657: horizontal tab used
+onos_radio_node.ino:658: trailing whitespace
+onos_radio_node.ino:658: horizontal tab used
+onos_radio_node.ino:659: horizontal tab used
+onos_radio_node.ino:660: horizontal tab used
+onos_radio_node.ino:660: closing curly bracket not in the same line or column
+onos_radio_node.ino:661: horizontal tab used
+onos_radio_node.ino:662: horizontal tab used
+onos_radio_node.ino:663: horizontal tab used
+onos_radio_node.ino:663: too many consecutive empty lines
+onos_radio_node.ino:664: horizontal tab used
+onos_radio_node.ino:665: trailing whitespace
+onos_radio_node.ino:665: horizontal tab used
+onos_radio_node.ino:666: horizontal tab used
+onos_radio_node.ino:667: horizontal tab used
+onos_radio_node.ino:668: horizontal tab used
+onos_radio_node.ino:669: horizontal tab used
+onos_radio_node.ino:670: horizontal tab used
+onos_radio_node.ino:671: horizontal tab used
+onos_radio_node.ino:671: closing curly bracket not in the same line or column
+onos_radio_node.ino:672: trailing whitespace
+onos_radio_node.ino:672: horizontal tab used
+onos_radio_node.ino:673: horizontal tab used
+onos_radio_node.ino:673: closing curly bracket not in the same line or column
+onos_radio_node.ino:674: horizontal tab used
+onos_radio_node.ino:675: horizontal tab used
+onos_radio_node.ino:676: horizontal tab used
+onos_radio_node.ino:677: horizontal tab used
+onos_radio_node.ino:678: horizontal tab used
+onos_radio_node.ino:678: line is longer than 100 characters
+onos_radio_node.ino:679: horizontal tab used
+onos_radio_node.ino:680: horizontal tab used
+onos_radio_node.ino:680: keyword 'if' not followed by a single space
+onos_radio_node.ino:681: horizontal tab used
+onos_radio_node.ino:682: trailing whitespace
+onos_radio_node.ino:682: horizontal tab used
+onos_radio_node.ino:683: horizontal tab used
+onos_radio_node.ino:683: closing curly bracket not in the same line or column
+onos_radio_node.ino:684: horizontal tab used
+onos_radio_node.ino:685: horizontal tab used
+onos_radio_node.ino:685: line is longer than 100 characters
+onos_radio_node.ino:685: comma should be followed by whitespace
+onos_radio_node.ino:685: comma should be followed by whitespace
+onos_radio_node.ino:686: horizontal tab used
+onos_radio_node.ino:686: line is longer than 100 characters
+onos_radio_node.ino:686: comma should be followed by whitespace
+onos_radio_node.ino:686: comma should be followed by whitespace
+onos_radio_node.ino:687: horizontal tab used
+onos_radio_node.ino:688: horizontal tab used
+onos_radio_node.ino:688: line is longer than 100 characters
+onos_radio_node.ino:689: horizontal tab used
+onos_radio_node.ino:690: horizontal tab used
+onos_radio_node.ino:691: horizontal tab used
+onos_radio_node.ino:691: comma should be followed by whitespace
+onos_radio_node.ino:692: horizontal tab used
+onos_radio_node.ino:692: comma should be followed by whitespace
+onos_radio_node.ino:693: horizontal tab used
+onos_radio_node.ino:693: comma should be followed by whitespace
+onos_radio_node.ino:694: horizontal tab used
+onos_radio_node.ino:694: closing curly bracket not in the same line or column
+onos_radio_node.ino:695: horizontal tab used
+onos_radio_node.ino:696: horizontal tab used
+onos_radio_node.ino:697: horizontal tab used
+onos_radio_node.ino:697: comma should be followed by whitespace
+onos_radio_node.ino:698: horizontal tab used
+onos_radio_node.ino:698: comma should be followed by whitespace
+onos_radio_node.ino:699: horizontal tab used
+onos_radio_node.ino:699: comma should be followed by whitespace
+onos_radio_node.ino:700: horizontal tab used
+onos_radio_node.ino:700: closing curly bracket not in the same line or column
+onos_radio_node.ino:701: horizontal tab used
+onos_radio_node.ino:702: horizontal tab used
+onos_radio_node.ino:703: horizontal tab used
+onos_radio_node.ino:703: comma should be followed by whitespace
+onos_radio_node.ino:704: horizontal tab used
+onos_radio_node.ino:704: comma should be followed by whitespace
+onos_radio_node.ino:705: horizontal tab used
+onos_radio_node.ino:705: comma should be followed by whitespace
+onos_radio_node.ino:706: horizontal tab used
+onos_radio_node.ino:706: closing curly bracket not in the same line or column
+onos_radio_node.ino:707: horizontal tab used
+onos_radio_node.ino:708: horizontal tab used
+onos_radio_node.ino:709: horizontal tab used
+onos_radio_node.ino:709: comma should be followed by whitespace
+onos_radio_node.ino:710: horizontal tab used
+onos_radio_node.ino:710: comma should be followed by whitespace
+onos_radio_node.ino:711: horizontal tab used
+onos_radio_node.ino:711: closing curly bracket not in the same line or column
+onos_radio_node.ino:712: horizontal tab used
+onos_radio_node.ino:713: horizontal tab used
+onos_radio_node.ino:713: line is longer than 100 characters
+onos_radio_node.ino:714: horizontal tab used
+onos_radio_node.ino:715: horizontal tab used
+onos_radio_node.ino:716: horizontal tab used
+onos_radio_node.ino:717: horizontal tab used
+onos_radio_node.ino:718: horizontal tab used
+onos_radio_node.ino:719: horizontal tab used
+onos_radio_node.ino:720: trailing whitespace
+onos_radio_node.ino:720: horizontal tab used
+onos_radio_node.ino:721: horizontal tab used
+onos_radio_node.ino:722: horizontal tab used
+onos_radio_node.ino:723: horizontal tab used
+onos_radio_node.ino:724: horizontal tab used
+onos_radio_node.ino:725: horizontal tab used
+onos_radio_node.ino:726: horizontal tab used
+onos_radio_node.ino:726: closing curly bracket not in the same line or column
+onos_radio_node.ino:727: horizontal tab used
+onos_radio_node.ino:728: horizontal tab used
+onos_radio_node.ino:729: horizontal tab used
+onos_radio_node.ino:729: closing curly bracket not in the same line or column
+onos_radio_node.ino:730: horizontal tab used
+onos_radio_node.ino:731: trailing whitespace
+onos_radio_node.ino:731: horizontal tab used
+onos_radio_node.ino:732: horizontal tab used
+onos_radio_node.ino:733: horizontal tab used
+onos_radio_node.ino:734: horizontal tab used
+onos_radio_node.ino:735: horizontal tab used
+onos_radio_node.ino:740: too many consecutive empty lines
+onos_radio_node.ino:741: comma should be followed by whitespace
+onos_radio_node.ino:743: trailing whitespace
+onos_radio_node.ino:743: horizontal tab used
+onos_radio_node.ino:744: horizontal tab used
+onos_radio_node.ino:745: horizontal tab used
+onos_radio_node.ino:746: horizontal tab used
+onos_radio_node.ino:747: horizontal tab used
+onos_radio_node.ino:748: horizontal tab used
+onos_radio_node.ino:749: horizontal tab used
+onos_radio_node.ino:750: horizontal tab used
+onos_radio_node.ino:751: horizontal tab used
+onos_radio_node.ino:752: horizontal tab used
+onos_radio_node.ino:753: horizontal tab used
+onos_radio_node.ino:754: horizontal tab used
+onos_radio_node.ino:755: horizontal tab used
+onos_radio_node.ino:755: comma should be followed by whitespace
+onos_radio_node.ino:755: comma should be followed by whitespace
+onos_radio_node.ino:756: horizontal tab used
+onos_radio_node.ino:757: horizontal tab used
+onos_radio_node.ino:757: line is longer than 100 characters
+onos_radio_node.ino:758: horizontal tab used
+onos_radio_node.ino:758: line is longer than 100 characters
+onos_radio_node.ino:759: horizontal tab used
+onos_radio_node.ino:760: horizontal tab used
+onos_radio_node.ino:761: trailing whitespace
+onos_radio_node.ino:761: horizontal tab used
+onos_radio_node.ino:762: horizontal tab used
+onos_radio_node.ino:762: closing curly bracket not in the same line or column
+onos_radio_node.ino:763: horizontal tab used
+onos_radio_node.ino:764: horizontal tab used
+onos_radio_node.ino:765: horizontal tab used
+onos_radio_node.ino:769: too many consecutive empty lines
+onos_radio_node.ino:773: horizontal tab used
+onos_radio_node.ino:774: horizontal tab used
+onos_radio_node.ino:775: horizontal tab used
+onos_radio_node.ino:776: horizontal tab used
+onos_radio_node.ino:777: horizontal tab used
+onos_radio_node.ino:778: horizontal tab used
+onos_radio_node.ino:779: horizontal tab used
+onos_radio_node.ino:780: horizontal tab used
+onos_radio_node.ino:781: horizontal tab used
+onos_radio_node.ino:782: horizontal tab used
+onos_radio_node.ino:783: horizontal tab used
+onos_radio_node.ino:784: trailing whitespace
+onos_radio_node.ino:784: horizontal tab used
+onos_radio_node.ino:785: horizontal tab used
+onos_radio_node.ino:786: horizontal tab used
+onos_radio_node.ino:787: trailing whitespace
+onos_radio_node.ino:787: horizontal tab used
+onos_radio_node.ino:788: horizontal tab used
+onos_radio_node.ino:789: trailing whitespace
+onos_radio_node.ino:789: horizontal tab used
+onos_radio_node.ino:790: horizontal tab used
+onos_radio_node.ino:791: horizontal tab used
+onos_radio_node.ino:791: closing curly bracket not in the same line or column
+onos_radio_node.ino:792: horizontal tab used
+onos_radio_node.ino:792: closing curly bracket not in the same line or column
+onos_radio_node.ino:793: trailing whitespace
+onos_radio_node.ino:793: horizontal tab used
+onos_radio_node.ino:794: horizontal tab used
+onos_radio_node.ino:794: closing curly bracket not in the same line or column
+onos_radio_node.ino:795: trailing whitespace
+onos_radio_node.ino:795: horizontal tab used
+onos_radio_node.ino:796: horizontal tab used
+onos_radio_node.ino:797: horizontal tab used
+onos_radio_node.ino:798: horizontal tab used
+onos_radio_node.ino:799: trailing whitespace
+onos_radio_node.ino:799: horizontal tab used
+onos_radio_node.ino:800: trailing whitespace
+onos_radio_node.ino:800: horizontal tab used
+onos_radio_node.ino:802: horizontal tab used
+onos_radio_node.ino:802: keyword 'if' not followed by a single space
+onos_radio_node.ino:803: horizontal tab used
+onos_radio_node.ino:804: horizontal tab used
+onos_radio_node.ino:805: trailing whitespace
+onos_radio_node.ino:805: horizontal tab used
+onos_radio_node.ino:806: horizontal tab used
+onos_radio_node.ino:806: keyword 'while' not followed by a single space
+onos_radio_node.ino:807: horizontal tab used
+onos_radio_node.ino:808: trailing whitespace
+onos_radio_node.ino:808: horizontal tab used
+onos_radio_node.ino:809: horizontal tab used
+onos_radio_node.ino:810: horizontal tab used
+onos_radio_node.ino:810: closing curly bracket not in the same line or column
+onos_radio_node.ino:811: horizontal tab used
+onos_radio_node.ino:812: horizontal tab used
+onos_radio_node.ino:813: horizontal tab used
+onos_radio_node.ino:814: horizontal tab used
+onos_radio_node.ino:815: horizontal tab used
+onos_radio_node.ino:816: horizontal tab used
+onos_radio_node.ino:816: comma should be followed by whitespace
+onos_radio_node.ino:816: comma should be followed by whitespace
+onos_radio_node.ino:816: comma should be followed by whitespace
+onos_radio_node.ino:817: horizontal tab used
+onos_radio_node.ino:818: horizontal tab used
+onos_radio_node.ino:818: line is longer than 100 characters
+onos_radio_node.ino:819: horizontal tab used
+onos_radio_node.ino:819: line is longer than 100 characters
+onos_radio_node.ino:820: horizontal tab used
+onos_radio_node.ino:821: horizontal tab used
+onos_radio_node.ino:822: horizontal tab used
+onos_radio_node.ino:823: horizontal tab used
+onos_radio_node.ino:824: horizontal tab used
+onos_radio_node.ino:825: horizontal tab used
+onos_radio_node.ino:826: trailing whitespace
+onos_radio_node.ino:826: horizontal tab used
+onos_radio_node.ino:827: horizontal tab used
+onos_radio_node.ino:828: trailing whitespace
+onos_radio_node.ino:828: horizontal tab used
+onos_radio_node.ino:829: horizontal tab used
+onos_radio_node.ino:830: horizontal tab used
+onos_radio_node.ino:830: closing curly bracket not in the same line or column
+onos_radio_node.ino:831: horizontal tab used
+onos_radio_node.ino:832: horizontal tab used
+onos_radio_node.ino:833: horizontal tab used
+onos_radio_node.ino:834: horizontal tab used
+onos_radio_node.ino:835: horizontal tab used
+onos_radio_node.ino:836: horizontal tab used
+onos_radio_node.ino:837: horizontal tab used
+onos_radio_node.ino:838: horizontal tab used
+onos_radio_node.ino:839: horizontal tab used
+onos_radio_node.ino:839: closing curly bracket not in the same line or column
+onos_radio_node.ino:840: trailing whitespace
+onos_radio_node.ino:840: horizontal tab used
+onos_radio_node.ino:841: horizontal tab used
+onos_radio_node.ino:842: horizontal tab used
+onos_radio_node.ino:842: closing curly bracket not in the same line or column
+onos_radio_node.ino:843: horizontal tab used
+onos_radio_node.ino:844: horizontal tab used
+onos_radio_node.ino:845: horizontal tab used
+onos_radio_node.ino:846: horizontal tab used
+onos_radio_node.ino:850: too many consecutive empty lines
+onos_radio_node.ino:854: horizontal tab used
+onos_radio_node.ino:855: horizontal tab used
+onos_radio_node.ino:856: horizontal tab used
+onos_radio_node.ino:857: horizontal tab used
+onos_radio_node.ino:858: horizontal tab used
+onos_radio_node.ino:859: horizontal tab used
+onos_radio_node.ino:860: horizontal tab used
+onos_radio_node.ino:861: horizontal tab used
+onos_radio_node.ino:862: trailing whitespace
+onos_radio_node.ino:862: horizontal tab used
+onos_radio_node.ino:863: horizontal tab used
+onos_radio_node.ino:864: horizontal tab used
+onos_radio_node.ino:865: horizontal tab used
+onos_radio_node.ino:866: horizontal tab used
+onos_radio_node.ino:867: horizontal tab used
+onos_radio_node.ino:868: horizontal tab used
+onos_radio_node.ino:869: horizontal tab used
+onos_radio_node.ino:870: horizontal tab used
+onos_radio_node.ino:871: horizontal tab used
+onos_radio_node.ino:872: horizontal tab used
+onos_radio_node.ino:873: trailing whitespace
+onos_radio_node.ino:873: horizontal tab used
+onos_radio_node.ino:873: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:874: horizontal tab used
+onos_radio_node.ino:874: closing curly bracket not in the same line or column
+onos_radio_node.ino:875: horizontal tab used
+onos_radio_node.ino:876: horizontal tab used
+onos_radio_node.ino:877: trailing whitespace
+onos_radio_node.ino:877: horizontal tab used
+onos_radio_node.ino:878: trailing whitespace
+onos_radio_node.ino:878: horizontal tab used
+onos_radio_node.ino:879: horizontal tab used
+onos_radio_node.ino:880: horizontal tab used
+onos_radio_node.ino:880: comma should be followed by whitespace
+onos_radio_node.ino:880: comma should be followed by whitespace
+onos_radio_node.ino:881: horizontal tab used
+onos_radio_node.ino:882: horizontal tab used
+onos_radio_node.ino:883: horizontal tab used
+onos_radio_node.ino:884: horizontal tab used
+onos_radio_node.ino:885: horizontal tab used
+onos_radio_node.ino:886: trailing whitespace
+onos_radio_node.ino:886: horizontal tab used
+onos_radio_node.ino:886: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:887: horizontal tab used
+onos_radio_node.ino:887: closing curly bracket not in the same line or column
+onos_radio_node.ino:888: horizontal tab used
+onos_radio_node.ino:889: horizontal tab used
+onos_radio_node.ino:890: horizontal tab used
+onos_radio_node.ino:891: horizontal tab used
+onos_radio_node.ino:892: horizontal tab used
+onos_radio_node.ino:893: horizontal tab used
+onos_radio_node.ino:894: horizontal tab used
+onos_radio_node.ino:895: horizontal tab used
+onos_radio_node.ino:896: horizontal tab used
+onos_radio_node.ino:897: horizontal tab used
+onos_radio_node.ino:898: horizontal tab used
+onos_radio_node.ino:899: horizontal tab used
+onos_radio_node.ino:899: closing curly bracket not in the same line or column
+onos_radio_node.ino:900: trailing whitespace
+onos_radio_node.ino:900: horizontal tab used
+onos_radio_node.ino:900: line is longer than 100 characters
+onos_radio_node.ino:901: horizontal tab used
+onos_radio_node.ino:902: horizontal tab used
+onos_radio_node.ino:903: horizontal tab used
+onos_radio_node.ino:903: closing curly bracket not in the same line or column
+onos_radio_node.ino:904: horizontal tab used
+onos_radio_node.ino:905: horizontal tab used
+onos_radio_node.ino:906: trailing whitespace
+onos_radio_node.ino:906: horizontal tab used
+onos_radio_node.ino:906: line is longer than 100 characters
+onos_radio_node.ino:906: keyword 'if' not followed by a single space
+onos_radio_node.ino:907: horizontal tab used
+onos_radio_node.ino:908: horizontal tab used
+onos_radio_node.ino:909: horizontal tab used
+onos_radio_node.ino:910: horizontal tab used
+onos_radio_node.ino:910: closing curly bracket not in the same line or column
+onos_radio_node.ino:912: horizontal tab used
+onos_radio_node.ino:912: closing curly bracket not in the same line or column
+onos_radio_node.ino:913: horizontal tab used
+onos_radio_node.ino:914: horizontal tab used
+onos_radio_node.ino:915: horizontal tab used
+onos_radio_node.ino:916: horizontal tab used
+onos_radio_node.ino:917: horizontal tab used
+onos_radio_node.ino:918: horizontal tab used
+onos_radio_node.ino:919: horizontal tab used
+onos_radio_node.ino:920: horizontal tab used
+onos_radio_node.ino:921: trailing whitespace
+onos_radio_node.ino:921: horizontal tab used
+onos_radio_node.ino:922: horizontal tab used
+onos_radio_node.ino:923: horizontal tab used
+onos_radio_node.ino:923: comma should be followed by whitespace
+onos_radio_node.ino:924: horizontal tab used
+onos_radio_node.ino:925: horizontal tab used
+onos_radio_node.ino:926: horizontal tab used
+onos_radio_node.ino:926: keyword 'if' not followed by a single space
+onos_radio_node.ino:927: horizontal tab used
+onos_radio_node.ino:928: horizontal tab used
+onos_radio_node.ino:929: horizontal tab used
+onos_radio_node.ino:930: horizontal tab used
+onos_radio_node.ino:931: horizontal tab used
+onos_radio_node.ino:932: horizontal tab used
+onos_radio_node.ino:932: closing curly bracket not in the same line or column
+onos_radio_node.ino:933: horizontal tab used
+onos_radio_node.ino:934: trailing whitespace
+onos_radio_node.ino:934: horizontal tab used
+onos_radio_node.ino:934: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:935: horizontal tab used
+onos_radio_node.ino:936: horizontal tab used
+onos_radio_node.ino:936: closing curly bracket not in the same line or column
+onos_radio_node.ino:937: horizontal tab used
+onos_radio_node.ino:938: horizontal tab used
+onos_radio_node.ino:939: horizontal tab used
+onos_radio_node.ino:940: horizontal tab used
+onos_radio_node.ino:941: horizontal tab used
+onos_radio_node.ino:942: horizontal tab used
+onos_radio_node.ino:943: horizontal tab used
+onos_radio_node.ino:944: horizontal tab used
+onos_radio_node.ino:945: horizontal tab used
+onos_radio_node.ino:946: trailing whitespace
+onos_radio_node.ino:946: horizontal tab used
+onos_radio_node.ino:947: horizontal tab used
+onos_radio_node.ino:948: horizontal tab used
+onos_radio_node.ino:949: trailing whitespace
+onos_radio_node.ino:949: horizontal tab used
+onos_radio_node.ino:950: trailing whitespace
+onos_radio_node.ino:950: horizontal tab used
+onos_radio_node.ino:951: horizontal tab used
+onos_radio_node.ino:952: trailing whitespace
+onos_radio_node.ino:952: horizontal tab used
+onos_radio_node.ino:952: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:953: trailing whitespace
+onos_radio_node.ino:953: horizontal tab used
+onos_radio_node.ino:954: horizontal tab used
+onos_radio_node.ino:954: line is longer than 100 characters
+onos_radio_node.ino:955: trailing whitespace
+onos_radio_node.ino:955: horizontal tab used
+onos_radio_node.ino:956: trailing whitespace
+onos_radio_node.ino:956: horizontal tab used
+onos_radio_node.ino:957: horizontal tab used
+onos_radio_node.ino:957: closing curly bracket not in the same line or column
+onos_radio_node.ino:958: horizontal tab used
+onos_radio_node.ino:959: horizontal tab used
+onos_radio_node.ino:960: horizontal tab used
+onos_radio_node.ino:961: horizontal tab used
+onos_radio_node.ino:961: closing curly bracket not in the same line or column
+onos_radio_node.ino:962: horizontal tab used
+onos_radio_node.ino:963: horizontal tab used
+onos_radio_node.ino:963: comma should be followed by whitespace
+onos_radio_node.ino:964: horizontal tab used
+onos_radio_node.ino:965: horizontal tab used
+onos_radio_node.ino:966: horizontal tab used
+onos_radio_node.ino:967: trailing whitespace
+onos_radio_node.ino:967: horizontal tab used
+onos_radio_node.ino:967: keyword 'return' not immediately followed by a semicolon or a single space
+onos_radio_node.ino:968: horizontal tab used
+onos_radio_node.ino:968: closing curly bracket not in the same line or column
+onos_radio_node.ino:969: horizontal tab used
+onos_radio_node.ino:971: closing curly bracket not in the same line or column
+onos_radio_node.ino:974: too many consecutive empty lines
+onos_radio_node.ino:981: horizontal tab used
+onos_radio_node.ino:982: horizontal tab used
+onos_radio_node.ino:982: keyword 'if' not followed by a single space
+onos_radio_node.ino:983: horizontal tab used
+onos_radio_node.ino:984: horizontal tab used
+onos_radio_node.ino:985: horizontal tab used
+onos_radio_node.ino:986: horizontal tab used
+onos_radio_node.ino:986: comma should be followed by whitespace
+onos_radio_node.ino:987: horizontal tab used
+onos_radio_node.ino:988: horizontal tab used
+onos_radio_node.ino:988: closing curly bracket not in the same line or column
+onos_radio_node.ino:989: horizontal tab used
+onos_radio_node.ino:990: horizontal tab used
+onos_radio_node.ino:991: horizontal tab used
+onos_radio_node.ino:992: trailing whitespace
+onos_radio_node.ino:992: horizontal tab used
+onos_radio_node.ino:993: horizontal tab used
+onos_radio_node.ino:994: trailing whitespace
+onos_radio_node.ino:994: horizontal tab used
+onos_radio_node.ino:995: horizontal tab used
+onos_radio_node.ino:996: horizontal tab used
+onos_radio_node.ino:997: horizontal tab used
+onos_radio_node.ino:998: horizontal tab used
+onos_radio_node.ino:999: horizontal tab used
+onos_radio_node.ino:1000: horizontal tab used
+onos_radio_node.ino:1001: horizontal tab used
+onos_radio_node.ino:1002: horizontal tab used
+onos_radio_node.ino:1003: horizontal tab used
+onos_radio_node.ino:1004: horizontal tab used
+onos_radio_node.ino:1005: horizontal tab used
+onos_radio_node.ino:1006: horizontal tab used
+onos_radio_node.ino:1006: closing curly bracket not in the same line or column
+onos_radio_node.ino:1007: horizontal tab used
+onos_radio_node.ino:1007: closing curly bracket not in the same line or column
+onos_radio_node.ino:1008: horizontal tab used
+onos_radio_node.ino:1009: horizontal tab used
+onos_radio_node.ino:1010: horizontal tab used
+onos_radio_node.ino:1012: horizontal tab used
+onos_radio_node.ino:1013: horizontal tab used
+onos_radio_node.ino:1014: horizontal tab used
+onos_radio_node.ino:1014: comma should be followed by whitespace
+onos_radio_node.ino:1015: horizontal tab used
+onos_radio_node.ino:1016: horizontal tab used
+onos_radio_node.ino:1017: horizontal tab used
+onos_radio_node.ino:1018: horizontal tab used
+onos_radio_node.ino:1019: horizontal tab used
+onos_radio_node.ino:1020: horizontal tab used
+onos_radio_node.ino:1021: horizontal tab used
+onos_radio_node.ino:1022: horizontal tab used
+onos_radio_node.ino:1023: horizontal tab used
+onos_radio_node.ino:1024: horizontal tab used
+onos_radio_node.ino:1025: horizontal tab used
+onos_radio_node.ino:1026: horizontal tab used
+onos_radio_node.ino:1027: horizontal tab used
+onos_radio_node.ino:1028: horizontal tab used
+onos_radio_node.ino:1029: horizontal tab used
+onos_radio_node.ino:1030: horizontal tab used
+onos_radio_node.ino:1031: horizontal tab used
+onos_radio_node.ino:1032: horizontal tab used
+onos_radio_node.ino:1032: comma should be followed by whitespace
+onos_radio_node.ino:1033: horizontal tab used
+onos_radio_node.ino:1034: horizontal tab used
+onos_radio_node.ino:1035: horizontal tab used
+onos_radio_node.ino:1036: horizontal tab used
+onos_radio_node.ino:1037: horizontal tab used
+onos_radio_node.ino:1038: horizontal tab used
+onos_radio_node.ino:1039: horizontal tab used
+onos_radio_node.ino:1040: horizontal tab used
+onos_radio_node.ino:1041: horizontal tab used
+onos_radio_node.ino:1042: horizontal tab used
+onos_radio_node.ino:1042: closing curly bracket not in the same line or column
+onos_radio_node.ino:1043: trailing whitespace
+onos_radio_node.ino:1043: horizontal tab used
+onos_radio_node.ino:1044: horizontal tab used
+onos_radio_node.ino:1044: closing curly bracket not in the same line or column
+onos_radio_node.ino:1045: horizontal tab used
+onos_radio_node.ino:1047: horizontal tab used
+onos_radio_node.ino:1048: horizontal tab used
+onos_radio_node.ino:1049: horizontal tab used
+onos_radio_node.ino:1050: horizontal tab used
+onos_radio_node.ino:1050: comma should be followed by whitespace
+onos_radio_node.ino:1051: horizontal tab used
+onos_radio_node.ino:1052: horizontal tab used
+onos_radio_node.ino:1054: horizontal tab used
+onos_radio_node.ino:1054: closing curly bracket not in the same line or column
+onos_radio_node.ino:1056: horizontal tab used
+onos_radio_node.ino:1056: closing curly bracket not in the same line or column
+onos_radio_node.ino:1057: horizontal tab used
+onos_radio_node.ino:1058: trailing whitespace
+onos_radio_node.ino:1058: horizontal tab used
+onos_radio_node.ino:1059: horizontal tab used
+onos_radio_node.ino:1060: closing curly bracket not in the same line or column
+onos_radio_node.ino:1065: trailing whitespace
+onos_radio_node.ino:1065: horizontal tab used
+onos_radio_node.ino:1066: horizontal tab used
+onos_radio_node.ino:1067: horizontal tab used
+onos_radio_node.ino:1068: horizontal tab used
+onos_radio_node.ino:1069: horizontal tab used
+onos_radio_node.ino:1070: horizontal tab used
+onos_radio_node.ino:1071: horizontal tab used
+onos_radio_node.ino:1071: comma should be followed by whitespace
+onos_radio_node.ino:1071: comma should be followed by whitespace
+onos_radio_node.ino:1072: horizontal tab used
+onos_radio_node.ino:1073: horizontal tab used
+onos_radio_node.ino:1074: horizontal tab used
+onos_radio_node.ino:1074: closing curly bracket not in the same line or column
+onos_radio_node.ino:1075: horizontal tab used
+onos_radio_node.ino:1076: horizontal tab used
+onos_radio_node.ino:1077: horizontal tab used
+onos_radio_node.ino:1078: horizontal tab used
+onos_radio_node.ino:1079: horizontal tab used
+onos_radio_node.ino:1080: horizontal tab used
+onos_radio_node.ino:1080: too many consecutive empty lines
+onos_radio_node.ino:1081: horizontal tab used
+onos_radio_node.ino:1082: horizontal tab used
+onos_radio_node.ino:1083: horizontal tab used
+onos_radio_node.ino:1084: horizontal tab used
+onos_radio_node.ino:1085: horizontal tab used
+onos_radio_node.ino:1086: horizontal tab used
+onos_radio_node.ino:1087: horizontal tab used
+onos_radio_node.ino:1088: horizontal tab used
+onos_radio_node.ino:1089: horizontal tab used
+onos_radio_node.ino:1090: horizontal tab used
+onos_radio_node.ino:1091: trailing whitespace
+onos_radio_node.ino:1091: horizontal tab used
+onos_radio_node.ino:1092: horizontal tab used
+onos_radio_node.ino:1098: horizontal tab used
+onos_radio_node.ino:1099: horizontal tab used
+onos_radio_node.ino:1104: horizontal tab used
+onos_radio_node.ino:1105: horizontal tab used
+onos_radio_node.ino:1106: horizontal tab used
+onos_radio_node.ino:1107: horizontal tab used
+onos_radio_node.ino:1108: horizontal tab used
+onos_radio_node.ino:1109: trailing whitespace
+onos_radio_node.ino:1109: horizontal tab used
+onos_radio_node.ino:1109: comma should be followed by whitespace
+onos_radio_node.ino:1110: trailing whitespace
+onos_radio_node.ino:1110: horizontal tab used
+onos_radio_node.ino:1111: horizontal tab used
+onos_radio_node.ino:1112: horizontal tab used
+onos_radio_node.ino:1112: line is longer than 100 characters
+onos_radio_node.ino:1113: horizontal tab used
+onos_radio_node.ino:1114: trailing whitespace
+onos_radio_node.ino:1114: horizontal tab used
+onos_radio_node.ino:1115: horizontal tab used
+onos_radio_node.ino:1116: trailing whitespace
+onos_radio_node.ino:1116: horizontal tab used
+onos_radio_node.ino:1117: horizontal tab used
+onos_radio_node.ino:1117: line is longer than 100 characters
+onos_radio_node.ino:1118: horizontal tab used
+onos_radio_node.ino:1119: trailing whitespace
+onos_radio_node.ino:1119: horizontal tab used
+onos_radio_node.ino:1120: horizontal tab used
+onos_radio_node.ino:1121: horizontal tab used
+onos_radio_node.ino:1122: horizontal tab used
+onos_radio_node.ino:1123: horizontal tab used
+onos_radio_node.ino:1127: too many consecutive empty lines
+onos_radio_node.ino:1131: horizontal tab used
+onos_radio_node.ino:1132: horizontal tab used
+onos_radio_node.ino:1133: horizontal tab used
+onos_radio_node.ino:1134: horizontal tab used
+onos_radio_node.ino:1135: horizontal tab used
+onos_radio_node.ino:1138: horizontal tab used
+onos_radio_node.ino:1139: horizontal tab used
+onos_radio_node.ino:1139: line is longer than 100 characters
+onos_radio_node.ino:1140: trailing whitespace
+onos_radio_node.ino:1141: horizontal tab used
+onos_radio_node.ino:1142: horizontal tab used
+onos_radio_node.ino:1143: horizontal tab used
+onos_radio_node.ino:1143: comma should be followed by whitespace
+onos_radio_node.ino:1143: comma should be followed by whitespace
+onos_radio_node.ino:1144: trailing whitespace
+onos_radio_node.ino:1144: horizontal tab used
+onos_radio_node.ino:1144: line is longer than 100 characters
+onos_radio_node.ino:1144: comma should be followed by whitespace
+onos_radio_node.ino:1145: horizontal tab used
+onos_radio_node.ino:1146: horizontal tab used
+onos_radio_node.ino:1147: horizontal tab used
+onos_radio_node.ino:1148: trailing whitespace
+onos_radio_node.ino:1148: horizontal tab used
+onos_radio_node.ino:1149: trailing whitespace
+onos_radio_node.ino:1149: horizontal tab used
+onos_radio_node.ino:1150: trailing whitespace
+onos_radio_node.ino:1150: horizontal tab used
+onos_radio_node.ino:1151: horizontal tab used
+onos_radio_node.ino:1152: horizontal tab used
+onos_radio_node.ino:1152: closing curly bracket not in the same line or column
+onos_radio_node.ino:1154: horizontal tab used
+onos_radio_node.ino:1155: horizontal tab used
+onos_radio_node.ino:1156: horizontal tab used
+onos_radio_node.ino:1156: line is longer than 100 characters
+onos_radio_node.ino:1157: horizontal tab used
+onos_radio_node.ino:1157: comma should be followed by whitespace
+onos_radio_node.ino:1157: negation operator used in its short form
+onos_radio_node.ino:1158: horizontal tab used
+onos_radio_node.ino:1159: trailing whitespace
+onos_radio_node.ino:1159: horizontal tab used
+onos_radio_node.ino:1159: comma should be followed by whitespace
+onos_radio_node.ino:1160: horizontal tab used
+onos_radio_node.ino:1161: horizontal tab used
+onos_radio_node.ino:1162: horizontal tab used
+onos_radio_node.ino:1164: horizontal tab used
+onos_radio_node.ino:1164: closing curly bracket not in the same line or column
+onos_radio_node.ino:1168: horizontal tab used
+onos_radio_node.ino:1169: horizontal tab used
+onos_radio_node.ino:1171: horizontal tab used
+onos_radio_node.ino:1172: horizontal tab used
+onos_radio_node.ino:1173: horizontal tab used
+onos_radio_node.ino:1174: horizontal tab used
+onos_radio_node.ino:1175: horizontal tab used
+onos_radio_node.ino:1176: horizontal tab used
+onos_radio_node.ino:1177: horizontal tab used
+onos_radio_node.ino:1178: horizontal tab used
+onos_radio_node.ino:1179: horizontal tab used
+onos_radio_node.ino:1180: horizontal tab used
+onos_radio_node.ino:1181: horizontal tab used
+onos_radio_node.ino:1182: horizontal tab used
+onos_radio_node.ino:1183: trailing whitespace
+onos_radio_node.ino:1183: horizontal tab used
+onos_radio_node.ino:1184: horizontal tab used
+onos_radio_node.ino:1184: line is longer than 100 characters
+onos_radio_node.ino:1185: horizontal tab used
+onos_radio_node.ino:1186: horizontal tab used
+onos_radio_node.ino:1187: horizontal tab used
+onos_radio_node.ino:1188: horizontal tab used
+onos_radio_node.ino:1189: horizontal tab used
+onos_radio_node.ino:1190: horizontal tab used
+onos_radio_node.ino:1191: trailing whitespace
+onos_radio_node.ino:1191: horizontal tab used
+onos_radio_node.ino:1192: horizontal tab used
+onos_radio_node.ino:1196: too many consecutive empty lines
+onos_radio_node.ino:1201: horizontal tab used
+onos_radio_node.ino:1203: horizontal tab used
+onos_radio_node.ino:1205: horizontal tab used
+onos_radio_node.ino:1205: keyword 'while' not followed by a single space
+onos_radio_node.ino:1206: horizontal tab used
+onos_radio_node.ino:1207: horizontal tab used
+onos_radio_node.ino:1207: closing curly bracket not in the same line or column
+onos_radio_node.ino:1208: horizontal tab used
+onos_radio_node.ino:1216: horizontal tab used
+onos_radio_node.ino:1218: horizontal tab used
+onos_radio_node.ino:1219: horizontal tab used
+onos_radio_node.ino:1221: horizontal tab used
+onos_radio_node.ino:1222: horizontal tab used
+onos_radio_node.ino:1222: line is longer than 100 characters
+onos_radio_node.ino:1223: horizontal tab used
+onos_radio_node.ino:1223: line is longer than 100 characters
+onos_radio_node.ino:1225: horizontal tab used
+onos_radio_node.ino:1225: comma should be followed by whitespace
+onos_radio_node.ino:1225: comma should be followed by whitespace
+onos_radio_node.ino:1226: horizontal tab used
+onos_radio_node.ino:1226: comma should be followed by whitespace
+onos_radio_node.ino:1227: horizontal tab used
+onos_radio_node.ino:1227: comma should be followed by whitespace
+onos_radio_node.ino:1229: horizontal tab used
+onos_radio_node.ino:1230: trailing whitespace
+onos_radio_node.ino:1230: horizontal tab used
+onos_radio_node.ino:1231: trailing whitespace
+onos_radio_node.ino:1231: horizontal tab used
+onos_radio_node.ino:1232: horizontal tab used
+onos_radio_node.ino:1233: trailing whitespace
+onos_radio_node.ino:1233: horizontal tab used
+onos_radio_node.ino:1233: line is longer than 100 characters
+onos_radio_node.ino:1234: trailing whitespace
+onos_radio_node.ino:1234: horizontal tab used
+onos_radio_node.ino:1234: line is longer than 100 characters
+onos_radio_node.ino:1235: trailing whitespace
+onos_radio_node.ino:1235: horizontal tab used
+onos_radio_node.ino:1236: trailing whitespace
+onos_radio_node.ino:1236: horizontal tab used
+onos_radio_node.ino:1237: trailing whitespace
+onos_radio_node.ino:1237: horizontal tab used
+onos_radio_node.ino:1238: horizontal tab used
+onos_radio_node.ino:1239: horizontal tab used
+onos_radio_node.ino:1240: horizontal tab used
+onos_radio_node.ino:1241: horizontal tab used
+onos_radio_node.ino:1242: horizontal tab used
+onos_radio_node.ino:1243: horizontal tab used
+onos_radio_node.ino:1244: horizontal tab used
+onos_radio_node.ino:1244: comma should be followed by whitespace
+onos_radio_node.ino:1245: horizontal tab used
+onos_radio_node.ino:1248: too many consecutive empty lines
+onos_radio_node.ino:1249: horizontal tab used
+onos_radio_node.ino:1250: horizontal tab used
+onos_radio_node.ino:1250: comma should be followed by whitespace
+onos_radio_node.ino:1250: comma should be followed by whitespace
+onos_radio_node.ino:1251: horizontal tab used
+onos_radio_node.ino:1251: comma should be followed by whitespace
+onos_radio_node.ino:1252: horizontal tab used
+onos_radio_node.ino:1252: comma should be followed by whitespace
+onos_radio_node.ino:1253: horizontal tab used
+onos_radio_node.ino:1254: trailing whitespace
+onos_radio_node.ino:1254: horizontal tab used
+onos_radio_node.ino:1255: trailing whitespace
+onos_radio_node.ino:1255: horizontal tab used
+onos_radio_node.ino:1256: trailing whitespace
+onos_radio_node.ino:1256: horizontal tab used
+onos_radio_node.ino:1257: trailing whitespace
+onos_radio_node.ino:1257: horizontal tab used
+onos_radio_node.ino:1258: horizontal tab used
+onos_radio_node.ino:1259: trailing whitespace
+onos_radio_node.ino:1259: horizontal tab used
+onos_radio_node.ino:1260: horizontal tab used
+onos_radio_node.ino:1261: horizontal tab used
+onos_radio_node.ino:1262: horizontal tab used
+onos_radio_node.ino:1263: horizontal tab used
+onos_radio_node.ino:1264: horizontal tab used
+onos_radio_node.ino:1265: horizontal tab used
+onos_radio_node.ino:1266: horizontal tab used
+onos_radio_node.ino:1268: horizontal tab used
+onos_radio_node.ino:1271: horizontal tab used
+onos_radio_node.ino:1272: horizontal tab used
+onos_radio_node.ino:1272: comma should be followed by whitespace
+onos_radio_node.ino:1272: comma should be followed by whitespace
+onos_radio_node.ino:1273: horizontal tab used
+onos_radio_node.ino:1274: horizontal tab used
+onos_radio_node.ino:1274: comma should be followed by whitespace
+onos_radio_node.ino:1274: comma should be followed by whitespace
+onos_radio_node.ino:1275: horizontal tab used
+onos_radio_node.ino:1275: comma should be followed by whitespace
+onos_radio_node.ino:1276: horizontal tab used
+onos_radio_node.ino:1276: comma should be followed by whitespace
+onos_radio_node.ino:1277: horizontal tab used
+onos_radio_node.ino:1278: horizontal tab used
+onos_radio_node.ino:1279: trailing whitespace
+onos_radio_node.ino:1279: horizontal tab used
+onos_radio_node.ino:1280: horizontal tab used
+onos_radio_node.ino:1282: horizontal tab used
+onos_radio_node.ino:1283: horizontal tab used
+onos_radio_node.ino:1284: horizontal tab used
+onos_radio_node.ino:1285: horizontal tab used
+onos_radio_node.ino:1286: horizontal tab used
+onos_radio_node.ino:1288: horizontal tab used
+onos_radio_node.ino:1290: horizontal tab used
+onos_radio_node.ino:1291: trailing whitespace
+onos_radio_node.ino:1291: horizontal tab used
+onos_radio_node.ino:1292: horizontal tab used
+onos_radio_node.ino:1293: trailing whitespace
+onos_radio_node.ino:1293: horizontal tab used
+onos_radio_node.ino:1294: trailing whitespace
+onos_radio_node.ino:1294: horizontal tab used
+onos_radio_node.ino:1295: trailing whitespace
+onos_radio_node.ino:1295: horizontal tab used
+onos_radio_node.ino:1296: horizontal tab used
+onos_radio_node.ino:1297: horizontal tab used
+onos_radio_node.ino:1298: horizontal tab used
+onos_radio_node.ino:1298: too many consecutive empty lines
+onos_radio_node.ino:1299: horizontal tab used
+onos_radio_node.ino:1300: horizontal tab used
+onos_radio_node.ino:1301: horizontal tab used
+onos_radio_node.ino:1302: horizontal tab used
+onos_radio_node.ino:1303: horizontal tab used
+onos_radio_node.ino:1303: too many consecutive empty lines
+onos_radio_node.ino:1304: horizontal tab used
+onos_radio_node.ino:1305: horizontal tab used
+onos_radio_node.ino:1306: horizontal tab used
+onos_radio_node.ino:1307: horizontal tab used
+onos_radio_node.ino:1308: horizontal tab used
+onos_radio_node.ino:1308: too many consecutive empty lines
+onos_radio_node.ino:1309: horizontal tab used
+onos_radio_node.ino:1310: horizontal tab used
+onos_radio_node.ino:1311: horizontal tab used
+onos_radio_node.ino:1312: horizontal tab used
+onos_radio_node.ino:1313: horizontal tab used
+onos_radio_node.ino:1314: horizontal tab used
+onos_radio_node.ino:1314: too many consecutive empty lines
+onos_radio_node.ino:1315: trailing whitespace
+onos_radio_node.ino:1315: horizontal tab used
+onos_radio_node.ino:1316: horizontal tab used
+onos_radio_node.ino:1317: horizontal tab used
+onos_radio_node.ino:1318: horizontal tab used
+onos_radio_node.ino:1319: horizontal tab used
+onos_radio_node.ino:1320: horizontal tab used
+onos_radio_node.ino:1321: horizontal tab used
+onos_radio_node.ino:1321: too many consecutive empty lines
+onos_radio_node.ino:1322: horizontal tab used
+onos_radio_node.ino:1323: horizontal tab used
+onos_radio_node.ino:1324: horizontal tab used
+onos_radio_node.ino:1325: horizontal tab used
+onos_radio_node.ino:1326: horizontal tab used
+onos_radio_node.ino:1327: horizontal tab used
+onos_radio_node.ino:1328: horizontal tab used
+onos_radio_node.ino:1329: horizontal tab used
+onos_radio_node.ino:1330: horizontal tab used
+onos_radio_node.ino:1331: horizontal tab used
+onos_radio_node.ino:1332: horizontal tab used
+onos_radio_node.ino:1333: horizontal tab used
+onos_radio_node.ino:1333: comma should be followed by whitespace
+onos_radio_node.ino:1334: trailing whitespace
+onos_radio_node.ino:1334: horizontal tab used
+onos_radio_node.ino:1335: horizontal tab used
+onos_radio_node.ino:1335: comma should be followed by whitespace
+onos_radio_node.ino:1336: horizontal tab used
+onos_radio_node.ino:1337: trailing whitespace
+onos_radio_node.ino:1337: horizontal tab used
+onos_radio_node.ino:1337: comma should be followed by whitespace
+onos_radio_node.ino:1337: comma should be followed by whitespace
+onos_radio_node.ino:1338: horizontal tab used
+onos_radio_node.ino:1339: horizontal tab used
+onos_radio_node.ino:1340: horizontal tab used
+onos_radio_node.ino:1341: horizontal tab used
+onos_radio_node.ino:1342: horizontal tab used
+onos_radio_node.ino:1343: horizontal tab used
+onos_radio_node.ino:1344: horizontal tab used
+onos_radio_node.ino:1345: horizontal tab used
+onos_radio_node.ino:1346: horizontal tab used
+onos_radio_node.ino:1347: horizontal tab used
+onos_radio_node.ino:1348: horizontal tab used
+onos_radio_node.ino:1349: horizontal tab used
+onos_radio_node.ino:1350: trailing whitespace
+onos_radio_node.ino:1350: horizontal tab used
+onos_radio_node.ino:1351: horizontal tab used
+onos_radio_node.ino:1352: horizontal tab used
+onos_radio_node.ino:1353: horizontal tab used
+onos_radio_node.ino:1353: too many consecutive empty lines
+onos_radio_node.ino:1354: horizontal tab used
+onos_radio_node.ino:1355: horizontal tab used
+onos_radio_node.ino:1356: horizontal tab used
+onos_radio_node.ino:1357: horizontal tab used
+onos_radio_node.ino:1358: trailing whitespace
+onos_radio_node.ino:1358: horizontal tab used
+onos_radio_node.ino:1359: horizontal tab used
+onos_radio_node.ino:1360: horizontal tab used
+onos_radio_node.ino:1361: horizontal tab used
+onos_radio_node.ino:1362: horizontal tab used
+onos_radio_node.ino:1363: horizontal tab used
+onos_radio_node.ino:1364: horizontal tab used
+onos_radio_node.ino:1365: horizontal tab used
+onos_radio_node.ino:1366: horizontal tab used
+onos_radio_node.ino:1366: line is longer than 100 characters
+onos_radio_node.ino:1367: horizontal tab used
+onos_radio_node.ino:1368: horizontal tab used
+onos_radio_node.ino:1368: full block {} expected in the control structure
+onos_radio_node.ino:1369: horizontal tab used
+onos_radio_node.ino:1370: horizontal tab used
+onos_radio_node.ino:1371: trailing whitespace
+onos_radio_node.ino:1371: horizontal tab used
+onos_radio_node.ino:1372: horizontal tab used
+onos_radio_node.ino:1373: horizontal tab used
+onos_radio_node.ino:1374: too many consecutive empty lines
+onos_radio_node.ino:1376: trailing whitespace
+onos_radio_node.ino:1377: trailing whitespace
+onos_radio_node.ino:1380: horizontal tab used
+onos_radio_node.ino:1381: trailing whitespace
+onos_radio_node.ino:1381: horizontal tab used
+onos_radio_node.ino:1382: horizontal tab used
+onos_radio_node.ino:1383: trailing whitespace
+onos_radio_node.ino:1383: horizontal tab used
+onos_radio_node.ino:1384: horizontal tab used
+onos_radio_node.ino:1385: horizontal tab used
+onos_radio_node.ino:1385: closing curly bracket not in the same line or column
+onos_radio_node.ino:1386: horizontal tab used
+onos_radio_node.ino:1386: closing curly bracket not in the same line or column
+onos_radio_node.ino:1387: horizontal tab used
+onos_radio_node.ino:1388: trailing whitespace
+onos_radio_node.ino:1388: horizontal tab used
+onos_radio_node.ino:1389: horizontal tab used
+onos_radio_node.ino:1390: trailing whitespace
+onos_radio_node.ino:1390: horizontal tab used
+onos_radio_node.ino:1391: horizontal tab used
+onos_radio_node.ino:1392: horizontal tab used
+onos_radio_node.ino:1392: closing curly bracket not in the same line or column
+onos_radio_node.ino:1393: horizontal tab used
+onos_radio_node.ino:1393: closing curly bracket not in the same line or column
+onos_radio_node.ino:1394: horizontal tab used
+onos_radio_node.ino:1395: horizontal tab used
+onos_radio_node.ino:1396: horizontal tab used
+onos_radio_node.ino:1397: horizontal tab used
+onos_radio_node.ino:1398: horizontal tab used
+onos_radio_node.ino:1398: closing curly bracket not in the same line or column
+onos_radio_node.ino:1399: trailing whitespace
+onos_radio_node.ino:1399: horizontal tab used
+onos_radio_node.ino:1400: horizontal tab used
+onos_radio_node.ino:1401: horizontal tab used
+onos_radio_node.ino:1402: horizontal tab used
+onos_radio_node.ino:1402: too many consecutive empty lines
+onos_radio_node.ino:1403: horizontal tab used
+onos_radio_node.ino:1404: horizontal tab used
+onos_radio_node.ino:1404: line is longer than 100 characters
+onos_radio_node.ino:1405: trailing whitespace
+onos_radio_node.ino:1405: horizontal tab used
+onos_radio_node.ino:1406: horizontal tab used
+onos_radio_node.ino:1407: horizontal tab used
+onos_radio_node.ino:1408: horizontal tab used
+onos_radio_node.ino:1408: closing curly bracket not in the same line or column
+onos_radio_node.ino:1409: horizontal tab used
+onos_radio_node.ino:1410: horizontal tab used
+onos_radio_node.ino:1411: horizontal tab used
+onos_radio_node.ino:1412: horizontal tab used
+onos_radio_node.ino:1413: horizontal tab used
+onos_radio_node.ino:1414: horizontal tab used
+onos_radio_node.ino:1414: closing curly bracket not in the same line or column
+onos_radio_node.ino:1415: trailing whitespace
+onos_radio_node.ino:1415: horizontal tab used
+onos_radio_node.ino:1416: horizontal tab used
+onos_radio_node.ino:1417: horizontal tab used
+onos_radio_node.ino:1418: horizontal tab used
+onos_radio_node.ino:1419: horizontal tab used
+onos_radio_node.ino:1420: horizontal tab used
+onos_radio_node.ino:1420: closing curly bracket not in the same line or column
+onos_radio_node.ino:1421: horizontal tab used
+onos_radio_node.ino:1422: horizontal tab used
+onos_radio_node.ino:1423: horizontal tab used
+onos_radio_node.ino:1424: horizontal tab used
+onos_radio_node.ino:1425: horizontal tab used
+onos_radio_node.ino:1426: horizontal tab used
+onos_radio_node.ino:1427: horizontal tab used
+onos_radio_node.ino:1428: horizontal tab used
+onos_radio_node.ino:1434: horizontal tab used
+onos_radio_node.ino:1435: horizontal tab used
+onos_radio_node.ino:1435: comma should be followed by whitespace
+onos_radio_node.ino:1436: horizontal tab used
+onos_radio_node.ino:1437: horizontal tab used
+onos_radio_node.ino:1437: comma should be followed by whitespace
+onos_radio_node.ino:1438: horizontal tab used
+onos_radio_node.ino:1439: horizontal tab used
+onos_radio_node.ino:1439: closing curly bracket not in the same line or column
+onos_radio_node.ino:1441: trailing empty line(s)
