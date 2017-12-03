@@ -356,7 +356,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 #        layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"0","write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
 
     global debug
-    
+    global csv_folder
     if 1 > 0:  # if debug > 0:   if debug is active ..
         
         day=str(datetime.datetime.today().day)
