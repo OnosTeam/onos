@@ -26,7 +26,6 @@
                    D6 ----------1 simple relay
                    D7 ----------1 simple relay
                    D8 ----------1 (chip select flash)
-                   D9 ----------1 simple relay
                     
 
 */
@@ -146,7 +145,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 //**********************************Onos objects configuration **************************************
 
-
+#define ENABLE_RADIO_RESET_PIN 0
 
 
 #if defined(node_type_WreedSaa)
@@ -196,6 +195,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 	
 	#define TOTAL_OBJECTS 7
 	#define node_default_timeout 30  //seconds
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 	
 #elif defined(node_type_WLightSS)
 	#define node_default_timeout 15
@@ -756,7 +756,11 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
 		//    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
 		skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
 	}
-	
+	#if ENABLE_RADIO_RESET_PIN == 1
+		else{
+			beginRadio();
+		}
+	#endif
 	radio.receiveDone(); //put radio in RX mode
 	*get_sync_time=millis();
 }
@@ -798,10 +802,7 @@ void getAddressFromGateway()
 	if(number_of_radio_get_address_try>30){
 		number_of_radio_get_address_try=0;
 		//to reset  module..because maybe is not working..
-		wdt_enable(WDTO_15MS);  // reset arduino 
-		while(1)
-		{
-		}		
+		beginRadio();  // reset radio module 
 		
 	}
 	
@@ -1060,6 +1061,10 @@ void beginRadio()
 {
 	
 	interrupts(); // Enable interrupts
+	digitalWrite(RFM69_RST,1); //set pullup on reed
+	delay(1); // delay for the module to receive the command
+	digitalWrite(RFM69_RST,0); //set pullup on reed
+	delay(10); // delay to wait for the module to restart
 	
 	*get_address_timeout_pointer=millis();
 	
@@ -1125,9 +1130,9 @@ void handleButton()
 {//handle the main node button , you can't call this from interrupt because millis() won't work
 
 	Serial.print(F("handleButton() executed "));
-	Serial.print("button_still_same_status:");
+	Serial.print(F("button_still_same_status:"));
 	Serial.print(button_still_same_status);
-	Serial.print("button_time_same_status:");
+	Serial.print(F("button_time_same_status:"));
 	Serial.println(millis()-button_time_same_status);
 
    // Serial.print(F("obj_button pressed"));
@@ -1213,6 +1218,10 @@ void setup()
 
 	node_obj_status[syncTimeout]=node_default_timeout;
 	sync_timeout=node_obj_status[syncTimeout]*1000;
+	
+	#if ENABLE_RADIO_RESET_PIN == 1
+		pinMode(RFM69_RST, OUTPUT);	
+	#endif
 
 	#if defined(node_type_WreedSaa)
 		node_obj_status[reed1Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
@@ -1249,8 +1258,8 @@ void setup()
 		// OBJECTS PIN DEFINITION___________________________________________________________________
 		node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
 		node_obj_pinout[relay2]=4;  // the second object is the relay 2 connected on pin 8  
-		node_obj_pinout[relay3]=9;  // the third  object is the relay 3 connected on pin 9 
-		node_obj_pinout[relay4]=6;  // the forth  object is the relay 4 connected on pin 3 
+		node_obj_pinout[relay3]=6;  // the third  object is the relay 3 connected on pin 9 
+		node_obj_pinout[relay4]=5;  // the forth  object is the relay 4 connected on pin 3 
 		node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
 		node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
 		// END OBJECTS PIN DEFINITION_______________________________________________________________
@@ -1260,7 +1269,7 @@ void setup()
 		pinMode(node_obj_pinout[relay4], OUTPUT);
 		pinMode(node_obj_pinout[led], OUTPUT);
 		pinMode(node_obj_pinout[button], INPUT);
-
+        
 		digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
 
@@ -1337,7 +1346,7 @@ void setup()
 	//enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
 	#if defined(node_type_WreedSaa)
 	attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
-	Serial.println("WreedSaa interrupt enabled");
+	Serial.println(F("WreedSaa interrupt enabled"));
 	#elif defined(node_type_WPlug1vx)
 	digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
 	attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
@@ -1361,9 +1370,9 @@ void setup()
 	
 	#if defined(ota_enabled)   //warning don't move this part (leave it as last part after enabling interrupts or the arduino will sometimes not boot.
 	if (flash.initialize())
-	Serial.println("SPI Flash Init OK!");
+	Serial.println(F("SPI Flash Init OK!"));
 	else
-	Serial.println("SPI Flash Init FAIL!");
+	Serial.println(F("SPI Flash Init FAIL!"));
 	#endif 
 	
 	

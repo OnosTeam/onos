@@ -404,12 +404,16 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
         row_to_write=[]
         
         csv_file_name=csv_folder+'/0Debug_'+node_sn+'.csv' 
+        
+        still_same_address = "same" 
+        if (nodeDict[node_sn].getNodeAddress())!=node_address:
+          still_same_address = "changed"  
     
-        init_row=["nodeSn","timestamp","day/month/year",
-                  "hours:minutes:seconds","address","last_sync"]
+        init_row=["nodeSn", "timestamp", "day/month/year", 
+                  "hours:minutes:seconds", "address", "last_sync", "still_same_address"]
         
         row_to_write=[node_sn, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
-                      node_address, previous_sync_time ]            
+                      node_address, previous_sync_time, still_same_address]            
         writeCsvFile(csv_file_name, init_row, row_to_write)  
 
 
