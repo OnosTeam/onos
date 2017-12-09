@@ -1,12 +1,14 @@
-
-
-
-
 /*
- * O.N.O.S.  arduino serial gateway  firmware by Marco Rigoni 27-8-16  onos.info@gmail.com 
+ * O.N.O.S.  arduino WlightVx node  firmware by Marco Rigoni 9-11-16  onos.info@gmail.com 
  * more info on www.myonos.com 
  *
  */
+// python-build-start
+// arduino:avr:uno
+// /dev/ttyUSB0
+// python-build-end
+
+/*
 
 
 /*
@@ -115,7 +117,7 @@ char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 
 int this_node_address=1; //must be int..
 
-volatile int old_address=254; 
+int old_address=254; 
 
 unsigned long get_address_timeout=0;
 
@@ -125,9 +127,10 @@ unsigned long timeout;
 
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
-#define rx_msg_lenght 61
-#define decoded_radio_answer_lenght 32
-#define syncMessage_lenght 28
+const uint8_t rx_msg_lenght = 61;
+const uint8_t decoded_radio_answer_lenght = 32;
+const uint8_t syncMessage_lenght = 28;
+
 
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
@@ -136,18 +139,18 @@ uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 char decoded_uart_answer[24]="er00_#]";
-volatile char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
+char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
 volatile char filtered_uart_message[rx_msg_lenght+3];
-volatile char filtered_radio_message[rx_msg_lenght+3];
+char filtered_radio_message[rx_msg_lenght+3];
 volatile char syncMessage[syncMessage_lenght];
-volatile char str_this_node_address[4];
+char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
-volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
-volatile char received_serial_number[13]; //used in OnosMsg
-volatile boolean reInitializeRadio=0;
-volatile boolean ota_loop=0; //enable the ota receiver loop
+char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
+char received_serial_number[13]; //used in OnosMsg
+boolean reInitializeRadio=0;
+boolean ota_loop=0; //enable the ota receiver loop
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 // node object pinuot//
 

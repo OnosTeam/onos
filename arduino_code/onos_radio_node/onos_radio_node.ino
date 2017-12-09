@@ -150,82 +150,81 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 #if defined(node_type_WreedSaa)
 	// define object numbers to use in the pin configuration warning this is not the pinout numbers
-	#define reed1   0
-	#define button  1
-	#define led     2
-	#define tempSensor   3
-	#define digOut  4
-	#define reed2   5
-	#define syncTimeout  6
-	#define reed1Logic  7
-	#define reed2Logic  8
-	#define battery_state 9
-	#define luminosity_sensor 10
+	const uint8_t reed1 = 0;
+	const uint8_t button = 1;
+	const uint8_t led = 2;
+	const uint8_t tempSensor = 3;
+	const uint8_t digOut = 4;
+	const uint8_t reed2 = 5;
+	const uint8_t syncTimeout = 6;
+	const uint8_t reed1Logic = 7;
+	const uint8_t reed2Logic = 8;
+	const uint8_t battery_state = 9;
+	const uint8_t luminosity_sensor = 10;
 	
-	#define TOTAL_OBJECTS 11 //11 because there are 10 elements + a null for the array closing
-	#define node_default_timeout 10 // seconds
+	const uint8_t number_of_total_objects = 11; //11 because there are 10 elements + a null for the array closing
+	const uint8_t node_default_timeout = 10; // seconds
 	#define battery_node            // tell the software to go to sleep to keep battery power. 
-	uint8_t reed_sensors_state=0;  //store the state of the 2 reeds sensors
-	uint8_t logic_reed1_status=0;
-	uint8_t logic_reed2_status=0;
+	uint8_t reed_sensors_state = 0;  //store the state of the 2 reeds sensors
+	uint8_t logic_reed1_status = 0;
+	uint8_t logic_reed2_status = 0;
 	
-	volatile uint8_t reed1_status_sent=0;
-	volatile uint8_t reed2_status_sent=0;
+	volatile uint8_t reed1_status_sent = 0;
+	volatile uint8_t reed2_status_sent = 0;
 	
-	int temperature_sensor_value=0;
-	#define analog_readings 20  //repeated readings  , don't make them more than 20 or there will be overflow
-	uint8_t temperature_sensor_value_byte=0;
+	int temperature_sensor_value = 0;
+	const uint8_t analog_readings = 20;  //repeated readings  , don't make them more than 20 or there will be overflow
+	uint8_t temperature_sensor_value_byte = 0;
 	//uint8_t temperature_sensor_lower_byte=0;
 	//uint8_t temperature_sensor_upper_byte=0;
-	int luminosity_sensor_value=0;
-	uint8_t luminosity_sensor_value_byte=0;
-	int battery_value=0;
-	byte battery_value_byte=0;
+	int luminosity_sensor_value = 0;
+	uint8_t luminosity_sensor_value_byte = 0;
+	int battery_value = 0;
+	byte battery_value_byte = 0;
 	
 #elif defined(node_type_Wrelay4x)
 	// define object numbers to use in the pin configuration warning this is not the pinout numbers
-	#define relay1  0
-	#define relay2  1
-	#define relay3  2 
-	#define relay4  3
-	#define button  4
-	#define led     5
-	#define syncTimeout  6
+	const uint8_t relay1 = 0;
+	const uint8_t relay2 = 1;
+	const uint8_t relay3 = 2; 
+	const uint8_t relay4 = 3;
+	const uint8_t button = 4;
+	const uint8_t led    = 5;
+	const uint8_t syncTimeout = 6;
 	// #define IS_RFM69HCW    false
 	
-	#define TOTAL_OBJECTS 7
-	#define node_default_timeout 30  //seconds
+	const uint8_t number_of_total_objects = 7;
+	const uint8_t node_default_timeout = 30;  //seconds
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 	
 #elif defined(node_type_WLightSS)
-	#define node_default_timeout 15
+	const uint8_t node_default_timeout = 15;
 
 #elif defined(node_type_WPlug1vx)
 	// define object numbers to use in the pin configuration warning this is not the pinout numbers
-	#define relay1  0
-	#define button  1
-	#define led     2
-	#define syncTimeout  3
-	#define TOTAL_OBJECTS 4
-	#define node_default_timeout 360
+	const uint8_t relay1 = 0;
+	const uint8_t button = 1;
+	const uint8_t led = 2;
+	const uint8_t syncTimeout = 3;
+	const uint8_t number_of_total_objects = 4;
+	const uint8_t node_default_timeout 360 = ;
 
 #elif defined(node_type_WIRbarr0)
-	#define node_default_timeout 15
+	const uint8_t node_default_timeout 360 = ;
 
 #elif defined(node_type_WSoilHaa)
-	#define node_default_timeout 15
+	const uint8_t node_default_timeout 360 = ;
 #endif 
 
 
 #if defined(battery_node)   //if the node is a battery node:
-	volatile byte keep_ADCSRA=ADCSRA; //save the state of the register;
+	volatile byte keep_ADCSRA = ADCSRA; //save the state of the register;
 	
-	unsigned long stay_awake_period=700 ;   //how long in ms the node will stay awake to receive radio messages.
-	unsigned long awake_time=0;
+	unsigned long stay_awake_period = 700 ;   //how long in ms the node will stay awake to receive radio messages.
+	unsigned long awake_time = 0;
 
 #endif 
 
-const uint8_t number_of_total_objects=TOTAL_OBJECTS ;
 
 uint8_t node_obj_pinout[number_of_total_objects]; 
 volatile int node_obj_status[number_of_total_objects];  
@@ -259,7 +258,6 @@ char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 //char init_encript_key[17]=INITENCRYPTKEY;
 int this_node_address=254; //i start with 254
 
-int number_of_radio_get_address_try=0;
 
 unsigned long get_address_timeout=0;
 
@@ -288,9 +286,9 @@ WPlugAvx node parameter:
 
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
-#define rx_msg_lenght 61
-#define decoded_radio_answer_lenght 32
-#define syncMessage_lenght 28
+const uint8_t rx_msg_lenght = 61;
+const uint8_t decoded_radio_answer_lenght = 32;
+const uint8_t syncMessage_lenght = 28;
 
 #define DEVMODE 1
 int onos_cmd_start_position=-99;  
@@ -300,18 +298,18 @@ uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 //volatile char decoded_uart_answer[24]="er00_#]";
-volatile char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
+char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
 //volatile char filtered_uart_message[rx_msg_lenght+3];
-volatile char filtered_radio_message[rx_msg_lenght+3];
+char filtered_radio_message[rx_msg_lenght+3];
 volatile char syncMessage[syncMessage_lenght];
-volatile char str_this_node_address[4];
+char str_this_node_address[4];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
-volatile char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
-volatile char received_serial_number[13]; //used in OnosMsg
-volatile boolean reInitializeRadio=0;
-volatile boolean ota_loop=0; //enable the ota receiver loop
+char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
+char received_serial_number[13]; //used in OnosMsg
+boolean reInitializeRadio=0;
+boolean ota_loop=0; //enable the ota receiver loop
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
 
@@ -353,7 +351,7 @@ unsigned long time_to_change_status=30;
 
 
 int tmp_number;
-volatile uint8_t tryed_times;
+uint8_t tryed_times;
 uint8_t counter;
 uint8_t pointer;
 /*
@@ -746,6 +744,14 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
 	syncMessage[7]='a'; //modify the message
 	}
 	*/
+
+	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
+		// unsigned long timetest=0;
+		// timetest=millis();	
+		beginRadio();  //beginradio() takes about 12 ms to execute ...
+		// Serial.print(F("prova time:"));
+		// Serial.print(millis()-timetest);
+	#endif
 	
 	Serial.println(F(" sendWithRetry sendSyncMessage executed"));
 	if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,tx_timeout)) {
@@ -756,11 +762,7 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
 		//    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
 		skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
 	}
-	#if ENABLE_RADIO_RESET_PIN == 1
-		else{
-			beginRadio();
-		}
-	#endif
+
 	radio.receiveDone(); //put radio in RX mode
 	*get_sync_time=millis();
 }
@@ -795,20 +797,19 @@ void getAddressFromGateway()
 	Serial.println(F(":end")); 
 	
 	tryed_times=0;
-	number_of_radio_get_address_try=number_of_radio_get_address_try+1;
-	Serial.print(F("number_of_radio_get_address_try:")); 
-	Serial.println(number_of_radio_get_address_try); 
 
-	if(number_of_radio_get_address_try>30){
-		number_of_radio_get_address_try=0;
-		//to reset  module..because maybe is not working..
-		beginRadio();  // reset radio module 
-		
-	}
-	
+
 	
 	while (tryed_times < radioRetry ){
 		Serial.println(F("r loopStart"));
+		
+		#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
+			// unsigned long timetest=0;
+			// timetest=millis();	
+			beginRadio();  //beginradio() takes about 12 ms to execute ...
+			// Serial.print(F("prova time:"));
+			// Serial.print(millis()-timetest);
+		#endif
 		
 		if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),1,radioTxTimeout)) {
 			// note that the max delay time is 255..because is uint8_t
@@ -1061,10 +1062,14 @@ void beginRadio()
 {
 	
 	interrupts(); // Enable interrupts
-	digitalWrite(RFM69_RST,1); //set pullup on reed
-	delay(1); // delay for the module to receive the command
-	digitalWrite(RFM69_RST,0); //set pullup on reed
-	delay(10); // delay to wait for the module to restart
+	
+	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
+		digitalWrite(RFM69_RST,1); //set pullup on reed
+		delay(1); // delay for the module to receive the command
+		digitalWrite(RFM69_RST,0); //set pullup on reed
+		delay(10); // delay to wait for the module to restart
+	#endif
+
 	
 	*get_address_timeout_pointer=millis();
 	
@@ -1129,10 +1134,10 @@ void buttonStateChanged()
 void handleButton()
 {//handle the main node button , you can't call this from interrupt because millis() won't work
 
-	Serial.print(F("handleButton() executed "));
-	Serial.print(F("button_still_same_status:"));
+	Serial.print(F("handleButton() ex"));
+	Serial.print(F("btn_still_same_status:"));
 	Serial.print(button_still_same_status);
-	Serial.print(F("button_time_same_status:"));
+	Serial.print(F("btn_t_same_status:"));
 	Serial.println(millis()-button_time_same_status);
 
    // Serial.print(F("obj_button pressed"));
@@ -1219,7 +1224,7 @@ void setup()
 	node_obj_status[syncTimeout]=node_default_timeout;
 	sync_timeout=node_obj_status[syncTimeout]*1000;
 	
-	#if ENABLE_RADIO_RESET_PIN == 1
+	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
 		pinMode(RFM69_RST, OUTPUT);	
 	#endif
 
@@ -1345,13 +1350,13 @@ void setup()
 	
 	//enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
 	#if defined(node_type_WreedSaa)
-	attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
-	Serial.println(F("WreedSaa interrupt enabled"));
+		attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+		Serial.println(F("WreedSaa interrupt enabled"));
 	#elif defined(node_type_WPlug1vx)
-	digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
-	attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+		digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
+		attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
 	#elif defined(node_type_Wrelay4x)
-	attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+		attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
 	#endif 
 	
 	
@@ -1369,10 +1374,10 @@ void setup()
 	
 	
 	#if defined(ota_enabled)   //warning don't move this part (leave it as last part after enabling interrupts or the arduino will sometimes not boot.
-	if (flash.initialize())
-	Serial.println(F("SPI Flash Init OK!"));
-	else
-	Serial.println(F("SPI Flash Init FAIL!"));
+		if (flash.initialize())
+			Serial.println(F("SPI Flash Init OK!"));
+		else
+			Serial.println(F("SPI Flash Init FAIL!"));
 	#endif 
 	
 	

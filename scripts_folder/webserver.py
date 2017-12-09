@@ -400,7 +400,11 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
         seconds=str(datetime.datetime.today().second)
         day_of_week=datetime.datetime.today().weekday()
         timestamp=str(time.time())[0:10]
-    
+        previous_sync_time_string="{:0.1f}".format(previous_sync_time)
+        #  "{:05.2f}".format(3.66999) get the string "03.67" from the numer 3.66999
+        #  "{:0.1f}".format(355.66999)  get '355.7' from the numer 355.66999
+        #  "{:0.1f}".format(55.66999).ljust(5,"0")  get '55.70' from the numer 55.66999   
+
         row_to_write=[]
         
         csv_file_name=csv_folder+'/0Debug_'+node_sn+'.csv' 
@@ -413,7 +417,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
                   "hours:minutes:seconds", "address", "last_sync", "still_same_address"]
         
         row_to_write=[node_sn, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
-                      node_address, previous_sync_time, still_same_address]            
+                      node_address, previous_sync_time_string, still_same_address]            
         writeCsvFile(csv_file_name, init_row, row_to_write)  
 
 
@@ -7191,27 +7195,16 @@ def main():
         #server = HTTPServer(('', 80), MyHandler)
         logprint('started httpserver...')
 
-
-
-
         bus = threading.Thread(target=onosBusThread)
         bus.daemon = True  #make the thread a daemon thread
         bus.start()
-
         #w2 = threading.Thread(target=nodeTcpServer)
         #w2.daemon = True  #make the thread a daemon thread
         #w2.start()
-
-
-
-
         w1 = threading.Thread(target=hardwareHandlerThread)
         w1.daemon = True  #make the thread a daemon thread
         w1.start()
-
         run_while_true()
-
-
 
     except KeyboardInterrupt:
          #updateJson()

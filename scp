@@ -7,15 +7,10 @@ scp -rC *  root@192.168.1.2:/tmp/onos
 
 scp -rC root@192.168.1.110:/bin/onos/* /tmp/ram/
 
-scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e Sonoff1P.ino.bin ) root@192.168.1.4:/tmp/onos/
+scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e Sonoff1P.ino.bin ) root@192.168.1.110:/tmp/onos/
 
 poi da ssh dare :
 mv /tmp/onos/ /bin/onos
-
-
-scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests  ) root@192.168.1.110:/bin/onos/
-
-scp -r * root@192.168.1.110:/bin/onos/
 
 
 scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e csv  ) root@192.168.1.110:/bin/onos/
@@ -23,9 +18,6 @@ scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e csv  ) r
 
 
 
-
-
-scp -r  orangepi@192.168.1.139:/tmp/onos/
 
 git add *
 git commit -a -m "working on lamp node" 
