@@ -207,13 +207,13 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 	const uint8_t led = 2;
 	const uint8_t syncTimeout = 3;
 	const uint8_t number_of_total_objects = 4;
-	const uint8_t node_default_timeout 360 = ;
+	const uint8_t node_default_timeout = 360;
 
 #elif defined(node_type_WIRbarr0)
-	const uint8_t node_default_timeout 360 = ;
+	const uint8_t node_default_timeout = 360;
 
 #elif defined(node_type_WSoilHaa)
-	const uint8_t node_default_timeout 360 = ;
+	const uint8_t node_default_timeout = 360;
 #endif 
 
 
@@ -608,13 +608,13 @@ void composeSyncMessage()
 			strcat(syncMessage, "rs");
 			strcat(syncMessage, serial_number);
 			
-			syncMessage[strlen(syncMessage)]=reed_sensors_state;   
+			uint8_t  tmp_len = strlen(syncMessage);
 			
-			syncMessage[strlen(syncMessage)]=temperature_sensor_value_byte;  
-			
-			syncMessage[strlen(syncMessage)]=luminosity_sensor_value;  
-			
-			syncMessage[strlen(syncMessage)]=battery_value; 
+			syncMessage[tmp_len] = reed_sensors_state;   
+			syncMessage[tmp_len + 1] = temperature_sensor_value_byte;  
+			syncMessage[tmp_len + 2] = luminosity_sensor_value;   
+			syncMessage[tmp_len + 3] = battery_value; 
+			syncMessage[tmp_len + 4] = '\0'; 
 		}
 	
 	#elif defined(node_type_Wrelay4x)
@@ -629,10 +629,13 @@ void composeSyncMessage()
 			strcat(syncMessage, "r4");
 			// strcat(syncMessage, "sy");
 			strcat(syncMessage, serial_number);
-			syncMessage[strlen(syncMessage)]=node_obj_status[0]+48;  
-			syncMessage[strlen(syncMessage)]=node_obj_status[1]+48;  
-			syncMessage[strlen(syncMessage)]=node_obj_status[2]+48;  
-			syncMessage[strlen(syncMessage)]=node_obj_status[3]+48;  
+			uint8_t  tmp_len = strlen(syncMessage);
+			syncMessage[tmp_len]=node_obj_status[0]+48;  
+			syncMessage[tmp_len + 1]=node_obj_status[1]+48;  
+			syncMessage[tmp_len + 2]=node_obj_status[2]+48;  
+			syncMessage[tmp_len + 3]=node_obj_status[3]+48;  
+			syncMessage[tmp_len + 4] = '\0'; 
+			
 		}
 		
 	#elif defined(node_type_WPlug1vx)
@@ -648,8 +651,9 @@ void composeSyncMessage()
 			// strcat(syncMessage, "sy");
 			
 			strcat(syncMessage, serial_number);
-			
-			syncMessage[strlen(syncMessage)]=node_obj_status[0]+48;  
+			uint8_t  tmp_len = strlen(syncMessage);
+			syncMessage[tmp_len] = node_obj_status[0]+48; 
+			syncMessage[tmp_len + 1] = '\0';
 			
 		}
 		
@@ -681,8 +685,13 @@ void composeSyncMessage()
 		
 		//itoa (minutes_time_from_turn_on,minutes_time_from_turn_on_array,10);  //convert from int to char array
 		//dtostrf  //convert from float to char array
+		
+		
+		
+		// TODO: use sprintf(tmp_minutes_time_from_turn_on_array,"%04u",minutes_time_from_turn_on);  
+		
 		if (minutes_time_from_turn_on<10){
-			dtostrf(minutes_time_from_turn_on,1, 0, tmp_minutes_time_from_turn_on_array);
+			dtostrf(minutes_time_from_turn_on,1, 0, tmp_minutes_time_from_turn_on_array);  //make a mull terminating array..
 			strcpy(minutes_time_from_turn_on_array,"000");
 			strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
 		}
@@ -705,8 +714,11 @@ void composeSyncMessage()
 		}
 		
 		//snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from float to char array
-		
-		syncMessage[strlen(syncMessage)]=main_obj_state+48;   //+48 for ascii translation
+				
+		uint8_t  tmp_len = strlen(syncMessage);
+		syncMessage[tmp_len]=main_obj_state+48;   //+48 for ascii translation
+		syncMessage[tmp_len + 1] = '\0';
+					
 		
 		Serial.print(F("composeSyncMessage executed with  status:"));
 		Serial.println(main_obj_state);
@@ -722,7 +734,10 @@ void composeSyncMessage()
 		progressive_msg_id=48;  //48 is 0 in ascii
 	}
 	
-	syncMessage[strlen(syncMessage)]=progressive_msg_id; //put the variable msgid in the array 
+	
+	uint8_t  tmp_len = strlen(syncMessage);
+	syncMessage[tmp_len]=progressive_msg_id; //put the variable msgid in the array 
+	syncMessage[tmp_len + 1] = '\0';
 	//Serial.println(syncMessage[28]);
 	//Serial.println(strlen(syncMessage));
 	strcat(syncMessage, "_#]");
