@@ -684,6 +684,15 @@ versione4.53   iniziato ad usare pythonserial come libraria dopo test fatti con 
                 Bugfix:now onos will check if a set address query is already being tried and it will not try 2 with the same node.
 
 
+
+5.30            After removing some bug in the overflow of syncmessage and
+                removing some misused volatile variables in onos_rfm69_serial_interface the command seams to be working correctly
+
+
+
+
+
+
 todo:mettere priorita oggetti su hardwareModelDict
 
 
