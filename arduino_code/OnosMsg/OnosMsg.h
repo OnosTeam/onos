@@ -35,19 +35,18 @@ extern boolean ota_loop;  //enable the ota receiver loop
 class OnosMsg {
   public:
     OnosMsg();
-    volatile char *received_message_answer;
-    volatile char *received_message;
+    //volatile char *received_message_answer;
+    //volatile char *received_message;
 
     void decodeOnosCmd(char *received_message,char *received_message_answer);
 
   private:
 
-    volatile char received_msg_cmd_type[3];
-    volatile int received_message_value;
-    volatile int received_message_first_pin_used;
-    volatile int received_message_second_pin_used;
-
-    volatile uint8_t rx_obj_selected;
+    char received_msg_cmd_type[3];
+    int received_message_value;
+    int received_message_first_pin_used;
+    int received_message_second_pin_used;
+    uint8_t rx_obj_selected;
 
 
 };

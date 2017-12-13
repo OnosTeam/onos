@@ -8,7 +8,7 @@
 // /dev/ttyUSB0
 // python-build-end
 
-/*
+
 
 
 /*
@@ -72,6 +72,27 @@
 #include <OnosMsg.h>
 #include <LowPower.h>
 #include <avr/wdt.h>
+
+
+
+#define DEVMODE 1
+#define DEBUG 1
+
+
+
+#if defined(DEBUG)
+	int freeRam () 
+	{
+		extern int __heap_start, *__brkval; 
+		int v; 
+		return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+	}
+
+
+#endif  // end DEBUG 
+
+ 
+ 
 
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
@@ -290,7 +311,6 @@ const uint8_t rx_msg_lenght = 61;
 const uint8_t decoded_radio_answer_lenght = 32;
 const uint8_t syncMessage_lenght = 28;
 
-#define DEVMODE 1
 int onos_cmd_start_position=-99;  
 int onos_cmd_end_position=-99;  
 char received_message_type_of_onos_cmd[3];
@@ -363,15 +383,10 @@ static int oldBatteryPcnt = 0;
 */
 
 
-/*
-int freeRam () 
-{
-  extern int __heap_start, *__brkval; 
-  int v; 
-  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
-}
 
-*/
+
+
+
 
 
 boolean changeObjStatus(char obj_number,int status_to_set)
@@ -1075,14 +1090,19 @@ void checkCurrentRadioAddress()
 
 void beginRadio()
 {
+
+	#if DEBUG == 1
+		Serial.print(F("freeMemory="));
+		Serial.println(freeRam());
+	#endif  // end DEBUG 
 	
 	interrupts(); // Enable interrupts
 	
 	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
 		digitalWrite(RFM69_RST,1); //set pullup on reed
-		delay(1); // delay for the module to receive the command
+		delay(5); // delay for the module to receive the command
 		digitalWrite(RFM69_RST,0); //set pullup on reed
-		delay(10); // delay to wait for the module to restart
+		delay(15); // delay to wait for the module to restart
 	#endif
 
 	
@@ -1096,8 +1116,6 @@ void beginRadio()
 	radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
 	
 	radio.encrypt(encript_key);
-	
-	
 	
 	radio.enableAutoPower(targetRSSI);
 	
@@ -1403,16 +1421,16 @@ void loop()
 {
 
 	#if defined(node_type_Wrelay4x)
-		if (button_still_same_status==0){  //filter 
-			obj_button_pin=node_obj_pinout[button];
-			if (digitalRead(obj_button_pin)==0) { 
+		if (button_still_same_status == 0){  //filter 
+			obj_button_pin = node_obj_pinout[button];
+			if (digitalRead(obj_button_pin) == 0) { 
 				handleButton();
 			}
 		}
 	#elif defined(node_type_WPlug1vx)
-		if (button_still_same_status==0){  //filter 
-			obj_button_pin=node_obj_pinout[button];
-			if (digitalRead(obj_button_pin)==0){ 
+		if (button_still_same_status == 0){  //filter 
+			obj_button_pin = node_obj_pinout[button];
+			if (digitalRead(obj_button_pin) == 0){ 
 				handleButton();
 			}
 		}
@@ -1426,10 +1444,15 @@ void loop()
 	
 	
 	
-	if (skipRadioRxMsg>skipRadioRxMsgThreshold){  //to allow the execution of radio tx , in case there are too many rx query..
-		skipRadioRxMsg=0;  //reset the counter to allow this node to receive query 
+	if (skipRadioRxMsg > skipRadioRxMsgThreshold){  //to allow the execution of radio tx , in case there are too many rx query..
+		skipRadioRxMsg = 0;  //reset the counter to allow this node to receive query 
 		Serial.println(F("I skip the rxradio part once"));
-		goto radioTx;
+		//goto radioTx;
+		//radioTx:
+	
+		radio.receiveDone();  //put radio in RX mode
+		Serial.flush();  //make sure all serial data is clocked out
+		checkCurrentRadioAddress();		
 	}
 	
 	
@@ -1444,10 +1467,10 @@ void loop()
 		checkAndHandleIncomingRadioMsg();
 	}
 	
-	radioTx:
+	//radioTx:
 	
 	radio.receiveDone();  //put radio in RX mode
-	Serial.flush();  //make sure all serial data is clocked
+	Serial.flush();  //make sure all serial data is clocked out
 	
 	checkCurrentRadioAddress();
 	

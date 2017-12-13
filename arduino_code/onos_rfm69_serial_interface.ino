@@ -181,9 +181,9 @@ uint8_t radioPriority=10;
 #define default_uartPriority 10
 
 
-volatile int tmp_number;
-volatile uint8_t counter;
-volatile uint8_t pointer;
+int tmp_number;
+uint8_t counter;
+uint8_t pointer;
 
 
 
