@@ -52,7 +52,3 @@ class OnosMsg {
 };
 
 #endif
-
-
-
-

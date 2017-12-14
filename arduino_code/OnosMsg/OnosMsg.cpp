@@ -227,7 +227,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 
                 
                 
-                //[S_123do001x_#]    # digital object controll
+                //[S_123do001x_#]   [S_001do001x_#]    # digital object controll
                 else if( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='o' ){
                 
                         received_message_value=(received_message[10]-48);
@@ -413,5 +413,3 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
 
 
 }// end of decodeOnosCmd()
-
-

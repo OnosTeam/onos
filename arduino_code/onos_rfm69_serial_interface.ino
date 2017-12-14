@@ -209,7 +209,10 @@ int freeRam ()
 
 boolean changeObjStatus(char obj_number,int status_to_set){
 
-   Serial.print(F("changeObjStatus executed with  status:"));
+   Serial.print(F("changeObjStatus executed with "));
+   Serial.print(F("obj:"));  
+   Serial.print(obj_number+48);  
+   Serial.print(F(",status:")); 
    Serial.println(status_to_set);
 
   if (obj_number!=button){ //will not change the status to the button...
@@ -919,4 +922,3 @@ restart:
 
 
 }
-

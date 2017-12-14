@@ -139,12 +139,12 @@
 #if defined(ota_enabled)
 	#include <RFM69_OTA.h>     //get it here: https://github.com/lowpowerlab/RFM69
 	#include <SPIFlash.h>      //get it here: https://github.com/lowpowerlab/spiflash
-	unsigned long ota_loop_start_time=0;
-	unsigned long  ota_timeout=25000;  //25 seconds 
+	unsigned long ota_loop_start_time = 0;
+	unsigned long  ota_timeout = 25000;  //25 seconds 
 	SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
-char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0001";   // this is the progressive numeric serial number
+char serial_number[13] = "xxxxxxxxxxxx";
+char numeric_serial[5] = "0001";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
@@ -266,28 +266,28 @@ RFM69_ATC radio;
 
 
 
-boolean radio_enabled=1;
+boolean radio_enabled = 1;
 
-unsigned long sync_time=0;
-unsigned long *get_sync_time=&sync_time;
-unsigned long sync_timeout=node_default_timeout;
+unsigned long sync_time = 0;
+unsigned long *get_sync_time = &sync_time;
+unsigned long sync_timeout = node_default_timeout;
 
-volatile boolean interrupt_called=0;
+volatile boolean interrupt_called = 0;
 
-char node_fw[]="5.27";
-char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
+char node_fw[] = "5.27";
+char encript_key[17] = "onosEncryptKey01";  //todo read it from eeprom
 //char init_encript_key[17]=INITENCRYPTKEY;
-int this_node_address=254; //i start with 254
+int this_node_address = 254; //i start with 254
 
 
-unsigned long get_address_timeout=0;
+unsigned long get_address_timeout = 0;
 
-unsigned long *get_address_timeout_pointer=&get_address_timeout;
+unsigned long *get_address_timeout_pointer = &get_address_timeout;
 
 
-volatile unsigned long button_time_same_status=0;
+volatile unsigned long button_time_same_status = 0;
 
-volatile boolean button_still_same_status=1; 
+volatile boolean button_still_same_status = 1; 
 
 
 
@@ -311,63 +311,63 @@ const uint8_t rx_msg_lenght = 61;
 const uint8_t decoded_radio_answer_lenght = 32;
 const uint8_t syncMessage_lenght = 28;
 
-int onos_cmd_start_position=-99;  
-int onos_cmd_end_position=-99;  
+int onos_cmd_start_position = -99;  
+int onos_cmd_end_position = -99;  
 char received_message_type_of_onos_cmd[3];
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
 //volatile char decoded_uart_answer[24]="er00_#]";
-char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
-int received_message_address=0; //must be int..
+char decoded_radio_answer[decoded_radio_answer_lenght] = "er00_#]";
+int received_message_address = 0; //must be int..
 //volatile char filtered_uart_message[rx_msg_lenght+3];
 char filtered_radio_message[rx_msg_lenght+3];
 volatile char syncMessage[syncMessage_lenght];
 char str_this_node_address[4];
-uint8_t main_obj_selected=0;
-uint8_t rx_obj_selected=0;
-char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
+uint8_t main_obj_selected = 0;
+uint8_t rx_obj_selected = 0;
+char progressive_msg_id = 48;  //48 is 0 in ascii   //a progressive id to make each message unique
 char received_serial_number[13]; //used in OnosMsg
-boolean reInitializeRadio=0;
-boolean ota_loop=0; //enable the ota receiver loop
+boolean reInitializeRadio = 0;
+boolean ota_loop = 0; //enable the ota receiver loop
 //////////////////////////////////End of Standard part to run decodeOnosCmd()//////////////////////////////////
 
 
 uint8_t obj_button_pin;
 //end node object pinuot, continue in setup() // 
 
-OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
+OnosMsg OnosMsgHandler = OnosMsg();  //create the OnosMsg object
 
-uint8_t radioRetry=3;      //todo: make this changable from serialport
-uint8_t radioTxTimeout=20;  //todo: make this changable from serialport
-uint8_t radioRetryAllarm=100; 
-uint8_t radioTxTimeoutAllarm=50;  
+uint8_t radioRetry = 3;      //todo: make this changable from serialport
+uint8_t radioTxTimeout = 20;  //todo: make this changable from serialport
+uint8_t radioRetryAllarm = 100; 
+uint8_t radioTxTimeoutAllarm = 50;  
 
 # define gateway_address 1
 //boolean first_sync=1;
-unsigned long random_time=0;
+unsigned long random_time = 0;
 
 
-unsigned long time_continuos_on=0;
-unsigned long time_since_last_sync=0;
-unsigned long time_from_turn_on=0;
+unsigned long time_continuos_on = 0;
+unsigned long time_since_last_sync = 0;
+unsigned long time_from_turn_on = 0;
 float minutes_time_from_turn_on;
 char tmp_minutes_time_from_turn_on_array[5];
 char minutes_time_from_turn_on_array[5];
 
-int timeout_to_turn_off=0;//0=disabled    600; //10 hours    todo   add the possibility to set it from remote
+int timeout_to_turn_off = 0;//0=disabled    600; //10 hours    todo   add the possibility to set it from remote
 
-uint8_t skipRadioRxMsg=0;
-uint8_t skipRadioRxMsgThreshold=5;
+uint8_t skipRadioRxMsg = 0;
+uint8_t skipRadioRxMsgThreshold = 10;
 
 
-volatile char main_obj_state=0;
+volatile char main_obj_state = 0;
 //int old_main_obj_state=5;
 
 
 
-unsigned long time_to_reset_encryption=3000; //this must be greater than time_to_change_status 
-unsigned long time_to_change_status=30;
+unsigned long time_to_reset_encryption = 3000; //this must be greater than time_to_change_status 
+unsigned long time_to_change_status = 30;
 
 
 int tmp_number;
@@ -395,58 +395,58 @@ boolean changeObjStatus(char obj_number,int status_to_set)
 	Serial.print(F("changeObjStatus executed with  status:"));
 	Serial.println(status_to_set);
 	
-	if (obj_number==button){ //will not change the status to the button...
+	if (obj_number == button){ //will not change the status to the button...
 		return(0);
 	}
 	
 
 	#if defined(node_type_WreedSaa)
-		if ( (obj_number==led)|(obj_number==digOut) ){
+		if ( (obj_number == led)|(obj_number == digOut) ){
 		digitalWrite(node_obj_pinout[obj_number],!status_to_set); // 
 		Serial.println(F("digitalWrite with obj")); 
 		}
 
 	#elif defined(node_type_Wrelay4x)
 
-		if (obj_number==0){
-			main_obj_state=status_to_set;
-			digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
+		if (obj_number == 0){
+			main_obj_state = status_to_set;
+			digitalWrite(node_obj_pinout[obj_number], !status_to_set); //  ! the relay are on when the pin is at gnd
 			Serial.println(F("digitalWrite with obj")); 
 			changeObjStatus(led,status_to_set);
 		}
-		else if(obj_number<4) { //objects from 0 to 3 are relay  
-			digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
+		else if(obj_number < 4) { //objects from 0 to 3 are relay  
+			digitalWrite(node_obj_pinout[obj_number], !status_to_set); //  ! the relay are on when the pin is at gnd
 			Serial.println(F("digitalWrite with obj")); 
 		}
-		else if (obj_number==led){
-			digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+		else if (obj_number == led){
+			digitalWrite(node_obj_pinout[obj_number], status_to_set); // 
 			Serial.println(F("digitalWrite with obj")); 
 		}
 	#elif defined(node_type_WPlug1vx)
 		
 		
-		if (obj_number==0){
-			main_obj_state=status_to_set;
-			digitalWrite(5,!status_to_set); // set relay1
-			digitalWrite(6,!status_to_set); // set relay2
-			digitalWrite(7,status_to_set);// reset both relays
+		if (obj_number == 0){
+			main_obj_state = status_to_set;
+			digitalWrite(5, !status_to_set); // set relay1
+			digitalWrite(6, !status_to_set); // set relay2
+			digitalWrite(7, status_to_set);// reset both relays
 			Serial.println(F("digitalWrite with obj")); 
-			changeObjStatus(led,!status_to_set);
+			changeObjStatus(led, !status_to_set);
 		}
 		
-		else if (obj_number==led){
-			digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+		else if (obj_number == led){
+			digitalWrite(node_obj_pinout[obj_number], status_to_set); // 
 			Serial.println(F("digitalWrite with obj")); 
 		}
 		
 		
 	#endif
 
-	if(obj_number==syncTimeout){  // if the object sent is syncTimeout change the sync_timeout with the value received
-		sync_timeout=status_to_set*1000;// get the value in seconds
+	if(obj_number == syncTimeout){  // if the object sent is syncTimeout change the sync_timeout with the value received
+		sync_timeout = status_to_set*1000;// get the value in seconds
 	}
 	
-	node_obj_status[obj_number]=status_to_set;
+	node_obj_status[obj_number] = status_to_set;
 	
 	return(1);
 
@@ -461,18 +461,18 @@ void composeSyncMessage()
 {
 	Serial.println(F("composeSyncMessage executed"));
 	//[S_123ul5.24WPlugAvx000810000x_#]
-	tmp_number=0;
+	tmp_number = 0;
 	//strcpy(str_this_node_address,"");
-	memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
-	str_this_node_address[0]='0';
-	str_this_node_address[1]='0';
-	str_this_node_address[2]='0';
+	memset(str_this_node_address, 0, sizeof(str_this_node_address)); //to clear the array
+	str_this_node_address[0] = '0';
+	str_this_node_address[1] = '0';
+	str_this_node_address[2] = '0';
 	
-	str_this_node_address[0]=(this_node_address/100)+48;
-	tmp_number=this_node_address%100;
-	str_this_node_address[1]=(tmp_number/10)+48;
-	tmp_number=tmp_number%10; 
-	str_this_node_address[2]=tmp_number+48;  
+	str_this_node_address[0] = (this_node_address/100)+48;
+	tmp_number = this_node_address%100;
+	str_this_node_address[1] = (tmp_number/10)+48;
+	tmp_number = tmp_number%10; 
+	str_this_node_address[2] = tmp_number+48;  
 	
 	/*
 	if (this_node_address>99)
@@ -509,39 +509,39 @@ void composeSyncMessage()
 	
 	
 	//strcpy(syncMessage, "");
-	memset(syncMessage,0,sizeof(syncMessage)); //to clear the array
+	memset(syncMessage, 0, sizeof(syncMessage)); //to clear the array
 	strcpy(syncMessage, "[S_");
 	strcat(syncMessage, str_this_node_address);
 	
 	#if defined(node_type_WreedSaa)
 		//[S_001rsWreedSaa000132Lgx_#]      reeds:3, temperature sensor:2, luminosity sensor:L, battery sensor:g 
 		
-		node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
-		node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
+		node_obj_status[reed1] = digitalRead(node_obj_pinout[reed1]);
+		node_obj_status[reed2] = digitalRead(node_obj_pinout[reed2]);
 		
-		reed1_status_sent=node_obj_status[reed1];
-		reed2_status_sent=node_obj_status[reed2];
+		reed1_status_sent = node_obj_status[reed1];
+		reed2_status_sent = node_obj_status[reed2];
 		
 		Serial.print(F("reed1_status="));
 		Serial.println(node_obj_status[reed1]);
 		Serial.print(F("reed2_status="));
 		Serial.println(node_obj_status[reed2]);
 		
-		logic_reed1_status=(node_obj_status[reed1])^(node_obj_status[reed1Logic]); //the 2 value must be different for the result to be 1
-		logic_reed2_status=(node_obj_status[reed2])^(node_obj_status[reed2Logic]);
+		logic_reed1_status = (node_obj_status[reed1]) ^ (node_obj_status[reed1Logic]); //the 2 value must be different for the result to be 1
+		logic_reed2_status = (node_obj_status[reed2]) ^ (node_obj_status[reed2Logic]);
 		
 		
-		if ((logic_reed1_status==0)&&(logic_reed2_status==0)){
-			reed_sensors_state='0';   
+		if ((logic_reed1_status == 0) && (logic_reed2_status == 0)){
+			reed_sensors_state = '0';   
 		}
-		else if ((logic_reed1_status==0)&&(logic_reed2_status==1)){
-			reed_sensors_state='1';   
+		else if ((logic_reed1_status == 0) && (logic_reed2_status == 1)){
+			reed_sensors_state = '1';   
 		}
-		else if ((logic_reed1_status==1)&&(logic_reed2_status==0)){
+		else if ((logic_reed1_status == 1) && (logic_reed2_status == 0)){
 			reed_sensors_state='2';   
 		}
-		else if ((logic_reed1_status==1)&&(logic_reed2_status==1)){
-			reed_sensors_state='3';   
+		else if ((logic_reed1_status == 1) && (logic_reed2_status == 1)){
+			reed_sensors_state = '3';   
 		}
 		
 		Serial.print(F("reed_total_status="));
@@ -549,22 +549,22 @@ void composeSyncMessage()
 		
 		// temperature_sensor_value=(  analogRead(A0)*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius
 		
-		for (uint8_t i=0;i<=analog_readings;i=i+1){
-			temperature_sensor_value=temperature_sensor_value+(analogRead(node_obj_pinout[tempSensor])*3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius  
+		for (uint8_t i = 0;i <= analog_readings;i = i + 1){
+			temperature_sensor_value = temperature_sensor_value + (analogRead(node_obj_pinout[tempSensor]) * 3.0 * 100.0) / 1024;//3v, lm35 temp sensor 10mv each celsius  
 			while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
-			luminosity_sensor_value= luminosity_sensor_value+analogRead(node_obj_pinout[luminosity_sensor])/4;
+			luminosity_sensor_value = luminosity_sensor_value + analogRead(node_obj_pinout[luminosity_sensor]) / 4;
 			while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
-			battery_value=battery_value+analogRead(node_obj_pinout[battery_state])/4;
+			battery_value = battery_value + analogRead(node_obj_pinout[battery_state]) / 4;
 			while (ADCSRA & (1 << ADSC)) ; //wait for the reading of previous analog read 
 		}
 		
-		temperature_sensor_value=(temperature_sensor_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..
+		temperature_sensor_value = (temperature_sensor_value/analog_readings) + 1;  // +1 is to never transmitt a binary 0 ..
 		
 		
-		if (temperature_sensor_value>254){// limit the data to only a byte
-			temperature_sensor_value=254;  
+		if (temperature_sensor_value > 254){// limit the data to only a byte
+			temperature_sensor_value = 254;  
 		}
-		temperature_sensor_value_byte=byte(temperature_sensor_value); //cast from int to byte
+		temperature_sensor_value_byte = byte(temperature_sensor_value); //cast from int to byte
 		
 		/*
 		//convert from integer to 2 binary bytes 
@@ -581,19 +581,19 @@ void composeSyncMessage()
 		
 		*/
 		
-		luminosity_sensor_value=(luminosity_sensor_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..
-		if (luminosity_sensor_value>254){// limit the data to only a byte
-			luminosity_sensor_value=254;  
+		luminosity_sensor_value = (luminosity_sensor_value/analog_readings) + 1;  // +1 is to never transmitt a binary 0 ..
+		if (luminosity_sensor_value > 254){// limit the data to only a byte
+			luminosity_sensor_value = 254;  
 		}
 		
-		luminosity_sensor_value_byte=byte(luminosity_sensor_value);//get the value of the lux sensor , 0:255
+		luminosity_sensor_value_byte = byte(luminosity_sensor_value);//get the value of the lux sensor , 0:255
 		
-		battery_value=(battery_value/analog_readings)+1;  // +1 is to never transmitt a binary 0 ..
+		battery_value = (battery_value / analog_readings) + 1;  // +1 is to never transmitt a binary 0 ..
 		
-		if (battery_value>254){// limit the data to only a byte
-			battery_value=254;  
+		if (battery_value > 254){// limit the data to only a byte
+			battery_value = 254;  
 		}
-		battery_value_byte=byte(battery_value);
+		battery_value_byte = byte(battery_value);
 		
 		Serial.print(F("temperature_sensor_value="));
 		Serial.print(temperature_sensor_value);
@@ -614,7 +614,7 @@ void composeSyncMessage()
 		battery_value=49;
 		*/
 		
-		if (this_node_address==254){
+		if (this_node_address == 254){
 			strcat(syncMessage, "ga");
 			strcat(syncMessage, node_fw);
 			strcat(syncMessage, serial_number);
@@ -634,7 +634,7 @@ void composeSyncMessage()
 	
 	#elif defined(node_type_Wrelay4x)
 		
-		if (this_node_address==254){
+		if (this_node_address == 254){
 			strcat(syncMessage, "ga");
 			strcat(syncMessage, node_fw);
 			strcat(syncMessage, serial_number);
@@ -645,17 +645,17 @@ void composeSyncMessage()
 			// strcat(syncMessage, "sy");
 			strcat(syncMessage, serial_number);
 			uint8_t  tmp_len = strlen(syncMessage);
-			syncMessage[tmp_len]=node_obj_status[0]+48;  
-			syncMessage[tmp_len + 1]=node_obj_status[1]+48;  
-			syncMessage[tmp_len + 2]=node_obj_status[2]+48;  
-			syncMessage[tmp_len + 3]=node_obj_status[3]+48;  
+			syncMessage[tmp_len] = node_obj_status[0] + 48;  
+			syncMessage[tmp_len + 1] = node_obj_status[1] + 48;  
+			syncMessage[tmp_len + 2] = node_obj_status[2] + 48;  
+			syncMessage[tmp_len + 3] = node_obj_status[3] + 48;  
 			syncMessage[tmp_len + 4] = '\0'; 
 			
 		}
 		
 	#elif defined(node_type_WPlug1vx)
 		
-		if (this_node_address==254){
+		if (this_node_address == 254){
 			strcat(syncMessage, "ga");
 			strcat(syncMessage, node_fw);
 			strcat(syncMessage, serial_number);
@@ -667,7 +667,7 @@ void composeSyncMessage()
 			
 			strcat(syncMessage, serial_number);
 			uint8_t  tmp_len = strlen(syncMessage);
-			syncMessage[tmp_len] = node_obj_status[0]+48; 
+			syncMessage[tmp_len] = node_obj_status[0] + 48; 
 			syncMessage[tmp_len + 1] = '\0';
 			
 		}
@@ -676,11 +676,11 @@ void composeSyncMessage()
 		
 	#elif defined(node_type_WLightSS)
 		
-		if (main_obj_state==1){
+		if (main_obj_state == 1){
 		
-			if (time_continuos_on!=0){
-				time_from_turn_on=time_from_turn_on+(millis()-time_continuos_on);
-				time_since_last_sync=millis();  // to implement...
+			if (time_continuos_on != 0){
+				time_from_turn_on = time_from_turn_on + (millis() - time_continuos_on);
+				time_since_last_sync = millis();  // to implement...
 			}
 		
 		}
@@ -688,15 +688,15 @@ void composeSyncMessage()
 		// char char_main_obj_state[2];
 		// char_main_obj_state[0]=main_obj_state+48;
 		
-		minutes_time_from_turn_on=0;  //time_from_turn_on/60000; //get minutes from milliseconds  todo set it correctly..
+		minutes_time_from_turn_on = 0;  //time_from_turn_on/60000; //get minutes from milliseconds  todo set it correctly..
 		
-		if( minutes_time_from_turn_on>9999) {//banana todo change it in some way...
-			minutes_time_from_turn_on=0;
+		if( minutes_time_from_turn_on > 9999) {//banana todo change it in some way...
+			minutes_time_from_turn_on = 0;
 		
 		}
 		
-		memset(tmp_minutes_time_from_turn_on_array,0,sizeof(tmp_minutes_time_from_turn_on_array)); //to clear the array
-		memset(minutes_time_from_turn_on_array,0,sizeof(minutes_time_from_turn_on_array)); //to clear the array
+		memset(tmp_minutes_time_from_turn_on_array, 0, sizeof(tmp_minutes_time_from_turn_on_array)); //to clear the array
+		memset(minutes_time_from_turn_on_array, 0, sizeof(minutes_time_from_turn_on_array)); //to clear the array
 		
 		//itoa (minutes_time_from_turn_on,minutes_time_from_turn_on_array,10);  //convert from int to char array
 		//dtostrf  //convert from float to char array
@@ -705,33 +705,33 @@ void composeSyncMessage()
 		
 		// TODO: use sprintf(tmp_minutes_time_from_turn_on_array,"%04u",minutes_time_from_turn_on);  
 		
-		if (minutes_time_from_turn_on<10){
-			dtostrf(minutes_time_from_turn_on,1, 0, tmp_minutes_time_from_turn_on_array);  //make a mull terminating array..
-			strcpy(minutes_time_from_turn_on_array,"000");
-			strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
+		if (minutes_time_from_turn_on < 10){
+			dtostrf(minutes_time_from_turn_on, 1, 0, tmp_minutes_time_from_turn_on_array);  //make a mull terminating array..
+			strcpy(minutes_time_from_turn_on_array, "000");
+			strcat(minutes_time_from_turn_on_array, tmp_minutes_time_from_turn_on_array);
 		}
 		
-		else if (minutes_time_from_turn_on<100){
-			dtostrf(minutes_time_from_turn_on,2, 0, tmp_minutes_time_from_turn_on_array);
-			strcpy(minutes_time_from_turn_on_array,"00");
-			strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
+		else if (minutes_time_from_turn_on < 100){
+			dtostrf(minutes_time_from_turn_on, 2, 0, tmp_minutes_time_from_turn_on_array);
+			strcpy(minutes_time_from_turn_on_array, "00");
+			strcat(minutes_time_from_turn_on_array, tmp_minutes_time_from_turn_on_array);
 		}
 		
-		else if (minutes_time_from_turn_on<1000){
-			dtostrf(minutes_time_from_turn_on,3, 0, tmp_minutes_time_from_turn_on_array);
-			strcpy(minutes_time_from_turn_on_array,"0");
-			strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
+		else if (minutes_time_from_turn_on < 1000){
+			dtostrf(minutes_time_from_turn_on, 3, 0, tmp_minutes_time_from_turn_on_array);
+			strcpy(minutes_time_from_turn_on_array, "0");
+			strcat(minutes_time_from_turn_on_array, tmp_minutes_time_from_turn_on_array);
 		}
 		
-		else if (minutes_time_from_turn_on<10000){
-			dtostrf(minutes_time_from_turn_on,4, 0, tmp_minutes_time_from_turn_on_array);
-			strcat(minutes_time_from_turn_on_array,tmp_minutes_time_from_turn_on_array);
+		else if (minutes_time_from_turn_on < 10000){
+			dtostrf(minutes_time_from_turn_on, 4, 0, tmp_minutes_time_from_turn_on_array);
+			strcat(minutes_time_from_turn_on_array, tmp_minutes_time_from_turn_on_array);
 		}
 		
 		//snprintf(minutes_time_from_turn_on_array, 5, "%d", minutes_time_from_turn_on); //convert from float to char array
 				
 		uint8_t  tmp_len = strlen(syncMessage);
-		syncMessage[tmp_len]=main_obj_state+48;   //+48 for ascii translation
+		syncMessage[tmp_len] = main_obj_state + 48;   //+48 for ascii translation
 		syncMessage[tmp_len + 1] = '\0';
 					
 		
@@ -742,16 +742,16 @@ void composeSyncMessage()
 	#endif  //end node_type_WLightSS
 	
 	
-	if (progressive_msg_id<122){  //122 is z in ascii
-		progressive_msg_id=progressive_msg_id+1;
+	if (progressive_msg_id < 122){  //122 is z in ascii
+		progressive_msg_id = progressive_msg_id + 1;
 	}
 	else{
-		progressive_msg_id=48;  //48 is 0 in ascii
+		progressive_msg_id = 48;  //48 is 0 in ascii
 	}
 	
 	
 	uint8_t  tmp_len = strlen(syncMessage);
-	syncMessage[tmp_len]=progressive_msg_id; //put the variable msgid in the array 
+	syncMessage[tmp_len] = progressive_msg_id; //put the variable msgid in the array 
 	syncMessage[tmp_len + 1] = '\0';
 	//Serial.println(syncMessage[28]);
 	//Serial.println(strlen(syncMessage));
@@ -762,7 +762,7 @@ void composeSyncMessage()
 
 
 
-void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
+void sendSyncMessage(uint8_t retry, uint8_t tx_timeout=150)
 {
 	
 	// composeSyncMessage();
@@ -784,17 +784,17 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
 	#endif
 	
 	Serial.println(F(" sendWithRetry sendSyncMessage executed"));
-	if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,tx_timeout)) {
+	if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage), retry, tx_timeout)) {
 		// note that the max delay time is 255..because is uint8_t
 		//target node Id, message as string or byte array, message length,retries, milliseconds before retry
 		//(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 		Serial.println(F("sent_sync_message1"));
 		//    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
-		skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+		skipRadioRxMsg = 0; //reset the counter to allow this node to receive query 
 	}
 
 	radio.receiveDone(); //put radio in RX mode
-	*get_sync_time=millis();
+	*get_sync_time = millis();
 }
 
 
@@ -807,8 +807,8 @@ void getAddressFromGateway()
 	//[S_123ga5.24WPlugAvx000810000x_#]
 	
 	composeSyncMessage();
-	syncMessage[6]='g'; //modify the message to get a address instead of just sync.
-	syncMessage[7]='a'; //modify the message to get a address instead of just sync.
+	syncMessage[6] = 'g'; //modify the message to get a address instead of just sync.
+	syncMessage[7] = 'a'; //modify the message to get a address instead of just sync.
 	
 	Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
 	
@@ -818,7 +818,7 @@ void getAddressFromGateway()
 	for (pointer = 0; pointer < sizeof(syncMessage); pointer++){
 		Serial.print(syncMessage[pointer]); 
 		if (pointer > 0){
-			if ((syncMessage[pointer-1]=='#')&&(syncMessage[pointer]==']')  ){//  
+			if ((syncMessage[pointer-1] == '#') && (syncMessage[pointer] == ']')  ){//  
 				break;
 			}
 		}
@@ -826,7 +826,7 @@ void getAddressFromGateway()
 	}
 	Serial.println(F(":end")); 
 	
-	tryed_times=0;
+	tryed_times = 0;
 
 
 	
@@ -841,7 +841,7 @@ void getAddressFromGateway()
 			// Serial.print(millis()-timetest);
 		#endif
 		
-		if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),1,radioTxTimeout)) {
+		if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage), 1, radioTxTimeout)) {
 			// note that the max delay time is 255..because is uint8_t
 			//target node Id, message as string or byte array, message length,retries, milliseconds before retry
 			//(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
@@ -853,13 +853,13 @@ void getAddressFromGateway()
 			}
 			Serial.println("end_get_address"); 
 			*/
-			skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+			skipRadioRxMsg = 0; //reset the counter to allow this node to receive query 
 			break;// exit the while (tryed_times < radioRetry )
 		}
 		else{
 			Serial.print(F("radio tx failed, I retry"));
-			random_time=10;//random(10,radioTxTimeout*3);
-			tryed_times=tryed_times+1;
+			random_time = 10;//random(10,radioTxTimeout*3);
+			tryed_times = tryed_times + 1;
 			delay(200);
 			//LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
 			//ADCSRA=keep_ADCSRA; //resume the status of the register
@@ -869,8 +869,8 @@ void getAddressFromGateway()
 	
 	}
 	
-	syncMessage[6]='u'; //modify the message
-	syncMessage[7]='l'; //modify the message
+	syncMessage[6] = 'u'; //modify the message
+	syncMessage[7] = 'l'; //modify the message
 	radio.receiveDone(); //put radio in RX mode
 }
 
@@ -896,20 +896,20 @@ boolean checkAndHandleIncomingRadioMsg(){
 	//memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
 	
 	//Serial.println(radio.SENDERID);
-	if (radio.TARGETID!=this_node_address){
+	if (radio.TARGETID != this_node_address){
 		Serial.println(F("[S_er9_radioAddress_#]"));
 		return(0); // todo: implement a forward of the message? 
 	}
 	
 	Serial.print(F("msg_start:"));
-	onos_cmd_start_position=-99;  
-	onos_cmd_end_position=-99;  
+	onos_cmd_start_position = -99;  
+	onos_cmd_end_position = -99;  
 	//strcpy(filtered_radio_message,"");
-	memset(filtered_radio_message,0,sizeof(filtered_radio_message)); //to clear the array
+	memset(filtered_radio_message, 0, sizeof(filtered_radio_message)); //to clear the array
 	
 	Serial.println(radio.TARGETID);
 	
-	if (radio.TARGETID!=this_node_address){
+	if (radio.TARGETID != this_node_address){
 		Serial.println(F("[S_er9_radioAddress_#]"));
 		return(0); // todo: implement a forward of the message? 
 	}
@@ -918,22 +918,22 @@ boolean checkAndHandleIncomingRadioMsg(){
 	//for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
 	
 	for (counter = 0; counter <= radio.DATALEN; counter++) {
-		filtered_radio_message[counter]=radio.DATA[counter];
+		filtered_radio_message[counter] = radio.DATA[counter];
 		//  Serial.println(filtered_radio_message[counter]);
 		
 		//[S_001dw06001_#]
-		if (counter<2){
+		if (counter < 2){
 			continue;
 		}
-		if ( (filtered_radio_message[counter-2]=='[')&&(filtered_radio_message[counter-1]=='S')&&(filtered_radio_message[counter]=='_')  ){//   
+		if ( (filtered_radio_message[counter-2] == '[') && (filtered_radio_message[counter-1] == 'S') && (filtered_radio_message[counter] == '_')  ){//   
 			// Serial.println("cmd start found-------------------------------");
 			onos_cmd_start_position=counter-2;
 		}
 		
 		
-		if( (filtered_radio_message[counter-2]=='_')&&(filtered_radio_message[counter-1]=='#')&&(filtered_radio_message[counter]==']')  ){//   
+		if( (filtered_radio_message[counter-2] == '_') && (filtered_radio_message[counter-1] == '#') && (filtered_radio_message[counter] == ']')  ){//   
 			//  Serial.println("cmd end found-------------------------------");
-			onos_cmd_end_position=counter-2;
+			onos_cmd_end_position = counter - 2;
 			break;// now the message has ended
 		}
 
@@ -943,7 +943,7 @@ boolean checkAndHandleIncomingRadioMsg(){
 	Serial.println(F(":msg_stop"));
 	
 	
-	if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
+	if ( (onos_cmd_start_position != -99) && (onos_cmd_end_position != -99 )){
 	
 	Serial.println(F("onos cmd  found-------------------------------"));
 	//noInterrupts(); // Disable interrupts    //important for lamp node 
@@ -951,12 +951,12 @@ boolean checkAndHandleIncomingRadioMsg(){
 	OnosMsgHandler.decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
 	
 	
-	if( (decoded_radio_answer[0]=='o')&&(decoded_radio_answer[1]=='k')){//if the message was ok...
+	if( (decoded_radio_answer[0] == 'o') && (decoded_radio_answer[1] == 'k')){//if the message was ok...
 	  //check if sender wanted an ACK
 	  if (radio.ACKRequested()){
 		radio.sendACK();
 		Serial.println(F(" - ACK sent"));
-		*get_sync_time=millis();
+		*get_sync_time = millis();
 	  }
 	  //interrupts(); // Enable interrupts
 	return(1); 
@@ -966,9 +966,9 @@ boolean checkAndHandleIncomingRadioMsg(){
 	  Serial.print(F("error in message decode i will not send the ACK,i found:"));
 	  //  uint8_t k=0;
 	  //  while (k<decoded_radio_answer_lenght)
-	  for (uint8_t k=0; k<decoded_radio_answer_lenght; k++)
+	  for (uint8_t k = 0; k < decoded_radio_answer_lenght; k++)
 		{
-		  if (decoded_radio_answer[k]==0)
+		  if (decoded_radio_answer[k] == 0)
 			{
 			  break;
 			} 
@@ -988,7 +988,7 @@ boolean checkAndHandleIncomingRadioMsg(){
 	
 	}
 	else{
-	strcpy(decoded_radio_answer,"nocmd0_#]");
+	strcpy(decoded_radio_answer, "nocmd0_#]");
 	Serial.print(F("error in message nocmd0_#]"));
 	Serial.print(onos_cmd_start_position);
 	Serial.println(onos_cmd_end_position);
@@ -1007,9 +1007,9 @@ boolean checkAndHandleIncomingRadioMsg(){
 
 void checkCurrentRadioAddress()
 	{
-	if(reInitializeRadio==1){
+	if(reInitializeRadio == 1){
 		beginRadio();
-		reInitializeRadio=0;
+		reInitializeRadio = 0;
 		composeSyncMessage();
 		sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
 		// TODO: add return();  ?
@@ -1018,28 +1018,28 @@ void checkCurrentRadioAddress()
 	
 	#if defined(remote_node)   // only if this is a remote node..
 		
-		if (this_node_address==254){// i have not the proper address yet..
+		if (this_node_address == 254){// i have not the proper address yet..
 	
-			random_time=10000;//random(4000,5000);
+			random_time = 10000;//random(4000,5000);
 			
-			if ((millis()-*get_address_timeout_pointer)>random_time){ //every 10000/5000 ms
+			if ((millis() - (*get_address_timeout_pointer)) > random_time){ //every 10000/5000 ms
 				#if defined(DEVMODE)
 					Serial.print(F("get_address_timeout>time:"));
-					Serial.println((millis()-*get_address_timeout_pointer));
+					Serial.println((millis() - (*get_address_timeout_pointer)));
 				#endif
 				
-				*get_address_timeout_pointer=millis();
+				*get_address_timeout_pointer = millis();
 				getAddressFromGateway();  //ask the gateway for a proper address
 				
 			}
 		}
 		else{
 			//random_time=1500;//random(1500,2500);
-			if ((millis()-*get_sync_time)>sync_timeout){ //every 1500/2500 ms
+			if ((millis() - (*get_sync_time)) > sync_timeout){ //every 1500/2500 ms
 
 				#if defined(battery_node) // defined(node_type_WreedSaa)
 					composeSyncMessage();
-					sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
+					sendSyncMessage(radioRetryAllarm, radioTxTimeoutAllarm);
 					//sync_time=millis();
 					//  I put the node to sleep
 					Serial.println(F("I go to sleep"));
@@ -1055,17 +1055,17 @@ void checkCurrentRadioAddress()
 					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
 					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
 					delayMicroseconds(50);
-					ADCSRA=keep_ADCSRA; //resume the status of the register
+					ADCSRA = keep_ADCSRA; //resume the status of the register
 					composeSyncMessage();
 					sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
 					//sync_time=millis(); changed in in sendSyncMessage
 					
-					awake_time=millis();
+					awake_time = millis();
 					Serial.println(F("w for possible messages"));
-					while ((millis()-awake_time)>stay_awake_period ){
+					while ((millis() - awake_time) > stay_awake_period ){
 						//TODO: put if(millis()-awake_time)<stay_awake_period )--->sleep   in the main loop...
 						if (radio.receiveDone()){
-							skipRadioRxMsg=skipRadioRxMsg+1;
+							skipRadioRxMsg = skipRadioRxMsg+1;
 							checkAndHandleIncomingRadioMsg();
 						}
 					
@@ -1075,7 +1075,7 @@ void checkCurrentRadioAddress()
 				#else    //not a battery node
 					Serial.println(F("not a battery node part executed"));
 					composeSyncMessage();
-					sendSyncMessage(radioRetry,radioTxTimeout);
+					sendSyncMessage(radioRetry, radioTxTimeout);
 					//sync_time=millis(); changed in in sendSyncMessage
 				#endif  //end  if defined(battery_node)
 
@@ -1099,17 +1099,17 @@ void beginRadio()
 	interrupts(); // Enable interrupts
 	
 	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
-		digitalWrite(RFM69_RST,1); //set pullup on reed
+		digitalWrite(RFM69_RST, 1); //set pullup on reed
 		delay(5); // delay for the module to receive the command
-		digitalWrite(RFM69_RST,0); //set pullup on reed
+		digitalWrite(RFM69_RST, 0); //set pullup on reed
 		delay(15); // delay to wait for the module to restart
 	#endif
 
 	
-	*get_address_timeout_pointer=millis();
+	*get_address_timeout_pointer = millis();
 	
 	// Initialize radio
-	radio.initialize(FREQUENCY,this_node_address,NETWORKID);
+	radio.initialize(FREQUENCY, this_node_address, NETWORKID);
 	if (IS_RFM69HCW) {
 		radio.setHighPower();    // Only for RFM69HCW & HW!
 	}
@@ -1120,13 +1120,13 @@ void beginRadio()
 	radio.enableAutoPower(targetRSSI);
 	
 	Serial.print(F("\nListening at "));
-	Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+	Serial.print(FREQUENCY == RF69_433MHZ ? 433 : FREQUENCY == RF69_868MHZ ? 868 : 915);
 	Serial.println(F(" MHz"));
 	Serial.print(F("radio address changed to:"));
 	Serial.println(this_node_address);
 	
 	#if defined(battery_node)   //if the node is a battery node:
-		keep_ADCSRA=ADCSRA; //save the state of the register
+		keep_ADCSRA = ADCSRA; //save the state of the register
 	#endif 
 	
 
@@ -1134,8 +1134,8 @@ void beginRadio()
 
 void buttonStateChanged()
 {
-	button_time_same_status=millis();
-	button_still_same_status=0;
+	button_time_same_status = millis();
+	button_still_same_status = 0;
 }
 
 #if defined(node_type_WreedSaa)
@@ -1145,7 +1145,7 @@ void buttonStateChanged()
 	  //node_obj_status[reed1Logic]=0;
 		Serial.println(F("handleReed called"));
 		composeSyncMessage();
-		sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
+		sendSyncMessage(radioRetryAllarm, radioTxTimeoutAllarm); 
 	
 	/*
 	  if (digitalRead(node_obj_pinout[reed1])==node_obj_status[reed1Logic]){ //the sensor should send allarm
@@ -1171,33 +1171,33 @@ void handleButton()
 	Serial.print(F("btn_still_same_status:"));
 	Serial.print(button_still_same_status);
 	Serial.print(F("btn_t_same_status:"));
-	Serial.println(millis()-button_time_same_status);
+	Serial.println(millis() - button_time_same_status);
 
    // Serial.print(F("obj_button pressed"));
-	if (((millis()-button_time_same_status)>time_to_reset_encryption)
-		&&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
+	if (((millis()-button_time_same_status) > time_to_reset_encryption)
+		&&( (millis()-button_time_same_status) < (time_to_reset_encryption * 2) )){  //button pressed for more than x seconds
   
 		Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
 		noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
-		memset(encript_key,0,sizeof(encript_key)); //to clear the array
-		strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
-		this_node_address=254;//reset the node address
+		memset(encript_key, 0, sizeof(encript_key)); //to clear the array
+		strcpy(encript_key, INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
+		this_node_address = 254;//reset the node address
 		//first_sync=1;
 		setup();
 		//beginRadio();  //restart radio with the default encript_key  
 		//checkCurrentRadioAddress();  
 		interrupts(); // Enable interrupts 
-		button_time_same_status=millis();
+		button_time_same_status = millis();
 	}
 
-	if (((millis()-button_time_same_status)>time_to_change_status)
+	if (((millis() - button_time_same_status) > time_to_change_status)
 								&&(button_still_same_status==0)){
 		Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
-		changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+		changeObjStatus(main_obj_selected, !main_obj_state);  // this will make a not of current state
 		composeSyncMessage();
-		sendSyncMessage(radioRetry+2,radioTxTimeout); 
-		button_still_same_status=1;
-		button_time_same_status=millis();
+		sendSyncMessage(radioRetry+2, radioTxTimeout); 
+		button_still_same_status = 1;
+		button_time_same_status = millis();
 		delay(100);//todo change it smaller
 
 	}
@@ -1208,17 +1208,17 @@ void handleButton()
 	{
 
 		detachInterrupt(1);
-		interrupt_called=1;
+		interrupt_called = 1;
 		//Serial.println(F("interrupt called"));
 		#if defined(battery_node)   //if the node is a battery node:
-			ADCSRA=keep_ADCSRA; //resume the status of the register
+			ADCSRA = keep_ADCSRA; //resume the status of the register
 		#endif
 		handleReed();
-		reed1_status_sent=node_obj_status[reed1];
-		reed2_status_sent=node_obj_status[reed2];
+		reed1_status_sent = node_obj_status[reed1];
+		reed2_status_sent = node_obj_status[reed2];
 		//delay(2);  //delays won't work in thw interrupt..
-		node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
-		node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
+		node_obj_status[reed1] = digitalRead(node_obj_pinout[reed1]);
+		node_obj_status[reed2] = digitalRead(node_obj_pinout[reed2]);
 		/* 
 		if ((reed1_status_sent!=node_obj_status[reed1] ) |(reed2_status_sent!=node_obj_status[reed2] )){ //if the reed has changed status during last transmission
 		Serial.println(F("-reed has changed again"));
@@ -1239,12 +1239,12 @@ void ota_receive_loop()
 
 	Serial.println(F("ota_receive_loop() executed"));
 
-	ota_loop_start_time=millis()+5000;
+	ota_loop_start_time = millis() + 5000;
 
-	while( (millis()-ota_loop_start_time)>ota_timeout) {
+	while( (millis() - ota_loop_start_time) > ota_timeout) {
 		CheckForWirelessHEX(radio, flash, false);
 	}
-	ota_loop=0;
+	ota_loop = 0;
 
 }
 #endif
@@ -1254,52 +1254,52 @@ void setup()
 {
 	noInterrupts(); // Disable interrupts    //important for lamp node
 
-	node_obj_status[syncTimeout]=node_default_timeout;
-	sync_timeout=node_obj_status[syncTimeout]*1000;
+	node_obj_status[syncTimeout] = node_default_timeout;
+	sync_timeout = node_obj_status[syncTimeout] * 1000;
 	
 	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
 		pinMode(RFM69_RST, OUTPUT);	
 	#endif
 
 	#if defined(node_type_WreedSaa)
-		node_obj_status[reed1Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
-		node_obj_status[reed2Logic]=0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
+		node_obj_status[reed1Logic] = 0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
+		node_obj_status[reed2Logic] = 0; //logic 0 means reed1Logic will be 1 if the magnet is close to the reed sensor
 
-		memset(serial_number,0,sizeof(serial_number)); //to clear the array
-		strcpy(serial_number,"WreedSaa");
-		strcat(serial_number,numeric_serial);
+		memset(serial_number, 0, sizeof(serial_number)); //to clear the array
+		strcpy(serial_number, "WreedSaa");
+		strcat(serial_number, numeric_serial);
 
 		// OBJECTS PIN DEFINITION__________________________________________________________________
-		node_obj_pinout[reed1]=3;   // the first  object is the reed1 connected on pin 3 
-		node_obj_pinout[button]=5;  // the second  object is the button  connected on pin 5 
-		node_obj_pinout[led]=4;     // the third  object is the led     connected on pin 4
-		node_obj_pinout[tempSensor]=A0;   // the forth object is the temperature sensor connected on analog pin 1  
-		node_obj_pinout[battery_state]=A1;   // the 9th object is the battery state connected on analog pin 0  
-		node_obj_pinout[luminosity_sensor]=A2; 
-		node_obj_pinout[digOut]=9;  // the    5  object is the digital output connected on pin 9 
-		node_obj_pinout[reed2]=6;   // the    6  object is the reed2 connected on pin 6 
+		node_obj_pinout[reed1] = 3;   // the first  object is the reed1 connected on pin 3 
+		node_obj_pinout[button] = 5;  // the second  object is the button  connected on pin 5 
+		node_obj_pinout[led] = 4;     // the third  object is the led     connected on pin 4
+		node_obj_pinout[tempSensor] = A0;   // the forth object is the temperature sensor connected on analog pin 1  
+		node_obj_pinout[battery_state] = A1;   // the 9th object is the battery state connected on analog pin 0  
+		node_obj_pinout[luminosity_sensor] = A2; 
+		node_obj_pinout[digOut] = 9;  // the    5  object is the digital output connected on pin 9 
+		node_obj_pinout[reed2] = 6;   // the    6  object is the reed2 connected on pin 6 
 		// END OBJECTS PIN DEFINITION_______________________________________________________________
 		pinMode(node_obj_pinout[reed1], INPUT);
 		pinMode(node_obj_pinout[button], INPUT);
 		pinMode(node_obj_pinout[led], OUTPUT);
 		pinMode(node_obj_pinout[digOut], OUTPUT);
 		pinMode(node_obj_pinout[reed2], INPUT);
-		digitalWrite(node_obj_pinout[reed1],1); //set pullup on reed
+		digitalWrite(node_obj_pinout[reed1], 1); //set pullup on reed
 		//  digitalwrite(node_obj_pinout[reed2],1);
 
 
 
 	#elif defined(node_type_Wrelay4x)
-		memset(serial_number,0,sizeof(serial_number)); //to clear the array
-		strcpy(serial_number,"Wrelay4x");
-		strcat(serial_number,numeric_serial);
+		memset(serial_number, 0, sizeof(serial_number)); //to clear the array
+		strcpy(serial_number, "Wrelay4x");
+		strcat(serial_number, numeric_serial);
 		// OBJECTS PIN DEFINITION___________________________________________________________________
-		node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
-		node_obj_pinout[relay2]=4;  // the second object is the relay 2 connected on pin 8  
-		node_obj_pinout[relay3]=6;  // the third  object is the relay 3 connected on pin 9 
-		node_obj_pinout[relay4]=5;  // the forth  object is the relay 4 connected on pin 3 
-		node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
-		node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+		node_obj_pinout[relay1] = 7;  // the first  object is the relay 1 connected on pin 7 
+		node_obj_pinout[relay2] = 4;  // the second object is the relay 2 connected on pin 8  
+		node_obj_pinout[relay3] = 6;  // the third  object is the relay 3 connected on pin 9 
+		node_obj_pinout[relay4] = 5;  // the forth  object is the relay 4 connected on pin 3 
+		node_obj_pinout[led] = 5;     // the fifth  object is the led     connected on pin 5
+		node_obj_pinout[button] = 3;  // the sixth  object is the button  connected on pin 3 
 		// END OBJECTS PIN DEFINITION_______________________________________________________________
 		pinMode(node_obj_pinout[relay1], OUTPUT);
 		pinMode(node_obj_pinout[relay2], OUTPUT);
@@ -1312,14 +1312,14 @@ void setup()
 
 
 	#elif defined(node_type_WLightSS)
-		memset(serial_number,0,sizeof(serial_number)); //to clear the array
+		memset(serial_number, 0, sizeof(serial_number)); //to clear the array
 	#elif defined(node_type_WPlug1vx)
-		memset(serial_number,0,sizeof(serial_number)); //to clear the array
-		strcpy(serial_number,"WPlug1vx");
-		strcat(serial_number,numeric_serial);
+		memset(serial_number, 0, sizeof(serial_number)); //to clear the array
+		strcpy(serial_number, "WPlug1vx");
+		strcat(serial_number, numeric_serial);
 		// OBJECTS PIN DEFINITION___________________________________________________________________
-		node_obj_pinout[led]=4;     // the object is the led     connected on pin 4
-		node_obj_pinout[button]=3;  // the object is the button  connected on pin 3 
+		node_obj_pinout[led] = 4;     // the object is the led     connected on pin 4
+		node_obj_pinout[button] = 3;  // the object is the button  connected on pin 3 
 		// END OBJECTS PIN DEFINITION_______________________________________________________________
 
 		pinMode(5, OUTPUT); // set relay1
@@ -1331,9 +1331,9 @@ void setup()
 		digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
 	#elif defined(node_type_WIRbarr0)
-		node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+		node_obj_pinout[relay1] = 4;  // the first  object is the relay 1 connected on pin 7 
 	#elif defined(node_type_WSoilHaa)
-		node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
+		node_obj_pinout[relay1] = 4;  // the first  object is the relay 1 connected on pin 7 
 	
 	#endif 
 	
@@ -1373,11 +1373,11 @@ void setup()
 	*/
 	beginRadio();
 	
-	changeObjStatus(0,1);
+	changeObjStatus(0, 1);
 	delay(300);   
-	changeObjStatus(0,0);
+	changeObjStatus(0, 0);
 	
-	Blink(node_obj_pinout[led],100,3); 
+	Blink(node_obj_pinout[led], 100, 3); 
 	digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
 	
 	
@@ -1457,13 +1457,13 @@ void loop()
 	
 	
 	#if defined(ota_enabled)  
-	if (ota_loop==1){
+	if (ota_loop == 1){
 		ota_receive_loop();
 	}
 	#endif 
 	
 	if (radio.receiveDone()){
-		skipRadioRxMsg=skipRadioRxMsg+1;
+		skipRadioRxMsg = skipRadioRxMsg + 1;
 		checkAndHandleIncomingRadioMsg();
 	}
 	
@@ -1479,11 +1479,10 @@ void loop()
 
 void Blink(byte PIN, byte DELAY_MS, byte loops)
 {
-	for (byte i=0; i<loops; i++){
+	for (byte i = 0; i < loops; i++){
 		digitalWrite(PIN,HIGH);
 		delay(DELAY_MS);
 		digitalWrite(PIN,LOW);
 		delay(DELAY_MS);
 	}
 }
-
