@@ -91,12 +91,15 @@
  
  
 #define ATC_RSSI      -30   //power signal from -30(stronger) to -95(weaker) 
-#define targetRSSI    -40
+
+
+
  
 //#define remote_node   //tell the compiler that this is a remote node
 #define local_node      //tell the compiler that this is a local node
 
-
+#if defined(local_node)
+        #define targetRSSI    0  //0 to disable because  the gateway must always send at max power
 
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  

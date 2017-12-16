@@ -386,7 +386,52 @@ static int oldBatteryPcnt = 0;
 
 
 
+void beginRadio()
+{
+	Serial.print(F("beginRadio() executed "));
 
+	#if DEBUG == 1
+		Serial.print(F("freeMemory="));
+		Serial.println(freeRam());
+	#endif  // end DEBUG 
+	
+	interrupts(); // Enable interrupts
+	
+	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
+		digitalWrite(RFM69_RST, 1); //set pullup on reed
+		delay(5); // delay for the module to receive the command
+		digitalWrite(RFM69_RST, 0); //set pullup on reed
+		delay(15); // delay to wait for the module to restart
+		Serial.print(F("hw reset of radio executed "));
+
+	#endif
+
+	
+	*get_address_timeout_pointer = millis();
+	
+	// Initialize radio
+	radio.initialize(FREQUENCY, this_node_address, NETWORKID);
+	if (IS_RFM69HCW) {
+		radio.setHighPower();    // Only for RFM69HCW & HW!
+	}
+	radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
+	
+	radio.encrypt(encript_key);
+	
+	radio.enableAutoPower(targetRSSI);
+	
+	Serial.print(F("\nListening at "));
+	Serial.print(FREQUENCY == RF69_433MHZ ? 433 : FREQUENCY == RF69_868MHZ ? 868 : 915);
+	Serial.println(F(" MHz"));
+	Serial.print(F("radio address set to:"));
+	Serial.println(this_node_address);
+	
+	#if defined(battery_node)   //if the node is a battery node:
+		keep_ADCSRA = ADCSRA; //save the state of the register
+	#endif 
+	
+
+}
 
 
 boolean changeObjStatus(char obj_number,int status_to_set)
@@ -752,12 +797,13 @@ void composeSyncMessage()
 	
 	uint8_t  tmp_len = strlen(syncMessage);
 	syncMessage[tmp_len] = progressive_msg_id; //put the variable msgid in the array 
-	syncMessage[tmp_len + 1] = '\0';
+	syncMessage[tmp_len + 1] = '_';
+	syncMessage[tmp_len + 2] = '#';
+	syncMessage[tmp_len + 3] = ']';
+	syncMessage[tmp_len + 4] = '\0';
 	//Serial.println(syncMessage[28]);
 	//Serial.println(strlen(syncMessage));
-	strcat(syncMessage, "_#]");
-	
-
+	//strcat(syncMessage, "_#]");
 }
 
 
@@ -783,12 +829,39 @@ void sendSyncMessage(uint8_t retry, uint8_t tx_timeout=150)
 		// Serial.print(millis()-timetest);
 	#endif
 	
+	
+	
 	Serial.println(F(" sendWithRetry sendSyncMessage executed"));
+	
+	Serial.print(F("msgToSend:")); 
+	
+	for (pointer = 0; pointer < strlen(syncMessage); pointer++){
+		Serial.print(syncMessage[pointer]); 
+		if (pointer > 0){
+			if ((syncMessage[pointer-1] == '#') && (syncMessage[pointer] == ']')  ){//  
+				break;
+			}
+		}
+	
+	}
+	Serial.println(F(":end")); 
+	
+	
+	
+	Serial.print(F("gateway_address:"));
+	Serial.print(gateway_address);
+	Serial.print(F(", strlen(syncMessage):"));
+	Serial.print(strlen(syncMessage));
+	Serial.print(F(", retry:"));
+	Serial.print(retry);
+	Serial.print(F(", tx_timeout:"));
+	Serial.print(tx_timeout);
+	
 	if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage), retry, tx_timeout)) {
 		// note that the max delay time is 255..because is uint8_t
 		//target node Id, message as string or byte array, message length,retries, milliseconds before retry
 		//(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
-		Serial.println(F("sent_sync_message1"));
+		Serial.println(F("sent_sync_message1!!!"));
 		//    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
 		skipRadioRxMsg = 0; //reset the counter to allow this node to receive query 
 	}
@@ -810,26 +883,21 @@ void getAddressFromGateway()
 	syncMessage[6] = 'g'; //modify the message to get a address instead of just sync.
 	syncMessage[7] = 'a'; //modify the message to get a address instead of just sync.
 	
-	Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
+	// Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
 	
 	
-	Serial.print(F("msgToSend:")); 
-	
-	for (pointer = 0; pointer < sizeof(syncMessage); pointer++){
-		Serial.print(syncMessage[pointer]); 
-		if (pointer > 0){
-			if ((syncMessage[pointer-1] == '#') && (syncMessage[pointer] == ']')  ){//  
-				break;
-			}
-		}
-	
-	}
-	Serial.println(F(":end")); 
+
 	
 	tryed_times = 0;
 
 
-	
+	Serial.print(F("gateway_address:"));
+	Serial.print(gateway_address);
+	Serial.print(F(", strlen(syncMessage):"));
+	Serial.print(strlen(syncMessage));
+	Serial.print(F(", radioTxTimeout:"));
+	Serial.println(radioTxTimeout);
+		
 	while (tryed_times < radioRetry ){
 		Serial.println(F("r loopStart"));
 		
@@ -841,12 +909,29 @@ void getAddressFromGateway()
 			// Serial.print(millis()-timetest);
 		#endif
 		
-		if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage), 1, radioTxTimeout)) {
+
+		
+		for (pointer = 0; pointer < strlen(syncMessage); pointer++){
+			Serial.print(syncMessage[pointer]); 
+			if (pointer > 0){
+				if ((syncMessage[pointer-1] == '#') && (syncMessage[pointer] == ']')  ){//  
+					break;
+				}
+			}
+		
+		}
+		Serial.print(F(":end")); 
+		Serial.print(F(", strlen(syncMessage):"));
+		Serial.println(strlen(syncMessage));
+		//Serial.print(F("[RX_RSSI:"));
+		//Serial.print(radio.RSSI);
+		//Serial.println(F("]"));
+		if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage), 1, radioTxTimeout)) {
 			// note that the max delay time is 255..because is uint8_t
 			//target node Id, message as string or byte array, message length,retries, milliseconds before retry
 			//(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
 			
-			Serial.println(F("sent_get_address"));
+			Serial.println(F("sent_get_address!!!"));
 			/*
 			for (char a=0;a<(35);a=a+1){
 			Serial.print(syncMessage[a]);
@@ -865,6 +950,7 @@ void getAddressFromGateway()
 			//ADCSRA=keep_ADCSRA; //resume the status of the register
 			
 		}
+
 	
 	
 	}
@@ -883,7 +969,9 @@ boolean checkAndHandleIncomingRadioMsg(){
 	Serial.print(F(" id:"));
 	Serial.println(radio.SENDERID);
 	Serial.print((char*)radio.DATA);
-	Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
+	Serial.print(F("   [RX_RSSI:"));
+	Serial.print(radio.RSSI);
+	Serial.print(F("]"));
 	/*
 	#if defined(ota_enabled)   //if the node is a battery node:
 	CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
@@ -1088,49 +1176,7 @@ void checkCurrentRadioAddress()
 }
 
 
-void beginRadio()
-{
 
-	#if DEBUG == 1
-		Serial.print(F("freeMemory="));
-		Serial.println(freeRam());
-	#endif  // end DEBUG 
-	
-	interrupts(); // Enable interrupts
-	
-	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
-		digitalWrite(RFM69_RST, 1); //set pullup on reed
-		delay(5); // delay for the module to receive the command
-		digitalWrite(RFM69_RST, 0); //set pullup on reed
-		delay(15); // delay to wait for the module to restart
-	#endif
-
-	
-	*get_address_timeout_pointer = millis();
-	
-	// Initialize radio
-	radio.initialize(FREQUENCY, this_node_address, NETWORKID);
-	if (IS_RFM69HCW) {
-		radio.setHighPower();    // Only for RFM69HCW & HW!
-	}
-	radio.setPowerLevel(31); // power output ranges from 0 (5dBm) to 31 (20dBm)
-	
-	radio.encrypt(encript_key);
-	
-	radio.enableAutoPower(targetRSSI);
-	
-	Serial.print(F("\nListening at "));
-	Serial.print(FREQUENCY == RF69_433MHZ ? 433 : FREQUENCY == RF69_868MHZ ? 868 : 915);
-	Serial.println(F(" MHz"));
-	Serial.print(F("radio address changed to:"));
-	Serial.println(this_node_address);
-	
-	#if defined(battery_node)   //if the node is a battery node:
-		keep_ADCSRA = ADCSRA; //save the state of the register
-	#endif 
-	
-
-}
 
 void buttonStateChanged()
 {
