@@ -289,7 +289,7 @@ volatile unsigned long button_time_same_status = 0;
 
 volatile boolean button_still_same_status = 1; 
 
-
+volatile boolean time_button_log_enable = 0;
 
 /*
 WPlugAvx node parameter:
@@ -508,10 +508,12 @@ void composeSyncMessage()
 	//[S_123ul5.24WPlugAvx000810000x_#]
 	tmp_number = 0;
 	//strcpy(str_this_node_address,"");
-	memset(str_this_node_address, 0, sizeof(str_this_node_address)); //to clear the array
+	//memset(str_this_node_address, 0, sizeof(str_this_node_address)); //to clear the array
 	str_this_node_address[0] = '0';
 	str_this_node_address[1] = '0';
 	str_this_node_address[2] = '0';
+	str_this_node_address[3] = '\0';
+
 	
 	str_this_node_address[0] = (this_node_address/100)+48;
 	tmp_number = this_node_address%100;
@@ -801,6 +803,10 @@ void composeSyncMessage()
 	syncMessage[tmp_len + 2] = '#';
 	syncMessage[tmp_len + 3] = ']';
 	syncMessage[tmp_len + 4] = '\0';
+	
+	Serial.print(F("composed msg len="));
+	Serial.println(strlen(syncMessage));
+
 	//Serial.println(syncMessage[28]);
 	//Serial.println(strlen(syncMessage));
 	//strcat(syncMessage, "_#]");
@@ -1180,7 +1186,8 @@ void checkCurrentRadioAddress()
 
 void buttonStateChanged()
 {
-	button_time_same_status = millis();
+	time_button_log_enable = 1;
+	//button_time_same_status = millis();  // ,millis won't work correctly but will still contain the last working value, before the interrupt.. 
 	button_still_same_status = 0;
 }
 
@@ -1212,6 +1219,11 @@ void buttonStateChanged()
 
 void handleButton()
 {//handle the main node button , you can't call this from interrupt because millis() won't work
+	if (time_button_log_enable == 1) {
+		time_button_log_enable = 0;
+		button_time_same_status = millis();
+	} 
+	
 
 	Serial.print(F("handleButton() ex"));
 	Serial.print(F("btn_still_same_status:"));
@@ -1234,6 +1246,8 @@ void handleButton()
 		//checkCurrentRadioAddress();  
 		interrupts(); // Enable interrupts 
 		button_time_same_status = millis();
+		//button_still_same_status = 1;
+
 	}
 
 	if (((millis() - button_time_same_status) > time_to_change_status)
@@ -1302,6 +1316,16 @@ void setup()
 
 	node_obj_status[syncTimeout] = node_default_timeout;
 	sync_timeout = node_obj_status[syncTimeout] * 1000;
+	
+	/*
+	 * 
+	 *
+	 * All AVR based boards have an SS pin that is useful when they act as a slave controlled by an external master.
+	 * this pin should be set always as OUTPUT otherwise the SPI interface could be put automatically into slave mode by hardware,
+	 * rendering the library inoperative. 
+	 * 
+	*/
+	pinMode(10, OUTPUT);  //  NSS setted as output
 	
 	#if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
 		pinMode(RFM69_RST, OUTPUT);	
@@ -1429,13 +1453,13 @@ void setup()
 	
 	//enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
 	#if defined(node_type_WreedSaa)
-		attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
+		attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1 (PIN 3)
 		Serial.println(F("WreedSaa interrupt enabled"));
 	#elif defined(node_type_WPlug1vx)
 		digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
-		attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+		attachInterrupt(1, buttonStateChanged, FALLING);
 	#elif defined(node_type_Wrelay4x)
-		attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+		attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING); 
 	#endif 
 	
 	

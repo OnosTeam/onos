@@ -100,7 +100,7 @@
 
 #if defined(local_node)
         #define targetRSSI    0  //0 to disable because  the gateway must always send at max power
-
+#endif
 int16_t packetnum = 0;  // packet counter, we increment per xmission
  
 RFM69_ATC radio;
@@ -753,6 +753,17 @@ void beginRadio(){
 
 
 void setup() {
+        
+        
+        /*
+         * 
+         *
+         * All AVR based boards have an SS pin that is useful when they act as a slave controlled by an external master.
+         * this pin should be set always as OUTPUT otherwise the SPI interface could be put automatically into slave mode by hardware,
+         * rendering the library inoperative. 
+         * 
+        */
+        pinMode(10, OUTPUT);  //  NSS setted as output        
 
   //pinMode(RFM69_RST, OUTPUT);
   //delay(95000); //wait for glinet to power on

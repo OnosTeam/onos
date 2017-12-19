@@ -22,12 +22,11 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=3
-FILE_NAME_0=4699;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_rfm69_serial_interface.ino;0;8
-FILE_NAME_1=10749;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Farduino-1.8.1%2Flibraries%2FOnosMsg%2FOnosMsg.cpp;0;8
-FILE_NAME_2=1123;C;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Farduino-1.8.1%2Flibraries%2FOnosMsg%2FOnosMsg.h;0;8
-FILE_NAME_3=13876;C++;0;EUTF-8;1;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_radio_node%2Fonos_radio_node.ino;0;8
-FILE_NAME_4=29961;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2FglobalVar.py;0;8
+current_page=2
+FILE_NAME_0=3969;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_rfm69_serial_interface.ino;0;8
+FILE_NAME_1=1123;C;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Farduino-1.8.1%2Flibraries%2FOnosMsg%2FOnosMsg.h;0;8
+FILE_NAME_2=29557;C++;0;EUTF-8;1;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_radio_node%2Fonos_radio_node.ino;0;8
+FILE_NAME_3=853;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2FOnosMsg%2FOnosMsg.cpp;0;8
 
 [VTE]
 last_dir=/home/marco
