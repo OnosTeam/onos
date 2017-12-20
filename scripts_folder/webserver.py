@@ -1222,7 +1222,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       logprint("error the state"+str(statusToSet)+"is not valid for the obj:"+objName,verbose=10)
       return(-1)  
 
-    statusToSet=int(statusToSet)  #int not float otherwise there will be errors
+    #statusToSet=int(statusToSet)  #int not float otherwise there will be errors
 
 
     #obj_previous_status=objectDict[objName].getStatus()
