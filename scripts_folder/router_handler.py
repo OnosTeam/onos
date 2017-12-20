@@ -476,7 +476,7 @@ class RouterHandler:
         #query example:  [S_123wp01x_#]
  
         if status_to_set not in [0,1]:
-          logprint("error in composeChangeNodeOutputPinStatusQuery in obj section,status_to_set>1",verbose=10)
+          logprint("error in composeChangeNodeOutputPinStatusQuery in obj section,status_to_set:"+str(status_to_set)+", not in (0,1)",verbose=10)
           return (-1)
         remoteNodeHwModelName=nodeDict[node_serial_number].getNodeHwModel()
         #print ( str(nodeDict[node_serial_number].getnodeObjectsDict()) )

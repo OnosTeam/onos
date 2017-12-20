@@ -148,7 +148,7 @@ char numeric_serial[5] = "0001";   // this is the progressive numeric serial num
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_Wrelay4x
+#define node_type_WPlug1vx
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -228,7 +228,7 @@ char numeric_serial[5] = "0001";   // this is the progressive numeric serial num
 	const uint8_t led = 2;
 	const uint8_t syncTimeout = 3;
 	const uint8_t number_of_total_objects = 4;
-	const uint8_t node_default_timeout = 360;
+	const uint8_t node_default_timeout = 30;
 
 #elif defined(node_type_WIRbarr0)
 	const uint8_t node_default_timeout = 360;
@@ -437,7 +437,9 @@ void beginRadio()
 boolean changeObjStatus(char obj_number,int status_to_set)
 {
 
-	Serial.print(F("changeObjStatus executed with  status:"));
+	Serial.print(F("changeObjStatus executed with obj:"));
+	Serial.print(obj_number,DEC);
+	Serial.print(F(",status:"));
 	Serial.println(status_to_set);
 	
 	if (obj_number == button){ //will not change the status to the button...
@@ -1448,7 +1450,7 @@ void setup()
 	changeObjStatus(0, 0);
 	
 	Blink(node_obj_pinout[led], 100, 3); 
-	digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
+	//digitalWrite(node_obj_pinout[led], 1); // 1 to to turn led off
 	
 	
 	//enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
@@ -1456,7 +1458,7 @@ void setup()
 		attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1 (PIN 3)
 		Serial.println(F("WreedSaa interrupt enabled"));
 	#elif defined(node_type_WPlug1vx)
-		digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
+		digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
 		attachInterrupt(1, buttonStateChanged, FALLING);
 	#elif defined(node_type_Wrelay4x)
 		attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING); 

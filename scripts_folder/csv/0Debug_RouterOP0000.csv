@@ -2,3 +2,4 @@ nodeSn,timestamp,day/month/year,hours:minutes:seconds,address,last_sync
 RouterOP0000,1512304274,3/12/2017,13:31:14,0,onos_system_started
 RouterOP0000,1512844356,9/12/2017,19:32:36,0,onos_system_started
 RouterOP0000,1512850162,9/12/2017,21:9:22,0,onos_system_started
+RouterOP0000,1513805312,20/12/2017,22:28:32,0,onos_system_started

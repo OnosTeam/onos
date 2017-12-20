@@ -1304,6 +1304,11 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
      # status_list=[statusToSet] 
       #while len(pins_to_set)!=len(status_list): #to make the same len...to bypass check in routerhandler..
       #  status_list.append(statusToSet)
+      try:
+        statusToSet=int(statusToSet)
+      except:
+        logprint("error in setting the status of :"+objName+",the status was:"+str(statusToSet)+"and is not convertible to int")         
+        return(-1)
       logprint("pins_to_set_digital_obj:"+str(pins_to_set) )
       logprint("len pins_to_set="+str(len(pins_to_set)) )
       logprint("statusToSet_digital_obj:"+str(statusToSet) )
@@ -1312,8 +1317,10 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       logprint("obj_type_digital_obj:"+str(obj_type) )
     
       logprint (str((nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list)))
-
-
+      if statusToSet not in [0,1]:
+        logprint("error in setting the status of :"+objName+",the status was:"+str(statusToSet)+"and is not in [0,1]",verbose=8)
+        return(-1)
+      
       hardware.outputWrite(nodeSerialNumber,pins_to_set,[statusToSet],nodeDict[nodeSerialNumber],objName,obj_previous_status,statusToSet,obj_type,user,priority,mail_report_list,node_password_dict=node_password_dict)
       return(1)   
 
@@ -2214,8 +2221,8 @@ class MyHandler(BaseHTTPRequestHandler):
     #global roomDict
     
 
-    #def log_message(self, format, *args):  # print self.path) remove the print of each request..comment this method to make it print..
-    #  return
+    def log_message(self, format, *args):  # print self.path) remove the print of each request..comment this method to make it print..
+      return
 
 
 
