@@ -119,8 +119,8 @@
 #define ATC_RSSI      -30   //power signal from -30(stronger) to -95(weaker) 
 #define targetRSSI    -40
 
-#define remote_node   //tell the compiler that this is a remote node
-//#define local_node  //tell the compiler that this is a local node
+#define REMOTE_NODE   //tell the compiler that this is a remote node
+//#define LOCAL_NODE  //tell the compiler that this is a local node
  
 
 
@@ -1112,7 +1112,7 @@ void checkCurrentRadioAddress()
 	}
 	
 	
-	#if defined(remote_node)   // only if this is a remote node..
+	#if defined(REMOTE_NODE)   // only if this is a remote node..
 		
 		if (this_node_address == 254){// i have not the proper address yet..
 	
@@ -1179,7 +1179,7 @@ void checkCurrentRadioAddress()
 
 		}
 		
-	#endif  // end if defined(remote_node) 
+	#endif  // end if defined(REMOTE_NODE) 
 	
 }
 
@@ -1465,9 +1465,10 @@ void setup()
 	#endif 
 	
 	
-	
-	
-	
+    #if defined(REMOTE_NODE)   // only if this is a remote node..
+		pinMode(2, OUTPUT);   // set pin 2 to input , may be used to get interrupt from radio
+		digitalWrite(2, 1);   // set internal pull up of pin 2 to prevent unnecessary interrupt call
+	#endif 
 	
 	
 	interrupts(); 
