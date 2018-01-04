@@ -9,11 +9,7 @@ install: "pip install nose pylint"
 
 script: "nosetests && pylint"
 
-addons:
-  sonarcloud:
-    organization: "onosadmin"
-    token:
-      secure: ec465e74a08a67a35c595974543260b1c7911229
+
 jdk:
   - oraclejdk8
 script:
