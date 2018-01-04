@@ -25,5 +25,7 @@ cache:
 
 notifications:
   email:
+    recipients:
+      - electronicflame@gmail.com
     on_success: always # default: never
     on_failure: always # default: always

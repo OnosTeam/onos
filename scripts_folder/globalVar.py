@@ -162,7 +162,7 @@ accept_only_from_white_list=0  # if set to 1 the onos cmd will be accepted only 
 mail_whiteList=[]  # will be overwritten by /scripts_folder/config_files/cf.json
 mail_whiteList.append("elettronicaopensource@gmail.com")
 mail_whiteList.append("electronicflame@gmail.com")
-mail_whiteList.append("marco_righe@yahoo.it")
+
 enable_mail_service=1  # active mailCheckThread   will be overwritten by /scripts_folder/config_files/cf.json
 enable_mail_output_service=1 #activate the sending of mails from onos  will be overwritten by /scripts_folder/config_files/cf.json
 last_mail_sync_time=0  
