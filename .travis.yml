@@ -13,7 +13,7 @@ addons:
   sonarcloud:
     organization: onosadmin-github
     token:
-      secure: 02a2a89e177677a76992fa0d6e359d3ab9b06404
+      secure: ec465e74a08a67a35c595974543260b1c7911229
 jdk:
   - oraclejdk8
 script:
