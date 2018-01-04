@@ -11,9 +11,9 @@ script: "nosetests && pylint"
 
 addons:
   sonarcloud:
-    organization: onosadmin-github
+    organization: "onosadmin-github"
     token:
-      secure: ec465e74a08a67a35c595974543260b1c7911229
+      secure: "ec465e74a08a67a35c595974543260b1c7911229"
 
 jdk:
   - oraclejdk8
@@ -25,5 +25,5 @@ cache:
 
 notifications:
   email:
-    on_success: never # default: always
+    on_success: always # default: never
     on_failure: always # default: always
