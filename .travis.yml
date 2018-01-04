@@ -17,7 +17,12 @@ addons:
 jdk:
   - oraclejdk8
 script:
-  - sonar-scanner
+  - sonar-scanner \
+    -Dsonar.projectKey=onos-sonarcloud \
+    -Dsonar.sources=. \
+    -Dsonar.host.url=https://sonarcloud.io  \
+    -Dsonar.organization=onosadmin-github \
+    -Dsonar.login=ec465e74a08a67a35c595974543260b1c7911229
 cache:
   directories:
     - '$HOME/.sonar/cache'
