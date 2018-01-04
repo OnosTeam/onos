@@ -1,6 +1,11 @@
 a volte se lo stato di un oggetto è in wait...può essere che il link a cui redirige  l'html dell'oggetto sia lo stesso dello stato attuale...in questo caso onos non cambia lo stato anche premendo...e questo comporta che lo stato rimanga sempre in wait..
 
 
+nelle condizioni degli scenari a volte compare (#_select_an_element_#==#_select_an_element_#)  se si aggiunge una condizione ma poi non si compila.
+
+
+
+
 started httpserver...
 hardwareHandlerThread() executed
 internetCheckConnection() executed

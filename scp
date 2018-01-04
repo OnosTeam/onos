@@ -13,7 +13,15 @@ poi da ssh dare :
 mv /tmp/onos/ /bin/onos
 
 
-scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e csv  ) root@192.168.1.110:/bin/onos/
+
+
+
+
+
+
+
+Da usare per aggiornare:
+scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e csv -e scripts_folder/csv ) root@192.168.1.110:/bin/onos/
 
 
 

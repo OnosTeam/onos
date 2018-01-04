@@ -64,6 +64,23 @@
 // Please maintain this license information along with authorship
 // and copyright notices in any redistribution of this code
 // **********************************************************************************/
+
+//   Copyright 2014-2018 Marco Rigoni                                               #
+//   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
+//   This program is free software: you can redistribute it and/or modify      #
+//   it under the terms of the GNU General Public License as published by      #
+//   the Free Software Foundation, either version 3 of the License, or         #
+//   (at your option) any later version.                                       # 
+//																			  #
+//   This program is distributed in the hope that it will be useful,           #
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #
+//   GNU General Public License for more details.                              #
+//                                                                             #
+//   You should have received a copy of the GNU General Public License         #
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
+ 
+ 
  
 #include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <SPI.h>
@@ -144,11 +161,11 @@
 	SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
 char serial_number[13] = "xxxxxxxxxxxx";
-char numeric_serial[5] = "0001";   // this is the progressive numeric serial number
+char numeric_serial[5] = "0008";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_WreedSaa
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -184,7 +201,7 @@ char numeric_serial[5] = "0001";   // this is the progressive numeric serial num
 	const uint8_t luminosity_sensor = 10;
 	
 	const uint8_t number_of_total_objects = 11; //11 because there are 10 elements + a null for the array closing
-	const uint8_t node_default_timeout = 10; // seconds
+	const int node_default_timeout = 360; // the timeout sync in the onos_center/2 -20 sec to be sure to not become inactive..
 	#define battery_node            // tell the software to go to sleep to keep battery power. 
 	uint8_t reed_sensors_state = 0;  //store the state of the 2 reeds sensors
 	uint8_t logic_reed1_status = 0;
@@ -215,11 +232,11 @@ char numeric_serial[5] = "0001";   // this is the progressive numeric serial num
 	// #define IS_RFM69HCW    false
 	
 	const uint8_t number_of_total_objects = 7;
-	const uint8_t node_default_timeout = 30;  //seconds
+	const int node_default_timeout = 30;  //seconds
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 	
 #elif defined(node_type_WLightSS)
-	const uint8_t node_default_timeout = 15;
+	const int node_default_timeout = 15;
 
 #elif defined(node_type_WPlug1vx)
 	// define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -228,13 +245,13 @@ char numeric_serial[5] = "0001";   // this is the progressive numeric serial num
 	const uint8_t led = 2;
 	const uint8_t syncTimeout = 3;
 	const uint8_t number_of_total_objects = 4;
-	const uint8_t node_default_timeout = 30;
+	const int node_default_timeout = 30;
 
 #elif defined(node_type_WIRbarr0)
-	const uint8_t node_default_timeout = 360;
+	const int node_default_timeout = 360;
 
 #elif defined(node_type_WSoilHaa)
-	const uint8_t node_default_timeout = 360;
+	const int node_default_timeout = 360;
 #endif 
 
 
@@ -243,7 +260,9 @@ char numeric_serial[5] = "0001";   // this is the progressive numeric serial num
 	
 	unsigned long stay_awake_period = 700 ;   //how long in ms the node will stay awake to receive radio messages.
 	unsigned long awake_time = 0;
-
+	const int time_to_sleep = node_default_timeout - (node_default_timeout / 3);  //how long the node will sleeep before waking up, use multiple of 8..
+	unsigned int sleep_cycles = time_to_sleep / 8; // the number of cycles needed to sleep for this time..
+	unsigned int sleep_counter = 0;
 #endif 
 
 
@@ -338,10 +357,10 @@ uint8_t obj_button_pin;
 
 OnosMsg OnosMsgHandler = OnosMsg();  //create the OnosMsg object
 
-uint8_t radioRetry = 3;      //todo: make this changable from serialport
-uint8_t radioTxTimeout = 20;  //todo: make this changable from serialport
-uint8_t radioRetryAllarm = 100; 
-uint8_t radioTxTimeoutAllarm = 50;  
+const uint8_t radioRetry = 3; 
+const uint8_t radioTxTimeout = 20;
+const uint8_t radioRetryAllarm = 100;
+const uint8_t radioTxTimeoutAllarm = 50;
 
 # define gateway_address 1
 //boolean first_sync=1;
@@ -863,7 +882,7 @@ void sendSyncMessage(uint8_t retry, uint8_t tx_timeout=150)
 	Serial.print(F(", retry:"));
 	Serial.print(retry);
 	Serial.print(F(", tx_timeout:"));
-	Serial.print(tx_timeout);
+	Serial.println(tx_timeout);
 	
 	if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage), retry, tx_timeout)) {
 		// note that the max delay time is 255..because is uint8_t
@@ -1130,34 +1149,50 @@ void checkCurrentRadioAddress()
 			}
 		}
 		else{
-			//random_time=1500;//random(1500,2500);
-			if ((millis() - (*get_sync_time)) > sync_timeout){ //every 1500/2500 ms
+			if ((millis() - (*get_sync_time)) > sync_timeout){ //every n ms
 
 				#if defined(battery_node) // defined(node_type_WreedSaa)
+					/*
 					composeSyncMessage();
+					Serial.println(F("sync_bf_sl"));					
 					sendSyncMessage(radioRetryAllarm, radioTxTimeoutAllarm);
-					//sync_time=millis();
+					*/
 					//  I put the node to sleep
-					Serial.println(F("I go to sleep"));
+					Serial.println(F("I_sleep"));
+					
 					radio.sleep();
+					/*
+					for (byte sleep_counter = 0; sleep_counter < sleep_cycles ; sleep_counter++){
+						LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+					}
+					*/
+					sleep_counter = 0;
+					
+					restart_sleep:
+					
 					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-					LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+					
+					sleep_counter = sleep_counter + 1 ;
+					
+					if (sleep_counter < sleep_cycles ){
+						goto restart_sleep;
+					}
+					
+
 					delayMicroseconds(50);
 					ADCSRA = keep_ADCSRA; //resume the status of the register
+					
+					Serial.print(F("sleep_counter:"));
+					Serial.println(sleep_counter);
+
 					composeSyncMessage();
 					sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
 					//sync_time=millis(); changed in in sendSyncMessage
 					
 					awake_time = millis();
+					/*
 					Serial.println(F("w for possible messages"));
+					
 					while ((millis() - awake_time) > stay_awake_period ){
 						//TODO: put if(millis()-awake_time)<stay_awake_period )--->sleep   in the main loop...
 						if (radio.receiveDone()){
@@ -1166,7 +1201,9 @@ void checkCurrentRadioAddress()
 						}
 					
 					}
+					
 					Serial.println(F("end wait"));
+					*/
 
 				#else    //not a battery node
 					Serial.println(F("not a battery node part executed"));
@@ -1379,7 +1416,7 @@ void setup()
 		pinMode(node_obj_pinout[relay4], OUTPUT);
 		pinMode(node_obj_pinout[led], OUTPUT);
 		pinMode(node_obj_pinout[button], INPUT);
-        
+
 		digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
 
@@ -1465,7 +1502,7 @@ void setup()
 	#endif 
 	
 	
-    #if defined(REMOTE_NODE)   // only if this is a remote node..
+	#if defined(REMOTE_NODE)   // only if this is a remote node..
 		pinMode(2, OUTPUT);   // set pin 2 to input , may be used to get interrupt from radio
 		digitalWrite(2, 1);   // set internal pull up of pin 2 to prevent unnecessary interrupt call
 	#endif 

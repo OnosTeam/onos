@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-#   Copyright 2014 Marco Rigoni                                               #
+#   Copyright 2014-2018 Marco Rigoni                                               #
 #   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
 #   This program is free software: you can redistribute it and/or modify      #
 #   it under the terms of the GNU General Public License as published by      #
@@ -47,7 +47,8 @@ global timezone
 global enable_onos_auto_update
 global conf_options
 global node_password_dict
-
+global debug
+global csv_folder
 
 
 
@@ -265,39 +266,7 @@ def writeCsvFile(csv_file_name, init_row, row_to_write):
     make_fs_readonly()       
 
     return()
-    
-    
-    
-if 1 > 0:  # if debug > 0:   if debug is active ..
-    
-    for node_sn in list(nodeDict):
-        """
-        | For each node i will write the start time in the csv
-        |
-        |
-        """
-        
-        node_address = nodeDict[node_sn].getNodeAddress()
-        day = str(datetime.datetime.today().day)
-        month = str(datetime.datetime.today().month)
-        year = str(datetime.datetime.today().year)
-        hours = str(datetime.datetime.today().hour)
-        minutes = str(datetime.datetime.today().minute)
-        seconds = str(datetime.datetime.today().second)
-        day_of_week = datetime.datetime.today().weekday()
-        timestamp = str(time.time())[0:10]
-    
-        row_to_write = []
-        
-        csv_file_name = csv_folder+'/0Debug_'+node_sn+'.csv'     
-        
-        init_row = ["nodeSn", "timestamp", "day/month/year", 
-        "hours:minutes:seconds", "address", "last_sync"]
-        previous_sync_time = "onos_system_started"
-            
-        row_to_write = [node_sn, timestamp, day +'/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
-                          node_address, previous_sync_time ]     
-        writeCsvFile(csv_file_name, init_row, row_to_write)     
+
 
 
 def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionary,conf_options_dictionary):  # save the current config to a json file named data.json
@@ -388,8 +357,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 #        logprint("the new status will be:"+str(prev_s) )
 #        layerExchangeDataQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"0","write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
 
-    global debug
-    global csv_folder
+
     if 1 > 0:  # if debug > 0:   if debug is active ..
         
         day=str(datetime.datetime.today().day)
@@ -407,7 +375,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
 
         row_to_write=[]
         
-        csv_file_name=csv_folder+'/0Debug_'+node_sn+'.csv' 
+        csv_file_name=csv_folder+'0Debug_'+node_sn+'.csv' 
         
         still_same_address = "same" 
         if (nodeDict[node_sn].getNodeAddress())!=node_address:
@@ -1149,7 +1117,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
         #row_to_write=[self.status, '08/05/2007', '00.00.00', '1507141842','admin']
         # 255,1507361485,7/10/2017 09:45:58,00,5,node
         
-        csv_file_name = csv_folder + '/' + objName + '.csv' 
+        csv_file_name = csv_folder + objName + '.csv' 
 
         init_row = ["statusToSet", "timestamp", "day/month/year", 
                   "hours:minutes:seconds", "hours", "day_of_week", "user"]
@@ -1478,7 +1446,7 @@ def updateNodeInputStatusFromReg(node_sn,register):  # deprecated
 
 
 
-
+# Here I have all the webobject in the list and I will pass them to the dictionary
 
 for a in objectList :                # append to dictionary all the web object
   objectDict[a.getName()]=a
@@ -1493,10 +1461,6 @@ for a in objectList :                # append to dictionary all the web object
       # change all the node object to the saved values
       a.setStatus("inactive")
       nodeDict[obj_node_address].updateLastNodeSync(99999)
-
-
-
-
 
 
 
@@ -1546,6 +1510,71 @@ if router_hardware_type=="RouterOP":
 
 
 
+if 1 > 0:  # if debug > 0:   if debug is active ..
+        
+    for node_sn in list(nodeDict):
+        """
+        | For each node I will write the start time in the csv
+        |
+        |
+        """
+        
+        node_address = nodeDict[node_sn].getNodeAddress()
+        day = str(datetime.datetime.today().day)
+        month = str(datetime.datetime.today().month)
+        year = str(datetime.datetime.today().year)
+        hours = str(datetime.datetime.today().hour)
+        minutes = str(datetime.datetime.today().minute)
+        seconds = str(datetime.datetime.today().second)
+        day_of_week = datetime.datetime.today().weekday()
+        timestamp = str(time.time())[0:10]
+    
+        row_to_write = []
+        
+        csv_file_name = csv_folder+'0Debug_'+node_sn+'.csv'     
+
+        init_row = ["nodeSn", "timestamp", "day/month/year", 
+        "hours:minutes:seconds", "address", "last_sync"]
+        previous_sync_time = "onos_system_started"
+            
+        row_to_write = [node_sn, timestamp, day +'/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
+                          node_address, previous_sync_time ]     
+        writeCsvFile(csv_file_name, init_row, row_to_write)   
+        
+    for objName in list(objectDict):
+        """
+        | For each object I will write the start time in the csv
+        |
+        |
+        """
+        logprint("for objName in list(objectDict):"+objName)
+
+        if objName in ("minutes", "dayTime", "hours", "day", "month", "year") :
+            continue
+        #logprint("I write the init in cvs file of:"+objName)
+
+        day = str(datetime.datetime.today().day)
+        month = str(datetime.datetime.today().month)
+        year = str(datetime.datetime.today().year)
+        hours = str(datetime.datetime.today().hour)
+        minutes = str(datetime.datetime.today().minute)
+        seconds = str(datetime.datetime.today().second)
+        day_of_week = datetime.datetime.today().weekday()
+        timestamp = str(time.time())[0:10]
+    
+        row_to_write = []
+        
+        csv_file_name = csv_folder + objName + '.csv'
+        
+        init_row = ["statusToSet", "timestamp", "day/month/year", 
+                  "hours:minutes:seconds", "hours", "day_of_week", "user"]
+        statusToSet = "onos_system_started"
+        user = "onos_system_started"
+
+        row_to_write = [statusToSet, timestamp, day + '/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
+                      hours, day_of_week, user]
+
+        writeCsvFile(csv_file_name, init_row, row_to_write)           
 
 
 
@@ -6400,7 +6429,8 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
         if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore       
 
           if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #if the node was already inactive or preactive
-            nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
+            if  (  (time.time() - nodeDict[a].getLastNodeSync() ) > 2147483647  ): #if the number is greater than signed32 bit int
+              nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
             message="the node:"+a+"is disconnected for timeout but was already so.." 
             logprint(message,verbose=2) 
             continue #skip
@@ -6673,7 +6703,7 @@ def executeQueueFunction(dataExchanged):
             objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
           except Exception as e: #todo place this somewhere else..
             hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
-            message="warning in the updateObjFromNode,the object doesnt exist yet"
+            message="warning in the updateObjFromNode,the object:_"+str(objName)+"_ doesnt exist yet"
             logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
             msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
             createNewWebObjFromNode(hwType,node_serial_number) 

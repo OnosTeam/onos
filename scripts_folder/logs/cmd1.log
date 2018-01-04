@@ -1,1 +1,1 @@
-ifdown: interface wlan0 not configured
+Failed to stop create_ap.service: Unit create_ap.service not loaded.

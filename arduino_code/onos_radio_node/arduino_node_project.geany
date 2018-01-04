@@ -26,6 +26,7 @@ current_page=2
 FILE_NAME_0=0;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_rfm69_serial_interface.ino;0;8
 FILE_NAME_1=37698;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Fwebserver.py;0;8
 FILE_NAME_2=0;C++;0;EUTF-8;1;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_radio_node%2Fonos_radio_node.ino;0;8
+FILE_NAME_3=0;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2FglobalVar.py;0;8
 
 [VTE]
 last_dir=/home/marco

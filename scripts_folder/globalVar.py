@@ -1,6 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
+#   Copyright 2014-2018 Marco Rigoni                                               #
+#   ElettronicaOpenSource.com   elettronicaopensource@gmail.com               #
+#   This program is free software: you can redistribute it and/or modify      #
+#   it under the terms of the GNU General Public License as published by      #
+#   the Free Software Foundation, either version 3 of the License, or         #
+#   (at your option) any later version.                                       # 
+#																			  #
+#   This program is distributed in the hope that it will be useful,           #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #
+#   GNU General Public License for more details.                              #
+#                                                                             #
+#   You should have received a copy of the GNU General Public License         #
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 """
   This module is imported from all the others and it stores the global variables and some global functions.
 
@@ -623,9 +636,9 @@ usersDict.update(online_usersDict) #insert the online users in the local diction
 
 node_password_dict={} # dictionary where the key is the node_serial_number and the value is the node password
 
-#onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"onosbeta1234","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
+onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta1234","smtp_port":"587","smtp_server":"smtp.gmail.com","mail_imap":"imap.gmail.com"}
 
-onos_mail_conf={"mail_account":"onos.beta@yahoo.com", "pw":"mailbeta1234", "smtp_port":"587", "smtp_server":"smtp.mail.yahoo.com", "mail_imap":"imap.mail.yahoo.com"}
+#onos_mail_conf={"mail_account":"onos.beta@yahoo.com", "pw":"mailbeta1234", "smtp_port":"587", "smtp_server":"smtp.mail.yahoo.com", "mail_imap":"imap.mail.yahoo.com"}
 
 
 #gmail problem solving:
