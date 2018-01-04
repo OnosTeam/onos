@@ -11,12 +11,17 @@ script: "nosetests && pylint"
 
 addons:
   sonarcloud:
-    organization: onosadmin-github
+    organization: "onosadmin"
     token:
       secure: ec465e74a08a67a35c595974543260b1c7911229
 jdk:
   - oraclejdk8
 script:
+  -cd /tmp
+  - wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
+  - unzip -d sonar-scanner-cli-3.0.3.778-linux.zip
+  - cd sonar-scanner-3.0.3.778-linux
+  - sudo sudo cp -R * /
   - sudo sonar-scanner     -Dsonar.projectKey=onos-sonarcloud     -Dsonar.sources=.     -Dsonar.host.url=https://sonarcloud.io      -Dsonar.organization=onosadmin-github     -Dsonar.login=ec465e74a08a67a35c595974543260b1c7911229
 cache:
   directories:
