@@ -63,6 +63,8 @@ class OnosMsg {
     //volatile char *received_message;
 
     void decodeOnosCmd(char *received_message,char *received_message_answer);
+    char  hexCharToDec(char value);
+
 
   private:
 

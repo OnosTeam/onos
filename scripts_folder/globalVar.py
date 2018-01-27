@@ -713,7 +713,7 @@ hardwareModelDict["WPlug1vx"]={"hwName":"WPlug1vx", "max_pin":13, "hardware_type
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]={}
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["object_numbers"]=[0]   #
-hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["query"]="do#_objnumber_##_valuelen:1_#"
+hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["query"]="d#_objnumber_##_valuelen:1_#"
 
 
 #hardwareModelDict["WPlugAvx"]["query"]["digital_obj_out"]={"plug":"wb#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj_out..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj_out)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()

@@ -80,9 +80,9 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
       return()
 
  
-    node_address=nodeDict[node_serial_number].getNodeAddress()
+    #node_address=nodeDict[node_serial_number].getNodeAddress()
 
-    query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
+    #query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
 
     data=""
 
@@ -414,9 +414,10 @@ def handle_new_query_to_radio_node_thread(serialCom):
       continue         ##skip to the next query ..
 
 
-    node_address=nodeDict[node_serial_number].getNodeAddress()
+    #node_address=nodeDict[node_serial_number].getNodeAddress()
+    
 
-    query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
+    #query=query[0:3]+node_address+query[6:] #change the address query if the node get a new one
 
     #if number_of_retry_done>0:
       

@@ -265,7 +265,7 @@ class RouterHandler:
       try:
         self.serial_communication=Serial_connection_Handler.Serial_connection_Handler()
         self.serialCommunicationIsWorking=self.serial_communication.working
-        self.serial_communication.uart.write("[S_001begin_#]\n")
+        self.serial_communication.uart.write("[S_01begin_#]\n")
         self.serialCommunicationIsWorking=1
       except Exception as e  :
         message="error in the init of serial port check if is it connected"
@@ -281,7 +281,7 @@ class RouterHandler:
         received_answer=""
         while retry_start_cmd < 10:
 
-          received_answer=self.serial_communication.uart.write("[S_001begin_#]\n")
+          received_answer=self.serial_communication.uart.write("[S_01begin_#]\n")
           if "[S_" in received_answer:
              self.serialCommunicationIsWorking=1
              serial_problem=0
@@ -320,7 +320,7 @@ class RouterHandler:
 
       self.progressive_msg_number=self.progressive_msg_number+1
 
-      if  self.progressive_msg_number>8: #restart the number
+      if  self.progressive_msg_number>9: #restart the number
         self.progressive_msg_number=0 
 
       self.progressive_msg_id=str(self.progressive_msg_number)  #todo  create a progressive number
@@ -445,7 +445,8 @@ class RouterHandler:
 
 
 
-    def composeChangeNodeOutputPinStatusQuery(self,pinNumbers,node_obj,objName,status_to_set,node_serial_number,node_address,out_type,user,priority,mail_report_list,node_password_dict={}) :
+    def composeChangeNodeOutputPinStatusQuery(self, pinNumbers, node_obj, objName, status_to_set, node_serial_number,  
+                                              node_address, out_type, user, priority, mail_report_list, node_password_dict={}) :
 
       """
       | Compose the correct query to change an output pin status on a remote node.
@@ -470,23 +471,18 @@ class RouterHandler:
 
  
 
-
-
       """
 
       logprint("composeChangeNodeOutputPinStatusQuery() executed")
      
-    
-
-
       address=nodeDict[node_serial_number].getNodeAddress()
       query="error_compose_query"
-      base_query=''           #' ''http://'''+address+''':'''+str(node_webserver_port) not used anymore 
+      base_query=''
    
 
       if (out_type in ("digital_obj_out","cfg_obj","analog_obj_out") ):  #todo remove "analog_obj_out"
         logprint("digital_obj compose query")
-        #query example:  [S_123wp01x_#]
+        #query example:  [S_01d001x_#] 
  
         if status_to_set not in [0,1]:
           logprint("error in composeChangeNodeOutputPinStatusQuery in obj section,status_to_set:"+str(status_to_set)+", not in (0,1)",verbose=10)
@@ -496,18 +492,12 @@ class RouterHandler:
         #print ("objName:"+objName+"end")
         try:
           obj_selected=nodeDict[node_serial_number].getNodeObjectAddress(objName)
-
         except Exception as e  :
           message="error getNodeObjectAddress"
           logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
-
-
         logprint ("obj_selected:"+str(obj_selected) )
-
-
         generic_object_name=self.searchObjectBaseName(obj_selected,node_serial_number)    
-     
         logprint ("generic_object_name:"+generic_object_name)
    
         query_placeholder=""
@@ -529,34 +519,22 @@ class RouterHandler:
               query_expected_answer=hardwareModelDict[remoteNodeHwModelName]["object_list"][out_type][generic_object_name]["query_expected_answer"][status_to_set]
 
 
-
-
-
-
         except Exception as e  :
           message="error in query_placeholder replacing the query from NodeHwModelName for node:"+remoteNodeHwModelName
           logprint(message,verbose=9,error_tuple=(e,sys.exc_info())) 
 
- 
     #   print "query_placeholder:"+query_placeholder
-
-
-
         if obj_selected<10:
+          # I don't need to convert this to hex ascii format because for i <10 decimal and hexadecimal are the same
           query_placeholder=query_placeholder.replace("#_objnumber_#","0"+str(obj_selected))
-        else:
-          query_placeholder=query_placeholder.replace("#_objnumber_#",str(obj_selected)) 
-
-
+        else: #warning this is to change if the sonoff node use more than 9 relays..(tasmoda don't use hexadecimal format...
+          #  hex(16).replace("0x","") --> '10'
+          #  hex(obj_selected).replace("0x","")   get the number expressed in 2 ascii hex format 
+          query_placeholder=query_placeholder.replace("#_objnumber_#",hex(obj_selected)[-2:]) 
 
         #query_placeholder=query_placeholder.replace("#_objnumber00_#","0"+str(obj_selected))
         #query_placeholder=query_placeholder.replace("#_objnumber0_#",str(obj_selected))
-
-
-
-          
-
-      #  print "query_placeholder2:"+query_placeholder
+        #print "query_placeholder2:"+query_placeholder
         acceptable_len=0
         value=0
 
@@ -564,7 +542,7 @@ class RouterHandler:
         if valuelen_pos != -1:
         #  print "valuelen_pos != -1"   
  
-          value=str(status_to_set)
+          value = hex(int(value)).replace("0x","")  #make the value expressed in hexadecimal
           #if (query_placeholder.find("sts_not_"))!=-1:  #if the query must be negated...for object with active low pin..
           #  print ("found sts_not_ in placeholder,i will negate the status")
           #  value=str(int(not (int(status_to_set)))) 
@@ -581,15 +559,18 @@ class RouterHandler:
 
 
           if (len(node_address)==3): #radio node
+            hex_node_address=hex(int(node_address)).replace("0x","")  # get the hexadecimal string of the address
+            if len(hex_node_address) < 2:  # to get an address with 2 char
+              hex_node_address = "0" + hex_node_address  
+             
             logprint("query_placeholder:"+query_placeholder)
-            query='''[S_'''+node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]\n'''
+            query='''[S_'''+hex_node_address+query_placeholder+self.getProgressive_msg_id()+'''_#]\n'''
             # print "query:::::"+query
             #valuelen_pos=query_placeholder.find("valuelen")
             #string_to_replace_with_value=query_placeholder[valuelen_pos:valuelen_pos+10]
             #query=query_placeholder.replace(string_to_replace_with_value,value)
           else:#network node
             query_placeholder=query_placeholder.replace("#_node_address_#",str(node_address)) 
-
             message="node_password_dict:"+str(node_password_dict)
             logprint(message,verbose=4) 
  
@@ -598,15 +579,10 @@ class RouterHandler:
               query_placeholder=query_placeholder.replace("#_node_password_#",node_password) 
             query=query_placeholder
           
-
           logprint("composed query was:"+query+"Endquery")
           
 
-
-
-
-
-      elif (out_type=="sr_relay"):
+      elif (out_type=="sr_relay"):  #not correctly implemented todo:
         pin1=str(pinNumbers[1])
         pin0=str(pinNumbers[0])
         if (len (pin0) <2):
@@ -617,7 +593,7 @@ class RouterHandler:
         #  [S_001sr04051_#] 
         query=base_query+'''[S_'''+node_address+'''sr'''+pin0+pin1+str(status_to_set)+self.getProgressive_msg_id()+'''_#]'''+'''\n'''
 
-      elif (out_type=="digital_output"):# [S_001dw06001_#]
+      elif (out_type=="digital_output"): #not correctly implemented todo:
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -631,7 +607,7 @@ class RouterHandler:
 
 
       # [S_001sm11135_#]
-      elif (out_type=="servo_output"):
+      elif (out_type=="servo_output"):  #not correctly implemented todo:
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -646,7 +622,7 @@ class RouterHandler:
         query=base_query+'''[S_'''+node_address+'''sm'''+pin+str(status_to_set)+str(self.query_number)+'''_#]'''+'''\n'''
 
       #  [S_001aw06155_#] 
-      elif (out_type=="analog_output"):
+      elif (out_type=="analog_output"):  #not correctly implemented todo:
 
         if type(pinNumbers) not in (tuple, list):  #if c is not a list , trasform it in a list of one element
           pinNumbers=[pinNumbers]
@@ -691,10 +667,19 @@ class RouterHandler:
 
       
       logprint("setAddressToNode executed with address:"+str(new_address))
+      
+      old_hex_node_address=hex(int(old_address)).replace("0x","")  # get the hexadecimal string of the address
+      
+      if len(old_hex_node_address) < 2:  # to get an address with 2 char
+        old_hex_node_address = "0" + hex_node_address  
 
+      new_hex_node_address=hex(int(new_address)).replace("0x","")  # get the hexadecimal string of the address
+      
+      if len(new_hex_node_address) < 2:  # to get an address with 2 char
+        new_hex_node_address = "0" + new_hex_node_address  
 
       #node_address=nodeDict[node_serial_number].getNodeAddress()  
-      query="[S_"+old_address+"sa"+new_address+node_serial_number+self.getProgressive_msg_id()+"_#]"+'''\n'''
+      query="[S_"+old_hex_node_address+"s"+new_hex_node_address+node_serial_number+self.getProgressive_msg_id()+"_#]"+'''\n'''
       #result=make_query_to_radio_node(self.serial_communication,node_serial_number,new_address,msg)
       #if result ==1:
       #  int_address=int(new_address)

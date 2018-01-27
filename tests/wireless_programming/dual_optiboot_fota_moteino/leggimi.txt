@@ -25,10 +25,19 @@ moteino optiboot funziona con 115200
 
 una volta compilato da ide arduino i .hex vengono messi in /tmp/
 
-mettendo :
+Installare su arduino :
+
+Mettendo:
 https://github.com/Optiboot/optiboot/releases/download/v6.2/package_optiboot_optiboot-additional_index.json
 
-nella lista repositories arduino e poi andando su strumenti /scheda  gestore schede e cercando optiboot si puoi installare in modo da poter programmare gli sketch da ide arduino
+nella lista repositories arduino e poi andando su strumenti /scheda  gestore schede e cercando optiboot si puoi installare optiboot originale.
+Attenzione bisogna sostituire i file con quello di moteino!!!!!! dovrebbe essere qui: /usr/share/arduino/hardware/arduino/bootloaders/optiboot   
+Attenzione arduino da la precedenza al arduino installato rispetto a quello portatile...quindi verificare che sia modificata la versione di sistema..
+
+in modo da poter programmare gli sketch da ide arduino
+
+
+
 
 Per programmarlo seleziona optiboot on 32 pin cpus   e su processore mettere atmega328p
 

@@ -5,7 +5,7 @@ la marca di flash usata è una che ha id: 0x1F65
 
 
 
-Attenzionedecommentare la riga 67 del file  RFM69_OTA.cpp
+Attenzione decommentare la riga 67 del file  RFM69_OTA.cpp
 dove è scritto:  flash.blockErase32K(0); //clear any written data in first 32K block
 
 In modo che in caso di fallimento la flash venga cancellata e si possa quindi riprovare la programmazione senza rischiare di rendere non avviabile arduino.

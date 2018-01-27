@@ -25,6 +25,29 @@ OnosMsg::OnosMsg(){
 }
 
 
+char OnosMsg::hexCharToDec(char value)  // given a value in ascii hexadecimal it will return the same value in decimal
+{
+        value = value + 48 ; // to compensate for the -48 in the rest of the code
+        switch (value) {
+                case 'a' :
+                        return(10);  // return 10 given 'a'
+                case 'b' :
+                        return(11);
+                case 'c' :
+                        return(12);
+                case 'd' :
+                        return(13);
+                case 'e' :
+                        return(14);
+                case 'f' :
+                        return(15);
+                default:
+                        return(value); // if the value is not > 9 return it as it is
+                    
+        }
+
+}
+
 
 
 void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
@@ -59,9 +82,12 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                       &&(received_message[2]=='_') ) {
         // the onos cmd was found           [S_001dw06001_#]
                 
-                        received_message_address=(received_message[3]-48)*100
-                                                +(received_message[4]-48)*10
-                                                +(received_message[5]-48)*1;
+                        received_message_address=hexCharToDec(received_message[3]-48)*16
+                                                +hexCharToDec(received_message[4]-48);
+                        Serial.print(F("received_message_address:")); 
+                        Serial.println(received_message_address); 
+
+
                 
                 if (received_message_address!=this_node_address) {//onos command for a remote arduino node
                         strcpy(decoded_result,"[S_remote_#]");
@@ -75,44 +101,43 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 
                 strcpy(decoded_result,"[S_er_cmdRNotfound_#]"); 
                 
-                received_msg_cmd_type[0]=received_message[6];
-                received_msg_cmd_type[1]=received_message[7];
+                received_msg_cmd_type[0]=received_message[5];
                 
                 //[S_123ga5.24WPlugAvx000810000x_#]
                 
                 
-                if ( received_msg_cmd_type[0]=='g' && received_msg_cmd_type[1]=='a' ){
+                if ( received_msg_cmd_type[0]=='g' ){
                         strcpy(decoded_result,"ok");
                         return; 
                 }
                 
-                else if ( received_msg_cmd_type[0]=='u' && received_msg_cmd_type[1]=='l' ){
+                else if ( received_msg_cmd_type[0]=='u' ){
                         strcpy(decoded_result,"ok");
                         return;
                 }
                 
                 
                 //[S_123otx_#
-                else if ( received_msg_cmd_type[0]=='o' && received_msg_cmd_type[1]=='t' ){
+                else if ( received_msg_cmd_type[0]=='o' ){
                         ota_loop=1;
                         strcpy(decoded_result,"ok");
                         return;
                 }
                 
                 
-                // [S_123dw04001_#]
-                // [S_001dw04001_#]
-                // [S_001dw04000_#]
-                // [S_254dw04000_#]
-                else if ( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='w' ){
-                                received_message_value=received_message[12]-48;
+                // [S_13D040x_#]
+                // [S_01D041x_#]
+                // [S_01D040x_#]
+                // [S_04D041x_#]
+                else if ( received_msg_cmd_type[0]=='D' ){    // totest
+                                received_message_value=received_message[8]-48;
                         if (received_message_value>1){ 
                                 strcpy(decoded_result,"[S_er0_status_#]");
                                 return;
                         }
                         
-                        received_message_first_pin_used= ((received_message[8])-48)*10
-                                                       +(  (received_message[9])-48)*1;
+                        received_message_first_pin_used= ((received_message[6])-48)*10
+                                                       +(  (received_message[7])-48)*1;
                         
                         pinMode(received_message_first_pin_used, OUTPUT); 
                         digitalWrite(received_message_first_pin_used, received_message_value); 
@@ -126,12 +151,11 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         return;
                 }
                 
-                //[S_001aw06125_#]
-                else if( received_msg_cmd_type[0]=='a' && received_msg_cmd_type[1]=='w' ){
+                //[S_08A06ffx_#]
+                else if( received_msg_cmd_type[0]=='a' ){   // totest
                         
-                        received_message_value=(received_message[10]-48)*100
-                                              +(received_message[11]-48)*10
-                                              +(received_message[12]-48)*1;
+                        received_message_value = hexCharToDec(received_message[8] - 48) * 16
+                                               + hexCharToDec(received_message[9] - 48);
                         
                         if ((received_message_value<0)||(received_message_value>255)){ //status check
                                 received_message_value=0;
@@ -148,21 +172,21 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 } 
                 
                 
-                //[S_001sr04051_#] 
-                else if( received_msg_cmd_type[0]=='s' && received_msg_cmd_type[1]=='r' ){
+                //[S_01r04051x_#] 
+                else if( received_msg_cmd_type[0]=='r' ){  // totest
                 
-                        received_message_value=received_message[12]-48;      
+                        received_message_value=received_message[10]-48;      
                         
                         if (received_message_value>1){ 
                                 strcpy(decoded_result,"[S_er0_status_#]"); 
                                 return;
                         }
                         
-                        received_message_first_pin_used= ((received_message[8])-48)*10
-                                                       +(  (received_message[9])-48)*1;
+                        received_message_first_pin_used= ((received_message[6])-48)*10
+                                                       +(  (received_message[7])-48)*1;
                                                        
-                        received_message_second_pin_used=((received_message[10])-48)*10
-                                                        +(  (received_message[11])-48)*1;
+                        received_message_second_pin_used=((received_message[8])-48)*10
+                                                        +(  (received_message[9])-48)*1;
                         
                         pinMode(received_message_first_pin_used, OUTPUT); 
                         pinMode(received_message_second_pin_used, OUTPUT); 
@@ -181,13 +205,11 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         return;
                 }
                 
-                //[S_001ac06125_#]    #configuration analog object
-                else if( received_msg_cmd_type[0]=='a' && received_msg_cmd_type[1]=='c' ){
+                //[S_01C0612x_#]    #configuration analog object  totest
+                else if( received_msg_cmd_type[0]=='C' ){
                 
-                        received_message_value=(received_message[10]-48)*100
-                                              +(received_message[11]-48)*10
-                                              +(received_message[12]-48)*1;
-                        
+                        received_message_value=hexCharToDec(received_message[8]-48)*16
+                                              +hexCharToDec(received_message[9]-48);
                         if ((received_message_value<0)||(received_message_value>255)){ //status check
                                 received_message_value=0;
                                 //Serial.println(F("onos_cmd_value_error"));  
@@ -196,8 +218,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return;
                         }
                         
-                        rx_obj_selected= ((received_message[8])-48)*10
-                                       +(  (received_message[9])-48)*1;
+                        rx_obj_selected= ((received_message[6])-48)*10
+                                       + (received_message[7])-48;
                         
                         strcpy(decoded_result,"ok");
                         
@@ -212,10 +234,10 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 } 
                 
                 
-                //[S_001dc001x_#]    #configuration digital object
-                else if( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='c' ){
+                //[S_01c001x_#]    #configuration digital object    totest
+                else if( received_msg_cmd_type[0]=='c'){
                 
-                        received_message_value=int(received_message[10]-48);
+                        received_message_value=int(received_message[8]-48);
                         
                         if (received_message_value>1){ //status check
                                 received_message_value=0;
@@ -224,7 +246,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return;
                         }
                         
-                        rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+                        rx_obj_selected= ((received_message[6])-48)*10+(  (received_message[7])-48)*1;
                         
                         strcpy(decoded_result,"ok");
                         
@@ -243,10 +265,10 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 
                 
                 
-                //[S_123do001x_#]   [S_001do001x_#]    # digital object controll
-                else if( received_msg_cmd_type[0]=='d' && received_msg_cmd_type[1]=='o' ){
+                //[S_12d001x_#]   [S_001do001x_#]    # digital object controll
+                else if( received_msg_cmd_type[0]=='d'){
                 
-                        received_message_value=(received_message[10]-48);
+                        received_message_value=(received_message[8]-48);
                         
                         if (received_message_value>1){ //status check
                                 received_message_value=0;
@@ -255,7 +277,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return;
                         }
                         
-                        rx_obj_selected= ((received_message[8])-48)*10+(  (received_message[9])-48)*1;
+                        rx_obj_selected= ((received_message[6])-48)*10+(  (received_message[7])-48)*1;
                         
                         strcpy(decoded_result,"ok");
                         
@@ -265,7 +287,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return; 
                         }
                         else{
-                                changeObjStatus(rx_obj_selected,received_message_value);
+                                changeObjStatus(rx_obj_selected,received_message_value); 
+                                // todo: make this return 0 or 1 to tell if the operation was completed.
                         }
                         
                         
@@ -273,30 +296,29 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 } 
                 
                 
-                // [S_254sa123Wrelay4x0007_#]     [S_254sa123WreedSaa0004_#]   [S_254sa123WPlug1vx0004_#]  
+                // [S_fes02Wrelay4x0007x_#]     [S_fes02WPlug1vx0001x_#] 
                 
-                else if( received_msg_cmd_type[0]=='s' && received_msg_cmd_type[1]=='a' ){
+                else if( received_msg_cmd_type[0]=='s'){   // set address to this node
                 
-                        received_message_value=(received_message[8]-48)*100
-                                              +(received_message[9]-48)*10
-                                              +(received_message[10]-48);
+                        received_message_value = hexCharToDec(received_message[6]-48)*16
+                                              +(received_message[7]-48);
                         
                         
                         //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
                         memset(received_serial_number,0,sizeof(received_serial_number)); //to clear the array 
                         
-                        received_serial_number[0]= received_message[11];
-                        received_serial_number[1]= received_message[12];
-                        received_serial_number[2]= received_message[13];
-                        received_serial_number[3]= received_message[14];
-                        received_serial_number[4]= received_message[15];
-                        received_serial_number[5]= received_message[16]; 
-                        received_serial_number[6]= received_message[17];
-                        received_serial_number[7]= received_message[18];
-                        received_serial_number[8]= received_message[19];
-                        received_serial_number[9]= received_message[20];
-                        received_serial_number[10]= received_message[21]; 
-                        received_serial_number[11]= received_message[22];
+                        received_serial_number[0] = received_message[8];
+                        received_serial_number[1] = received_message[9];
+                        received_serial_number[2] = received_message[10];
+                        received_serial_number[3] = received_message[11];
+                        received_serial_number[4] = received_message[12];
+                        received_serial_number[5] = received_message[13]; 
+                        received_serial_number[6] = received_message[14];
+                        received_serial_number[7] = received_message[15];
+                        received_serial_number[8] = received_message[16];
+                        received_serial_number[9] = received_message[17];
+                        received_serial_number[10] = received_message[18]; 
+                        received_serial_number[11] = received_message[19];
                         
                         
                         
@@ -330,32 +352,32 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 }
                 
                 
-                // [S_001ceProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
+                // [S_01eProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
                 
-                // [S_123ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
-                // [S_254ceWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
+                // [S_23eWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
+                // [S_feeWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
                 
                 
                 
-                else if( received_msg_cmd_type[0]=='c' && received_msg_cmd_type[1]=='e' ){
+                else if( received_msg_cmd_type[0]=='e' ){  //todo   set encrypt key to this node
                 
                         
                         //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
                         
                         memset(received_serial_number,0,sizeof(received_serial_number)); //to clear the array 
                         
-                        received_serial_number[0]= received_message[8];
-                        received_serial_number[1]= received_message[9];
-                        received_serial_number[2]= received_message[10];
-                        received_serial_number[3]= received_message[11];
-                        received_serial_number[4]= received_message[12];
-                        received_serial_number[5]= received_message[13]; 
-                        received_serial_number[6]= received_message[14];
-                        received_serial_number[7]= received_message[15];
-                        received_serial_number[8]= received_message[16];
-                        received_serial_number[9]= received_message[17];
-                        received_serial_number[10]= received_message[18]; 
-                        received_serial_number[11]= received_message[19];
+                        received_serial_number[0] = received_message[6];
+                        received_serial_number[1] = received_message[7];
+                        received_serial_number[2] = received_message[8];
+                        received_serial_number[3] = received_message[9];
+                        received_serial_number[4] = received_message[10];
+                        received_serial_number[5] = received_message[11]; 
+                        received_serial_number[6] = received_message[12];
+                        received_serial_number[7] = received_message[13];
+                        received_serial_number[8] = received_message[14];
+                        received_serial_number[9] = received_message[15];
+                        received_serial_number[10] = received_message[16]; 
+                        received_serial_number[11] = received_message[17];
                         
                         
                         
@@ -367,23 +389,24 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         
                         memset(encript_key,0,sizeof(encript_key)); //to clear the array 
                         
-                        encript_key[0]= received_message[20];
-                        encript_key[1]= received_message[21];
-                        encript_key[2]= received_message[22];
-                        encript_key[3]= received_message[23]; 
-                        encript_key[4]= received_message[24];
-                        encript_key[5]= received_message[25];
-                        encript_key[6]= received_message[26];
-                        encript_key[7]= received_message[27];
-                        encript_key[8]= received_message[28]; 
-                        encript_key[9]= received_message[29];
-                        encript_key[10]= received_message[30];
-                        encript_key[11]= received_message[31];
-                        encript_key[12]= received_message[32];
-                        encript_key[13]= received_message[33]; 
-                        encript_key[14]= received_message[34];
-                        encript_key[15]= received_message[35];
-                        encript_key[16]= received_message[36];
+                        encript_key[0] = received_message[18];
+                        encript_key[1] = received_message[19];
+                        encript_key[2] = received_message[20];
+                        encript_key[3] = received_message[21]; 
+                        encript_key[4] = received_message[22];
+                        encript_key[5] = received_message[23];
+                        encript_key[6] = received_message[24];
+                        encript_key[7] = received_message[25];
+                        encript_key[8] = received_message[26]; 
+                        encript_key[9] = received_message[27];
+                        encript_key[10] = received_message[28];
+                        encript_key[11] = received_message[29];
+                        encript_key[12] = received_message[30];
+                        encript_key[13] = received_message[31]; 
+                        encript_key[14] = received_message[32];
+                        encript_key[15] = received_message[33];
+                        encript_key[16] = '\0';
+                        //encript_key[16] = received_message[34];
                         
                         
                         noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
@@ -403,12 +426,12 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         return;
                 }
                 
-                //[S_001begin_#]
-                else if( received_msg_cmd_type[0]=='b' && received_msg_cmd_type[1]=='e'){
-                        if( received_message[6]=='b' && received_message[7]=='e' 
-                                               && received_message[8]=='g' 
-                                               && received_message[9]=='i' 
-                                               && received_message[10]=='n'){
+                //[S_01begin_#]
+                else if( received_msg_cmd_type[0]=='b' ) {  //todo
+                        if( received_message[5]=='b' && received_message[6]=='e' 
+                                               && received_message[7]=='g' 
+                                               && received_message[8]=='i' 
+                                               && received_message[9]=='n'){
                                 strcpy(decoded_result,"ok");
                         }
                         else{
