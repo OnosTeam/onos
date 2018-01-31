@@ -254,7 +254,7 @@ unsigned long sync_timeout=node_default_timeout;
 
 volatile boolean interrupt_called=0;
 
-char node_fw[]="5.27";
+char node_fw[]="01";
 char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 //char init_encript_key[17]=INITENCRYPTKEY;
 int this_node_address=254; //i start with 254
@@ -304,7 +304,7 @@ int received_message_address=0; //must be int..
 //volatile char filtered_uart_message[rx_msg_lenght+3];
 char filtered_radio_message[rx_msg_lenght+3];
 char syncMessage[syncMessage_lenght];
-char str_this_node_address[4];
+char str_this_node_address[3];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
 char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
@@ -351,7 +351,6 @@ unsigned long time_to_reset_encryption=3000; //this must be greater than time_to
 unsigned long time_to_change_status=30;
 
 
-int tmp_number;
 uint8_t tryed_times;
 uint8_t counter;
 uint8_t pointer;
@@ -446,50 +445,24 @@ return(0);
 void composeSyncMessage()
 {
   Serial.println(F("composeSyncMessage executed"));
-  //[S_123ul5.24WPlugAvx000810000x_#]
-  tmp_number=0;
+  //[S_01g05ProminiS0001x_#] 
   //strcpy(str_this_node_address,"");
   memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
   str_this_node_address[0]='0';
   str_this_node_address[1]='0';
-  str_this_node_address[2]='0';
   
-  str_this_node_address[0]=(this_node_address/100)+48;
-  tmp_number=this_node_address%100;
-  str_this_node_address[1]=(tmp_number/10)+48;
-  tmp_number=tmp_number%10; 
-  str_this_node_address[2]=tmp_number+48;  
+  //tmp_char_this_node_address = this_node_address ;  //make the cast of int to char
+
+  str_this_node_address[0] = char(OnosMsgHandler.charDecToHex( this_node_address / 16) );
+  str_this_node_address[1] = char(OnosMsgHandler.charDecToHex( this_node_address % 16) );
+  str_this_node_address[2] = '\0';
   
-  /*
-  if (this_node_address>99)
-  {
-  str_this_node_address[0]=(this_node_address/100)+48;
-  tmp_number=this_node_address%100;
-  str_this_node_address[1]=(tmp_number/10)+48;
-  tmp_number=tmp_number%10; 
-  str_this_node_address[2]=tmp_number+48;
-  }
-  
-  
-  else if (this_node_address>9)
-  {
-  str_this_node_address[0]='0';
-  str_this_node_address[1]=(this_node_address/10)+48;
-  tmp_number=this_node_address%10; 
-  str_this_node_address[2]=tmp_number+48;
-  }
-  else
-  { 
-  str_this_node_address[0]='0';
-  str_this_node_address[1]='0';
-  str_this_node_address[2]=this_node_address+48;
-  }
-  */    
-  
-  Serial.println(F("local_address:"));
+  Serial.println(F("local_address dec:"));
+  Serial.println(this_node_address);
+
+  Serial.println(F("local_address hex:"));
   Serial.println(str_this_node_address[0]);
   Serial.println(str_this_node_address[1]);
-  Serial.println(str_this_node_address[2]);
   
   
   
@@ -500,7 +473,7 @@ void composeSyncMessage()
   strcat(syncMessage, str_this_node_address);
   
   #if defined(node_type_WreedSaa)
-    //[S_001rsWreedSaa000132Lgx_#]      reeds:3, temperature sensor:2, luminosity sensor:L, battery sensor:g 
+    //[S_01uWreedSaa000132Lgx_#]      reeds:3, temperature sensor:2, luminosity sensor:L, battery sensor:g 
     
     node_obj_status[reed1]=digitalRead(node_obj_pinout[reed1]);
     node_obj_status[reed2]=digitalRead(node_obj_pinout[reed2]);
@@ -601,12 +574,12 @@ void composeSyncMessage()
     */
     
     if (this_node_address==254){
-      strcat(syncMessage, "ga");
+      strcat(syncMessage, "g");
       strcat(syncMessage, node_fw);
       strcat(syncMessage, serial_number);
     }
     else{
-      strcat(syncMessage, "rs");
+      strcat(syncMessage, "u");
       strcat(syncMessage, serial_number);
       
       uint8_t  tmp_len = strlen(syncMessage);
@@ -621,13 +594,13 @@ void composeSyncMessage()
   #elif defined(node_type_Wrelay4x)
     
     if (this_node_address==254){
-      strcat(syncMessage, "ga");
+      strcat(syncMessage, "g");
       strcat(syncMessage, node_fw);
       strcat(syncMessage, serial_number);
     }
     else{
       //[S_123r4Wrelay4x00080110x_#]     0110 is the 4 relay status
-      strcat(syncMessage, "r4");
+      strcat(syncMessage, "u");
       // strcat(syncMessage, "sy");
       strcat(syncMessage, serial_number);
       uint8_t  tmp_len = strlen(syncMessage);
@@ -642,13 +615,13 @@ void composeSyncMessage()
   #elif defined(node_type_WPlug1vx)
     
     if (this_node_address==254){
-      strcat(syncMessage, "ga");
+      strcat(syncMessage, "g");
       strcat(syncMessage, node_fw);
       strcat(syncMessage, serial_number);
     }
     else{
       //[S_123r4Wrelay4x00080110x_#]     0110 is the 4 relay status
-      strcat(syncMessage, "ul");
+      strcat(syncMessage, "u");
       // strcat(syncMessage, "sy");
       
       strcat(syncMessage, serial_number);
@@ -793,9 +766,7 @@ void getAddressFromGateway()
   //[S_123ga5.24WPlugAvx000810000x_#]
   
   composeSyncMessage();
-  syncMessage[6]='g'; //modify the message to get a address instead of just sync.
-  syncMessage[7]='a'; //modify the message to get a address instead of just sync.
-  
+  //syncMessage[5]='g'; //modify the message to get a address instead of just sync.  
   Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
   
   

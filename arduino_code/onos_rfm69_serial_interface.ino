@@ -129,7 +129,7 @@ unsigned long sync_time=0;
 
 char serial_number[13]="ProminiS0001";
 
-char node_fw[]="5.26";
+char node_fw[]="01";
 char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 
 int this_node_address=1; //must be int..
@@ -161,7 +161,7 @@ int received_message_address=0; //must be int..
 volatile char filtered_uart_message[rx_msg_lenght+3];
 char filtered_radio_message[rx_msg_lenght+3];
 volatile char syncMessage[syncMessage_lenght];
-char str_this_node_address[4];
+char str_this_node_address[3];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
 char progressive_msg_id=48;  //48 is 0 in ascii   //a progressive id to make each message unique
@@ -198,7 +198,6 @@ uint8_t radioPriority=10;
 #define default_uartPriority 10
 
 
-int tmp_number;
 uint8_t counter;
 uint8_t pointer;
 
@@ -256,19 +255,16 @@ void composeSyncMessage(){
 
   //[S_001sy3.05ProminiS0001_#] 
 
-  tmp_number=0;
   //strcpy(str_this_node_address,"");
   memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
   str_this_node_address[0]='0';
   str_this_node_address[1]='0';
-  str_this_node_address[2]='0';
   
-  str_this_node_address[0]=(this_node_address/100)+48;
-  tmp_number=this_node_address%100;
-  str_this_node_address[1]=(tmp_number/10)+48;
-  tmp_number=tmp_number%10; 
-  str_this_node_address[2]=tmp_number+48;    
-  
+  //tmp_char_this_node_address = this_node_address ;  //make the cast of int to char
+
+  str_this_node_address[0] = char(OnosMsgHandler.charDecToHex( this_node_address / 16) );
+  str_this_node_address[1] = char(OnosMsgHandler.charDecToHex( this_node_address % 16) );
+  str_this_node_address[2] = '\0';
 
 
   //strcpy(syncMessage, "");
@@ -281,7 +277,7 @@ void composeSyncMessage(){
   }
   else{
   */
-  strcat(syncMessage, "sy");
+  strcat(syncMessage, "u");
 
   //}
 
@@ -307,7 +303,7 @@ void composeSyncMessage(){
 
 void makeSyncMessage(){
 
-  //[S_001sy3.05ProminiS0001_#] 
+  //[S_01u01ProminiS0001_#] 
   
 
   for (pointer = 0; pointer < sizeof(syncMessage); pointer++) {

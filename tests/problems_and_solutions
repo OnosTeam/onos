@@ -167,7 +167,7 @@ I will use post instead of get message
   Standard part to all messages :
 
   "[S_"   3 byte for the start of the message
-   2 bytes for the address of the node expressed in hex format max number is FF --> 255
+   2 bytes for the address of the node expressed in hex format max number is ff --> 255
    1 byte for the type of msg expressed in ascii character 
    1 byte for the message id (a progressive number from ascii 0 to 9 to identify the message, first time will be 0 next 1 and so on)
   "#_]"   3 byte for the end of the message
@@ -182,7 +182,7 @@ I will use post instead of get message
   The message to change a digital output pin status will be: 
 
   3 bytes with "[S_" for the start of the message
-  2 bytes for the address of the node expressed in hex format max number is FF --> 255
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255
   1 bytes containing "D" for the type of msg
   2 bytes for the number of pin  (for pin 13 it will be '13'  ,for pin 3 it will be '03')
   1 bytes to tell arduino the status (0 or 1 ) to set the pin
@@ -193,6 +193,139 @@ I will use post instead of get message
 
 
 
+  The message to change the value of a generic digital object node will be: 
+
+  3 bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255
+  1 byte containing "d" for the type of msg , set digital object
+  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  1 byte to tell arduino the value (0 or 1 ) to set the object
+  1 byte for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01d001x_#]    to set the first object (00) of the node to 1, (x is the id value)
+             [S_01d000x_#]    to set the first object (00) of the node to 0, (x is the id value)
+
+
+
+  The message to change the value of a generic analog object node will be: #to implement
+
+  3 bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255
+  1 bytes containing "a" for the type of msg , set analog object
+  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  2 byte to tell arduino the value to set the object to expressed in hexadecimal (min 00  max ff)
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01a0100x_#]    to set the second object of the node to 0  which is the  hex value of "00" converted
+             [S_01a01ffx_#]    to set the second object of the node to 255  which is the  hex value of "ff" converted
+
+
+
+
+
+  If a node needs to get a free address from the OnosCenter it will write:
+
+  3 bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255   01 for the gateway
+  1 byte containing "g" for the type of msg
+  2 bytes with the fw version for example "00" expressed in hex format max number is ff --> 255
+  12 byte to tell the node serial number
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01g05ProminiS0001x_#] 
+
+
+  But if the node has already a valid address then it will send a data update with the 'u' cmd type
+  The message will change for each node type.
+  The gateway node will know how to handle each different message because it will know the serial number of the sender node
+
+
+  For example :
+
+  If a reed node have to send a update message it will write:
+
+  3  bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255   01 for the gateway
+  1 byte containing "u" for the type of msg
+  12 bytes to tell the node serial number
+  1 byte to tell the status of 2 reeds( 0:"both reeds off",2:"reed1 on and reed2 off",1:"reed1 off and reed2 on",3:"both reeds on")
+  1 bytes to tell the status of the temperature sensor (binary)
+  1 byte to tell the status of the luminosity sensor(binary)
+  1 byte to tell the status of the battery sensor(binary)
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01uWreedSaa000132Lgx_#]      reeds values=3, temperature sensor=2, luminosity sensor=L, battery sensor=g     
+
+
+
+ if the node is a plug or lamp with sensors it will send:  To implement  and to modify
+
+  3 bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255   01 for the gateway
+  1 bytes containing "u" for the type of msg , update
+  2 bytes with the fw version for example "00" expressed in hex format max number is ff --> 255
+  12 byte to tell the node serial number
+  1 byte to tell the status of the node ( relay on or off )
+  2 byte to tell the sensor value on A0  (lux for "lamp type" and maybe ampere for "plug type")  expressed in hex format
+  3 bytes to tell how many minutes the relay have been stayed on since the node was powered on (will restart after 10 hours).
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example: deprecated  [S_254u01ProminiS00010167123x_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
+
+   
+
+
+
+
+
+  To set a node address OnosCenter will then send a message with a : [S_fes02ProminiS0001x_#]  to tell the node to set its address to 123 for example
+
+             
+
+
+
+
+
+
+  If the node that have to send a sync message is a lamp node or a plug node it will write:
+  3 bytes with "[S_" for the start of the message
+  3 bytes for the address of the node ("001" for the arduino gateway)
+  2 bytes containing "ul" for the type of msg  (um stand for update lamp)
+  ///  removed because i know the fw from the last getaddress    // 4 byte with the fw version for example "5.23"
+  12 byte to tell the node serial number
+  1 byte to tell the status of the node ( relay on or off )
+  3 byte to tell the sensor value on A0  (lux for "lamp type" and maybe ampere for "plug type")
+  3 bytes to tell how many minutes the relay have been stayed on since the node was powered on (will restart after 10 hours).
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_001ulProminiS00010167123x_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
+
+
+
+  If onosCenter needs to change a node encrypt key it will send:  totest
+
+  3  bytes with "[S_" for the start of the message
+  2  bytes for the address of the node in hexadecimal ("01" for the arduino gateway)
+  1  byte containing "e" for the type of msg (change encrypt key)
+  12 bytes to tell the node serial number
+  16 bytes to tell the new encrypt key
+  1  byte for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01eProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key
+
+
+
+
+
+
+
+
+
+
+
+
+
+//deprecated coding:
 
 
   The message to change an analog output pin status will be:  deprecated
@@ -235,9 +368,6 @@ I will use post instead of get message
              [S_001sr04050x_#]    to set the relay (set on pin 4 , reset on pin 5)  to 0 
 
 
-
-
-
   The message to change the status of the onos_plug_node_WPlugavx contact status will be:  deprecated
 
   3 bytes with "[S_" for the start of the message
@@ -265,124 +395,10 @@ I will use post instead of get message
 
 
 
-
-  The message to change the value of a generic digital object node will be: 
-
-  3 bytes with "[S_" for the start of the message
-  2 bytes for the address of the node expressed in hex format max number is FF --> 255
-  1 byte containing "d" for the type of msg , set digital object
-  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
-  1 byte to tell arduino the value (0 or 1 ) to set the object
-  1 byte for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_01d001x_#]    to set the first object (00) of the node to 1, (x is the id value)
-             [S_01d000x_#]    to set the first object (00) of the node to 0, (x is the id value)
+//end deprecated coding
 
 
 
-  The message to change the value of a generic analog object node will be: #to implement
-
-  3 bytes with "[S_" for the start of the message
-  3 bytes for the address of the node
-  2 bytes containing "ao" for the type of msg , set analog object
-  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
-  3 byte to tell arduino the value to set the object to expressed in hexadecimal (min 0x000  max 0xFFF)
-          in this way the value can range from 0 to 65535 (16 bit)
-  1 bytes for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_001ao10000x_#]    to set the first object of the node to 0  which is the  hex value of "000" converted
-             [S_001ao100FFx_#]    to set the first object of the node to 255  which is the  hex value of "00F" converted
-
-
-
-
-
-  If a node needs to get a free address from the OnosCenter it will write:
-
-  3 bytes with "[S_" for the start of the message
-  3 bytes for the address of the node ("001" for the arduino gateway)
-  2 bytes containing "ga" for the type of msg
-  4 byte with the fw version for example "5.23"
-  12 byte to tell the node serial number
-  1 bytes for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_001ga3.05ProminiS0001x_#] 
-
-  But if the node is a plug or lamp with sensors it will send:
-
-  3 bytes with "[S_" for the start of the message
-  3 bytes for the address of the node ("001" for the arduino gateway)
-  2 bytes containing "ga" for the type of msg
-  4 byte with the fw version for example "5.23"
-  12 byte to tell the node serial number
-  1 byte to tell the status of the node ( relay on or off )
-  3 byte to tell the sensor value on A0  (lux for "lamp type" and maybe ampere for "plug type")
-  3 bytes to tell how many minutes the relay have been stayed on since the node was powered on (will restart after 10 hours).
-  1 bytes for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_254ga3.05ProminiS00010167123x_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
-
-   
-
-  OnosCenter will then send a message with a : [S_fes02ProminiS0001x_#]  to tell the node to set its address to 123 for example
-
-             
-
-
-  If a node needs to send the "I'm alive" sync message OnosCenter it will write:
-  3 bytes with "[S_" for the start of the message
-  3 bytes for the address of the node ("001" for the arduino gateway)
-  2 bytes containing "sy" for the type of msg
-  ///  removed because i know the fw from the last getaddress    //4 byte with the fw version for example "5.23"
-  12 byte to tell the node serial number
-  1 bytes for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_001syProminiS0001x_#]      
-
-
-
-  If the node that have to send a sync message is a lamp node or a plug node it will write:
-  3 bytes with "[S_" for the start of the message
-  3 bytes for the address of the node ("001" for the arduino gateway)
-  2 bytes containing "ul" for the type of msg  (um stand for update lamp)
-  ///  removed because i know the fw from the last getaddress    // 4 byte with the fw version for example "5.23"
-  12 byte to tell the node serial number
-  1 byte to tell the status of the node ( relay on or off )
-  3 byte to tell the sensor value on A0  (lux for "lamp type" and maybe ampere for "plug type")
-  3 bytes to tell how many minutes the relay have been stayed on since the node was powered on (will restart after 10 hours).
-  1 bytes for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_001ulProminiS00010167123x_#]     #lux=167  lamp is at 0 , 123 minutes on since boot  
-
-
-
-  If onosCenter needs to change a node encrypt key it will send:  totest
-
-  3  bytes with "[S_" for the start of the message
-  2  bytes for the address of the node in hexadecimal ("01" for the arduino gateway)
-  1  byte containing "e" for the type of msg (change encrypt key)
-  12 bytes to tell the node serial number
-  16 bytes to tell the new encrypt key
-  1  byte for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_01eProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key
-
-
-
-
-  If a reed node have to send a update message for a reed node it will write:
-
-  3  bytes with "[S_" for the start of the message
-  3  bytes for the address of the node ("001" for the arduino gateway)
-  2  bytes containing "rs" for the type of msg (reed sensor)
-  12 bytes to tell the node serial number
-  1 byte to tell the status of 2 reeds( 0:"both reeds off",2:"reed1 on and reed2 off",1:"reed1 off and reed2 on",3:"both reeds on")
-  1 bytes to tell the status of the temperature sensor (binary)
-  1 byte to tell the status of the luminosity sensor(binary)
-  1 byte to tell the status of the battery sensor(binary)
-  1 bytes for the message id ,a progressive binary number from 0 to 255
-  3 bytes with "_#]" to close the message 
-  example:   [S_001rsWreedSaa000132Lgx_#]      reeds:3, temperature sensor:2, luminosity sensor:L, battery sensor:g     
 
 
 
