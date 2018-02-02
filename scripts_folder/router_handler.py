@@ -536,13 +536,12 @@ class RouterHandler:
         #query_placeholder=query_placeholder.replace("#_objnumber0_#",str(obj_selected))
         #print "query_placeholder2:"+query_placeholder
         acceptable_len=0
-        value=0
 
         valuelen_pos=query_placeholder.find("#_valuelen")
         if valuelen_pos != -1:
         #  print "valuelen_pos != -1"   
  
-          value = hex(int(value)).replace("0x","")  #make the value expressed in hexadecimal
+          value = hex(int(status_to_set)).replace("0x","")  #make the value expressed in hexadecimal
           #if (query_placeholder.find("sts_not_"))!=-1:  #if the query must be negated...for object with active low pin..
           #  print ("found sts_not_ in placeholder,i will negate the status")
           #  value=str(int(not (int(status_to_set)))) 
@@ -671,7 +670,7 @@ class RouterHandler:
       old_hex_node_address=hex(int(old_address)).replace("0x","")  # get the hexadecimal string of the address
       
       if len(old_hex_node_address) < 2:  # to get an address with 2 char
-        old_hex_node_address = "0" + hex_node_address  
+        old_hex_node_address = "0" + old_hex_node_address  
 
       new_hex_node_address=hex(int(new_address)).replace("0x","")  # get the hexadecimal string of the address
       

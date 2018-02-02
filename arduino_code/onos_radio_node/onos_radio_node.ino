@@ -392,7 +392,6 @@ boolean changeObjStatus(char obj_number,int status_to_set)
     }
 
   #elif defined(node_type_Wrelay4x)
-
     if (obj_number==0){
       main_obj_state=status_to_set;
       digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
@@ -407,9 +406,8 @@ boolean changeObjStatus(char obj_number,int status_to_set)
       digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
       Serial.println(F("digitalWrite with obj")); 
     }
+    
   #elif defined(node_type_WPlug1vx)
-    
-    
     if (obj_number==0){
       main_obj_state=status_to_set;
       digitalWrite(5,!status_to_set); // set relay1

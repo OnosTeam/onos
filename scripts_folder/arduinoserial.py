@@ -82,7 +82,6 @@ class SerialPort:
 
     """
 
-
     self.ser = serial.Serial()
     self.ser.port = serialport
 #ser.port = "/dev/port0"
@@ -97,52 +96,29 @@ class SerialPort:
     self.ser.xonxoff = False     #disable software flow control
     self.ser.rtscts = False     #disable hardware (RTS/CTS) flow control
     self.ser.dsrdtr = False       #disable hardware (DSR/DTR) flo
-
-
-
-
-
-
     self.port=serialport
     self.busy=0
 #the error controll is done by the arduin_handler.py     
     #self.fd = os.open(serialport, os.O_RDWR | os.O_NOCTTY | os.O_NDELAY)
     self.status=1
 
-
-
     self.readed_packets_list=[]
 
-
     self.status=0
-
-
-
 
     #os.system("cat "+self.port)
     self.usb=""
     #n = os.read(self.fd)
 
-
-    
-
     self.removeFromInBuffer=''
-
-    
     self.dataAvaible=0
     self.t_read = threading.Thread(target=self.read_data)
     self.t_read.daemon = True  #make the thread a daemon thread
     self.t_read.start()
     self.exit=0
-    
-
-
     self.ser.open()
-    
     self.port_was_opened=0
     
-
-
 
 
   def read_data(self):   # thread  function
@@ -150,14 +126,11 @@ class SerialPort:
 
       global write_enable
       logprint("read_data thread executed")
- 
-
       ignore = ''   #'\r'
       filedev=self.port
       self.dataAvaible=0
       self.exit=exit
    
-
       try: 
 
         if self.ser.isOpen() == True :  
@@ -181,12 +154,8 @@ class SerialPort:
               self.exit=1
               return()
 
-
-
           if self.exit==1:
             return()
-          
-
 
           self.port_was_opened=1
           buf=''
@@ -234,166 +203,120 @@ class SerialPort:
 
 ##################################################################
 
-
-
-
           #at this point i should have a full packet message
           if len(buf)>5:
 
             buf=buf.replace("\n", "")  #to remove \n
             buf=buf.replace("\r", "")  #to remove \r
             buf=buf.replace("\x00", "")  #to remove \n
-
-
             cmd_start=buf.find("[S_")
             cmd_end=buf.find("_#]",cmd_start) #serch the end of the packet ..starting from the "[S_"
-
             cmd='' 
             if ( (cmd_start!=-1)&(cmd_end!=-1)): #there is a full onos command packet
-
 
               #time.sleep(1) #todo remove,justfordebug
               cmd=buf[cmd_start:cmd_end+3]
               next_buf=buf[cmd_end+3:]
               buf=''              
-              logprint("Packet 232 cmd input :"+cmd+"cmd[3]cmd[4]="+cmd[3]+cmd[4])
+              logprint("232PacketInput:"+cmd) # +"cmd[3]cmd[4]="+cmd[3]+cmd[4])
 
 
-              if( (cmd[3]=="o")&(cmd[4]=="k") ): # [S_ok003dw060005_#]  i received a confirm from the node
+              if( (cmd[3]=="o")&(cmd[4]=="k") ): # [S_okd061x_#]  i received a confirm from the node
                 serial_answer_readyQueue.put(cmd)  
                 #with lock_serial_input:              
                 self.readed_packets_list.append(cmd)
                 buf=""
                 #self.dataAvaible=1 
 
-
-
                 continue
 
-              elif( (cmd[6]=="s")&(cmd[7]=="y") )or((cmd[6]=="u")&(cmd[7]=="l")) :
-              # [S_001syProminiS0001_#]   or [S_123ulWPlugAvx000810000_#]
+              elif(cmd[5] == "g"):
+              # [S_01g05ProminiS0001x_#]
 
-                logprint("serial rx cmd="+cmd)
+                logprint("232Rxg=" + cmd)
                 try:
-                  serial_number=cmd[8:20]   
-                  node_address=cmd[3:6]
-                  node_fw="def0"  #default
-                  if ((cmd[6]=="u")&(cmd[7]=="l")):  #todo  sensor value data extraction [S_003ulWrelay4x000100000u_#]
-                    obj_value=cmd[20]
-                    obj_address_to_update=0
-                    priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":{obj_address_to_update:obj_value} }) 
+                  serial_number = cmd[8:20]
+                  node_address = '%03d' %(int(cmd[3:5], 16) )  # get the address in decimal format,example:get "010" from the hexadecimal "0a"  
+                                                               # the '%03d' %  will fill with '0' the left part.. 2 will become a string ='002'
+                  node_fw = '%03d' %(int(cmd[3:5], 16) ) # "def0"  #default  
 
-
-
-
-                  if node_address=="254":  #the node is looking for a free address
-
-                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                  if node_address == "254":  #the node is looking for a free address
+                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired", "nodeSn":serial_number, "nodeAddress":node_address, "nodeFw":node_fw}) 
                     continue
 
                 except Exception as e  :               
-                  message="error receiving serial sync message cmd was :"+cmd
+                  message="errorRx232 g_sync msg was:" + cmd
                   logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
 
                 #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
-
                 continue
 
 
+              elif(cmd[5] == "u" ):
+                #[S_01uWreedSaa000132Lgx_#]
 
-####reed node
-
-              elif( (cmd[6]=="r")&(cmd[7]=="s") ) :
-              #  [S_001rsWreedSaa0001312Lgx_#] 
-
-                logprint("serial rx cmd="+cmd)
+                logprint("232Rxu=" + cmd[0:18]+"+bin part")
                 try:
-                  serial_number=cmd[8:20]   
-                  node_address=cmd[3:6]
-                  node_fw="def0"  #default
-                  reeds_status=cmd[20]
-                  logprint("reeds status received:"+reeds_status) 
-                  reed1_status=(reeds_status=="2")or(reeds_status=="3") #get boolean result
-                  reed2_status=(reeds_status=="1")or(reeds_status=="3") #get boolean result
-                  tempSensor= ord(cmd[21])-1       #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
-                  luminosity_sensor= ord(cmd[22])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
-                  battery_state= ord(cmd[23])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
-                  objects_to_update_dict={0:reed1_status,5:reed2_status,3:tempSensor,10:luminosity_sensor,9:battery_state}
-                  obj_address_to_update=0
-                  priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
-                  if node_address=="254":  #the node is looking for a free address
-                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                    serial_number = cmd[6:18]
+                    node_address = '%03d' %(int(cmd[3:5], 16) )  # get the address in decimal format,example:get "010" from the hexadecimal "0a"  
+                                                                 # the '%03d' %  will fill with '0' the left part.. 2 will become a string ='002'
+                    node_fw = "def0"  #default  
+                    node_type = cmd[6:14]   #get WreedSaa from  [S_01uWreedSaa000132Lgx_#]
+                  
+                    if node_type == "WreedSaa":  # if the node is a reed node
+                        reeds_status=cmd[18]
+                        logprint("reeds status received:"+reeds_status) 
+                        reed1_status=(reeds_status=="2")or(reeds_status=="3") #get boolean result
+                        reed2_status=(reeds_status=="1")or(reeds_status=="3") #get boolean result
+                        tempSensor= ord(cmd[19])-1       #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                        luminosity_sensor= ord(cmd[20])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                        battery_state= ord(cmd[21])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                        objects_to_update_dict={0:reed1_status,5:reed2_status,3:tempSensor,10:luminosity_sensor,9:battery_state}
+                        obj_address_to_update=0
+                        priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+                        if node_address=="254":  #the node is looking for a free address
+                            priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                            continue
+
+
+                    elif node_type == "Wrelay4x":
+                    #  [S_01uWrelay4x00010011x_#]
+
+                        relay0_status=cmd[18]
+                        relay1_status=cmd[19]
+                        relay2_status=cmd[20]
+                        relay3_status=cmd[21]
+    
+                        objects_to_update_dict={0:relay0_status,1:relay1_status,2:relay2_status,3:relay3_status}
+                        obj_address_to_update=0
+                        priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+                        if node_address=="254":  #the node is looking for a free address
+                            priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                            continue
+
+
+                    elif node_type == "WPlug1vx":
+                    #  [S_01uWPlug1vx00091x_#]
+
+                        relay0_status=cmd[18]
+                        relay1_status=cmd[19]
+                        relay2_status=cmd[20]
+                        relay3_status=cmd[21]
+    
+                        objects_to_update_dict={0:relay0_status,1:relay1_status,2:relay2_status,3:relay3_status}
+                        obj_address_to_update=0
+                        priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+                        if node_address=="254":  #the node is looking for a free address
+                            priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                            continue
+
+    
+                except Exception as e:               
+                    message="errorRx232 u_sync msg was:" + cmd
+                    logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
+                    #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }
                     continue
 
-                except Exception as e  :               
-                  message="error receiving serial sync message cmd was :"+cmd
-                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
-                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }
-
-                continue
-
-
-####end reed node
-
-
-#### 4 relay node
-
-              elif( (cmd[6]=="r")&(cmd[7]=="4") ) :
-              #  [S_001rsWreedSaa0001312Lgx_#] 
-
-                logprint("serial rx cmd="+cmd)
-                try:
-                  serial_number=cmd[8:20]   
-                  node_address=cmd[3:6]
-                  node_fw="def0"  #default
-                  relay0_status=cmd[20]
-                  relay1_status=cmd[21]
-                  relay2_status=cmd[22]
-                  relay3_status=cmd[23]
-
-                  objects_to_update_dict={0:relay0_status,1:relay1_status,2:relay2_status,3:relay3_status}
-                  obj_address_to_update=0
-                  priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
-                  if node_address=="254":  #the node is looking for a free address
-                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
-                    continue
-
-                except Exception as e  :               
-                  message="error receiving serial sync message cmd was :"+cmd
-                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info()))  
-                  #priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw }
-
-                continue
-
-
-####end reed node
-
-
-              elif( (cmd[6]=="g")&(cmd[7]=="a") ): #  [S_001ga3.05ProminiS0001x_#]
-                logprint("---serial rx cmd="+cmd,verbose=5)
-                try:
-
-
-                  serial_number=cmd[12:24]   
-
-                  node_fw=cmd[8:12]
-                  node_address=cmd[3:6]
-
-                  priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw })              
-
-                  if node_address=="254" or node_address=="001" :  #the node is looking for a free address or to a confirm for first contact
-                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
-
-               
-
-                  continue
-
-
-                except Exception as e  :               
-                  message="error receiving serial sync message cmd was :" 
-                  logprint(message,verbose=8,error_tuple=(e,sys.exc_info())) 
-
-                continue 
 
 
               else:  # a messege is received but is not started from a node, probably is an answer
@@ -402,15 +325,13 @@ class SerialPort:
                   buf=""
                   serial_answer_readyQueue.put(cmd)  
                   continue  
-
-           # print "serial input="+buf
-
+              #print "serial input="+buf
               #with lock_serial_input:              
 
               self.readed_packets_list.append(cmd)
               self.dataAvaible=1 
               logprint("incoming buffer="+cmd)
-            else: #cmd not found   if len(buf)>5: false
+            else: #cmd not full yet
               tmp_buf=buf.decode("utf8","replace")
               tmp_buf.encode("ascii","replace")
               logprint("incoming buffer="+tmp_buf)

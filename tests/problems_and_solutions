@@ -153,7 +153,9 @@ I will use post instead of get message
 
   Example of the smallest possible message:
     [S_001ka_#] 
-  
+
+
+  Todo: in the future we can remove the 3 ending bytes "_#]"  because if we received the type of msg we know the lenght of the message.
 
 
   To handle errors cmd:
@@ -255,6 +257,32 @@ I will use post instead of get message
   1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
   example:   [S_01uWreedSaa000132Lgx_#]      reeds values=3, temperature sensor=2, luminosity sensor=L, battery sensor=g     
+
+
+  If a Wrelay4x node have to send a update message it will write:
+
+  3  bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255   01 for the gateway
+  1 byte containing "u" for the type of msg
+  12 bytes to tell the node serial number
+  4 bytes to tell the status of 4 relays    in ascii  '0'  or  '1'
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01uWrelay4x00010011x_#]      0011  relay0 off, relay1 off, relay2 on, relay3 on   
+
+
+
+  If a WPlug1vx node have to send a update message it will write:
+
+  3  bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255   01 for the gateway
+  1 byte containing "u" for the type of msg
+  12 bytes to tell the node serial number
+  1 byte to tell the status of the relay   in ascii  '0'  or  '1'
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01uWPlug1vx00091x_#]      1 relay0 on   
+
 
 
 
