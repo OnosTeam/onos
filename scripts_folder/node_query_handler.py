@@ -73,8 +73,6 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
   answer_received=""
   for m in range(0,max_retry):   #retry n times to get the answer from node  
     
-    # [S_001dw06001_#]
-
     if (nodeDict[node_serial_number].getNodeActivity()==0):  # the node is inactive
       logprint("error01_radio_query,the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
       return()
@@ -88,7 +86,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
 
     end_of_query=query.find("_#]")
 
-    # [S_ok003sr070811_#]
+    # 
     expected_confirm="[S_ok"+query[3:end_of_query+3]
      #if data.find("ok"+query[3:end_of_query+3])!=-1:    
     logprint("expected_confirm:"+expected_confirm+"__")

@@ -6774,38 +6774,35 @@ def executeQueueFunction(dataExchanged):
 
     
   if (dataExchanged["cmd"]=="NewAddressToNodeRequired"):
-    old_address="254"
-    node_fw="def1"
+    #old_address = "254"
+    node_fw = "def1"
     try:
-      node_serial_number=dataExchanged["nodeSn"]
+      node_serial_number = dataExchanged["nodeSn"]
       nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
-      node_fw=dataExchanged["nodeFw"]
+      node_fw = dataExchanged["nodeFw"]
+      node_address = dataExchanged["nodeAddress"]
       #old_address=dataExchanged["nodeAddress"]
-      if node_serial_number in nodeDict:
-        old_address=nodeDict[node_serial_number].getNodeAddress()  
-      else:
-        msg=createNewNode(node_serial_number,old_address,node_fw)+"_#]" 
-
-      #   [S_254sa123WLightSS0003_#]
-      if old_address=="001":   #the router node will not need another address ..only a confirm for first message sync
-        new_address=old_address
+      #if node_serial_number in nodeDict:
+      #  saved_address = nodeDict[node_serial_number].getNodeAddress()  
+      #else:
+      #  msg = createNewNode(node_serial_number,old_address,node_fw)+"_#]" 
+      if node_address=="001":   #the router node will not need another address ..only a confirm for first message sync
+        new_address=saved_address
       else:
         new_address=getNextFreeAddress(node_serial_number,uart_router_sn,node_fw)
 
-
-
-      current_query_to_radio_nodes_list=queryToRadioNodeQueue.queue
-      # current_query_to_radio_nodes_list example like this (10, '[S_254sa003WreedSaa00041_#]\n', 'WreedSaa0004', 0, 1506273338.843928, 'set_address', '003', 'onos_node', 10, [], 'set_address')
+      current_query_to_radio_nodes_list = queryToRadioNodeQueue.queue
+      # current_query_to_radio_nodes_list example like this (10, query, 'WreedSaa0004', 0, 1506273338.843928, 'set_address', '003', 'onos_node', 10, [], 'set_address')
 
       for a in current_query_to_radio_nodes_list: 
         if len(a)>0:
-          query=a[1]
+          query = a[1]
           logprint("checking if already queryng this cmd, current check is:"+str(query))
-          if (("sa" in query)&(node_serial_number in query) ):#there is already a query that want to set a new address to this node 
+          if ((query[5]=='s')&(node_serial_number in query) ):#there is already a query that want to set a new address to this node 
             logprint("there is already a query that want to set a new address to this node") 
             return  
       try:
-        hardware.setAddressToNode(node_serial_number,old_address,new_address) 
+        hardware.setAddressToNode(node_serial_number,node_address,new_address) 
       except Exception as e:
         message="error in setAddressToNode of onosBusThread ,Node:"+str(node_serial_number)+"I will try to reconnect serialport"
         logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
@@ -6816,7 +6813,7 @@ def executeQueueFunction(dataExchanged):
     except Exception as e:
       message="error in the NewAddressToNodeRequired of onosBusThread ,Node:"+str(node_serial_number)
       logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
-      msg=createNewNode(node_serial_number,old_address,node_fw)+"_#]" 
+      msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
 
 
      

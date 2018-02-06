@@ -694,6 +694,8 @@ class RouterHandler:
       status_to_set=new_address
       user="onos_node"
       mail_report_list=[]
+   
+      logprint("setAddressToNode query:"+query)
 
       queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
       if node_query_radio_threads_executing==0:
