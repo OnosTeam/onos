@@ -6774,11 +6774,11 @@ def executeQueueFunction(dataExchanged):
 
     
   if (dataExchanged["cmd"]=="NewAddressToNodeRequired"):
-  
     old_address="254"
     node_fw="def1"
     try:
       node_serial_number=dataExchanged["nodeSn"]
+      nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
       node_fw=dataExchanged["nodeFw"]
       #old_address=dataExchanged["nodeAddress"]
       if node_serial_number in nodeDict:

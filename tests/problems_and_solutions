@@ -142,27 +142,19 @@ I will use post instead of get message
 
 
 
-16)Onos need a protocol to talk with the nodes.
+16)Onos need a protocol to talk with the radio nodes.
   here the protocol:
-  The message will have a variable lenght from a minimum of 11 bytes to a maximun of 61 bytes. 
+  The message will have a variable lenght from a minimum of x bytes to a maximun of 61 bytes. 
   The start of each message will be indicated by a 3 bytes long string equal to "[S_" 
   The end of each message will be indicated by a 3 bytes long string equal to "_#]"  
-  After the start of the message the first 3 bytes contain the address to whom the message is directed.
-  After the address bytes 2 bytes will tell the type of the message.
+  After the start of the message the first 2 bytes contain the address to whom the message is directed.
+  After the address bytes 1 byte will tell the type of the message.
   The remaining bytes of the message will have different lenght,meaning and position based on the type of the message.
-
-  Example of the smallest possible message:
-    [S_001ka_#] 
 
 
   Todo: in the future we can remove the 3 ending bytes "_#]"  because if we received the type of msg we know the lenght of the message.
-
-
   To handle errors cmd:
-
   If a node A received a cmd it doesn't recognise from node B (because is not implemented in that node)  it will not send an ack...
-
-
 
 
  
@@ -220,6 +212,35 @@ I will use post instead of get message
   3 bytes with "_#]" to close the message 
   example:   [S_01a0100x_#]    to set the second object of the node to 0  which is the  hex value of "00" converted
              [S_01a01ffx_#]    to set the second object of the node to 255  which is the  hex value of "ff" converted
+
+
+
+
+  The message to change the value of a configuration boolean object node will be: #to implement
+
+  3 bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255
+  1 bytes containing "c" for the type of msg , set analog config object
+  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  1 byte to tell arduino the value to set the object to, 0 or 1 
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_05c010x_#]    to set the second object of the node to 0
+             [S_05c011x_#]    to set the second object of the node to 1
+
+
+
+  The message to change the value of a configuration analog object node will be: #to implement
+
+  3 bytes with "[S_" for the start of the message
+  2 bytes for the address of the node expressed in hex format max number is ff --> 255
+  1 bytes containing "C" for the type of msg , set analog config object
+  2 bytes for the number of the object to change  expressed in hexadecimal(for first object of the node it will be "0")
+  2 byte to tell arduino the value to set the object to expressed in hexadecimal (min 00  max ff)
+  1 bytes for the message id ,a progressive binary number from 0 to 255
+  3 bytes with "_#]" to close the message 
+  example:   [S_01C0100x_#]    to set the second object of the node to 0  which is the  hex value of "00" converted
+             [S_01C01ffx_#]    to set the second object of the node to 255  which is the  hex value of "ff" converted
 
 
 

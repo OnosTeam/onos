@@ -40,7 +40,7 @@
 extern int this_node_address;
 //extern boolean first_sync;
 
-extern char str_this_node_address[4];
+//extern char str_this_node_address[3];
 extern uint8_t main_obj_selected;
 extern uint8_t rx_obj_selected;
 extern char progressive_msg_id;  //48 is 0 in ascii   //a progressive id to make each message unique
@@ -64,7 +64,7 @@ class OnosMsg {
 
     void decodeOnosCmd(char *received_message,char *received_message_answer);
     char  hexCharToDec(char value);
-
+    char  charDecToHex(int value);
 
   private:
 

@@ -22,14 +22,15 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=5
+current_page=2
 FILE_NAME_0=14987;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_rfm69_serial_interface.ino;0;8
-FILE_NAME_1=37698;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Fwebserver.py;0;8
+FILE_NAME_1=276641;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Fwebserver.py;0;8
 FILE_NAME_2=0;C++;0;EUTF-8;1;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Farduino_code%2Fonos_radio_node%2Fonos_radio_node.ino;0;8
-FILE_NAME_3=0;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2FglobalVar.py;0;8
-FILE_NAME_4=15238;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Fnode_query_handler.py;0;8
-FILE_NAME_5=14205;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Farduino-1.8.1%2Flibraries%2FOnosMsg%2FOnosMsg.cpp;0;8
-FILE_NAME_6=11326;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Frouter_handler.py;0;8
+FILE_NAME_3=28533;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2FglobalVar.py;0;8
+FILE_NAME_4=15245;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Fnode_query_handler.py;0;8
+FILE_NAME_5=14617;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Farduino-1.8.1%2Flibraries%2FOnosMsg%2FOnosMsg.cpp;0;8
+FILE_NAME_6=17616;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Frouter_handler.py;0;8
+FILE_NAME_7=8371;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.30%2Fscripts_folder%2Farduinoserial.py;0;8
 
 [VTE]
 last_dir=/home/marco

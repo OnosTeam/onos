@@ -156,9 +156,10 @@ class WebObject(object):   # inherit from object python class
 
     def InitFunction(self):
       #os.system(self.init_function+'> logs/cmd_init.log 2>&1 &')
-      with lock_bash_cmd: 
-        subprocess.call(self.init_function+'> logs/cmd_init.log 2>&1 &', shell=True,close_fds=True)
-      logprint(self.init_function)
+      if len(self.init_function)>0:
+        with lock_bash_cmd: 
+          subprocess.call(self.init_function+'> logs/cmd_init.log 2>&1 &', shell=True,close_fds=True)
+        logprint(self.init_function)
       if self.status in self.cmdDict.keys():
         if self.cmdDict[self.status]!="":
           os.system(self.cmdDict[self.status]+'> logs/cmd1.log 2>&1 &')

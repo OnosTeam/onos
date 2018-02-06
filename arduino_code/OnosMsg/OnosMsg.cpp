@@ -42,13 +42,34 @@ char OnosMsg::hexCharToDec(char value)  // given a value in ascii hexadecimal it
                 case 'f' :
                         return(15);
                 default:
-                        return(value); // if the value is not > 9 return it as it is
+                        return(value - 48 ); // if the value is not > 9 return it as it is
                     
         }
 
 }
 
+char OnosMsg::charDecToHex(int value)  // given a value in ascii hexadecimal it will return the same value in decimal
+{
+     
+        switch (value) {
+                case 10 :
+                        return('a');  // return 10 given 'a'
+                case 11 :
+                        return('b');
+                case 12 :
+                        return('c');
+                case 13 :
+                        return('d');
+                case 14 :
+                        return('e');
+                case 15 :
+                        return('f');
+                default:
+                        return(value + '0'); // if the value is not > 9 return it as it is
+                    
+        }
 
+}
 
 void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
 {
@@ -84,8 +105,8 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 
                         received_message_address=hexCharToDec(received_message[3]-48)*16
                                                 +hexCharToDec(received_message[4]-48);
-                        Serial.print(F("received_message_address:")); 
-                        Serial.println(received_message_address); 
+                        //Serial.print(F("received_message_address:")); 
+                        //Serial.println(received_message_address); 
 
 
                 
@@ -129,10 +150,10 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 // [S_01D041x_#]
                 // [S_01D040x_#]
                 // [S_04D041x_#]
-                else if ( received_msg_cmd_type[0]=='D' ){    // totest
+                else if ( received_msg_cmd_type[0]=='D' ){    // totest   # digital pin controll
                                 received_message_value=received_message[8]-48;
                         if (received_message_value>1){ 
-                                strcpy(decoded_result,"[S_er0_status_#]");
+                                strcpy(decoded_result,"[S_erD_status_#]");
                                 return;
                         }
                         
@@ -151,7 +172,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         return;
                 }
                 
-                //[S_08A06ffx_#]
+                //[S_08a06ffx_#]   # analog object controll
                 else if( received_msg_cmd_type[0]=='a' ){   // totest
                         
                         received_message_value = hexCharToDec(received_message[8] - 48) * 16
@@ -160,7 +181,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         if ((received_message_value<0)||(received_message_value>255)){ //status check
                                 received_message_value=0;
                                 //Serial.println(F("onos_cmd_value_error"));  
-                                strcpy(decoded_result,"[S_er0_status_#]"); 
+                                strcpy(decoded_result,"[S_era_status_#]"); 
                                 return;
                         }
                         
@@ -178,7 +199,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         received_message_value=received_message[10]-48;      
                         
                         if (received_message_value>1){ 
-                                strcpy(decoded_result,"[S_er0_status_#]"); 
+                                strcpy(decoded_result,"[S_err_status_#]"); 
                                 return;
                         }
                         
@@ -205,7 +226,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         return;
                 }
                 
-                //[S_01C0612x_#]    #configuration analog object  totest
+                //[S_05C0612x_#]    #configuration analog object  totest
                 else if( received_msg_cmd_type[0]=='C' ){
                 
                         received_message_value=hexCharToDec(received_message[8]-48)*16
@@ -234,7 +255,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 } 
                 
                 
-                //[S_01c001x_#]    #configuration digital object    totest
+                //[S_05c001x_#]    #configuration digital object   
                 else if( received_msg_cmd_type[0]=='c'){
                 
                         received_message_value=int(received_message[8]-48);
@@ -251,7 +272,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         strcpy(decoded_result,"ok");
                         
                         if (rx_obj_selected>number_of_total_objects){ //object out of the range
-                                Serial.println(F("er_dc_obj_number_#]"));  
+                                //Serial.println(F("er_dc_obj_number_#]"));  
                                 strcpy(decoded_result,"er_dc_obj_number_#]"); 
                                 return; 
                         }
@@ -262,10 +283,37 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         
                         return;
                 } 
+
+                //[S_08a06ffx_#]     # analog object controll      
+                else if( received_msg_cmd_type[0]=='a'){
                 
-                
-                
-                //[S_12d001x_#]   [S_001do001x_#]    # digital object controll
+                        received_message_value = hexCharToDec(received_message[8] - 48) * 16
+                                               + hexCharToDec(received_message[9] - 48); 
+                                                                      
+                        if ((received_message_value<0)||(received_message_value>255)){ //status check
+                                received_message_value=0;
+                                //Serial.println(F("onos_cmd_value_error"));  
+                                strcpy(decoded_result,"[S_era_status_#]"); 
+                                return;
+                        }
+
+                        rx_obj_selected = ((received_message[6])-48)*10+(  (received_message[7])-48)*1;
+                        
+                        strcpy(decoded_result,"ok");
+                        
+                        if (rx_obj_selected>number_of_total_objects){ //object out of the range
+                                //Serial.println(F("er_do_obj_number_#]"));  
+                                strcpy(decoded_result,"er_ao_obj_number_#]"); 
+                                return; 
+                        }
+                        else{
+                                changeObjStatus(rx_obj_selected,received_message_value); 
+                                // todo: make this return 0 or 1 to tell if the operation was completed.
+                        }
+
+                        return;
+                } 
+                //[S_12d001x_#]   [S_0ad001x_#]    # digital object controll      0a is the address 10
                 else if( received_msg_cmd_type[0]=='d'){
                 
                         received_message_value=(received_message[8]-48);
@@ -294,16 +342,15 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         
                         return;
                 } 
-                
-                
-                // [S_fes02Wrelay4x0007x_#]     [S_fes02WPlug1vx0001x_#] 
+
+                // [S_fes02Wrelay4x0007x_#]     [S_fes02WPlug1vx0001x_#]
                 
                 else if( received_msg_cmd_type[0]=='s'){   // set address to this node
                 
                         received_message_value = hexCharToDec(received_message[6]-48)*16
-                                              +(received_message[7]-48);
-                        
-                        
+                                               + hexCharToDec(received_message[7]-48);
+
+
                         //todo: use  strstr to compare this and avoid making the copy array char * pch;  pch = strstr (str,"simple"); 
                         memset(received_serial_number,0,sizeof(received_serial_number)); //to clear the array 
                         
@@ -319,9 +366,9 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         received_serial_number[9] = received_message[17];
                         received_serial_number[10] = received_message[18]; 
                         received_serial_number[11] = received_message[19];
-                        
-                        
-                        
+
+
+
                         //    todo implement it!
                         if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
                                 strcpy(decoded_result,"er1_sn:"); 
@@ -333,25 +380,37 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         
                         
                         if ((received_message_value<0)||(received_message_value>254)){ //status check
+                                /*
+                                Serial.print(F("received_message_value:"));
+                                Serial.println(received_message_value);
+                                Serial.print(F("received_message[6]:"));
+                                Serial.println(received_message[6]-48);
+                                Serial.print(F("received_message[7]:"));
+                                Serial.println(received_message[7]-48);
+                                
+                                Serial.print(F("hex received_message[6]:"));
+                                Serial.println(hexCharToDec(received_message[6]-48));
+                                Serial.print(F("hex received_message[7]:"));
+                                Serial.println(hexCharToDec(received_message[7]-48));
+                                */
                                 received_message_value=0;
-                                //Serial.println(F("onos_cmd_value_error"));  
-                                strcpy(decoded_result,"er0_status_#]"); 
+                                strcpy(decoded_result,"[S_ers_status_#]"); 
                                 return;
                         }
                         
                         noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
                         this_node_address=received_message_value;
                         strcpy(decoded_result,"ok");
-                        Serial.print(F("i will change radio address to:"));
-                        Serial.println(this_node_address);
+                        //Serial.print(F("i will change radio address to:"));
+                        //Serial.println(this_node_address);
                         reInitializeRadio=1;  //to execute beginRadio()
                         interrupts();
                         //first_sync=0;
                         
                         return;
                 }
-                
-                
+
+
                 // [S_01eProminiS0001onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
                 
                 // [S_23eWrelay4x0007onosEncryptKey00x_#]           "onosEncryptKey00" is the encrypt key 
@@ -378,17 +437,17 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         received_serial_number[9] = received_message[15];
                         received_serial_number[10] = received_message[16]; 
                         received_serial_number[11] = received_message[17];
-                        
-                        
-                        
+
+
+
                         //    todo implement it!
                         if (strcmp(received_serial_number,serial_number)!=0) {//onos command not for this  node
                                 strcpy(decoded_result,"er2_sn_#]"); 
                                 return;
                         } 
-                        
+
                         memset(encript_key,0,sizeof(encript_key)); //to clear the array 
-                        
+
                         encript_key[0] = received_message[18];
                         encript_key[1] = received_message[19];
                         encript_key[2] = received_message[20];
@@ -407,18 +466,19 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         encript_key[15] = received_message[33];
                         encript_key[16] = '\0';
                         //encript_key[16] = received_message[34];
-                        
-                        
+
+
                         noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
                         strcpy(decoded_result,"ok");
                         #if defined(DEVMODE)
-                        Serial.print(F("[S_i will change radio address to:_#]"));
+                          Serial.print(F("[S_i will change radio address to:_#]"));
+                          Serial.println(this_node_address);
                         #endif
-                        Serial.println(this_node_address);
+                        
                         reInitializeRadio=1;  //to execute beginRadio()
                         
                         #if defined(remote_node)   // only if this is a remote node.. 
-                        this_node_address=254;
+                          this_node_address=254;
                         #endif
                         
                         //first_sync=0;
@@ -439,16 +499,13 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         }
                         return;
                 }
-                
-                
-                
-                
-        
+
+
+
+
         } // end of if message start with [S_ 
-        
-        
-        
-        
+
+
 
 
 }// end of decodeOnosCmd()

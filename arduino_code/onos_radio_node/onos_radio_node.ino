@@ -123,11 +123,11 @@
   SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0001";   // this is the progressive numeric serial number
+char numeric_serial[5]="0002";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_Wrelay4x
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
