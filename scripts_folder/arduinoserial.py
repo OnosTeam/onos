@@ -272,7 +272,7 @@ class SerialPort:
                         luminosity_sensor= ord(cmd[20])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
                         battery_state= ord(cmd[21])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
                         objects_to_update_dict={0:reed1_status,5:reed2_status,3:tempSensor,10:luminosity_sensor,9:battery_state}
-                        obj_address_to_update=0
+                        #obj_address_to_update=0
                         priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
                         if node_address=="254":  #the node is looking for a free address
                             priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
@@ -288,7 +288,7 @@ class SerialPort:
                         relay3_status=cmd[21]
     
                         objects_to_update_dict={0:relay0_status,1:relay1_status,2:relay2_status,3:relay3_status}
-                        obj_address_to_update=0
+                        #obj_address_to_update=0
                         priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
                         if node_address=="254":  #the node is looking for a free address
                             priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
@@ -299,12 +299,10 @@ class SerialPort:
                     #  [S_01uWPlug1vx00091x_#]
 
                         relay0_status=cmd[18]
-                        relay1_status=cmd[19]
-                        relay2_status=cmd[20]
-                        relay3_status=cmd[21]
+
     
-                        objects_to_update_dict={0:relay0_status,1:relay1_status,2:relay2_status,3:relay3_status}
-                        obj_address_to_update=0
+                        objects_to_update_dict={0:relay0_status}
+                        #obj_address_to_update=0
                         priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
                         if node_address=="254":  #the node is looking for a free address
                             priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 

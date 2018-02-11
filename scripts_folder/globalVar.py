@@ -702,12 +702,12 @@ hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(7, 8)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5), (6)]}
 
 
-hardwareModelDict["WLightSA"]={"hwName":"WLightSA", "max_pin":13, "hardware_type":"arduino2009_serial", "pin_mode":{}, "parameters":{}, "query":{}, "timeout":360}
-hardwareModelDict["WLightSA"]["pin_mode"]["digital_obj_out"]={"lamp":[(5, 6)]}
-hardwareModelDict["WLightSA"]["pin_mode"]["analog_input"]={"luminosity":[(14)], "temperature":[(15)]}
-hardwareModelDict["WLightSA"]["pin_mode"]["cfg_obj"]={"lux_threshold":[(-1)], "timeout_to_turn_off":[(-1)]}#this have no pins..
-hardwareModelDict["WLightSA"]["query"]["digital_obj_out"]={"lamp":"wl#_objnumber_##_valuelen:1_#"}  #define the base query for this
-hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen:3_#", "timeout_to_turn_off":"to#_valuelen:4_#" }  #define the base query for this
+#hardwareModelDict["WLightSA"]={"hwName":"WLightSA", "max_pin":13, "hardware_type":"arduino2009_serial", "pin_mode":{}, "parameters":{}, "query":{}, "timeout":360}
+#hardwareModelDict["WLightSA"]["pin_mode"]["digital_obj_out"]={"lamp":[(5, 6)]}
+#hardwareModelDict["WLightSA"]["pin_mode"]["analog_input"]={"luminosity":[(14)], "temperature":[(15)]}
+#hardwareModelDict["WLightSA"]["pin_mode"]["cfg_obj"]={"lux_threshold":[(-1)], "timeout_to_turn_off":[(-1)]}#this have no pins..
+#hardwareModelDict["WLightSA"]["query"]["digital_obj_out"]={"lamp":"wl#_objnumber_##_valuelen:1_#"}  #define the base query for this
+#hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen:3_#", "timeout_to_turn_off":"to#_valuelen:4_#" }  #define the base query for this
                    
 hardwareModelDict["WPlug1vx"]={"hwName":"WPlug1vx", "max_pin":13, "hardware_type":"arduino_promini", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]={}
@@ -716,6 +716,7 @@ hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["object
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["query"]="d#_objnumber_##_valuelen:1_#"
 
 
+#deprecated ..
 #hardwareModelDict["WPlugAvx"]["query"]["digital_obj_out"]={"plug":"wb#_objnumber_##_valuelen:1_#","plug2":"wb#_objnumber_##_valuelen:1_#"}  #define the base query for this node digital_obj_out..so onos will write for example: [S_001wp01x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj_out)  , the starting [S_001  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
 

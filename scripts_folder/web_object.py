@@ -192,7 +192,7 @@ class WebObject(object):   # inherit from object python class
                 message=subprocess.check_output(self.cmdDict[status], shell=True,close_fds=True) 
                 logprint(message)
               except Exception as e: 
-                message="error executing bash cmd"
+                message="error executing bash cmd:"+self.cmdDict[status]
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
                 
         if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status

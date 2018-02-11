@@ -330,7 +330,7 @@ class HwNode:
 
 
 
-    def getNodeObjectFromAddress(self,objectAddress):
+    def getNodeObjectFromAddress(self,objectAddress,node_serial_number=""):
       """
         |  Get the objectname in the node address
         |   
@@ -338,7 +338,7 @@ class HwNode:
       if objectAddress in self.nodeObjectsDict:
         return(self.nodeObjectsDict[objectAddress])
       else:
-        message="error , no object with address:"+str(objectAddress)+" found in this node"
+        message="error , no object with address:"+str(objectAddress)+" found in this node:"+node_serial_number
         logprint(message,verbose=9)   
         return(-1)
 

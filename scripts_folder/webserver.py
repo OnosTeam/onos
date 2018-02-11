@@ -6699,7 +6699,7 @@ def executeQueueFunction(dataExchanged):
         try: #to prevent the case where a node send an update for a node that is not in the hardwareModelDict
           logprint("object address in the node="+str(a) )
           try:
-            objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a))
+            objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a),node_serial_number)
             objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
           except Exception as e: #todo place this somewhere else..
             hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
@@ -6777,10 +6777,16 @@ def executeQueueFunction(dataExchanged):
     #old_address = "254"
     node_fw = "def1"
     try:
+        node_address = dataExchanged["nodeAddress"]
+    except Exception as e:
+        node_address = 254
+        message='''error in ataExchanged["nodeAddress"] of onosBusThread'''
+        logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
+    try:
       node_serial_number = dataExchanged["nodeSn"]
       nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
       node_fw = dataExchanged["nodeFw"]
-      node_address = dataExchanged["nodeAddress"]
+
       #old_address=dataExchanged["nodeAddress"]
       #if node_serial_number in nodeDict:
       #  saved_address = nodeDict[node_serial_number].getNodeAddress()  
