@@ -123,11 +123,11 @@
   SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0002";   // this is the progressive numeric serial number
+char numeric_serial[5]="0001";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_Wrelay4x
+#define node_type_WPlug1vx
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -377,7 +377,7 @@ int freeRam ()
 boolean changeObjStatus(char obj_number,int status_to_set)
 {
 
-  Serial.print(F("changeObjStatus executed with  status:"));
+  Serial.print(F("changeObjStatusExecutedStatus:"));
   Serial.println(status_to_set);
   
   if (obj_number==button){ //will not change the status to the button...
@@ -388,23 +388,23 @@ boolean changeObjStatus(char obj_number,int status_to_set)
   #if defined(node_type_WreedSaa)
     if ( (obj_number==led)|(obj_number==digOut) ){
     digitalWrite(node_obj_pinout[obj_number],!status_to_set); // 
-    Serial.println(F("digitalWrite with obj")); 
+    Serial.println(F("dw_With_obj")); 
     }
 
   #elif defined(node_type_Wrelay4x)
     if (obj_number==0){
       main_obj_state=status_to_set;
       digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
-      Serial.println(F("digitalWrite with obj")); 
+      Serial.println(F("dw_With_obj")); 
       changeObjStatus(led,status_to_set);
     }
     else if(obj_number<4) { //objects from 0 to 3 are relay  
       digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
-      Serial.println(F("digitalWrite with obj")); 
+      Serial.println(F("dw_With_obj")); 
     }
     else if (obj_number==led){
       digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
-      Serial.println(F("digitalWrite with obj")); 
+      Serial.println(F("dw_With_obj")); 
     }
     
   #elif defined(node_type_WPlug1vx)
@@ -413,13 +413,13 @@ boolean changeObjStatus(char obj_number,int status_to_set)
       digitalWrite(5,!status_to_set); // set relay1
       digitalWrite(6,!status_to_set); // set relay2
       digitalWrite(7,status_to_set);// reset both relays
-      Serial.println(F("digitalWrite with obj")); 
+      Serial.println(F("dw_With_obj")); 
       changeObjStatus(led,!status_to_set);
     }
     
     else if (obj_number==led){
       digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
-      Serial.println(F("digitalWrite with obj")); 
+      Serial.println(F("dw_With_obj")); 
     }
     
     
@@ -442,7 +442,7 @@ return(0);
 
 void composeSyncMessage()
 {
-  Serial.println(F("composeSyncMessage executed"));
+  Serial.println(F("composeSyncMessageExec"));
   //[S_01g05ProminiS0001x_#] 
   //strcpy(str_this_node_address,"");
   memset(str_this_node_address,0,sizeof(str_this_node_address)); //to clear the array
@@ -455,10 +455,10 @@ void composeSyncMessage()
   str_this_node_address[1] = char(OnosMsgHandler.charDecToHex( this_node_address % 16) );
   str_this_node_address[2] = '\0';
   
-  Serial.println(F("local_address dec:"));
+  Serial.println(F("local_address_dec:"));
   Serial.println(this_node_address);
 
-  Serial.println(F("local_address hex:"));
+  Serial.println(F("local_address_hex:"));
   Serial.println(str_this_node_address[0]);
   Serial.println(str_this_node_address[1]);
   
@@ -692,7 +692,7 @@ void composeSyncMessage()
     syncMessage[tmp_len + 1] = '\0';
           
     
-    Serial.print(F("composeSyncMessage executed with  status:"));
+    Serial.print(F("composeSyncMessageExecStatus:"));
     Serial.println(main_obj_state);
     strcat(syncMessage, minutes_time_from_turn_on_array);
   
@@ -740,7 +740,7 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
     // Serial.print(millis()-timetest);
   #endif
   
-  Serial.println(F(" sendWithRetry sendSyncMessage executed"));
+  Serial.println(F("sendWithRetrySendSyncMessageExecuted_#]"));
   if (radio.sendWithRetry(gateway_address, syncMessage, strlen(syncMessage),retry,tx_timeout)) {
     // note that the max delay time is 255..because is uint8_t
     //target node Id, message as string or byte array, message length,retries, milliseconds before retry
@@ -759,13 +759,13 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
 
 void getAddressFromGateway()
 {
-  Serial.println(F("getAddressFromGateway executed"));
+  Serial.println(F("getAddressFromGw ex"));
   
   //[S_123ga5.24WPlugAvx000810000x_#]
   
   composeSyncMessage();
   //syncMessage[5]='g'; //modify the message to get a address instead of just sync.  
-  Serial.println(F(" sendWithRetry getAddressFromGateway executed"));
+  Serial.println(F("sendWRetry getAddressFromGw ex"));
   
   
   Serial.print(F("msgToSend:")); 
@@ -812,7 +812,7 @@ void getAddressFromGateway()
       break;// exit the while (tryed_times < radioRetry )
     }
     else{
-      Serial.print(F("radio tx failed, I retry"));
+      Serial.print(F("RadioTxFail,IRetry"));
       random_time=10;//random(10,radioTxTimeout*3);
       tryed_times=tryed_times+1;
       delay(200);
@@ -838,7 +838,7 @@ boolean checkAndHandleIncomingRadioMsg(){
   Serial.print(F(" id:"));
   Serial.println(radio.SENDERID);
   Serial.print((char*)radio.DATA);
-  Serial.print(F("   [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
+  Serial.print(F(" [RX_RSSI:"));Serial.print(radio.RSSI);Serial.print(F("]"));
   /*
   #if defined(ota_enabled)   //if the node is a battery node:
   CheckForWirelessHEX(radio, flash, false);  //to check for ota messages..
@@ -856,7 +856,7 @@ boolean checkAndHandleIncomingRadioMsg(){
     return(0); // todo: implement a forward of the message? 
   }
   
-  Serial.print(F("msg_start:"));
+  Serial.print(F("msgStart:"));
   onos_cmd_start_position=-99;  
   onos_cmd_end_position=-99;  
   //strcpy(filtered_radio_message,"");
@@ -895,12 +895,12 @@ boolean checkAndHandleIncomingRadioMsg(){
   }
   
   
-  Serial.println(F(":msg_stop"));
+  Serial.println(F(":msgStop"));
   
   
   if ( (onos_cmd_start_position!=-99) && (onos_cmd_end_position!=-99 )){
   
-  Serial.println(F("onos cmd  found-------------------------------"));
+  Serial.println(F("onosCmdFound"));
   //noInterrupts(); // Disable interrupts    //important for lamp node 
   //decodeOnosCmd(filtered_radio_message);
   OnosMsgHandler.decodeOnosCmd(filtered_radio_message,decoded_radio_answer);
@@ -910,7 +910,7 @@ boolean checkAndHandleIncomingRadioMsg(){
     //check if sender wanted an ACK
     if (radio.ACKRequested()){
     radio.sendACK();
-    Serial.println(F(" - ACK sent"));
+    Serial.println(F("-ACKsent"));
     *get_sync_time=millis();
     }
     //interrupts(); // Enable interrupts
@@ -918,7 +918,7 @@ boolean checkAndHandleIncomingRadioMsg(){
   
   }
   else{
-    Serial.print(F("error in message decode i will not send the ACK,i found:"));
+    Serial.print(F("errorInMsgDecode_I_dont_sendACK,i found:"));
     //  uint8_t k=0;
     //  while (k<decoded_radio_answer_lenght)
     for (uint8_t k=0; k<decoded_radio_answer_lenght; k++)
@@ -944,7 +944,7 @@ boolean checkAndHandleIncomingRadioMsg(){
   }
   else{
   strcpy(decoded_radio_answer,"nocmd0_#]");
-  Serial.print(F("error in message nocmd0_#]"));
+  Serial.print(F("error_IN_msg_nocmd0_#]"));
   Serial.print(onos_cmd_start_position);
   Serial.println(onos_cmd_end_position);
   return(0); 
@@ -997,7 +997,7 @@ void checkCurrentRadioAddress()
           sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
           //sync_time=millis();
           //  I put the node to sleep
-          Serial.println(F("I go to sleep"));
+          Serial.println(F("IGoToSleep"));
           radio.sleep();
           LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
           LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
@@ -1016,7 +1016,7 @@ void checkCurrentRadioAddress()
           //sync_time=millis(); changed in in sendSyncMessage
           
           awake_time=millis();
-          Serial.println(F("w for possible messages"));
+          Serial.println(F("wait_for_possible_rx_messages"));
           while ((millis()-awake_time)>stay_awake_period ){
             //TODO: put if(millis()-awake_time)<stay_awake_period )--->sleep   in the main loop...
             if (radio.receiveDone()){
@@ -1025,10 +1025,10 @@ void checkCurrentRadioAddress()
             }
           
           }
-          Serial.println(F("end wait"));
+          Serial.println(F("endWait"));
 
         #else    //not a battery node
-          Serial.println(F("not a battery node part executed"));
+          Serial.println(F("notABatteryNodePartExec"));
           composeSyncMessage();
           sendSyncMessage(radioRetry,radioTxTimeout);
           //sync_time=millis(); changed in in sendSyncMessage
@@ -1071,10 +1071,10 @@ void beginRadio()
   
   radio.enableAutoPower(targetRSSI);
   
-  Serial.print(F("\nListening at "));
+  Serial.print(F("\nListeningAt:"));
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(F(" MHz"));
-  Serial.print(F("radio address changed to:"));
+  Serial.print(F("radioAddressChangedTo:"));
   Serial.println(this_node_address);
   
   #if defined(battery_node)   //if the node is a battery node:
@@ -1095,7 +1095,7 @@ void buttonStateChanged()
   void handleReed()
   {//handle the reed sensor
     //node_obj_status[reed1Logic]=0;
-    Serial.println(F("handleReed called"));
+    Serial.println(F("handleReedCalled"));
     composeSyncMessage();
     sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm); 
   
@@ -1119,7 +1119,7 @@ void buttonStateChanged()
 void handleButton()
 {//handle the main node button , you can't call this from interrupt because millis() won't work
 
-  Serial.print(F("handleButton() ex"));
+  Serial.print(F("handleButton()ex"));
   Serial.print(F("btn_still_same_status:"));
   Serial.print(button_still_same_status);
   Serial.print(F("btn_t_same_status:"));
@@ -1129,7 +1129,7 @@ void handleButton()
   if (((millis()-button_time_same_status)>time_to_reset_encryption)
     &&( (millis()-button_time_same_status)<time_to_reset_encryption*2)){  //button pressed for more than x seconds
   
-    Serial.println(F("time_to_reset_encryption ---------------------------------_#]"));
+    Serial.println(F("time_to_reset_encryption_#]"));
     noInterrupts(); // Disable interrupts ,this will be reenabled from beginRadio()
     memset(encript_key,0,sizeof(encript_key)); //to clear the array
     strcpy(encript_key,INITENCRYPTKEY);//reset the encript_key to default to made the first sync with onoscenter 
@@ -1144,7 +1144,7 @@ void handleButton()
 
   if (((millis()-button_time_same_status)>time_to_change_status)
                 &&(button_still_same_status==0)){
-    Serial.println(F("time_to_change_status_#]++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
+    Serial.println(F("time_to_change_status_#]++++++++++++"));
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
     composeSyncMessage();
     sendSyncMessage(radioRetry+2,radioTxTimeout); 
@@ -1189,7 +1189,7 @@ void handleButton()
 void ota_receive_loop()
 {
 
-  Serial.println(F("ota_receive_loop() executed"));
+  Serial.println(F("ota_receive_loop()exec"));
 
   ota_loop_start_time=millis()+5000;
 
@@ -1388,7 +1388,7 @@ void loop()
     }
   #elif defined(node_type_WreedSaa)
     if (interrupt_called == 1){
-      Serial.println(F("interrupt called"));
+      Serial.println(F("interruptCall"));
       interrupt_called = 0;
     }
   #endif 
@@ -1398,7 +1398,7 @@ void loop()
   
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){  //to allow the execution of radio tx , in case there are too many rx query..
     skipRadioRxMsg=0;  //reset the counter to allow this node to receive query 
-    Serial.println(F("I skip the rxradio part once"));
+    Serial.println(F("IskipRxradioPartOnce"));
     goto radioTx;
   }
   
