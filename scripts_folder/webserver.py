@@ -327,7 +327,65 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
 
 
 
+def checkNodeActivity(node_sn):    
+    """
+       |  Given a node serial number it check if the node is still active or not and disable/enable the node objects accordingly
+       |   
+    """
+    logprint("checkNodeActivity executed with node:" + node_sn)
+    global nodeDict
+    global node_used_addresses_list
+    time_passed_since_last_node_sync = time.time() - nodeDict[node_sn].getLastNodeSync()
+    nodeActivity = nodeDict[node_sn].getNodeActivity()
+    
+    if (time_passed_since_last_node_sync > nodeDict[node_sn].getNodeTimeout() ) : #the node is not connected anymore       
 
+        if nodeActivity==0 or nodeActivity==2: #if the node was already inactive or preactive
+            if  ( time_passed_since_last_node_sync > 2147483647  ): #if the number is greater than signed32 bit int
+                nodeDict[node_sn].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
+            message="the node:"+node_sn+"is disconnected for timeout but was already so.." 
+            logprint(message,verbose=2) 
+            return #skip
+
+        node_address=nodeDict[node_sn].getNodeAddress() 
+        numeric_address=int(node_address)
+        if numeric_address not in node_used_addresses_list: 
+            node_used_addresses_list.pop()
+
+        nodeDict[a].setNodeActivity(0)  #set the node as inactive
+        message="the node:"+node_sn+" IS NOT CONNECTED ANYMORE,did you disconnect it? difference=:"+str(time_passed_since_last_node_sync)
+        logprint(message,verbose=6)  
+
+        for b in nodeDict[node_sn].getnodeObjectsDict().values():#for each object in the node 
+            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
+
+    else:#now the node is connected
+        if (nodeActivity==0 or nodeActivity==2)and (nodeDict[node_sn].getNodeAddress()!="254") : #the node was not connected but now it is
+            nodeDict[node_sn].setNodeActivity(1)  #set the node as active
+            message="The node:"+node_sn+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
+            logprint(message,verbose=5)
+            #for b in objectDict.keys():
+            for b in nodeDict[node_sn].getnodeObjectsDict().values():#for each object in the node 
+                logprint("objectDict[b].getHwNodeSerialNumber():"+str(objectDict[b].getHwNodeSerialNumber()) )
+                #if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
+                logprint("webobject:"+b+"returned active",verbose=6)
+                prev_s=objectDict[b].getPreviousStatus() 
+                current_s=objectDict[b].getStatus()
+                node_HwModel=nodeDict[node_sn].getNodeHwModel()
+                logprint("node_HwModel:"+node_HwModel,verbose=6)  
+                message="list(hardwareModelDict[node_HwModel][parameters]:"+str(list(hardwareModelDict[node_HwModel]["parameters"]))
+                logprint(message,verbose=5)  
+                if "parameters" in list(hardwareModelDict[node_HwModel]):
+                    if "battery_node" in list(hardwareModelDict[node_HwModel]["parameters"]):
+                        if hardwareModelDict[node_HwModel]["parameters"]["battery_node"]==1:
+                            message="I will not ask the node to set its status after reconnection since this node is a battery sensors"
+                            logprint(message,verbose=5) 
+                            continue 
+                if ((current_s=="inactive") or (current_s=="onoswait") ): 
+                #  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
+                    logprint("the new status will be:"+str(prev_s),verbose=6 )
+                    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
+                #set the web_object to the status before the disconnection 
 
 
 
@@ -340,9 +398,11 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
   logprint("updateNodeAddress() executed with node_sn:"+node_sn,verbose=3)
   try: #if (node_sn in nodeDict.keys()):
 
-    previous_sync_time=time.time()-nodeDict[node_sn].getLastNodeSync()
+    time_passed_since_last_sync = time.time() - nodeDict[node_sn].getLastNodeSync()
 
     nodeDict[node_sn].updateLastNodeSync(time.time())
+    
+    checkNodeActivity(node_sn)
 #    if nodeDict[node_sn].getNodeActivity()==0 or nodeDict[node_sn].getNodeActivity()==2: #the node was not connected but now it is
 #      nodeDict[node_sn].setNodeActivity(1)  #set the node as active
 #    for b in nodeDict[node_sn].getnodeObjectsDict().values():#for each object in the node 
@@ -368,7 +428,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
         seconds=str(datetime.datetime.today().second)
         day_of_week=datetime.datetime.today().weekday()
         timestamp=str(time.time())[0:10]
-        previous_sync_time_string="{:0.1f}".format(previous_sync_time)
+        time_passed_since_last_sync_string="{:0.1f}".format(time_passed_since_last_sync)
         #  "{:05.2f}".format(3.66999) get the string "03.67" from the numer 3.66999
         #  "{:0.1f}".format(355.66999)  get '355.7' from the numer 355.66999
         #  "{:0.1f}".format(55.66999).ljust(5,"0")  get '55.70' from the numer 55.66999   
@@ -385,7 +445,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
                   "hours:minutes:seconds", "address", "last_sync", "still_same_address"]
         
         row_to_write=[node_sn, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
-                      node_address, previous_sync_time_string, still_same_address]            
+                      node_address, time_passed_since_last_sync_string, still_same_address]            
         writeCsvFile(csv_file_name, init_row, row_to_write)  
 
 
@@ -6347,6 +6407,9 @@ def internetCheckConnection():
     logprint(message,verbose=10,error_tuple=(e,sys.exc_info())) 
     internet_state=0
   return(internet_state)
+  
+  
+
 
 
 def hardwareHandlerThread():  #check the nodes status and update the webobjects values 
@@ -6414,75 +6477,73 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
 
         if nodeDict[a].getNodeTimeout()=="never": #never timeout
           continue
-         
         #print "nodecheck:"+a
-
         #print "last_node_sync:"+str(nodeDict[a].getLastNodeSync()) 
         #print "time_now:"+str(time.time()) 
-
         #print "difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
-
         #message="nodecheck:"+a+" last_sync:"+str(nodeDict[a].getLastNodeSync())+" time_now:"+str(time.time())+"timeout at:"+str(nodeDict[a].getNodeTimeout())+"will timeout in:"+str( nodeDict[a].getNodeTimeout() -(time.time()-nodeDict[a].getLastNodeSync() ) )
         #logprint(message,verbose=1)   
+        checkNodeActivity(a)
+        
+     #########################################   
+        #time_passed_since_last_node_sync = time.time() - nodeDict[a].getLastNodeSync() )
+        #if (time_passed_since_last_node_sync > nodeDict[a].getNodeTimeout() ) : #the node is not connected anymore       
 
+          #if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #if the node was already inactive or preactive
+            #if  (  (time.time() - nodeDict[a].getLastNodeSync() ) > 2147483647  ): #if the number is greater than signed32 bit int
+              #nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
+            #message="the node:"+a+"is disconnected for timeout but was already so.." 
+            #logprint(message,verbose=2) 
+            #continue #skip
 
-        if  (  (time.time()-nodeDict[a].getLastNodeSync() )>nodeDict[a].getNodeTimeout()  ) : #the node is not connected anymore       
+          #node_address=nodeDict[a].getNodeAddress() 
+          #numeric_address=int(node_address)
+          #if numeric_address not in node_used_addresses_list: 
+            #node_used_addresses_list.pop()
 
-          if nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2: #if the node was already inactive or preactive
-            if  (  (time.time() - nodeDict[a].getLastNodeSync() ) > 2147483647  ): #if the number is greater than signed32 bit int
-              nodeDict[a].updateLastNodeSync(time.time()-99999) #set this to prevent the overflow of the variable
-            message="the node:"+a+"is disconnected for timeout but was already so.." 
-            logprint(message,verbose=2) 
-            continue #skip
+          #nodeDict[a].setNodeActivity(0)  #set the node as inactive
+          #message="the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it? difference=:"+str(time_passed_since_last_node_sync)
+          #logprint(message,verbose=6)  
 
-          node_address=nodeDict[a].getNodeAddress() 
-          numeric_address=int(node_address)
-          if numeric_address not in node_used_addresses_list: 
-            node_used_addresses_list.pop()
+          #for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
+            #priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
-          nodeDict[a].setNodeActivity(0)  #set the node as inactive
-          message="the node:"+a+" IS NOT CONNECTED ANYMORE,did you disconnect it? difference=:"+str(time.time()-nodeDict[a].getLastNodeSync())
-          logprint(message,verbose=6)  
+          ##for b in objectDict.keys():
+          ##  if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
+              ##objectDict[b].setStatus("inactive")
+          ##    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
 
-          for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
-            priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
+        #else:#now the node is connected
+          #if (nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2)and nodeDict[a].getNodeAddress()!="254" : #the node was not connected but now it is
+            #nodeDict[a].setNodeActivity(1)  #set the node as active
+            #message="The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
+            #logprint(message,verbose=5)
+            ##for b in objectDict.keys():
+            #for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
+              #logprint("objectDict[b].getHwNodeSerialNumber():"+str(objectDict[b].getHwNodeSerialNumber()) )
+              ##if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
+              #logprint("webobject:"+b+"returned active",verbose=6)
+              #prev_s=objectDict[b].getPreviousStatus() 
+              #current_s=objectDict[b].getStatus()
 
-          #for b in objectDict.keys():
-          #  if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then disactive it
-              #objectDict[b].setStatus("inactive")
-          #    priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":"inactive","write_to_hw":0,"user":"onos_node","priority":99,"mail_report_list":[]}) 
-
-        else:#now the node is connected
-          if (nodeDict[a].getNodeActivity()==0 or nodeDict[a].getNodeActivity()==2)and nodeDict[a].getNodeAddress()!="254" : #the node was not connected but now it is
-            nodeDict[a].setNodeActivity(1)  #set the node as active
-            message="The node:"+a+" IS NOW RECONNECTED "+"at:" +getErrorTimeString()
-            logprint(message,verbose=5)
-            #for b in objectDict.keys():
-            for b in nodeDict[a].getnodeObjectsDict().values():#for each object in the node 
-              logprint("objectDict[b].getHwNodeSerialNumber():"+str(objectDict[b].getHwNodeSerialNumber()) )
-              #if objectDict[b].getHwNodeSerialNumber()==a :  #if the web object is from the node a then reactive it
-              logprint("webobject:"+b+"returned active",verbose=6)
-              prev_s=objectDict[b].getPreviousStatus() 
-              current_s=objectDict[b].getStatus()
-
-              node_HwModel=nodeDict[a].getNodeHwModel()
-              logprint("node_HwModel:"+node_HwModel,verbose=6)  
-              message="list(hardwareModelDict[node_HwModel][parameters]:"+str(list(hardwareModelDict[node_HwModel]["parameters"]))
-              logprint(message,verbose=5)  
-              if "parameters" in list(hardwareModelDict[node_HwModel]):
-                if "battery_node" in list(hardwareModelDict[node_HwModel]["parameters"]):
-                  if hardwareModelDict[node_HwModel]["parameters"]["battery_node"]==1:
-                    message="I will not ask the node to set its status after reconnection since this node is a battery sensors"
-                    logprint(message,verbose=5) 
-                    continue 
-              if ((current_s=="inactive") or (current_s=="onoswait") ): 
-              #  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
-                logprint("the new status will be:"+str(prev_s),verbose=6 )
-                priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
-                #set the web_object to the status before the disconnection 
+              #node_HwModel=nodeDict[a].getNodeHwModel()
+              #logprint("node_HwModel:"+node_HwModel,verbose=6)  
+              #message="list(hardwareModelDict[node_HwModel][parameters]:"+str(list(hardwareModelDict[node_HwModel]["parameters"]))
+              #logprint(message,verbose=5)  
+              #if "parameters" in list(hardwareModelDict[node_HwModel]):
+                #if "battery_node" in list(hardwareModelDict[node_HwModel]["parameters"]):
+                  #if hardwareModelDict[node_HwModel]["parameters"]["battery_node"]==1:
+                    #message="I will not ask the node to set its status after reconnection since this node is a battery sensors"
+                    #logprint(message,verbose=5) 
+                    #continue 
+              #if ((current_s=="inactive") or (current_s=="onoswait") ): 
+              ##  prev_s=objectDict[b].getStartStatus()      #if the current status is "inactive" set it to the previous status
+                #logprint("the new status will be:"+str(prev_s),verbose=6 )
+                #priorityCmdQueue.put( {"cmd":"setSts","webObjectName":b,"status_to_set":prev_s,"write_to_hw":1,"user":"onos_node","priority":99,"mail_report_list":[]})
+                ##set the web_object to the status before the disconnection 
           
-          #nodeDict[a].updateLastNodeSync(time.time())
-
+          ##nodeDict[a].updateLastNodeSync(time.time())
+################################
 
 
 
@@ -6703,7 +6764,7 @@ def executeQueueFunction(dataExchanged):
             objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
           except Exception as e: #todo place this somewhere else..
             hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
-            message="warning in the updateObjFromNode,the object:_"+str(objName)+"_ doesnt exist yet"
+            message="warning in the updateObjFromNode,the object:_"+str(objName)+"_ doesnt exist yet, I create the node"
             logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
             msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
             createNewWebObjFromNode(hwType,node_serial_number) 

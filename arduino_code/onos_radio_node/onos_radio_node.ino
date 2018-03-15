@@ -194,12 +194,12 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   // #define IS_RFM69HCW    false
   
   const uint8_t number_of_total_objects = 7;
-  const int node_default_timeout = 30;  //seconds
+  const int node_default_timeout = 180;  //seconds
   #undef ENABLE_RADIO_RESET_PIN
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
   
 #elif defined(node_type_WLightSS)
-  const int node_default_timeout = 15;
+  const int node_default_timeout = 360;
 
 #elif defined(node_type_WPlug1vx)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -208,7 +208,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   const uint8_t led = 2;
   const uint8_t syncTimeout = 3;
   const uint8_t number_of_total_objects = 4;
-  const int node_default_timeout = 360;
+  const int node_default_timeout = 180;
 
 #elif defined(node_type_WIRbarr0)
   const int node_default_timeout = 360;
@@ -943,11 +943,15 @@ boolean checkAndHandleIncomingRadioMsg(){
   
   }
   else{
-  strcpy(decoded_radio_answer,"nocmd0_#]");
-  Serial.print(F("error_IN_msg_nocmd0_#]"));
-  Serial.print(onos_cmd_start_position);
-  Serial.println(onos_cmd_end_position);
-  return(0); 
+    strcpy(decoded_radio_answer,"nocmd0_#]");
+    Serial.print(F("error_IN_msg_nocmd0_#]"));
+    //Serial.print(onos_cmd_start_position);
+    //Serial.println(onos_cmd_end_position);
+    for (counter = 0; counter <= radio.DATALEN; counter++) {
+      Serial.print(radio.DATA[counter]);
+    }
+    Serial.println(F("end_msg"));
+    return(0); 
   }
   
 

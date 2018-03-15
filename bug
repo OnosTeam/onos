@@ -1,3 +1,23 @@
+su nodo wplugw1x:
+
+se premi molte volte velocemente il pulsante fisico:
+
+sendWithRetrySendSyncMessageExecuted_#]
+ id:1
+ [RX_RSSI:-35]msgStart:3
+:msgStop
+error_IN_msg_nocmd0_#]0end_msg
+handleButton()exbtn_still_same_status:0btn_t_same_status:1
+
+Non dovrebbe ricevere niente da onosCenter ma riceve uno "0"  overflow?
+
+
+
+
+
+
+
+
 a volte se lo stato di un oggetto è in wait...può essere che il link a cui redirige  l'html dell'oggetto sia lo stesso dello stato attuale...in questo caso onos non cambia lo stato anche premendo...e questo comporta che lo stato rimanga sempre in wait..
 
 

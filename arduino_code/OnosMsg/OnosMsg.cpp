@@ -103,10 +103,10 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                       &&(received_message[2]=='_') ) {
         // the onos cmd was found           [S_001dw06001_#]
                 
-                        received_message_address=hexCharToDec(received_message[3]-48)*16
-                                                +hexCharToDec(received_message[4]-48);
-                        //Serial.print(F("received_message_address:")); 
-                        //Serial.println(received_message_address); 
+                received_message_address=hexCharToDec(received_message[3]-48)*16
+                                        +hexCharToDec(received_message[4]-48);
+                //Serial.print(F("received_message_address:")); 
+                //Serial.println(received_message_address); 
 
 
                 
@@ -117,7 +117,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                 Serial.print(serial_number);
                 Serial.println(F("end")); 
                 */
-                        return; //return because i don't need to decode the message..i need to retrasmit it to the final node.
+                        return; //return because I don't need to decode the message..I need to retrasmit it to another node or OnosCenter.
                 }
                 
                 strcpy(decoded_result,"[S_er_cmdRNotfound_#]"); 

@@ -338,7 +338,7 @@ class HwNode:
       if objectAddress in self.nodeObjectsDict:
         return(self.nodeObjectsDict[objectAddress])
       else:
-        message="error , no object with address:"+str(objectAddress)+" found in this node:"+node_serial_number
+        message="Warning , no object with address:"+str(objectAddress)+" found in this node:"+node_serial_number
         logprint(message,verbose=9)   
         return(-1)
 
