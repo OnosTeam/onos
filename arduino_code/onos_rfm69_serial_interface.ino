@@ -212,7 +212,7 @@ boolean radio_msg_to_decode_is_avaible=0;
 volatile char main_obj_state=0;
 
 
-uint8_t skipUartRxMsg=0;
+//uint8_t skipUartRxMsg=0;
 
 /*
 int freeRam () 
@@ -595,7 +595,10 @@ boolean checkAndHandleIncomingRadioMsg(){
     //for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
 
   for (uint8_t counter = 0; counter < radio.DATALEN; counter++) {
-
+    if (counter > (sizeof(filtered_radio_message)-1) ){  // to prevent overflow
+      Serial.println(F("[S_erA_overflow_filtered_radio_message_#]"));
+      break; 
+    }
     filtered_radio_message[counter]=radio.DATA[counter];
       //  Serial.println(filtered_radio_message[counter]);
 

@@ -297,7 +297,7 @@ int onos_cmd_end_position=-99;
 char received_message_type_of_onos_cmd[3];
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
-int received_message_value;
+int received_message_value;  //used in OnosMsg.cpp
 //volatile char decoded_uart_answer[24]="er00_#]";
 char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
@@ -329,7 +329,7 @@ uint8_t radioTxTimeoutAllarm=50;
 unsigned long random_time=0;
 
 
-unsigned long time_continuos_on=0;
+/*unsigned long time_continuos_on=0;
 unsigned long time_since_last_sync=0;
 unsigned long time_from_turn_on=0;
 float minutes_time_from_turn_on;
@@ -338,8 +338,9 @@ char minutes_time_from_turn_on_array[5];
 
 int timeout_to_turn_off=0;//0=disabled    600; //10 hours    todo   add the possibility to set it from remote
 
-uint8_t skipRadioRxMsg=0;
-uint8_t skipRadioRxMsgThreshold=5;
+*/
+//uint8_t skipRadioRxMsg=0;
+//uint8_t skipRadioRxMsgThreshold=5;
 
 
 volatile char main_obj_state=0;
@@ -426,7 +427,7 @@ boolean changeObjStatus(char obj_number,int status_to_set)
   #endif
 
   if(obj_number==syncTimeout){  // if the object sent is syncTimeout change the sync_timeout with the value received
-    sync_timeout=status_to_set*1000;// get the value in seconds
+    sync_timeout=(unsigned long)(status_to_set*1000);// I need the cast otherwise there will be a overflow..
   }
   
   node_obj_status[obj_number]=status_to_set;
@@ -747,7 +748,7 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
     //(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries, uint8_t retryWaitTime)
     Serial.println(F("sent_sync_message1"));
     //    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
-    skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+    //skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
   }
 
   radio.receiveDone(); //put radio in RX mode
@@ -808,7 +809,7 @@ void getAddressFromGateway()
       }
       Serial.println("end_get_address"); 
       */
-      skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+      // skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
       break;// exit the while (tryed_times < radioRetry )
     }
     else{
@@ -826,6 +827,7 @@ void getAddressFromGateway()
   
   syncMessage[6]='u'; //modify the message
   syncMessage[7]='l'; //modify the message
+  *get_sync_time=millis();  // to prevent the skip rx message in the loop() when there is no address received yet..
   radio.receiveDone(); //put radio in RX mode
 }
 
@@ -873,6 +875,11 @@ boolean checkAndHandleIncomingRadioMsg(){
   //for (uint8_t counter = 0; counter <= rx_msg_lenght; counter++) {
   
   for (counter = 0; counter <= radio.DATALEN; counter++) {
+      
+    if (counter > (sizeof(filtered_radio_message)-1) ){  // to prevent overflow
+      Serial.println(F("[S_erA_overflow_filtered_radio_message_#]"));
+      break; 
+    }
     filtered_radio_message[counter]=radio.DATA[counter];
     //  Serial.println(filtered_radio_message[counter]);
     
@@ -966,7 +973,10 @@ boolean checkAndHandleIncomingRadioMsg(){
 
 void checkCurrentRadioAddress()
   {
+  //Serial.println(F("checkCurrentRadioAddress()"));
+
   if(reInitializeRadio==1){
+    Serial.print(F("reInitializeRadio==1"));
     beginRadio();
     reInitializeRadio=0;
     composeSyncMessage();
@@ -993,6 +1003,15 @@ void checkCurrentRadioAddress()
       }
     }
     else{
+/*
+      Serial.print(F("*get_sync_time:")); 
+      Serial.print(*get_sync_time);
+      Serial.print(F("millis()-*get_sync_time:")); 
+      Serial.print(millis()-*get_sync_time);
+      Serial.print(F(",sync_timeout:")); 
+      Serial.println(sync_timeout);
+      */
+
       //random_time=1500;//random(1500,2500);
       if ((millis()-*get_sync_time)>sync_timeout){ //every 1500/2500 ms
 
@@ -1024,14 +1043,15 @@ void checkCurrentRadioAddress()
           while ((millis()-awake_time)>stay_awake_period ){
             //TODO: put if(millis()-awake_time)<stay_awake_period )--->sleep   in the main loop...
             if (radio.receiveDone()){
-              skipRadioRxMsg=skipRadioRxMsg+1;
+              //skipRadioRxMsg=skipRadioRxMsg+1;
               checkAndHandleIncomingRadioMsg();
             }
           
           }
           Serial.println(F("endWait"));
+        #endif  //end  if defined(battery_node)
 
-        #else    //not a battery node
+        #ifndef battery_node // if not defined(node_type_WreedSaa)    //not a battery node
           Serial.println(F("notABatteryNodePartExec"));
           composeSyncMessage();
           sendSyncMessage(radioRetry,radioTxTimeout);
@@ -1090,7 +1110,7 @@ void beginRadio()
 
 void buttonStateChanged()
 {
-  button_time_same_status=millis();
+  button_time_same_status=millis();   // i know it doesn't work correctly inside interrupt but it will give me the last timer anyway.
   button_still_same_status=0;
 }
 
@@ -1150,9 +1170,9 @@ void handleButton()
                 &&(button_still_same_status==0)){
     Serial.println(F("time_to_change_status_#]++++++++++++"));
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
+    button_still_same_status=1;
     composeSyncMessage();
     sendSyncMessage(radioRetry+2,radioTxTimeout); 
-    button_still_same_status=1;
     button_time_same_status=millis();
     delay(100);//todo change it smaller
 
@@ -1211,7 +1231,7 @@ void setup()
   noInterrupts(); // Disable interrupts    //important for lamp node
 
   node_obj_status[syncTimeout]=node_default_timeout;
-  sync_timeout=node_obj_status[syncTimeout]*1000;
+  sync_timeout=(unsigned long)node_default_timeout*1000;  // I need the cast otherwise there will be a overflow..
   
   #if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
     pinMode(RFM69_RST, OUTPUT); 
@@ -1400,13 +1420,20 @@ void loop()
   
   
   
+  if ((millis()-*get_sync_time)>(sync_timeout*3)){
+    // if the timeout is n time greater than the default it means there are too many rx messages(with possible errors)
+    // I will skip one in order to sens a sync message
+    Serial.println(F("IskipRxradioPartOnce"));
+    goto radioTx;
+  }
+/*
   if (skipRadioRxMsg>skipRadioRxMsgThreshold){  //to allow the execution of radio tx , in case there are too many rx query..
     skipRadioRxMsg=0;  //reset the counter to allow this node to receive query 
     Serial.println(F("IskipRxradioPartOnce"));
     goto radioTx;
   }
-  
-  
+*/
+
   #if defined(ota_enabled)  
   if (ota_loop==1){
     ota_receive_loop();
@@ -1414,7 +1441,7 @@ void loop()
   #endif 
   
   if (radio.receiveDone()){
-    skipRadioRxMsg=skipRadioRxMsg+1;
+    //skipRadioRxMsg=skipRadioRxMsg+1;
     checkAndHandleIncomingRadioMsg();
   }
   
