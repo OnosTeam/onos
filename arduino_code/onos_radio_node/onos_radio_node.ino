@@ -127,7 +127,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_Wrelay4x
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -397,7 +397,7 @@ boolean changeObjStatus(char obj_number,int status_to_set)
       main_obj_state=status_to_set;
       digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
       Serial.println(F("dw_With_obj")); 
-      changeObjStatus(led,status_to_set);
+      changeObjStatus(led,!status_to_set);
     }
     else if(obj_number<4) { //objects from 0 to 3 are relay  
       digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
@@ -1271,10 +1271,10 @@ void setup()
     strcat(serial_number,numeric_serial);
     // OBJECTS PIN DEFINITION___________________________________________________________________
     node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
-    node_obj_pinout[relay2]=4;  // the second object is the relay 2 connected on pin 8  
+    node_obj_pinout[relay2]=5;  // the second object is the relay 2 connected on pin 5  
     node_obj_pinout[relay3]=6;  // the third  object is the relay 3 connected on pin 9 
     node_obj_pinout[relay4]=5;  // the forth  object is the relay 4 connected on pin 3 
-    node_obj_pinout[led]=5;     // the fifth  object is the led     connected on pin 5
+    node_obj_pinout[led]=4;     // the fifth  object is the led     connected on pin 4
     node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
     // END OBJECTS PIN DEFINITION_______________________________________________________________
     pinMode(node_obj_pinout[relay1], OUTPUT);
