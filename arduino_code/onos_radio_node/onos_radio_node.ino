@@ -127,7 +127,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_Wrelay4x
+#define node_type_WreedSaa
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -163,7 +163,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   const uint8_t luminosity_sensor = 10;
   
   const uint8_t number_of_total_objects = 11; //11 because there are 10 elements + a null for the array closing
-  const int node_default_timeout = 10; // seconds
+  const int node_default_timeout = 60; // seconds
   #define battery_node            // tell the software to go to sleep to keep battery power. 
   uint8_t reed_sensors_state = 0;  //store the state of the 2 reeds sensors
   uint8_t logic_reed1_status = 0;
@@ -220,8 +220,9 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 #if defined(battery_node)   //if the node is a battery node:
   volatile byte keep_ADCSRA = ADCSRA; //save the state of the register;
-  
-  unsigned long stay_awake_period = 700 ;   //how long in ms the node will stay awake to receive radio messages.
+  //unsigned long sleep_percentage = 0.9;// the ratio between sleep and awake time expressed as 0.x where 1.0 is 100% and 0.01 is 1%
+  unsigned long stay_awake_period = 5 ;//how long in sec the node will stay awake to receive radio messages.
+  uint8_t sleep_cycles = uint8_t( ( (node_default_timeout - stay_awake_period )/8 ) - 1 );  // number of sleep cycle to do ...8 seconds for each sleep cycle..
   unsigned long awake_time = 0;
 
 #endif 
@@ -1013,52 +1014,60 @@ void checkCurrentRadioAddress()
       */
 
       //random_time=1500;//random(1500,2500);
-      if ((millis()-*get_sync_time)>sync_timeout){ //every 1500/2500 ms
-
-        #if defined(battery_node) // defined(node_type_WreedSaa)
+      
+      #if defined(battery_node) // defined(node_type_WreedSaa)
+        Serial.print(F("stay_awake_period:"));
+        Serial.println(stay_awake_period,DEC);
+        if ((millis()-*get_sync_time)>(stay_awake_period *1000)){ //every n ms
           composeSyncMessage();
           sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
-          //sync_time=millis();
-          //  I put the node to sleep
-          Serial.println(F("IGoToSleep"));
-          radio.sleep();
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          delayMicroseconds(50);
-          ADCSRA=keep_ADCSRA; //resume the status of the register
-          composeSyncMessage();
-          sendSyncMessage(radioRetryAllarm,radioTxTimeoutAllarm);
-          //sync_time=millis(); changed in in sendSyncMessage
-          
+          //sync_time=millis(); changed, now is in sendSyncMessage
+          /*
           awake_time=millis();
           Serial.println(F("wait_for_possible_rx_messages"));
-          while ((millis()-awake_time)>stay_awake_period ){
+          while ((millis()-awake_time)<stay_awake_period ){
+            //note: if stay_awake_period < node_default_timeout 
+            //      you will not see any delay on the frequency of node sync 
+            //      because the time is taken from the node_default_timeout...
+            Serial.print(F("millis()-awake_time:"));
+            Serial.println(millis()-awake_time);
             //TODO: put if(millis()-awake_time)<stay_awake_period )--->sleep   in the main loop...
             if (radio.receiveDone()){
               //skipRadioRxMsg=skipRadioRxMsg+1;
               checkAndHandleIncomingRadioMsg();
             }
-          
           }
           Serial.println(F("endWait"));
-        #endif  //end  if defined(battery_node)
+          */
+          //  I put the node to sleep
+          Serial.print(F("IGoToSleep for:"));
+          Serial.print(sleep_cycles*8);
+          Serial.println(F("sec"));
+          Serial.flush();  //make sure all serial data is clocked
 
-        #ifndef battery_node // if not defined(node_type_WreedSaa)    //not a battery node
+          radio.sleep();
+          for (uint8_t i=0;i<=sleep_cycles;i=i+1){
+            LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+          }
+          Serial.println(F("EndSleep"));
+
+
+          
+          delayMicroseconds(50);
+          ADCSRA=keep_ADCSRA; //resume the status of the register
+        } // end  if ((millis()-*get_sync_time)> ..
+        
+      #endif  //end  if defined(battery_node)
+
+      #ifndef battery_node // if not defined(node_type_WreedSaa)    //not a battery node
+        if ((millis()-*get_sync_time)>sync_timeout){ //every 1500/2500 ms
           Serial.println(F("notABatteryNodePartExec"));
           composeSyncMessage();
           sendSyncMessage(radioRetry,radioTxTimeout);
-          //sync_time=millis(); changed in in sendSyncMessage
-        #endif  //end  if defined(battery_node)
+            //sync_time=millis(); changed in in sendSyncMessage
+        }
+      #endif  //end  if defined(battery_node)
 
-      }
 
     }
     
@@ -1098,7 +1107,7 @@ void beginRadio()
   Serial.print(F("\nListeningAt:"));
   Serial.print(FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(F(" MHz"));
-  Serial.print(F("radioAddressChangedTo:"));
+  Serial.print(F("radioAddrChTo:"));
   Serial.println(this_node_address);
   
   #if defined(battery_node)   //if the node is a battery node:
@@ -1168,7 +1177,7 @@ void handleButton()
 
   if (((millis()-button_time_same_status)>time_to_change_status)
                 &&(button_still_same_status==0)){
-    Serial.println(F("time_to_change_status_#]++++++++++++"));
+    Serial.println(F("time_to_change_status_#]"));
     changeObjStatus(main_obj_selected,!main_obj_state);  // this will make a not of current state
     button_still_same_status=1;
     composeSyncMessage();
@@ -1326,7 +1335,7 @@ void setup()
   
   
   
-  Serial.println(F("Setup -------------------------------------------------"));
+  Serial.println(F("Setup -----------------"));
   Serial.println(F("Feather RFM69W Receiver"));
   
   
@@ -1360,12 +1369,15 @@ void setup()
   //enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
   #if defined(node_type_WreedSaa)
     attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
-    Serial.println(F("WreedSaa interrupt enabled"));
+    Serial.println(F("WreedSaa interrupt en"));
   #elif defined(node_type_WPlug1vx)
     digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
     attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+    Serial.println(F("WPlug1vx interrupt en"));
   #elif defined(node_type_Wrelay4x)
     attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+    Serial.println(F("Wrelay4x interrupt en"));
+
   #endif 
   
   
