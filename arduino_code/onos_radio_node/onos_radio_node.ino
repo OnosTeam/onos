@@ -127,7 +127,7 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WreedSaa
+#define node_type_WPlug1vx
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -750,10 +750,17 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
     Serial.println(F("sent_sync_message1"));
     //    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
     //skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
+    *get_sync_time=millis();
+
+  }
+  else{
+    Serial.println(F("Error_sent_sync_msg_failed"));
+    delay(1);
+
   }
 
   radio.receiveDone(); //put radio in RX mode
-  *get_sync_time=millis();
+  //*get_sync_time=millis();
 }
 
 

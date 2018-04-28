@@ -395,7 +395,7 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
   Given a node serialnumber and an address, updates the node in the nodeDict with the given address. 
 
   """
-  logprint("updateNodeAddress() executed with node_sn:"+node_sn,verbose=3)
+  logprint("updateNodeAddress()ex with node_sn:"+node_sn+"address:"+node_address+"fw:"+node_fw,verbose=3)
   try: #if (node_sn in nodeDict.keys()):
 
     time_passed_since_last_sync = time.time() - nodeDict[node_sn].getLastNodeSync()
@@ -441,10 +441,10 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
         if (nodeDict[node_sn].getNodeAddress())!=node_address:
           still_same_address = "changed"  
     
-        init_row=["nodeSn", "timestamp", "day/month/year", 
+        init_row=["nodeSn", "node_fw", "timestamp", "day/month/year", 
                   "hours:minutes:seconds", "address", "last_sync", "still_same_address"]
         
-        row_to_write=[node_sn, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
+        row_to_write=[node_sn, node_fw, timestamp, day+'/'+month+'/'+year, hours+':'+minutes+':'+seconds,
                       node_address, time_passed_since_last_sync_string, still_same_address]            
         writeCsvFile(csv_file_name, init_row, row_to_write)  
 
@@ -1595,7 +1595,7 @@ if 1 > 0:  # if debug > 0:   if debug is active ..
 
         init_row = ["nodeSn", "timestamp", "day/month/year", 
         "hours:minutes:seconds", "address", "last_sync"]
-        previous_sync_time = "onos_system_started"
+        previous_sync_time = "+++onos_system_started1+++"
             
         row_to_write = [node_sn, timestamp, day +'/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
                           node_address, previous_sync_time ]     
@@ -1628,8 +1628,8 @@ if 1 > 0:  # if debug > 0:   if debug is active ..
         
         init_row = ["statusToSet", "timestamp", "day/month/year", 
                   "hours:minutes:seconds", "hours", "day_of_week", "user"]
-        statusToSet = "onos_system_started"
-        user = "onos_system_started"
+        statusToSet = "+++onos_system_started0+++"
+        user = "+++onos_system_started0+++"
 
         row_to_write = [statusToSet, timestamp, day + '/' + month + '/' + year, hours + ':' + minutes + ':' + seconds,
                       hours, day_of_week, user]
@@ -6743,12 +6743,17 @@ def executeQueueFunction(dataExchanged):
     node_serial_number=dataExchanged["nodeSn"]
     node_address=dataExchanged["nodeAddress"]
     node_fw=dataExchanged["nodeFw"]
+
+    
     if node_serial_number not in nodeDict.keys():
       message="error node_sn:"+node_serial_number+" not in nodeDict"
       logprint(message,verbose=5)
       priorityCmdQueue.put( {"cmd":"createNewNode","nodeSn":node_serial_number,"nodeAddress":node_address,"nodeFw":node_fw }) 
       return
 
+    if node_fw == "df0": # this is just a sync of a previosly connected node...so I use the already stored node_fw value 
+      node_fw = nodeDict[node_serial_number].getNodeFwVersion()
+      
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,node_fw)
     node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
     logprint(str(list(dataExchanged["objects_to_update"]))+"end data_exanged",verbose=3)
@@ -6836,7 +6841,9 @@ def executeQueueFunction(dataExchanged):
     
   if (dataExchanged["cmd"]=="NewAddressToNodeRequired"):
     #old_address = "254"
-    node_fw = "def1"
+    #node_fw = "df1"
+    node_fw = dataExchanged["nodeFw"]
+
     try:
         node_address = dataExchanged["nodeAddress"]
     except Exception as e:
@@ -6846,7 +6853,6 @@ def executeQueueFunction(dataExchanged):
     try:
       node_serial_number = dataExchanged["nodeSn"]
       nodeDict[node_serial_number].setNodeActivity(2)  #set the node as preactive state(not active yet but turned on)
-      node_fw = dataExchanged["nodeFw"]
 
       #old_address=dataExchanged["nodeAddress"]
       #if node_serial_number in nodeDict:

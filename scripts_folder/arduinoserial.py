@@ -227,9 +227,10 @@ class SerialPort:
                             serial_number = cmd[8:20]
                             node_address = '%03d' %(int(cmd[3:5], 16) )    # get the address in decimal format,example:get "010" from the hexadecimal "0a"    
                                                                            # the '%03d' %    will fill with '0' the left part.. 2 will become a string ='002'
-                            node_fw = '%03d' %(int(cmd[3:5], 16) ) # "def0"    #default    
+                            node_fw = '%03d' %(int(cmd[6:8], 16) ) # "df0"    #default    
 
                             if node_address == "254":    #the node is looking for a free address
+                                logprint("node_fw=" + node_fw)
                                 priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired", "nodeSn":serial_number, "nodeAddress":node_address, "nodeFw":node_fw}) 
                                 continue
     
@@ -249,7 +250,7 @@ class SerialPort:
                             serial_number = cmd[6:18]
                             node_address = '%03d' %(int(cmd[3:5], 16) )    # get the address in decimal format,example:get "010" from the hexadecimal "0a"    
                                                                          # the '%03d' %    will fill with '0' the left part.. 2 will become a string ='002'
-                            node_fw = "def0"    #default    
+                            node_fw = "df0"    #default    
                             node_type = cmd[6:14]     #get WreedSaa from    [S_01uWreedSaa000132Lgx_#]
                             
                             if node_type == "WreedSaa":    # if the node is a reed node
