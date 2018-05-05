@@ -1129,7 +1129,6 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
       write_to_hardware=0
 
     if ( objectDict[objName].getAttachedPinList() )==[9999] : #if there is no pins attached to this webobject
-
       logprint("no pin attached to this webobject , I change its status")
       if objectDict[objName].getType() not in ["digital_obj_out","analog_obj_out","cfg_obj"]:
         write_to_hardware=0
@@ -3501,6 +3500,27 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
+            if self.path.find("/mod_objects_list")!=-1: # render the csv list 
+              logprint("")
+              namespace={"current_username":self.current_username,"current_path":self.path,"objectDict":objectDict}
+              cgi_name="gui/mod_objects_list.py" 
+              #execfile(cgi_name,globals(),namespace)
+              exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+
+              web_page=namespace["web_page"]
+
+              try:
+                self.send_response(200)
+                self.send_header('Content-type',	'text/html')
+                self.end_headers()
+                self.wfile.write(web_page) 
+              except Exception as e  :
+                message="error13k in send_header "
+                logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+              return 
+              
+              
+
             if self.path.find("gui/csv_list")!=-1: # render the csv list 
               logprint("")
               namespace={"current_username":self.current_username,"current_path":self.path,"csv_path":"/csv/"}
@@ -3519,8 +3539,6 @@ class MyHandler(BaseHTTPRequestHandler):
                 message="error13k in send_header "
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return 
-
-
             #/RouterGL0001/index.html?=r_onos_s12
 
             if  ( string.find(self.path,"r_onos_s")!=-1)& ( string.find(self.path,"?")!=-1)& ( string.find(self.path,"=")!=-1):   #if is the javascript on the page asking to update the webpage             /
@@ -4425,7 +4443,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 try:             
 
-                  objectDict[current_obj_name].setName(new_obj_name)    #rename the object_name in the object..
+                  objectDict[current_obj_name].setName(new_obj_name)    #rename the object_name in the object dict..
                   tmp_htmlDict=objectDict[current_obj_name].getHtmlDict()
 
                   for a in tmp_htmlDict.keys():

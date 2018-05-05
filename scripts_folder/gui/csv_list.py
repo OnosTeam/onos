@@ -30,7 +30,7 @@ html = menu
 for file_name in file_list:
     html = html + '''<div class="riga" >'''
     html = html + '''    <a href="''' + csv_folder + file_name + ''' ">
-                         <div class="zone-name col1">''' + file_name + '''</div>
+                         <div class="element_name col1">''' + file_name + '''</div>
                          </a> <br> '''
     html = html + '''</div>'''
 
