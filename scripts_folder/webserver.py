@@ -3500,11 +3500,11 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 
-            if self.path.find("/mod_objects_list")!=-1: # render the csv list 
-              logprint("")
+# Object Mod section start #
+
+            if self.path.find("/mod_object_list")!=-1: # render the objects list  
               namespace={"current_username":self.current_username,"current_path":self.path,"objectDict":objectDict}
-              cgi_name="gui/mod_objects_list.py" 
-              #execfile(cgi_name,globals(),namespace)
+              cgi_name="gui/mod_object_list.py" 
               exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
 
               web_page=namespace["web_page"]
@@ -3518,6 +3518,68 @@ class MyHandler(BaseHTTPRequestHandler):
                 message="error13k in send_header "
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return 
+              
+              
+            if self.path.find("/mod_object")!=-1:
+                current_object_name = self.path.split("/")[-1] # get the part after the / that is the object name
+                
+                if current_object_name not in objectDict:
+                  logprint("error the webobject" + current_object_name + "selected does not exist in the dict",verbose=6)
+                  web_page = "error the webobject" + current_object_name + "selected does not exist"
+                    
+                  try:
+                    self.send_response(200)
+                    self.send_header('Content-type',	'text/html')
+                    self.end_headers()
+                    self.wfile.write(web_page) 
+                  except Exception as e  :
+                    message="error13k2 in send_header "
+                    logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+                  return 
+                  
+                if self.path.find("/mod_object_select")!=-1: # render the object modification 
+                  namespace={"current_username":self.current_username,"current_path":self.path,"objectDict":objectDict,"current_object_name":current_object_name}
+                  cgi_name="gui/mod_object_select.py" 
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+                  web_page=namespace["web_page"]
+                
+                elif self.path.find("/mod_object_delete")!=-1: # Todo: implement this part
+                  namespace={"current_username":self.current_username,"current_path":self.path,"objectDict":objectDict,"current_object_name":current_object_name}
+                  cgi_name="gui/mod_object_delete.py" 
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+                  web_page=namespace["web_page"]
+    
+              
+                elif self.path.find("/mod_object_rename")!=-1:
+                  namespace={"current_username":self.current_username,"current_path":self.path,"objectDict":objectDict,"current_object_name":current_object_name}
+                  cgi_name="gui/mod_object_rename.py" 
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+                  web_page=namespace["web_page"]
+
+
+                elif self.path.find("/mod_object_perm")!=-1: #todo to implement..
+                  namespace={"current_username":self.current_username,"current_path":self.path,"objectDict":objectDict,"current_object_name":current_object_name}
+                  cgi_name="gui/mod_object_perm.py" 
+                  exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
+                  web_page=namespace["web_page"]
+  
+
+                try:
+                  self.send_response(200)
+                  self.send_header('Content-type',	'text/html')
+                  self.end_headers()
+                  self.wfile.write(web_page) 
+                except Exception as e  :
+                  message="error13k in send_header "
+                  logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
+                return  
+# Object Mod section start #
+
+              
+              
+              
+              
+              
               
               
 
@@ -3536,7 +3598,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(web_page) 
               except Exception as e  :
-                message="error13k in send_header "
+                message="error13k1 in send_header "
                 logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))  
               return 
             #/RouterGL0001/index.html?=r_onos_s12

@@ -61,8 +61,8 @@ operator2_sel_default='''
 
 #example conditions:  (#_year_#==2016)&(#_hours_#==8)&(#_minutes_#==0)
 functionsToRun=scenarioDict[scenario_to_mod]["functionsToRun"]  #get the string where there are the conditions
-print type(functionsToRun)
-print "functionsToRun",functionsToRun
+print(type(functionsToRun))
+print("functionsToRun", functionsToRun)
 html_functionsToRun=''
 
 i=0

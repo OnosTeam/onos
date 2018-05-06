@@ -115,7 +115,7 @@ function menudxfunction(menu_rx,funzionedx) {
 		<a href="/"><div id="homebutton" class="vocemenu_sx" ><i class="icon-home3"></i>Home</div></a>
 		<a href="/"><div id="zonebutton" class="vocemenu_sx" ><i class="icon-book"></i>Zone</div></a>
 		<a href="/scenarios_list/"><div id="scenaributton" class="vocemenu_sx"><i class="icon-calculator"></i>Scenari</div></a>
-		<a href="/mod_objects_list"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Oggetti</div></a>
+		<a href="/mod_object_list"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Oggetti</div></a>
 		<a href="/gui/csv_list"><div id="oggettibutton" class="vocemenu_sx"><i class="icon-price-tag"></i>Csv</div></a>
 		<a href="/setup/"><div id="impostazionibutton" class="vocemenu_sx"><i class="icon-settings"></i>Impostazioni</div></a>
 		<a href="/gui/users_list.py"><div id="accountbutton" class="vocemenu_sx"><i class="icon-user2"></i>Account</div></a>

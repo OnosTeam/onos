@@ -11,7 +11,7 @@ from get_top_menu import *  # works because there is sys.path.append(lib_dir2)  
 
 
 
-part_to_insert_in_head = '''<link rel="stylesheet" href="/css/mod_objects_list.css">
+part_to_insert_in_head = '''<link rel="stylesheet" href="/css/mod_object.css">
     <title>Objects list</title>
 '''.encode('ascii', 'ignore')
 
@@ -24,8 +24,8 @@ objects_list = list(objectDict) # get list of all objects in the system
 html = menu
 
 for object_name in objects_list:
-    html = html + '''<div class="riga" >'''
-    html = html + '''    <a href="mod_objects_select/''' + object_name + ''' ">
+    html = html + '''<div class="row_type1" >'''
+    html = html + '''    <a href="mod_object_select/''' + object_name + ''' ">
                          <div class="element_name col1">''' + object_name + '''</div>
                          </a> <br> '''
     html = html + '''</div>'''

@@ -15,7 +15,7 @@ part_to_insert_in_head='''
 
 	<link rel="stylesheet" href="/css/zone_creation.css">
 	<meta charset="utf-8">
-	<title>Creazione Zona</title>
+	<title>Zone Creation</title>
 '''
 
 javascript_to_insert_in_page='''

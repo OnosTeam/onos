@@ -67,7 +67,6 @@ class HwNode:
       self.timeout=hwModel["timeout"]  #time (in seconds) onos will let pass without contact with the node after which the node will be setted as inactive 
 
       self.nodeObjectsDict={}
-      self.NodeSerialNumber=self.NodeSerialNumber
       self.total_pin={}
       self.last_node_sync=time.time()
       self.isActive=1

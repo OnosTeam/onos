@@ -1,0 +1,112 @@
+.flex {max-width: 100%}
+	
+
+.row_type1{
+	position:relative;
+	width:100%;
+	height:50px;
+	margin-top:10px;
+	background-color:#1e9bae;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+}
+
+.row_type2{
+	position:relative;
+	width:100%;
+	height:200px;
+	margin-top:10px;
+	background-color:#1e9bae;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+}
+
+
+.col1{left:0%;}
+
+.col2{left:85%;}
+
+
+
+
+
+.element_name{
+	
+	position:absolute;
+	top:0px;
+	width:100%;
+	height:50px;
+	line-height:50px;
+	text-align:center;
+	font-size:15px;
+	color:black;
+	
+	
+}
+
+
+
+
+.setting_link{
+	position:absolute;
+	top:0px;
+	width:15%;
+	height:50px;
+	line-height:50px;
+	text-align:center;
+	font-size:15px;
+
+	border-left: 3px solid white;
+	border-top-left-radius:25px; 
+	border-bottom-left-radius:25px; 
+	
+	
+}
+.name_text{
+	position:absolute;
+	width:90%;
+	height:30px;
+	top:80px;
+	left:5%;
+	color:black;
+}
+
+
+
+.save_button{
+	position:absolute;
+    top:140px;
+	padding-left:5px;
+	padding-right:5px;
+	height:30px;
+	width:50%;
+	left:25%;
+	line-height:30px;
+	text-align:center;
+	font-size:15px;
+	color:white;
+	background-color:#1e9bae;
+	border-top-left-radius:10px; 
+	border-top-right-radius:10px; 
+	border-bottom-left-radius:10px; 
+	border-bottom-right-radius:10px; 
+	border: 1px solid white;
+	
+	
+	
+}
+
+.big_text{
+    top:0px;
+    position:absolute;
+    font-size:22px;
+	
+}
+
+
+.small_text{
+	top:40px;
+	position:absolute;
+	font-size:12px;
+	
+}
