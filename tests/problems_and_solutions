@@ -329,7 +329,28 @@ I will use post instead of get message
 
   To set a node address OnosCenter will then send a message with a : [S_fes02ProminiS0001x_#]  to tell the node to set its address to 123 for example
 
-             
+         
+
+
+
+To controll the mars rover :   
+// the mars rover will have 8 objects for the wheels movement 
+// 4 digital objects to tell if each wheels motors should move forward or backward
+// 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
+// 4 analog object to tell the pivoting servos what angle they should move to (from 0 to 180 degrees)
+
+// there will be a coded message to compress all this data in a single message: 
+
+//  [S_fdmDAoAoAoAoSoSoSoSox_#]    
+//  Where:
+//  The fd is the 253 address...
+//  The m stand for mars rover
+//  The D is a binary where the last 4 bits are the digital object to tell if each wheels motors should move forward or backward 
+//  Each Ao is  a hex of the 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
+//  Each So is a hex of the 4 analog object to tell the pivoting servos what angle they should move to (from 0 to 180 degrees)
+
+
+
 
 
 

@@ -86,7 +86,14 @@
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/ONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
+
+//#define node_type_rover_transmitter  //tell the compiler this is a node rover receiver...
+
+
 #define NETWORKID     100  // The same on all nodes that talk to each other
+
+
+
  
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
@@ -112,6 +119,9 @@
 //#define remote_node   //tell the compiler that this is a remote node
 #define local_node      //tell the compiler that this is a local node
 
+
+
+
 #if defined(local_node)
         #define targetRSSI    0  //0 to disable because  the gateway must always send at max power
 #endif
@@ -133,6 +143,14 @@ char node_fw[]="01";
 char encript_key[17]="onosEncryptKey01";  //todo read it from eeprom
 
 int this_node_address=1; //must be int..
+
+#if defined(node_type_rover_transmitter)
+
+ int this_node_address=253; //must be int..        // This is the rover address ..
+ char serial_number[13]="MarsRoverT0";
+
+
+#endif
 
 int old_address=254; 
 
