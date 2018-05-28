@@ -1,5 +1,15 @@
 .flex {max-width: 100%}
 	
+.riga{
+	position:relative;
+	width:100%;
+	height:50px;
+	margin-top:10px;
+
+}
+
+
+
 .name_text{
 	position:absolute;
 	width:90%;
@@ -151,5 +161,4 @@ input:checked + .check {
 .check {font-size:20px;}
 
 .ogg_selection{font-size:20px;}
-
 

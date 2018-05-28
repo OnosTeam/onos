@@ -794,7 +794,7 @@ void setup() {
          * rendering the library inoperative. 
          * 
         */
-        pinMode(10, OUTPUT);  //  NSS setted as output        
+  pinMode(RFM69_CS, OUTPUT);  //  NSS setted as output        
 
   //pinMode(RFM69_RST, OUTPUT);
   //delay(95000); //wait for glinet to power on

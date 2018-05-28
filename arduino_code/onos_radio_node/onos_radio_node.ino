@@ -1245,6 +1245,16 @@ void ota_receive_loop()
 void setup()
 {
   noInterrupts(); // Disable interrupts    //important for lamp node
+  
+/*
+ * 
+ *
+ * All AVR based boards have an SS pin that is useful when they act as a slave controlled by an external master.
+ * this pin should be set always as OUTPUT otherwise the SPI interface could be put automatically into slave mode by hardware,
+ * rendering the library inoperative. 
+ * 
+*/
+  pinMode(RFM69_CS, OUTPUT);  //  NSS setted as output        
 
   node_obj_status[syncTimeout]=node_default_timeout;
   sync_timeout=(unsigned long)node_default_timeout*1000;  // I need the cast otherwise there will be a overflow..
