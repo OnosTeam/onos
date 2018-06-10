@@ -1,0 +1,4 @@
+in RFM69.cpp I enabled whitening of the data using RF_PACKET1_DCFREE_WHITENING ...warning will have to use the same setup on every node...
+
+
+
