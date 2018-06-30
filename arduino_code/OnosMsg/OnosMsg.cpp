@@ -277,7 +277,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return; 
                         }
                         else{
-                                changeObjStatus(rx_obj_selected,received_message_value);
+                                status_change_from_msg(rx_obj_selected,received_message_value);
                         }
                         
                         
@@ -307,7 +307,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return; 
                         }
                         else{
-                                changeObjStatus(rx_obj_selected,received_message_value); 
+                                status_change_from_msg(rx_obj_selected,received_message_value); 
                                 // todo: make this return 0 or 1 to tell if the operation was completed.
                         }
 
@@ -335,7 +335,7 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                                 return; 
                         }
                         else{
-                                changeObjStatus(rx_obj_selected,received_message_value); 
+                                status_change_from_msg(rx_obj_selected,received_message_value); 
                                 // todo: make this return 0 or 1 to tell if the operation was completed.
                         }
                         

@@ -44,3 +44,8 @@ Per programmarlo seleziona optiboot on 32 pin cpus   e su processore mettere atm
 
 
 
+dalla ultima versione si può usare anche moteino:
+https://lowpowerlab.github.io/MoteinoCore/package_LowPowerLab_index.json
+non servono altre modifiche in questo caso..
+
+

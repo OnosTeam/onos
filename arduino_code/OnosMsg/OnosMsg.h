@@ -53,7 +53,7 @@ extern uint8_t main_obj_selected;
 extern char encript_key[17];
 extern boolean reInitializeRadio;
 void beginRadio(void);  //prototype of the function used in the node..
-boolean changeObjStatus(char,int);
+void status_change_from_msg(char,int);
 extern boolean ota_loop;  //enable the ota receiver loop
 
 class OnosMsg {

@@ -95,8 +95,8 @@
 #define RFM69_RST     9
 
 
-#define ATC_RSSI      -30   //power signal from -30(stronger) to -95(weaker) 
-#define targetRSSI    -40
+#define ATC_RSSI      -50   //power signal from -30(stronger) to -95(weaker) 
+#define targetRSSI    -50
 
 #define remote_node   //tell the compiler that this is a remote node
 //#define local_node  //tell the compiler that this is a local node
@@ -123,7 +123,7 @@
   SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0002";   // this is the progressive numeric serial number
+char numeric_serial[5]="0001";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
@@ -200,6 +200,8 @@ char numeric_serial[5]="0002";   // this is the progressive numeric serial numbe
   
 #elif defined(node_type_WLightSS)
   const int node_default_timeout = 360;
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 
 #elif defined(node_type_WPlug1vx)
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
@@ -209,12 +211,18 @@ char numeric_serial[5]="0002";   // this is the progressive numeric serial numbe
   const uint8_t syncTimeout = 3;
   const uint8_t number_of_total_objects = 4;
   const int node_default_timeout = 180;
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module  
 
 #elif defined(node_type_WIRbarr0)
   const int node_default_timeout = 360;
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 
 #elif defined(node_type_WSoilHaa)
   const int node_default_timeout = 360;
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 #endif 
 
 
@@ -269,6 +277,12 @@ unsigned long *get_address_timeout_pointer=&get_address_timeout;
 volatile unsigned long button_time_same_status=0;
 
 volatile boolean button_still_same_status=1; 
+
+
+
+volatile char enable_change_object_from_decoded_msg = 0;
+volatile char obj_number_from_decoded_msg = 0;
+volatile int obj_status_to_set_from_decoded_msg = 0;
 
 
 
@@ -375,6 +389,12 @@ int freeRam ()
 
 */
 
+void status_change_from_msg(char obj_number, int status_to_set)
+{
+        enable_change_object_from_decoded_msg = 1;
+        obj_number_from_decoded_msg = obj_number;
+        obj_status_to_set_from_decoded_msg = status_to_set;
+}
 
 boolean changeObjStatus(char obj_number,int status_to_set)
 {
@@ -412,8 +432,12 @@ boolean changeObjStatus(char obj_number,int status_to_set)
   #elif defined(node_type_WPlug1vx)
     if (obj_number==0){
       main_obj_state=status_to_set;
+      delayMicroseconds(580);  // to prevent overcurrent absorption 
+
       digitalWrite(5,!status_to_set); // set relay1
+      delayMicroseconds(580);  // to prevent overcurrent absorption I will drive a relay at a time..
       digitalWrite(6,!status_to_set); // set relay2
+      delayMicroseconds(580);  // to prevent overcurrent absorption I will drive a relay at a time..
       digitalWrite(7,status_to_set);// reset both relays
       Serial.println(F("dw_With_obj")); 
       changeObjStatus(led,!status_to_set);
@@ -805,6 +829,10 @@ void getAddressFromGateway()
       // Serial.print(millis()-timetest);
     #endif
     
+    /*
+     * Serial.println(F("temp:"));
+     * Serial.println(radio.readTemperature());
+    */
     if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),1,radioTxTimeout)) {
       // note that the max delay time is 255..because is uint8_t
       //target node Id, message as string or byte array, message length,retries, milliseconds before retry
@@ -928,6 +956,12 @@ boolean checkAndHandleIncomingRadioMsg(){
     Serial.println(F("-ACKsent"));
     *get_sync_time=millis();
     }
+    if (enable_change_object_from_decoded_msg == 1){
+      changeObjStatus(obj_number_from_decoded_msg,obj_status_to_set_from_decoded_msg);
+      enable_change_object_from_decoded_msg = 0;
+
+    }
+  
     //interrupts(); // Enable interrupts
   return(1); 
   
@@ -1089,9 +1123,9 @@ void beginRadio()
   interrupts(); // Enable interrupts
   
   #if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
-    digitalWrite(RFM69_RST,1); //set pullup on reed
+    digitalWrite(RFM69_RST,1);
     delay(1); // delay for the module to receive the command
-    digitalWrite(RFM69_RST,0); //set pullup on reed
+    digitalWrite(RFM69_RST,0); 
     delay(10); // delay to wait for the module to restart
   #endif
 
@@ -1419,7 +1453,6 @@ void setup()
   #endif 
   
   
-
 }
  
 void loop() 

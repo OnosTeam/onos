@@ -160,6 +160,10 @@ unsigned long timeout;
 
 //boolean first_sync=0; //tell the node if the first sync was made 
 
+volatile char enable_change_object_from_decoded_msg = 0;
+volatile char obj_number_from_decoded_msg = 0;
+volatile int obj_status_to_set_from_decoded_msg = 0;
+
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
 const uint8_t rx_msg_lenght = 61;
@@ -176,9 +180,9 @@ int received_message_value;
 char decoded_uart_answer[24]="er00_#]";
 char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
-volatile char filtered_uart_message[rx_msg_lenght+3];
+char filtered_uart_message[rx_msg_lenght+3];
 char filtered_radio_message[rx_msg_lenght+3];
-volatile char syncMessage[syncMessage_lenght];
+char syncMessage[syncMessage_lenght];
 char str_this_node_address[3];
 uint8_t main_obj_selected=0;
 uint8_t rx_obj_selected=0;
@@ -240,6 +244,14 @@ int freeRam ()
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
 */
+
+void status_change_from_msg(char obj_number, int status_to_set)
+{
+        enable_change_object_from_decoded_msg = 1;
+        obj_number_from_decoded_msg = obj_number;
+        obj_status_to_set_from_decoded_msg = status_to_set;
+}
+
 
 boolean changeObjStatus(char obj_number,int status_to_set){
 
@@ -470,6 +482,7 @@ boolean checkAndReceiveSerialMsg(){
       }
       else {
         sendSerialAnswerFromSerialMsg();
+        
       }
 
 
@@ -560,6 +573,10 @@ void sendSerialAnswerFromSerialMsg(){
     sync_time=millis();
     enable_answer_back=0;
     // the answer will be : [S_ok+ message received
+    if (enable_change_object_from_decoded_msg == 1){
+      changeObjStatus(obj_number_from_decoded_msg,obj_status_to_set_from_decoded_msg);
+      enable_change_object_from_decoded_msg = 0;
+    }
 
   }
 
@@ -653,6 +670,10 @@ boolean checkAndHandleIncomingRadioMsg(){
       if (radio.ACKRequested()){
         radio.sendACK();
           //Serial.println(" - ACK sent");
+      }
+      if (enable_change_object_from_decoded_msg == 1){
+        changeObjStatus(obj_number_from_decoded_msg,obj_status_to_set_from_decoded_msg);
+        enable_change_object_from_decoded_msg = 0;
       }
       return(1); 
     }
