@@ -211,8 +211,6 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   const uint8_t syncTimeout = 3;
   const uint8_t number_of_total_objects = 4;
   const int node_default_timeout = 180;
-  #undef ENABLE_RADIO_RESET_PIN
-    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module  
 
 #elif defined(node_type_WIRbarr0)
   const int node_default_timeout = 360;
@@ -849,10 +847,11 @@ void getAddressFromGateway()
       break;// exit the while (tryed_times < radioRetry )
     }
     else{
-      Serial.print(F("RadioTxFail,IRetry"));
-      random_time=10;//random(10,radioTxTimeout*3);
+      Serial.println(F("RadioTxFail,IRetry"));
+      //random_time=10;//random(10,radioTxTimeout*3);
       tryed_times=tryed_times+1;
       delay(200);
+      
       //LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
       //ADCSRA=keep_ADCSRA; //resume the status of the register
       
@@ -1033,7 +1032,7 @@ void checkCurrentRadioAddress()
   
       random_time=10000;//random(4000,5000);
       
-      if ((millis()-*get_address_timeout_pointer)>random_time){ //every 10000/5000 ms
+      if ((millis()-(*get_address_timeout_pointer))>random_time){ //every 10000/5000 ms
         #if defined(DEVMODE)
           Serial.print(F("get_address_timeout>time:"));
           Serial.println((millis()-*get_address_timeout_pointer));
