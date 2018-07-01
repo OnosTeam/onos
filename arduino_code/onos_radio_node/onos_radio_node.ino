@@ -211,6 +211,8 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   const uint8_t syncTimeout = 3;
   const uint8_t number_of_total_objects = 4;
   const int node_default_timeout = 180;
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 
 #elif defined(node_type_WIRbarr0)
   const int node_default_timeout = 360;
@@ -365,7 +367,7 @@ unsigned long time_to_reset_encryption=3000; //this must be greater than time_to
 unsigned long time_to_change_status=30;
 
 
-uint8_t tryed_times;
+uint8_t tried_times;
 uint8_t counter;
 uint8_t pointer;
 /*
@@ -812,11 +814,11 @@ void getAddressFromGateway()
   }
   Serial.println(F(":end")); 
   
-  tryed_times=0;
+  tried_times=0;
 
 
   
-  while (tryed_times < radioRetry ){
+  while (tried_times < radioRetry ){
     Serial.println(F("r loopStart"));
     
     #if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
@@ -844,13 +846,13 @@ void getAddressFromGateway()
       Serial.println("end_get_address"); 
       */
       // skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
-      break;// exit the while (tryed_times < radioRetry )
+      break;// exit the while (tried_times < radioRetry )
     }
     else{
       Serial.println(F("RadioTxFail,IRetry"));
       //random_time=10;//random(10,radioTxTimeout*3);
-      tryed_times=tryed_times+1;
-      delay(200);
+      tried_times=tried_times+1;
+      delay(100);
       
       //LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
       //ADCSRA=keep_ADCSRA; //resume the status of the register
@@ -1038,9 +1040,9 @@ void checkCurrentRadioAddress()
           Serial.println((millis()-*get_address_timeout_pointer));
         #endif
         
-        *get_address_timeout_pointer=millis();
         getAddressFromGateway();  //ask the gateway for a proper address
-        
+        *get_address_timeout_pointer=millis();
+
       }
     }
     else{
