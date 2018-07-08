@@ -73,6 +73,9 @@
 #include <LowPower.h>
 #include <avr/wdt.h>
 
+#define ENABLE_WATCHDOG 1  // to disable watchdog comment this line, to use watchdog you will have to install an updated bootloader on the atmega..
+
+
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
 //*********************************************************************************************
@@ -227,6 +230,10 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
 
 
 #if defined(battery_node)   //if the node is a battery node:
+  #if defined(ENABLE_WATCHDOG)  // battery nodes can't use watchdog because of sleep...
+    #undef ENABLE_WATCHDOG      //remove defined ENABLE_WATCHDOG if defined
+  #endif 
+
   volatile byte keep_ADCSRA = ADCSRA; //save the state of the register;
   //unsigned long sleep_percentage = 0.9;// the ratio between sleep and awake time expressed as 0.x where 1.0 is 100% and 0.01 is 1%
   unsigned long stay_awake_period = 5 ;//how long in sec the node will stay awake to receive radio messages.
@@ -398,7 +405,6 @@ void status_change_from_msg(char obj_number, int status_to_set)
 
 boolean changeObjStatus(char obj_number,int status_to_set)
 {
-
   Serial.print(F("changeObjStatusExecutedStatus:"));
   Serial.println(status_to_set);
   
@@ -775,6 +781,9 @@ void sendSyncMessage(uint8_t retry,uint8_t tx_timeout=150)
     //    Blink(LED, 50, 3); //blink LED 3 times, 50ms between blinks
     //skipRadioRxMsg=0; //reset the counter to allow this node to receive query 
     *get_sync_time=millis();
+    #if defined(ENABLE_WATCHDOG)
+       wdt_reset();
+    #endif
 
   }
   else{
@@ -833,6 +842,10 @@ void getAddressFromGateway()
      * Serial.println(F("temp:"));
      * Serial.println(radio.readTemperature());
     */
+    
+    #if defined(ENABLE_WATCHDOG)
+       wdt_reset();
+    #endif
     if (radio.sendWithRetry(gateway_address, syncMessage,strlen(syncMessage),1,radioTxTimeout)) {
       // note that the max delay time is 255..because is uint8_t
       //target node Id, message as string or byte array, message length,retries, milliseconds before retry
@@ -1293,7 +1306,9 @@ void setup()
 
   node_obj_status[syncTimeout]=node_default_timeout;
   sync_timeout=(unsigned long)node_default_timeout*1000;  // I need the cast otherwise there will be a overflow..
-  
+
+
+
   #if ENABLE_RADIO_RESET_PIN == 1  // if the radio reset pin is used in this node ..
     pinMode(RFM69_RST, OUTPUT); 
   #endif
@@ -1435,9 +1450,6 @@ void setup()
   
   
   
-  
-  
-  
   interrupts(); 
   // if analog input pin 1 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
@@ -1453,12 +1465,17 @@ void setup()
       Serial.println(F("SPI Flash Init FAIL!"));
   #endif 
   
-  
+  #if defined(ENABLE_WATCHDOG)
+    wdt_enable(WDTO_8S);
+    Serial.println(F("Enabled watchdog"));
+  #endif
 }
  
 void loop() 
 {
-
+  #if defined(ENABLE_WATCHDOG)
+      wdt_reset();
+  #endif
   #if defined(node_type_Wrelay4x)
     if (button_still_same_status==0){  //filter 
       obj_button_pin=node_obj_pinout[button];
@@ -1514,7 +1531,7 @@ void loop()
   Serial.flush();  //make sure all serial data is clocked
   
   checkCurrentRadioAddress();
-  
+
 
 }  //END OF LOOP()
 
