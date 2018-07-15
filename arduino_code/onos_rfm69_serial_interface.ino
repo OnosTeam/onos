@@ -78,10 +78,16 @@
 //   along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 
 
+#define radio_module_connected 1   //comment this line to disable the radio part
 
-#include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
-#include <SPI.h>
-#include <RFM69_ATC.h> 
+
+
+#if defined(radio_module_connected)
+	#include <RFM69.h>    //get it here: https://www.github.com/lowpowerlab/rfm69
+	#include <SPI.h>
+	#include <RFM69_ATC.h>
+#endif //defined radio_module_connected
+
 #include <OnosMsg.h>
 //*********************************************************************************************
 // *********** IMPORTANT SETTINGS - YOU MUST CHANGE/ONFIGURE TO FIT YOUR HARDWARE *************
@@ -94,7 +100,6 @@
 
 
 
- 
 //Match frequency to the hardware version of the radio on your Feather
 //#define FREQUENCY     RF69_433MHZ
 //#define FREQUENCY     RF69_868MHZ
@@ -126,14 +131,13 @@
         #define targetRSSI    0  //0 to disable because  the gateway must always send at max power
 #endif
 int16_t packetnum = 0;  // packet counter, we increment per xmission
+
+
+#if  defined(radio_module_connected)
+	RFM69_ATC radio;
+#endif //defined radio_module_connected
+
  
-RFM69_ATC radio;
- 
-
-
-
-
-
 
 unsigned long sync_time=0;
 
@@ -205,6 +209,8 @@ const uint8_t number_of_total_objects=7;      // 7 because there are 6 elements 
 uint8_t node_obj_pinout[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as void for array in c..
 uint8_t node_obj_status[number_of_total_objects];  // 6  objects 4 relay 1 button and a led  made 7 to store the last element as
 
+
+
 //end node object pinuot, continue in setup() // 
 
 OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
@@ -265,13 +271,16 @@ boolean changeObjStatus(char obj_number,int status_to_set){
 
     digitalWrite(node_obj_pinout[obj_number],!status_to_set); // !  is only for this hardware since the ralay are actived low..
 
+/*
     if (obj_number==0){
       main_obj_state=status_to_set;
       changeObjStatus(led,!status_to_set);
     }
-
+*/
 
     node_obj_status[obj_number]=status_to_set;
+    digitalWrite(node_obj_pinout[obj_number],status_to_set); // !  is only for this hardware since the ralay are actived low..
+
 
     return(1);
   }
@@ -478,7 +487,10 @@ boolean checkAndReceiveSerialMsg(){
       //decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
       OnosMsgHandler.decodeOnosCmd(filtered_uart_message,decoded_uart_answer);
       if ( strcmp(decoded_uart_answer,"[S_remote_#]")==0){
+		#if  defined(radio_module_connected)
         ForwardSerialMessageToRadio(filtered_uart_message,received_message_address);
+        #endif //defined radio_module_connected
+
       }
       else {
         sendSerialAnswerFromSerialMsg();
@@ -520,6 +532,7 @@ boolean checkAndReceiveSerialMsg(){
 
 
 
+#if  defined(radio_module_connected)
 
 boolean ForwardSerialMessageToRadio(char *msg_to_send_to_radio,int radio_address){
   memset(decoded_uart_answer,0,sizeof(decoded_uart_answer)); //to clear the array
@@ -542,9 +555,8 @@ boolean ForwardSerialMessageToRadio(char *msg_to_send_to_radio,int radio_address
             delay(10);//delay to allow the remote node to talk after a transmission failure
             return(0);
           }
-
-
 }
+#endif //defined radio_module_connected
 
 void sendSerialAnswerFromSerialMsg(){
 
@@ -599,7 +611,7 @@ void sendSerialAnswerFromSerialMsg(){
 }
 
 
-
+#if  defined(radio_module_connected)
 boolean checkAndHandleIncomingRadioMsg(){
 
     //print message received to serial
@@ -692,9 +704,10 @@ boolean checkAndHandleIncomingRadioMsg(){
   }
 
 }
+#endif //defined radio_module_connected
 
 
-
+#if  defined(radio_module_connected)
 void forwardRadioMsgToSerialPort(){
 
     if(strcmp(decoded_radio_answer,"[S_remote_#]")==0){ //transmit the received data from the node to the serial port
@@ -727,7 +740,10 @@ void forwardRadioMsgToSerialPort(){
 
 }
 
+#endif //defined radio_module_connected
 
+
+#if  defined(radio_module_connected)
 void checkCurrentRadioAddress(){
 
   if(reInitializeRadio==1){
@@ -786,6 +802,10 @@ void checkCurrentRadioAddress(){
 #endif
 
 }
+#endif //defined radio_module_connected
+
+
+#if  defined(radio_module_connected)
 void beginRadio(){
 
   interrupts(); // Enable interrupts
@@ -800,9 +820,8 @@ void beginRadio(){
   radio.encrypt(encript_key);
   
   radio.enableAutoPower(targetRSSI);
- 
 }
-
+#endif //defined radio_module_connected
 
 void setup() {
         
@@ -815,12 +834,26 @@ void setup() {
          * rendering the library inoperative. 
          * 
         */
-  pinMode(RFM69_CS, OUTPUT);  //  NSS setted as output        
-
+  pinMode(RFM69_CS, OUTPUT);  //  NSS setted as output    
+  
+  node_obj_pinout[0]=3;
+  node_obj_pinout[1]=4;
+  node_obj_pinout[2]=5;
+  node_obj_pinout[3]=6;
+  node_obj_pinout[4]=7;
+  node_obj_pinout[5]=8;
+  
+  pinMode(node_obj_pinout[0], OUTPUT);
+  pinMode(node_obj_pinout[1], OUTPUT);
+  pinMode(node_obj_pinout[2], OUTPUT);
+  pinMode(node_obj_pinout[3], OUTPUT);
+  pinMode(node_obj_pinout[4], OUTPUT);
+  pinMode(node_obj_pinout[5], OUTPUT);
   //pinMode(RFM69_RST, OUTPUT);
   //delay(95000); //wait for glinet to power on
   while (!Serial); // wait until serial console is open
   Serial.begin(SERIAL_BAUD);
+
 
 
 
@@ -839,8 +872,10 @@ void setup() {
   digitalWrite(RFM69_RST, LOW);
   delay(120);
   */
+  #if  defined(radio_module_connected)
+    beginRadio();
+  #endif //defined radio_module_connected
 
-  beginRadio();
   
 
 
@@ -891,20 +926,21 @@ void setup() {
   Serial.flush(); //make sure all serial data is clocked out ,waiting until is done
   composeSyncMessage();
   makeSyncMessage();
-
 }
 
 
+  #if  defined(radio_module_connected)
+  void radioRxCheck(){
+    if (radio.receiveDone()){
+      radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
+      if (radio_msg_to_decode_is_avaible==1){
+        forwardRadioMsgToSerialPort();
+      }
+   }
 
-void radioRxCheck(){
-  if (radio.receiveDone()){
-    radio_msg_to_decode_is_avaible=checkAndHandleIncomingRadioMsg();
-    if (radio_msg_to_decode_is_avaible==1){
-      forwardRadioMsgToSerialPort();
-    }
   }
+  #endif //defined radio_module_connected
 
-}
 
 void uartRxCheck(){
   if (Serial.available() > 0) {
@@ -933,11 +969,11 @@ sync:
 */
 
 
-
 restart:
 
 
   if (Serial.available() > 0) {
+
 
     if (radioPriority>uartPriority){// to alternate radio and serial reception...
       if (radioPriority>1){
@@ -945,7 +981,10 @@ restart:
       }
       //Serial.print(F("radio_priority"));  
       //Serial.print(radioPriority);
+#if  defined(radio_module_connected)
       radioRxCheck(); 
+#endif //defined radio_module_connected
+
       uartRxCheck(); 
     }
     else{
@@ -954,8 +993,12 @@ restart:
       }
       //Serial.print(F("uartPriority"));  
       //Serial.print(uartPriority);
-      uartRxCheck();  
-      radioRxCheck();
+      uartRxCheck(); 
+      
+    #if  defined(radio_module_connected)
+        radioRxCheck();
+    #endif //defined radio_module_connected
+ 
     }
 
 
@@ -968,9 +1011,11 @@ restart:
     }
 
   }
+  #if  defined(radio_module_connected)
   else{
-    radioRxCheck(); 
-  }
+       radioRxCheck();
+   }
+   #endif //defined radio_module_connected
 
 
 /*
