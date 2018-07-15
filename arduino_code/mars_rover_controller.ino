@@ -10,9 +10,9 @@
 
 // there will be a coded message to compress all this data in a single message: 
 
-//  [S_fdmDAoAoAoAoSoSoSoSox_#]    
+//  [S_famDAoAoAoAoSoSoSoSox_#]    
 //  Where:
-//  The fd is the 253 address...
+//  The fa is the 250 address...
 //  The m stand for mars rover
 //  The D is a binary where the last 4 bits are the digital object to tell if each wheels motors should move forward or backward 
 //  Each Ao is  a hex of the 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
@@ -72,7 +72,7 @@ byte an2_old=0;
 byte an3_old=0;
 int analog_threshold=10;
 
-int rx_node_address=252; 
+int rx_node_address=250;  //the mars rover address
 char str_rx_node_address[3];
 
 const uint8_t syncMessage_lenght = 28;

@@ -341,9 +341,9 @@ To controll the mars rover :
 
 // there will be a coded message to compress all this data in a single message: 
 
-//  [S_fdmDAoAoAoAoSoSoSoSox_#]    
+//  [S_famDAoAoAoAoSoSoSoSox_#]    
 //  Where:
-//  The fd is the 253 address...
+//  The fd is the 250 address...
 //  The m stand for mars rover
 //  The D is a binary where the last 4 bits are the digital object to tell if each wheels motors should move forward or backward 
 //  Each Ao is  a hex of the 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
@@ -1406,4 +1406,11 @@ https://letsencrypt.org/about/
 58) The nodes need to receive the timeout time from OnosCenter :
     The best way is to send the timeout value inside the set address msg, this way i can be sure that every node has the correct timeout
 
+
+
+59) If a node is connected to the 220 voltage power grid and the node control a relay, the relay when turned on and off make an interference with the radio module that will then stop working...
+Note that this will not happen when all the node is powered by battery and the 220 is not present..
+This happens randomly, also using 2 different power supply sharing the same gnd.
+To solve this I will have to reset the radio module every time before sending a message,(maybe also to receive a message every n seconds ?)
+Doing so will make the node work until around 60000 relay toggle (randomly the node will froze)..but to make the node never stop the software watchdog is needed!  
 

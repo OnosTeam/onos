@@ -28,6 +28,36 @@
                    D8 ----------1 (chip select flash)
                     
 
+
+
+
+
+for arduino mega:
+Connect as follows
+
+Mega2560 pin D21 to RMF69W DIO0    ?
+Mega2560 pin D53 to RMF69W NSS
+Mega2560 pin D52 to RMF69W SCK
+Mega2560 pin D50 to RMF69W MISO
+Mega2560 pin D51 to RMF69W MOSI
+* 
+* 
+pluma hardware/tools/avr/avr/include/avr/power.h
+* 
+* after: 
+* #if defined(__AVR_HAVE_PRR1_PRUSART2)
+#define power_usart2_enable()           (PRR1 &= (uint8_t)~(1 << PRUSART2))
+#define power_usart2_disable()          (PRR1 |= (uint8_t)(1 << PRUSART2))
+#endif
+* 
+* put:
+* #if defined(__AVR_HAVE_PRR1_PRUSART3)
+#define power_usart3_enable() (PRR1 &= (uint8_t)~(1 << PRUSART3))
+#define power_usart3_disable() (PRR1 |= (uint8_t)(1 << PRUSART3))
+#endif
+
+* 
+
 */
 
 
@@ -94,8 +124,8 @@
  
 #define RFM69_CS      10
 #define RFM69_IRQ     2
-#define RFM69_IRQN    0  // Pin 2 is IRQ 0!
-#define RFM69_RST     9
+#define RFM69_IRQN    0  // Pin 2 is IRQ 0!  deprecated because on RFM69.h is used the default...
+#define RFM69_RST     9  // deprecated because on RFM69.h is used the default...
 
 
 #define ATC_RSSI      -50   //power signal from -30(stronger) to -95(weaker) 
@@ -126,11 +156,11 @@
   SPIFlash flash(FLASH_SS, 0x1F65); //EF30 for windbond 4mbit flash  , 0x1F65 for AT25DN512C , i used the 'i' comand from serial port after i get the flash error and it said '1F65' , i put it here and the error disappeared
 #endif 
 char serial_number[13]="xxxxxxxxxxxx";
-char numeric_serial[5]="0001";   // this is the progressive numeric serial number
+char numeric_serial[5]="0011";   // this is the progressive numeric serial number
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_WPlug1vx
+#define node_type_MarsRover
 /*
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
@@ -216,7 +246,37 @@ char numeric_serial[5]="0001";   // this is the progressive numeric serial numbe
   const int node_default_timeout = 180;
   #undef ENABLE_RADIO_RESET_PIN
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
+    
+#elif defined(node_type_MarsRover)
+  // define object numbers to use in the pin configuration warning this is not the pinout numbers
+  const uint8_t relay1 = 0;
+  const uint8_t button = 1;
+  const uint8_t led = 2;
+  const uint8_t syncTimeout = 3;
+  const uint8_t number_of_total_objects = 4;
+  const int node_default_timeout = 180;
+  
+  #undef RFM69_CS 
+  #undef RFM69_IRQ   
+  #undef RFM69_IRQN
+  #undef RFM69_RST 
+  #undef ENABLE_WATCHDOG  //do not use watchdog..
+  #define RFM69_CS      53 //NSS
+  #define RFM69_IRQ     2 //DIO0  // deprecated because on RFM69.h is used the default...
+  #define RFM69_IRQN    0  // Pin 2 is IRQ 0! // deprecated because on RFM69.h is used the default...
 
+  //#define RFM69_RST     9 
+  
+/*
+Mega2560 pin D2  to RMF69W DIO0 
+Mega2560 pin D53 to RMF69W NSS
+Mega2560 pin D52 to RMF69W SCK
+Mega2560 pin D50 to RMF69W MISO
+Mega2560 pin D51 to RMF69W MOSI
+
+*/
+  //#undef ENABLE_RADIO_RESET_PIN
+    //#define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
 #elif defined(node_type_WIRbarr0)
   const int node_default_timeout = 360;
   #undef ENABLE_RADIO_RESET_PIN
@@ -454,7 +514,9 @@ boolean changeObjStatus(char obj_number,int status_to_set)
       Serial.println(F("dw_With_obj")); 
     }
     
-    
+  #elif defined(node_type_MarsRover)  
+      Serial.println(F("ch_mars_rover_obj")); 
+
   #endif
 
   if(obj_number==syncTimeout){  // if the object sent is syncTimeout change the sync_timeout with the value received
@@ -661,7 +723,23 @@ void composeSyncMessage()
       
     }
     
-    
+  #elif defined(node_type_MarsRover)
+    if (this_node_address==254){
+      strcat(syncMessage, "g");
+      strcat(syncMessage, node_fw);
+      strcat(syncMessage, serial_number);
+    }
+    else{
+      //[S_123r4Wrelay4x00080110x_#]     0110 is the 4 relay status
+      strcat(syncMessage, "u");
+      // strcat(syncMessage, "sy");
+      
+      strcat(syncMessage, serial_number);
+      uint8_t  tmp_len = strlen(syncMessage);
+      syncMessage[tmp_len] = node_obj_status[0]+48; 
+      syncMessage[tmp_len + 1] = '\0';
+      
+    }  
     
   #elif defined(node_type_WLightSS)
     
@@ -1382,6 +1460,24 @@ void setup()
 
     digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
+
+  #elif defined(node_type_MarsRover)
+    this_node_address=250; //i start with 250 for the mars rover address
+    memset(serial_number,0,sizeof(serial_number)); //to clear the array
+    strcpy(serial_number,"MarsRV00");
+    strcat(serial_number,numeric_serial);
+    // OBJECTS PIN DEFINITION___________________________________________________________________
+    node_obj_pinout[led]=4;     // the object is the led     connected on pin 4
+    node_obj_pinout[button]=3;  // the object is the button  connected on pin 3 
+    // END OBJECTS PIN DEFINITION_______________________________________________________________
+
+    pinMode(5, OUTPUT); // set relay1
+    pinMode(6, OUTPUT); // set relay2
+    pinMode(7, OUTPUT); // reset relay
+    pinMode(node_obj_pinout[led], OUTPUT);
+    pinMode(node_obj_pinout[button], INPUT);
+
+    digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
   #elif defined(node_type_WIRbarr0)
     node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
   #elif defined(node_type_WSoilHaa)
