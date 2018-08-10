@@ -182,8 +182,8 @@ I will use post instead of get message
   1 bytes to tell arduino the status (0 or 1 ) to set the pin
   1 bytes for the message id ,a progressive binary number from 0 to 255
   3 bytes with "_#]" to close the message 
-  example:   [S_01d061x_#]    to set pin 6 to 1
-             [S_01d060x_#]    to set pin 6 to 0
+  example:   [S_01D061x_#]    to set pin 6 to 1
+             [S_01D060x_#]    to set pin 6 to 0
 
 
 
@@ -341,14 +341,15 @@ To controll the mars rover :
 
 // there will be a coded message to compress all this data in a single message: 
 
-//  [S_famDAoAoAoAoSoSoSoSox_#]    
+//  [S_famDAoAoAoAoSoSoSoSoBCx_#]    
 //  Where:
-//  The fd is the 250 address...
+//  The fa is the 250 address...
 //  The m stand for mars rover
 //  The D is a binary where the last 4 bits are the digital object to tell if each wheels motors should move forward or backward 
 //  Each Ao is  a hex of the 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
 //  Each So is a hex of the 4 analog object to tell the pivoting servos what angle they should move to (from 0 to 180 degrees)
-
+    The B is a binary that contain the state of part (controller_buttons0) of the digital button of the psx controller
+    The C is a binary that contain the state of part (controller_buttons1) of the digital button of the psx controller   
 
 
 

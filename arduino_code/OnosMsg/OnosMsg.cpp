@@ -500,7 +500,200 @@ void OnosMsg::decodeOnosCmd(char *received_message,char *decoded_result)
                         return;
                 }
 
+                else if( received_msg_cmd_type[0]=='m' ){  //mars rover
+/*
+// the mars rover will have 8 objects for the wheels movement 
+// 4 digital objects to tell if each wheels motors should move forward or backward
+// 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
+// 4 analog object to tell the pivoting servos what angle they should move to (from 0 to 180 degrees)
 
+// there will be a coded message to compress all this data in a single message: 
+
+//  [S_famDAoAoAoAoSoSoSoSox_#]    
+//  Where:
+//  The fa is the 250 address...
+//  The m stand for mars rover
+//  The D is a binary where the last 4 bits are the digital object to tell if each wheels motors should move forward(1) or backward(0) 
+//  Each Ao is  a hex of the 4 analog objects to tell the pwm value each motor should use,(for speed controll, from 0 to 255)
+//  Each So is a hex of the 4 analog object to tell the pivoting servos what angle they should move to (from 0 to 180 degrees)
+*/
+                
+                        byte motors_directions_byte = received_message[6];
+                        
+                        int motor0_direction = motors_directions_byte & B00000001;
+                        
+                        int motor1_direction = motors_directions_byte & B00000010;
+
+                        int motor2_direction = motors_directions_byte & B00000100;
+                        
+                        int motor3_direction = motors_directions_byte & B00001000;
+                        
+                                        
+                        int motor0_speed = hexCharToDec(received_message[7]-48)*16
+                                              +hexCharToDec(received_message[8]-48);
+
+                        int motor1_speed = hexCharToDec(received_message[9]-48)*16
+                                              +hexCharToDec(received_message[10]-48);
+
+                        int motor2_speed = hexCharToDec(received_message[11]-48)*16
+                                              +hexCharToDec(received_message[12]-48);
+                                              
+                        int motor3_speed = hexCharToDec(received_message[13]-48)*16
+                                              +hexCharToDec(received_message[14]-48);
+                                              
+                                              
+                        int motor0_orientation_angle = hexCharToDec(received_message[15]-48)*16
+                                              +hexCharToDec(received_message[16]-48);   
+                                              
+                        int motor1_orientation_angle = hexCharToDec(received_message[17]-48)*16
+                                              +hexCharToDec(received_message[18]-48);   
+                                              
+                        int motor2_orientation_angle = hexCharToDec(received_message[19]-48)*16
+                                              +hexCharToDec(received_message[20]-48);   
+                                              
+                        int motor3_orientation_angle = hexCharToDec(received_message[21]-48)*16
+                                              +hexCharToDec(received_message[22]-48);                                                                                                                                             
+                        
+                        int buttons0 = received_message[22];
+                        
+                        int buttons1 = received_message[23];
+                        
+                        int cross_button_status = bitRead(buttons0, 0) ;
+                        
+                        int square_button_status =  bitRead(buttons0, 1) ;
+
+                        int circle_button_status =  bitRead(buttons0, 2) ;
+         
+                        int triangle_button_status =  bitRead(buttons0, 3) ;
+                        
+                        
+                        int l1_button_status = bitRead(buttons1, 0) ;
+                        
+                        int r1_button_status = bitRead(buttons1, 1) ;
+
+                        int l2_button_status = bitRead(buttons1, 2) ;
+         
+                        int r2_button_status = bitRead(buttons1, 3) ;                       
+                                                
+                        int l3_button_status = bitRead(buttons1, 4) ;
+
+                        int r3_button_status = bitRead(buttons1, 5) ;
+         
+                        int start_button_status = bitRead(buttons1, 6) ;                         
+                       
+                        int select_button_status = bitRead(buttons1, 7) ;                          
+                      
+                       
+                       
+                       
+                        if ((buttons0 | B11101111) == B11101111){ //up arrow
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+                        }
+                        else if ((buttons0 | B01111111) == B01111111){ //down arrow
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+                        }
+                        else if ((buttons0 | B11011111) == B11011111){ //right arrow
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+                        }
+                        
+                        else if ((buttons0 | B10111111) == B10111111){ //left arrow
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+                        }
+                        
+                        else if ((buttons0 | B00001111) == B11111111){ //no arrow pressed
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+                        
+                        else if ((buttons0 | B00001111) == B11111111){ //no arrow pressed
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+/*
+                        if ((buttons0 | B11111110) == B11111111){ // x pressed
+                                changeObjStatus(12,motor0_direction);
+                        }
+
+                        if ((buttons0 | B11111101) == B11111111){ //square pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons0 | B11111011) == B11111111){ //circle pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons0 | B11110111) == B11111111){ //triangle pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        
+                        if ((buttons1 | B11111110) == B11111111){ // l1 pressed
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons1 | B11111101) == B11111111){ //r1 pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons1 | B11111011) == B11111111){ //l2 pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons0 | B11110111) == B11111111){ //r2 pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }       
+
+                        if ((buttons1 | B11101111) == B11111111){ // l3 pressed
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons1 | B11011111) == B11111111){ //r3 pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons1 | B10111111) == B11111111){ //start pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }
+
+                        if ((buttons0 | B01111111) == B11111111){ //select pressed 
+                                __asm__("nop\n\t"); //nop just to fill this if ... 
+
+                        }        
+*/
+
+                        changeObjStatus(12,cross_button_status);
+                                                              
+                        changeObjStatus(0,motor0_direction);
+                        changeObjStatus(1,motor1_direction);
+                        changeObjStatus(2,motor2_direction);
+                        changeObjStatus(3,motor3_direction);
+                                                                                                        
+                        changeObjStatus(4,motor0_speed);
+                        changeObjStatus(5,motor1_speed);
+                        changeObjStatus(6,motor2_speed);
+                        changeObjStatus(7,motor3_speed);
+                        
+                        changeObjStatus(8 ,motor0_orientation_angle);
+                        changeObjStatus(9 ,motor1_orientation_angle);
+                        changeObjStatus(10,motor2_orientation_angle);
+                        changeObjStatus(11,motor3_orientation_angle);                                        
+                        
+                        strcpy(decoded_result,"ok");
+                        
+                        
+                        return;
+                } 
 
 
         } // end of if message start with [S_ 

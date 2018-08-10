@@ -248,14 +248,66 @@ char numeric_serial[5]="0011";   // this is the progressive numeric serial numbe
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
     
 #elif defined(node_type_MarsRover)
+
+   #include <Servo.h>
   // define object numbers to use in the pin configuration warning this is not the pinout numbers
-  const uint8_t relay1 = 0;
-  const uint8_t button = 1;
-  const uint8_t led = 2;
-  const uint8_t syncTimeout = 3;
-  const uint8_t number_of_total_objects = 4;
+  const uint8_t motor0_direction = 0;
+  const uint8_t motor1_direction = 1;
+  const uint8_t motor2_direction = 2;
+  const uint8_t motor3_direction = 3;
+ 
+  const uint8_t motor0_speed = 4;
+  const uint8_t motor1_speed = 5;
+  const uint8_t motor2_speed = 6;
+  const uint8_t motor3_speed = 7;
+  
+  const uint8_t motor0_orientation_angle = 8;
+  const uint8_t motor1_orientation_angle = 9;
+  const uint8_t motor2_orientation_angle = 10;
+  const uint8_t motor3_orientation_angle = 11;  
+  
+  const uint8_t led = 12;
+  const uint8_t front_bumper = 13;
+  const uint8_t rear_bumper = 14;
+  
+  const uint8_t cutter_blade = 15;
+  const uint8_t camera_rotation = 16;
+  const uint8_t camera_tilt = 17;  
+  
+  const uint8_t x_position = 18;
+  const uint8_t y_position = 19;
+ 
+  const uint8_t syncTimeout = 20;
+  const uint8_t number_of_total_objects = 21;
   const int node_default_timeout = 180;
   
+  Servo myservo0;  // create servo object to control a servo
+  Servo myservo1;  // create servo object to control a servo
+  Servo myservo2;  // create servo object to control a servo
+  Servo myservo3;  // create servo object to control a servo
+  
+  Servo cutter_blade_motor;  // create servo object to control a servo
+  
+  Servo camera_tilt_servo;  // create servo object to control a servo
+  
+  Servo camera_rotation_servo;  // create servo object to control a servo
+  
+  
+  // pinout for the l298 motors controll
+  #define motor0A_direction  22
+  #define motor0B_direction  23
+
+  #define motor1A_direction  24
+  #define motor1B_direction  25
+  
+  #define motor2A_direction  26
+  #define motor2B_direction  27
+  
+  #define motor3A_direction  28
+  #define motor3B_direction  29
+  
+
+
   #undef RFM69_CS 
   #undef RFM69_IRQ   
   #undef RFM69_IRQN
@@ -347,7 +399,7 @@ volatile boolean button_still_same_status=1;
 
 
 
-volatile char enable_change_object_from_decoded_msg = 0;
+//volatile char enable_change_object_from_decoded_msg = 0;
 volatile char obj_number_from_decoded_msg = 0;
 volatile int obj_status_to_set_from_decoded_msg = 0;
 
@@ -456,22 +508,20 @@ int freeRam ()
 
 */
 
-void status_change_from_msg(char obj_number, int status_to_set)
-{
-        enable_change_object_from_decoded_msg = 1;
-        obj_number_from_decoded_msg = obj_number;
-        obj_status_to_set_from_decoded_msg = status_to_set;
-}
+
 
 boolean changeObjStatus(char obj_number,int status_to_set)
 {
-  Serial.print(F("changeObjStatusExecutedStatus:"));
+  Serial.print(F("chObjSt:"));
   Serial.println(status_to_set);
+  Serial.print(F("chObjNumber:"));
+  Serial.println(obj_number, DEC);
   
+  /*
   if (obj_number==button){ //will not change the status to the button...
     return(0);
   }
-  
+  */  
 
   #if defined(node_type_WreedSaa)
     if ( (obj_number==led)|(obj_number==digOut) ){
@@ -516,6 +566,13 @@ boolean changeObjStatus(char obj_number,int status_to_set)
     
   #elif defined(node_type_MarsRover)  
       Serial.println(F("ch_mars_rover_obj")); 
+      if (obj_number==led){
+          
+          digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+          Serial.print(F("dw_mars_led_to:")); 
+          Serial.println(status_to_set); 
+
+      }
 
   #endif
 
@@ -532,6 +589,16 @@ boolean changeObjStatus(char obj_number,int status_to_set)
 return(0);
 
 }
+
+
+void status_change_from_msg(char obj_number, int status_to_set)
+{       //todo: make this with an array to allow controll of multiple objects
+        //enable_change_object_from_decoded_msg = 1;
+        obj_number_from_decoded_msg = obj_number;
+        obj_status_to_set_from_decoded_msg = status_to_set;
+        changeObjStatus(obj_number, status_to_set);
+}
+
 
 
 void composeSyncMessage()
@@ -1048,11 +1115,12 @@ boolean checkAndHandleIncomingRadioMsg(){
     Serial.println(F("-ACKsent"));
     *get_sync_time=millis();
     }
-    if (enable_change_object_from_decoded_msg == 1){
-      changeObjStatus(obj_number_from_decoded_msg,obj_status_to_set_from_decoded_msg);
-      enable_change_object_from_decoded_msg = 0;
 
-    }
+    //if (enable_change_object_from_decoded_msg == 1){
+      //changeObjStatus(obj_number_from_decoded_msg,obj_status_to_set_from_decoded_msg);
+      //enable_change_object_from_decoded_msg = 0;
+
+    //}
   
     //interrupts(); // Enable interrupts
   return(1); 
@@ -1466,18 +1534,88 @@ void setup()
     memset(serial_number,0,sizeof(serial_number)); //to clear the array
     strcpy(serial_number,"MarsRV00");
     strcat(serial_number,numeric_serial);
-    // OBJECTS PIN DEFINITION___________________________________________________________________
-    node_obj_pinout[led]=4;     // the object is the led     connected on pin 4
-    node_obj_pinout[button]=3;  // the object is the button  connected on pin 3 
+    // OBJECTS PIN DEFINITION__________________________________________________________________
+    
+    node_obj_pinout[led]=13;   
+    node_obj_pinout[front_bumper]=3;   
+    node_obj_pinout[rear_bumper]=12; 
+    
+    //warning the   motor0A_direction,motor0B_direction .. are defined in the header
+      
+/*
+    node_obj_pinout[motor0A_direction]=22;   
+    node_obj_pinout[motor0B_direction]=23; 
+    
+    node_obj_pinout[motor1A_direction]=24;     
+    node_obj_pinout[motor1B_direction]=25;   
+    
+    node_obj_pinout[motor2A_direction]=26;   
+    node_obj_pinout[motor2B_direction]=27; 
+    
+    node_obj_pinout[motor3A_direction]=28;     
+    node_obj_pinout[motor3B_direction]=29;       
+    
+    
+*/    
+    node_obj_pinout[motor0_speed]=8;   
+    node_obj_pinout[motor1_speed]=9; 
+    node_obj_pinout[motor2_speed]=10;     
+    node_obj_pinout[motor3_speed]=11; 
+    
+    node_obj_pinout[motor0_orientation_angle]=14;   
+    node_obj_pinout[motor1_orientation_angle]=15; 
+    node_obj_pinout[motor2_orientation_angle]=16;     
+    node_obj_pinout[motor3_orientation_angle]=17;     
+ 
+    
     // END OBJECTS PIN DEFINITION_______________________________________________________________
+    
+    
+    
+    pinMode(motor0A_direction, OUTPUT);
+    pinMode(motor0B_direction, OUTPUT);
 
-    pinMode(5, OUTPUT); // set relay1
-    pinMode(6, OUTPUT); // set relay2
-    pinMode(7, OUTPUT); // reset relay
-    pinMode(node_obj_pinout[led], OUTPUT);
-    pinMode(node_obj_pinout[button], INPUT);
+    pinMode(motor1A_direction, OUTPUT);
+    pinMode(motor1B_direction, OUTPUT);
+   
+    pinMode(motor2A_direction, OUTPUT);
+    pinMode(motor2B_direction, OUTPUT);
 
-    digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
+    pinMode(motor3A_direction, OUTPUT);
+    pinMode(motor3B_direction, OUTPUT);
+  
+    
+    pinMode(node_obj_pinout[motor0_orientation_angle], OUTPUT);
+    pinMode(node_obj_pinout[motor1_orientation_angle], OUTPUT);
+    pinMode(node_obj_pinout[motor2_orientation_angle], OUTPUT);
+    pinMode(node_obj_pinout[motor3_orientation_angle], OUTPUT);    
+    
+    digitalWrite(motor0A_direction, HIGH); 
+    digitalWrite(motor0B_direction, LOW); 
+    
+    digitalWrite(motor1A_direction, HIGH); 
+    digitalWrite(motor1B_direction, LOW); 
+
+    digitalWrite(motor2A_direction, HIGH); 
+    digitalWrite(motor2B_direction, LOW); 
+    
+    digitalWrite(motor3A_direction, HIGH); 
+    digitalWrite(motor3B_direction, LOW);         
+    
+    
+
+  
+    analogWrite(motor0_speed, 90);
+    analogWrite(motor1_speed, 90);
+    analogWrite(motor2_speed, 90);
+    analogWrite(motor3_speed, 90);
+
+    myservo0.attach(node_obj_pinout[motor0_orientation_angle]);  // attaches the servo on pin 9 to the servo object
+    myservo1.attach(node_obj_pinout[motor1_orientation_angle]);  // attaches the servo on pin 9 to the servo object
+    myservo2.attach(node_obj_pinout[motor2_orientation_angle]);  // attaches the servo on pin 9 to the servo object
+    myservo3.attach(node_obj_pinout[motor3_orientation_angle]);  // attaches the servo on pin 9 to the servo object
+  
+    
   #elif defined(node_type_WIRbarr0)
     node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 
   #elif defined(node_type_WSoilHaa)
@@ -1540,6 +1678,9 @@ void setup()
   #elif defined(node_type_Wrelay4x)
     attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
     Serial.println(F("Wrelay4x interrupt en"));
+  #elif defined(node_type_MarsRover)
+    digitalWrite(node_obj_pinout[led], 0); // 0 to to turn ledd off
+
 
   #endif 
   
