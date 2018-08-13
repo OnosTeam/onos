@@ -54,6 +54,12 @@ PS2X ps2x; // create PS2 Controller Class
 //you must always either restart your Arduino after you connect the controller, 
 //or call config_gamepad(pins) again after connecting the controller.
 
+
+#define Y_UNDER_THRESHOLD  0  //threshold under which I will consider active the joystick
+#define Y_OVER_THRESHOLD   20  //threshold over which I will consider active the joystick
+#define Y_LEFT_JOYSTICK_IDLE_VALUE 90 //threshold over which the motors will be moving forward (under this value the motors will move backwards)
+#define X_LEFT_JOYSTICK_IDLE_VALUE 90 //threshold over which the motors will be moving forward (under this value the motors will move backwards)
+
 int error = 0;
 byte type = 0;
 byte vibrate = 0;
@@ -62,15 +68,15 @@ byte controller_buttons0=B11111111;
 byte controller_buttons1=B11111111;  
 byte old_controller_buttons0=B11111111;
 byte old_controller_buttons1=B11111111;
-byte an0=0;
-byte an1=0;
-byte an2=0;
-byte an3=0;
+byte left_joystick_y=0;
+byte left_joystick_x=0;
+byte right_joystick_y=0;
+byte right_joystick_x=0;
 
-byte an0_old=0;
-byte an1_old=0;
-byte an2_old=0;
-byte an3_old=0;
+byte left_joystick_y_old=0;
+byte left_joystick_x_old=0;
+byte right_joystick_y_old=0;
+byte right_joystick_x_old=0;
 int analog_threshold=10;
 
 int rx_node_address=250;  //the mars rover address
@@ -90,8 +96,8 @@ OnosMsg OnosMsgHandler=OnosMsg();  //create the OnosMsg object
 
 void composeSerialMessage(byte buttons0, byte buttons1,byte analog0,byte analog1, byte analog2, byte analog3 ){
     memset(str_rx_node_address,0,sizeof(str_rx_node_address)); //to clear the array
-    str_rx_node_address[0]='0';
-    str_rx_node_address[1]='0';
+    str_rx_node_address[0] = '0';
+    str_rx_node_address[1] = '0';
     
     //tmp_char_rx_node_address = rx_node_address ;  //make the cast of int to char
     
@@ -124,30 +130,30 @@ void composeSerialMessage(byte buttons0, byte buttons1,byte analog0,byte analog1
           Serial.println("up arrow detected");
         #endif 
         uint8_t  tmp_len = strlen(syncMessage);
-        syncMessage[tmp_len]=B11111111;   // all motors forward
-        syncMessage[tmp_len+1]='f';   // motor0 full speed
-        syncMessage[tmp_len+2]='f';   // motor0 full speed
+        syncMessage[tmp_len] = B11111111;   // all motors forward
+        syncMessage[tmp_len+1] = 'f';   // motor0 full speed
+        syncMessage[tmp_len+2] = 'f';   // motor0 full speed
         
-        syncMessage[tmp_len+3]='f';   // motor1 full speed
-        syncMessage[tmp_len+4]='f';   // motor1 full speed
+        syncMessage[tmp_len+3] = 'f';   // motor1 full speed
+        syncMessage[tmp_len+4] = 'f';   // motor1 full speed
         
-        syncMessage[tmp_len+5]='f';   // motor2 full speed
-        syncMessage[tmp_len+6]='f';   // motor2 full speed
+        syncMessage[tmp_len+5] = 'f';   // motor2 full speed
+        syncMessage[tmp_len+6] = 'f';   // motor2 full speed
         
-        syncMessage[tmp_len+7]='f';   // motor3 full speed
-        syncMessage[tmp_len+8]='f';   // motor3 full speed
+        syncMessage[tmp_len+7] = 'f';   // motor3 full speed
+        syncMessage[tmp_len+8] = 'f';   // motor3 full speed
         
-        syncMessage[tmp_len+8]='5';   // servo motor0 directed forward (90 degree)
-        syncMessage[tmp_len+9]='a';   // servo motor0 directed forward (90 degree)
+        syncMessage[tmp_len+8] = '5';   // servo motor0 directed forward (90 degree)
+        syncMessage[tmp_len+9] = 'a';   // servo motor0 directed forward (90 degree)
         
-        syncMessage[tmp_len+10]='5';  // servo motor1 directed forward (90 degree)
-        syncMessage[tmp_len+11]='a';  // servo motor1 directed forward (90 degree)
+        syncMessage[tmp_len+10] = '5';  // servo motor1 directed forward (90 degree)
+        syncMessage[tmp_len+11] = 'a';  // servo motor1 directed forward (90 degree)
         
-        syncMessage[tmp_len+12]='5';  // servo motor2 directed forward (90 degree)
-        syncMessage[tmp_len+13]='a';  // servo motor2 directed forward (90 degree)
+        syncMessage[tmp_len+12] = '5';  // servo motor2 directed forward (90 degree)
+        syncMessage[tmp_len+13] = 'a';  // servo motor2 directed forward (90 degree)
         
-        syncMessage[tmp_len+14]='5';  // servo motor3 directed forward (90 degree)
-        syncMessage[tmp_len+15]='a';  // servo motor3 directed forward (90 degree)
+        syncMessage[tmp_len+14] = '5';  // servo motor3 directed forward (90 degree)
+        syncMessage[tmp_len+15] = 'a';  // servo motor3 directed forward (90 degree)
         
     }
     else if ((buttons0 | B01111111) == B01111111){ //down arrow
@@ -233,7 +239,7 @@ void composeSerialMessage(byte buttons0, byte buttons1,byte analog0,byte analog1
         syncMessage[tmp_len+7]='f';   // motor3 full speed
         syncMessage[tmp_len+8]='f';   // motor3 full speed
         
-        syncMessage[tmp_len+8]='b ';  // servo motor0 directed left (0 degree)
+        syncMessage[tmp_len+8]='b';  // servo motor0 directed left (0 degree)
         syncMessage[tmp_len+9]='4';   // servo motor0 directed left (0 degree)
         
         syncMessage[tmp_len+10]='b';  // servo motor1 directed left (0 degree)
@@ -251,30 +257,73 @@ void composeSerialMessage(byte buttons0, byte buttons1,byte analog0,byte analog1
           Serial.println("no arrow pressed");
         #endif 
         uint8_t  tmp_len = strlen(syncMessage);
-        syncMessage[tmp_len]=B11111111;   // all motors forward
-        syncMessage[tmp_len+1]='0';   // motor0 stopped
-        syncMessage[tmp_len+2]='0';   // motor0 stopped
         
-        syncMessage[tmp_len+3]='0';   // motor1 stopped
-        syncMessage[tmp_len+4]='0';   // motor1 stopped
-        
-        syncMessage[tmp_len+5]='0';   // motor2 stopped
-        syncMessage[tmp_len+6]='0';   // motor2 stopped
-        
-        syncMessage[tmp_len+7]='0';   // motor3 stopped
-        syncMessage[tmp_len+8]='0';   // motor3 stopped
-        
-        syncMessage[tmp_len+8]='0';   // servo motor0 directed righ (180 degree)
-        syncMessage[tmp_len+9]='0';   // servo motor0 directed righ (180 degree)
-        
-        syncMessage[tmp_len+10]='0';  // servo motor1 directed righ (180 degree)
-        syncMessage[tmp_len+11]='0';  // servo motor1 directed righ (180 degree)
-        
-        syncMessage[tmp_len+12]='0';  // servo motor2 directed righ (180 degree)
-        syncMessage[tmp_len+13]='0';  // servo motor2 directed righ (180 degree)
-        
-        syncMessage[tmp_len+14]='0';  // servo motor3 directed righ (180 degree)
-        syncMessage[tmp_len+15]='0';  // servo motor3 directed righ (180 degree)
+        if  ( (left_joystick_y < Y_UNDER_THRESHOLD)& (left_joystick_y > Y_OVER_THRESHOLD)){ //the user is moving the left joystick 
+                
+                if (left_joystick_y > Y_LEFT_JOYSTICK_IDLE_VALUE){ // todo: add some way to detect also the x axis of the joystick
+                        syncMessage[tmp_len]=B11111111;   // all motors forward
+                }
+                else{
+                        syncMessage[tmp_len]=B11110000;   // all motors backward
+                }
+                
+                uint8_t byte0_motor_speed = char(OnosMsgHandler.charDecToHex( left_joystick_y / 16) );
+                uint8_t byte1_motor_speed = char(OnosMsgHandler.charDecToHex( left_joystick_y % 16) );
+                
+                uint8_t byte0_motor_direction = char(OnosMsgHandler.charDecToHex( left_joystick_x / 16) );
+                uint8_t byte1_motor_direction = char(OnosMsgHandler.charDecToHex( left_joystick_x % 16) );                
+                
+                
+                syncMessage[tmp_len+1] = byte0_motor_speed;
+                syncMessage[tmp_len+2] = byte1_motor_speed;
+                                
+                syncMessage[tmp_len+3] = byte0_motor_speed;   
+                syncMessage[tmp_len+4] = byte1_motor_speed;  
+                
+                syncMessage[tmp_len+5] = byte0_motor_speed;
+                syncMessage[tmp_len+6] = byte1_motor_speed;
+                
+                syncMessage[tmp_len+7] = byte0_motor_speed;
+                syncMessage[tmp_len+8] = byte1_motor_speed;
+                
+                syncMessage[tmp_len+8] = byte0_motor_direction;
+                syncMessage[tmp_len+9] = byte1_motor_direction;
+                
+                syncMessage[tmp_len+10] = byte0_motor_direction;
+                syncMessage[tmp_len+11] = byte1_motor_direction;
+                
+                syncMessage[tmp_len+12] = byte0_motor_direction;
+                syncMessage[tmp_len+13] = byte1_motor_direction;
+                
+                syncMessage[tmp_len+14] = byte0_motor_direction;
+                syncMessage[tmp_len+15] = byte1_motor_direction;            
+                }
+        else{ //the user is not using the arrows or the left joystick
+                syncMessage[tmp_len] = B11111111;   // all motors forward
+                syncMessage[tmp_len+1] = '0';   // motor0 stopped
+                syncMessage[tmp_len+2] = '0';   // motor0 stopped
+                
+                syncMessage[tmp_len+3] = '0';   // motor1 stopped
+                syncMessage[tmp_len+4] = '0';   // motor1 stopped
+                
+                syncMessage[tmp_len+5] = '0';   // motor2 stopped
+                syncMessage[tmp_len+6] = '0';   // motor2 stopped
+                
+                syncMessage[tmp_len+7] = '0';   // motor3 stopped
+                syncMessage[tmp_len+8] = '0';   // motor3 stopped
+                
+                syncMessage[tmp_len+8] = '0';   // servo motor0 directed righ (180 degree)
+                syncMessage[tmp_len+9] = '0';   // servo motor0 directed righ (180 degree)
+                
+                syncMessage[tmp_len+10] = '0';  // servo motor1 directed righ (180 degree)
+                syncMessage[tmp_len+11] = '0';  // servo motor1 directed righ (180 degree)
+                
+                syncMessage[tmp_len+12] = '0';  // servo motor2 directed righ (180 degree)
+                syncMessage[tmp_len+13] = '0';  // servo motor2 directed righ (180 degree)
+                
+                syncMessage[tmp_len+14] = '0';  // servo motor3 directed righ (180 degree)
+                syncMessage[tmp_len+15] = '0';  // servo motor3 directed righ (180 degree)
+        }
                 
     }
     uint8_t  tmp_len = strlen(syncMessage);
@@ -484,7 +533,7 @@ void loop() {
         controller_buttons1 = controller_buttons1 & B01111111;   
       } 
       
-      composeSerialMessage(controller_buttons0, controller_buttons1, an0, an1, an2, an3);
+      composeSerialMessage(controller_buttons0, controller_buttons1, left_joystick_y, left_joystick_x, right_joystick_y, right_joystick_x);
       #if defined(DEBUG_MODE)
         Serial.println("composed msg:");
       #endif        
@@ -503,22 +552,22 @@ void loop() {
       Serial.println("Square just released");    
     */
       
-      an0=ps2x.Analog(PSS_LY);
-      an1=ps2x.Analog(PSS_LX);
+      left_joystick_y=ps2x.Analog(PSS_LY);
+      left_joystick_x=ps2x.Analog(PSS_LX);
       
-      an2=ps2x.Analog(PSS_RY);
-      an3=ps2x.Analog(PSS_RX);
+      right_joystick_y=ps2x.Analog(PSS_RY);
+      right_joystick_x=ps2x.Analog(PSS_RX);
 
-      if( ((an0<(an0_old-analog_threshold))|(an0>(an0_old+analog_threshold)))|((an1<(an1_old-analog_threshold))|(an1>(an1_old+analog_threshold)))|((an2<(an2_old-analog_threshold))|(an2>(an2_old+analog_threshold)))|((an3<(an3_old-analog_threshold))|(an3>(an3_old+analog_threshold))) ) {
-        composeSerialMessage(controller_buttons0, controller_buttons1, an0, an1, an2, an3);
+      if( ((left_joystick_y<(left_joystick_y_old-analog_threshold))|(left_joystick_y>(left_joystick_y_old+analog_threshold)))|((left_joystick_x<(left_joystick_x_old-analog_threshold))|(left_joystick_x>(left_joystick_x_old+analog_threshold)))|((right_joystick_y<(right_joystick_y_old-analog_threshold))|(right_joystick_y>(right_joystick_y_old+analog_threshold)))|((right_joystick_x<(right_joystick_x_old-analog_threshold))|(right_joystick_x>(right_joystick_x_old+analog_threshold))) ) {
+        composeSerialMessage(controller_buttons0, controller_buttons1, left_joystick_y, left_joystick_x, right_joystick_y, right_joystick_x);
         #if defined(DEBUG_MODE)        
           Serial.println("composed msg:");
         #endif  
         Serial.println(syncMessage);
-        an0_old = an0;
-        an1_old = an1;
-        an2_old = an2;
-        an3_old = an3;
+        left_joystick_y_old = left_joystick_y;
+        left_joystick_x_old = left_joystick_x;
+        right_joystick_y_old = right_joystick_y;
+        right_joystick_x_old = right_joystick_x;
 
       }
   }    

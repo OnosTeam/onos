@@ -13,3 +13,11 @@ while 1:
   arduino.write('[S_fed000x_#]') 
   i = i + 1
   print("i:"+str(i))
+
+
+#senza interrupt e senza reset radio:
+#impallato:i:12626
+#impallato: i:60976
+#con interrupt e reset seriale raggiounge e supera 100000 switch on off del relay
+
+
