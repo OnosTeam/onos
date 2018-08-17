@@ -1536,10 +1536,7 @@ void setup()
     strcat(serial_number,numeric_serial);
     // OBJECTS PIN DEFINITION__________________________________________________________________
     
-    node_obj_pinout[led]=13;   
-    node_obj_pinout[front_bumper]=3;   
-    node_obj_pinout[rear_bumper]=12; 
-    
+
     //warning the   motor0A_direction,motor0B_direction .. are defined in the header
       
 /*
@@ -1553,10 +1550,31 @@ void setup()
     node_obj_pinout[motor2B_direction]=27; 
     
     node_obj_pinout[motor3A_direction]=28;     
-    node_obj_pinout[motor3B_direction]=29;       
+    node_obj_pinout[motor3B_direction]=29;    
+       
+  #define motor0A_direction  22
+  #define motor0B_direction  23
+
+  #define motor1A_direction  24
+  #define motor1B_direction  25
+  
+  #define motor2A_direction  26
+  #define motor2B_direction  27
+  
+  #define motor3A_direction  28
+  #define motor3B_direction  29    
     
-    
-*/    
+//  interrupt 0 pin D2-----------DIO0  (interrupt request out)
+//              pin D9-----------RST   (radio module reset)   
+//           SS pin D10----------NSS   (chip select in)
+//          SCK pin D13----------SCK   (SPI clock in)
+//         MOSI pin D11----------MOSI  (SPI Data in)
+//         MISO pin D12----------MISO  (SPI Data out)
+*/ 
+    node_obj_pinout[led]=13;   
+    node_obj_pinout[front_bumper]=3;   
+    node_obj_pinout[rear_bumper]=12; 
+      
     node_obj_pinout[motor0_speed]=8;   
     node_obj_pinout[motor1_speed]=9; 
     node_obj_pinout[motor2_speed]=10;     

@@ -655,7 +655,7 @@ def replace_functions(scenario_functions,scenario_name):#given a string ,replace
 
 
 def replace_conditions(scenario_conditions,scenario_name):#given a string ,replace web_object names with their value 
-
+  logprint("scenario_conditions replaced:"+str(scenario_conditions) )
   obj_list=[]
   #scenario_conditions=scenario_conditions.replace("!","not ")  
   while 1:  # until all the objects are replaced by their value
@@ -711,7 +711,6 @@ def replace_conditions(scenario_conditions,scenario_name):#given a string ,repla
     logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
     return(-1)
-  logprint("scenario_conditions replaced:"+str(scenario_conditions) )
   return([scenario_conditions,obj_list])
 
 
@@ -855,7 +854,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
         #f=f.replace("#condvalue#","1")  
       #f=f.replace("#mathvalue#",mathResultValue)   
       f=f.replace("==","=")    #replace == with =
-      f=f.replace("!","not ")   
+      f=f.replace("!=","=not ")   
       point=f.find("=")
       f_before_equal_sign=f[0:point]
       f_before_equal_sign=f_before_equal_sign.replace("#_","")
@@ -920,7 +919,7 @@ def checkwebObjectScenarios(scenario_name):#check all the webobjects in the scen
           obj_to_change=op.split("=" )[0]
           str_status=op.split("=" )[1]
         except Exception as e :
-          message="error in the split of op in executionList ,op="+op+"obj_to_change:"+obj_to_change+",str_status:"+str_status
+          message="error in the split of op in executionList ,op="+op+", obj_to_change:"+obj_to_change+",str_status:"+str_status
           logprint(message,verbose=9,error_tuple=(e,sys.exc_info()))
 
   
@@ -4101,7 +4100,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 if (self.path.split("/")[2])in scenarioDict.keys():
                   namespace={"scenario_to_mod":self.path.split("/")[2]}
                   scenario_to_mod=(self.path.split("/"))[2]
-                  cgi_name="gui/scenario_f_to_run.py"       
+                  cgi_name="gui/scenario_operations.py"       
                   
                   #execfile(cgi_name,globals(),namespace)
                   exec(compile(open(cgi_name, "rb").read(), cgi_name, 'exec'), globals(), namespace)
@@ -5685,7 +5684,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
             elif "function_to_run_1" in postvars:# if the current page is /function_to_run/scenario name  because "function_to_run_1"  is the hidden form name
             #<input type="hidden" name="mod_functions1a" value="">
-              logprint("function_to_run_1 post received ")
+              logprint("function_to_run_1 post Received ")
 
               scenario_name=self.clear_PostData(postvars["function_to_run_1"][0])#get the current scenario name 
 
@@ -5697,7 +5696,7 @@ class MyHandler(BaseHTTPRequestHandler):
               else:
                 return(-1)
 
-              logprint("menu_number"+str(menu_number) )
+              logprint("menu_number:"+str(menu_number) )
               functions_list=[]
               for i in range(1,menu_number+1):
                 try:
@@ -5727,11 +5726,13 @@ class MyHandler(BaseHTTPRequestHandler):
                   if operator=="==":
                     operator="="  
 
-
+                  logprint("trying if right elemt is a number:"+right_element)
                   try:#detect if is a number
                     a=int(right_element) #was float
                   except:
                     right_element="#_"+right_element+"_#"
+                    logprint("right elemt is not a number")
+
 
                   if (third_element!="")&(third_element!=" ")&(second_operator!="")&(second_operator!=" ")&(third_element!="#_select_an_element_#"):
                     try:#detect if is a number
@@ -5764,7 +5765,6 @@ class MyHandler(BaseHTTPRequestHandler):
                 if second_operator_new=="==":
                   second_operator_new="="
 
-
                 if right_element_new=="variabile_numerica":
                   if "text_area1new" in postvars:
                     right_element_new=self.clear_PostData(postvars["text_area1new"][0])
@@ -5782,16 +5782,23 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
                 if (left_element_new!="#_select_an_element_#")&(right_element_new!="#_select_an_element_#"):
+                        
+                  logprint("trying if right_element_new is a number:"+right_element_new)      
+                  try:#detect if is a number and so it don't need the #__#
+                    a=int(right_element_new) #was float
+                  except:
+                    right_element_new="#_"+right_element_new+"_#"
+                    logprint("right_element_new is not a number")
+
+                    
                   if (third_element_new!="")&(third_element_new!=" ")&(second_operator_new!="")&(second_operator_new!=" ")&(third_element_new!="#_select_an_element_#"):
 
-                    try:#detect if is a number and so it don't need the #__#
-                      a=int(right_element_new) #was float
-                    except:
-                      r="#_"+right_element_new+"_#"
+                    logprint("trying if third_element_new is a number:"+third_element_new)      
                     try:#detect if is a number
                       a=int(third_element_new) #was float
                     except:
                       third_element_new="#_"+third_element_new+"_#"
+                      logprint("third_element_new is not a number:")
 
                     functions_list.append(left_element_new+operator_new+right_element_new+second_operator_new+third_element_new) 
                   else:
