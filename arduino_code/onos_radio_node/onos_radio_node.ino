@@ -565,7 +565,55 @@ boolean changeObjStatus(char obj_number,int status_to_set)
     }
     
   #elif defined(node_type_MarsRover)  
-      Serial.println(F("ch_mars_rover_obj")); 
+    Serial.println(F("ch_mars_rover_obj")); 
+      
+    switch(obj_number) {
+      case led: {
+        digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+        Serial.print(F("dw_mars_led_to:")); 
+        Serial.println(status_to_set);         
+      } break;
+      case motor0_direction: {  //No variable being declared! Brace OK?
+        digitalWrite(motor0A_direction, status_to_set); 
+        digitalWrite(motor0B_direction, !status_to_set);            
+      } break;
+      case motor1_direction: {  //No variable being declared! Brace OK?
+        digitalWrite(motor1A_direction, status_to_set); 
+        digitalWrite(motor1B_direction, !status_to_set);         } break;
+      case motor2_direction: {  //No variable being declared! Brace OK?
+        digitalWrite(motor2A_direction, status_to_set); 
+        digitalWrite(motor2B_direction, !status_to_set);         } break;
+      case motor3_direction: {  //No variable being declared! Brace OK?
+        digitalWrite(motor3A_direction, status_to_set); 
+        digitalWrite(motor3B_direction, !status_to_set);         } break;
+      
+      case motor0_speed: {  //No variable being declared! Brace OK?
+        analogWrite(node_obj_pinout[motor0_speed],status_to_set); // 
+      } break;      
+      case motor1_speed: {  //No variable being declared! Brace OK?
+        analogWrite(node_obj_pinout[motor1_speed],status_to_set); // 
+      } break;  
+      case motor2_speed: {  //No variable being declared! Brace OK?
+        analogWrite(node_obj_pinout[motor2_speed],status_to_set); // 
+      } break;      
+      case motor3_speed: {  //No variable being declared! Brace OK?
+        analogWrite(node_obj_pinout[motor3_speed],status_to_set); // 
+      } break; 
+      
+      case motor0_orientation_angle: {  //No variable being declared! Brace OK?
+        myservo0.write(status_to_set); 
+      } break;       
+      case motor1_orientation_angle: {  //No variable being declared! Brace OK?
+        myservo1.write(status_to_set); 
+      } break;      
+      case motor2_orientation_angle: {  //No variable being declared! Brace OK?
+        myservo2.write(status_to_set); 
+      } break;       
+      case motor3_orientation_angle: {  //No variable being declared! Brace OK?
+        myservo3.write(status_to_set); 
+      } break;                      
+    } 
+      /*
       if (obj_number==led){
           
           digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
@@ -573,6 +621,7 @@ boolean changeObjStatus(char obj_number,int status_to_set)
           Serial.println(status_to_set); 
 
       }
+      */
 
   #endif
 
@@ -1622,17 +1671,62 @@ void setup()
     
     
 
-  
+/*  
     analogWrite(motor0_speed, 90);
     analogWrite(motor1_speed, 90);
     analogWrite(motor2_speed, 90);
     analogWrite(motor3_speed, 90);
+*/
+    digitalWrite(motor0_speed, 1);
+    digitalWrite(motor1_speed, 1);
+    digitalWrite(motor2_speed, 1);
+    digitalWrite(motor3_speed, 1);
+
 
     myservo0.attach(node_obj_pinout[motor0_orientation_angle]);  // attaches the servo on pin 9 to the servo object
     myservo1.attach(node_obj_pinout[motor1_orientation_angle]);  // attaches the servo on pin 9 to the servo object
     myservo2.attach(node_obj_pinout[motor2_orientation_angle]);  // attaches the servo on pin 9 to the servo object
     myservo3.attach(node_obj_pinout[motor3_orientation_angle]);  // attaches the servo on pin 9 to the servo object
-  
+
+
+    changeObjStatus(motor0_orientation_angle,90);
+    changeObjStatus(motor1_orientation_angle,90);
+    changeObjStatus(motor2_orientation_angle,90);
+    changeObjStatus(motor3_orientation_angle,90);
+    
+    
+    changeObjStatus(motor0_direction,1);
+    changeObjStatus(motor1_direction,1);
+    changeObjStatus(motor2_direction,1);
+    changeObjStatus(motor3_direction,1);
+    
+    
+    
+    
+    Serial.println(F("pos0"));
+/*
+    myservo0.write(45); 
+    myservo1.write(45); 
+    myservo2.write(45); 
+    myservo3.write(45); 
+*/
+
+    delay(1500); 
+/*    
+    myservo0.write(99); 
+    myservo1.write(99); 
+    myservo2.write(99); 
+    myservo3.write(99); 
+*/    
+
+    changeObjStatus(motor0_orientation_angle,40);
+    changeObjStatus(motor1_orientation_angle,40);
+    changeObjStatus(motor2_orientation_angle,40);
+    changeObjStatus(motor3_orientation_angle,40);
+    
+    Serial.println(F("pos1"));
+
+        
     
   #elif defined(node_type_WIRbarr0)
     node_obj_pinout[relay1]=4;  // the first  object is the relay 1 connected on pin 7 

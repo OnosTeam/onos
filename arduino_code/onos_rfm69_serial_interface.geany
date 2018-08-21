@@ -22,14 +22,20 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=6
-FILE_NAME_0=11542;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2Fmars_rover_controller.ino;0;8
+current_page=5
+FILE_NAME_0=19971;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2Fmars_rover_controller.ino;0;8
 FILE_NAME_1=19025;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2FRFM69_masterRFM69-master_928de01a2b0ffc21d0dff935694641c04d6b9041_mod_flash%2Bwhitening%2Bbaud38400%2FRFM69.cpp;0;8
 FILE_NAME_2=1008;C;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2FRFM69_masterRFM69-master_928de01a2b0ffc21d0dff935694641c04d6b9041_mod_flash%2Bwhitening%2Bbaud38400%2FRFM69.h;0;8
 FILE_NAME_3=7696;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2FRFM69_masterRFM69-master_928de01a2b0ffc21d0dff935694641c04d6b9041_mod_flash%2Bwhitening%2Bbaud38400%2FRFM69_ATC.cpp;0;8
 FILE_NAME_4=22061;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2Fonos_rfm69_serial_interface.ino;0;8
-FILE_NAME_5=19636;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2Fonos_radio_node%2Fonos_radio_node.ino;0;8
+FILE_NAME_5=0;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2Fonos_radio_node%2Fonos_radio_node.ino;0;8
 FILE_NAME_6=33274;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Farduino-1.8.1%2Flibraries%2FOnosMsg%2FOnosMsg.cpp;0;8
+FILE_NAME_7=234965;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Fscripts_folder%2Fwebserver.py;0;8
+FILE_NAME_8=0;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Fscripts_folder%2Fgui%2Fscenario_creation_conditions.py;0;8
+FILE_NAME_9=9210;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Fscripts_folder%2Fgui%2Fscenario_operations.py;0;8
+FILE_NAME_10=42133;Python;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Fscripts_folder%2FglobalVar.py;0;8
+FILE_NAME_11=0;Python;0;EUTF-8;2;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Fscripts_folder%2Fgui%2Fmod_scenario.py;0;8
+FILE_NAME_12=0;C++;0;EUTF-8;0;1;0;%2Fmedia%2Fmarco%2Fdata%2Fprogetti%2Fweb_interface%2Fonos_versions%2Fonos_5.31%2Farduino_code%2FOnosMsg%2FOnosMsg.cpp;0;8
 
 [VTE]
 last_dir=/home/marco
