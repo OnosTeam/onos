@@ -160,8 +160,10 @@ char numeric_serial[5]="0011";   // this is the progressive numeric serial numbe
 
 //you should comment all the type but the one you want to use
 //commentare tutti i tipi di nodo tranne quello utilizzato
-#define node_type_MarsRover
+#define node_type_Wrelay1x
 /*
+#define node_type_MarsRover
+#define node_type_Wrelay1x
 #define node_type_Wrelay4x
 #define node_type_WreedSaa
 #define node_type_WLightSS  not implemented
@@ -227,6 +229,16 @@ char numeric_serial[5]="0011";   // this is the progressive numeric serial numbe
   // #define IS_RFM69HCW    false
   
   const uint8_t number_of_total_objects = 7;
+  const int node_default_timeout = 180;  //seconds
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
+
+#elif defined(node_type_Wrelay1x)
+  const uint8_t relay1 = 0;
+  const uint8_t button = 1; 
+  const uint8_t led    = 2;
+  const uint8_t syncTimeout = 3;
+  const uint8_t number_of_total_objects = 4;
   const int node_default_timeout = 180;  //seconds
   #undef ENABLE_RADIO_RESET_PIN
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
@@ -544,7 +556,19 @@ boolean changeObjStatus(char obj_number,int status_to_set)
       digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
       Serial.println(F("dw_With_obj")); 
     }
-    
+
+  #elif defined(node_type_Wrelay1x)
+    if (obj_number==0){
+      main_obj_state=status_to_set;
+      digitalWrite(node_obj_pinout[obj_number],!status_to_set); //  ! the relay are on when the pin is at gnd
+      Serial.println(F("dw_With_obj")); 
+      changeObjStatus(led,!status_to_set);
+    }
+    else if (obj_number==led){
+      digitalWrite(node_obj_pinout[obj_number],status_to_set); // 
+      Serial.println(F("dw_With_obj")); 
+    }
+        
   #elif defined(node_type_WPlug1vx)
     if (obj_number==0){
       main_obj_state=status_to_set;
@@ -819,7 +843,23 @@ void composeSyncMessage()
       syncMessage[tmp_len + 4] = '\0'; 
       
     }
+  #elif defined(node_type_Wrelay1x)
     
+    if (this_node_address==254){
+      strcat(syncMessage, "g");
+      strcat(syncMessage, node_fw);
+      strcat(syncMessage, serial_number);
+    }
+    else{
+      //[S_123r4Wrelay1x00081x_#]    1 is the relay status
+      strcat(syncMessage, "u");
+      // strcat(syncMessage, "sy");
+      strcat(syncMessage, serial_number);
+      uint8_t  tmp_len = strlen(syncMessage);
+      syncMessage[tmp_len]=node_obj_status[0]+48;  
+      syncMessage[tmp_len + 4] = '\0'; 
+      
+    }    
   #elif defined(node_type_WPlug1vx)
     
     if (this_node_address==254){
@@ -1557,6 +1597,21 @@ void setup()
         
     digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
 
+  #elif defined(node_type_Wrelay1x)
+    memset(serial_number,0,sizeof(serial_number)); //to clear the array
+    strcpy(serial_number,"Wrelay1x");
+    strcat(serial_number,numeric_serial);
+    // OBJECTS PIN DEFINITION___________________________________________________________________
+    node_obj_pinout[relay1]=5;  // the forth  object is the relay  connected on pin 5
+    node_obj_pinout[led]=4;     // the fifth  object is the led     connected on pin 4
+    node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+    // END OBJECTS PIN DEFINITION_______________________________________________________________
+    pinMode(node_obj_pinout[relay1], OUTPUT);
+    pinMode(node_obj_pinout[led], OUTPUT);
+    pinMode(node_obj_pinout[button], INPUT);
+        
+    digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
+
 
   #elif defined(node_type_WLightSS)
     memset(serial_number,0,sizeof(serial_number)); //to clear the array
@@ -1790,6 +1845,9 @@ void setup()
   #elif defined(node_type_Wrelay4x)
     attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
     Serial.println(F("Wrelay4x interrupt en"));
+  #elif defined(node_type_Wrelay1x)
+    attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
+    Serial.println(F("Wrelay1x interrupt en"));    
   #elif defined(node_type_MarsRover)
     digitalWrite(node_obj_pinout[led], 0); // 0 to to turn ledd off
 
@@ -1826,6 +1884,13 @@ void loop()
       wdt_reset();
   #endif
   #if defined(node_type_Wrelay4x)
+    if (button_still_same_status==0){  //filter 
+      obj_button_pin=node_obj_pinout[button];
+      if (digitalRead(obj_button_pin)==0) { 
+        handleButton();
+      }
+    }
+  #elif defined(node_type_Wrelay1x)
     if (button_still_same_status==0){  //filter 
       obj_button_pin=node_obj_pinout[button];
       if (digitalRead(obj_button_pin)==0) { 
