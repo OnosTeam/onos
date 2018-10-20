@@ -21,6 +21,10 @@ mv /tmp/onos/ /bin/onos
 
 
 Da usare per aggiornare:
+ssh root@192.168.1.110 mount -o remount,rw / && scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e csv -e scripts_folder/csv ) root@192.168.1.110:/bin/onos/
+
+
+
 scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e csv -e scripts_folder/csv ) root@192.168.1.110:/bin/onos/
 
 

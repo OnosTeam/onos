@@ -39,7 +39,7 @@ for obj in obj_list:
 
 
 
-obj_sel='''<option>variabile_numerica</option>'''+obj_sel
+obj_sel='''<option>0</option><option>1</option><option>variabile_numerica</option>'''+obj_sel
 
 
 operator2_sel_default='''

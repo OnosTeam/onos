@@ -78,7 +78,7 @@ class Serial_connection_Handler():
         #old_port=port       #  [0:len(port)-1] 
         port='/dev/'+port   #  [0:len(port)-1]   #remove /n of ls
         self.ser =arduinoserial.SerialPort(port, baud_rate)     
-        logprint ("arduino connected correctly to onos system on port:"+port) 
+        logprint ("serial port connected correctly to onos system on port:"+port) 
         return(self.ser)
       except:  #some error occured while using the port i found 
         logprint("port error with port:"+port+" i will retry with another port")
