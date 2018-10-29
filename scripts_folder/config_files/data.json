@@ -10,31 +10,13 @@
       "WreedSaa0008": {
         "hwModelName": "WreedSaa", 
         "nodeAddress": "038", 
-        "nodeObjectsDict": {
-          "0": "reed1_WreedSaa0008", 
-          "2": "led_WreedSaa0008", 
-          "3": "tempSensor_WreedSaa0008", 
-          "4": "digOut_WreedSaa0008", 
-          "5": "reed2_WreedSaa0008", 
-          "6": "syncTime_WreedSaa0008", 
-          "7": "reed1Logic_WreedSaa0008", 
-          "8": "reed2Logic_WreedSaa0008", 
-          "9": "battery_state_WreedSaa0008", 
-          "10": "luminosity_sensor_WreedSaa0008"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "WreedSaa0008"
       }, 
       "Wrelay4x0001": {
         "hwModelName": "Wrelay4x", 
         "nodeAddress": "027", 
-        "nodeObjectsDict": {
-          "0": "caldaia_Wrelay4x0001", 
-          "1": "router_Wrelay4x0001", 
-          "2": "relay_Wrelay4x0001", 
-          "3": "relay2_Wrelay4x0001", 
-          "5": "led_Wrelay4x0001", 
-          "6": "syncTime_Wrelay4x0001"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "Wrelay4x0001"
       }
     }, 
@@ -64,7 +46,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 150, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -98,7 +80,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -119,7 +101,7 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "day=0", 
+          "0": "<div class=\"analog_bar_container\"> <div class=\"analog_bar\" style=\"width: 0%\" >29 </div></div> ", 
           "1": "day=1", 
           "onoswait": "dayWAIT"
         }, 
@@ -134,14 +116,14 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 30, 
+        "status": 29, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "b"
+        "type": "analog_obj_in"
       }, 
       "dayTime": {
         "cmdDict": {
@@ -170,7 +152,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 32, 
+        "status": 1431, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -204,7 +186,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -240,10 +222,10 @@
         ], 
         "priority": 0, 
         "scenarios": [
-          "caldaia_off_notte", 
-          "caldaia_on_mattino"
+          "caldaia_on_mattino", 
+          "caldaia_off_notte"
         ], 
-        "status": 0, 
+        "status": 23, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -277,7 +259,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -311,7 +293,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -345,7 +327,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 153, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -381,7 +363,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 32, 
+        "status": 51, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -417,7 +399,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 12, 
+        "status": 10, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -485,7 +467,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -519,7 +501,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": true, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -553,7 +535,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -587,7 +569,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": false, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -621,7 +603,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "1", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -655,7 +637,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -689,7 +671,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -723,7 +705,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -757,7 +739,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "0", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -791,7 +773,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 21, 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -827,7 +809,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 2017, 
+        "status": 2018, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -864,6 +846,7 @@
         "group": [], 
         "hidden": 0, 
         "objects": [
+          "day", 
           "onosCenterWifi"
         ], 
         "order": 0, 

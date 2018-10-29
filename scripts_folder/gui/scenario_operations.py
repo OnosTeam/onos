@@ -39,7 +39,7 @@ for obj in obj_list:
 
 
 
-obj_sel='''<option>0</option><option>1</option><option>variabile_numerica</option>'''+obj_sel
+obj_sel='''<option>variabile_numerica</option>'''+obj_sel
 
 
 operator2_sel_default='''
@@ -60,9 +60,9 @@ operator2_sel_default='''
 
 
 #example conditions:  (#_year_#==2016)&(#_hours_#==8)&(#_minutes_#==0)
-functionsToRun=scenarioDict[scenario_to_mod]["functionsToRun"]  #get the string where there are the functionsToRun
+functionsToRun=scenarioDict[scenario_to_mod]["functionsToRun"]  #get the string where there are the conditions
 print(type(functionsToRun))
-print("functionsToRun:", functionsToRun)
+print("functionsToRun", functionsToRun)
 html_functionsToRun=''
 
 i=0
@@ -77,21 +77,26 @@ for c in functionsToRun: # for each function
   obj_sel_sx=obj_sel
   obj_sel_dx=obj_sel
   obj_sel_third='<option> </option>'+obj_sel
-  
-  if  c.find("!=") != -1 :  # detect if the opeartor is '!=' or '='
-    operator='!='
-  else:
-    operator='='
-     
+   
+
+  operator='='
 #  if "=!" in c:
 #    operator='=!'
 #  elif "=" in c:
 #    operator='=!'
 
   pos=c.find(operator)
-  second_operator=""
+  second_operator=0
   if (pos!=-1): # found an = in the string
-    left_element=c.split(operator)[0] #c[0:pos]   #get the left element so from  (#_year_#==2016)   gets "#_year_#"
+
+
+
+
+
+
+
+    left_element=c[0:pos]   #get the left element so from  (#_year_#==2016)   gets "#_year_#"
+
 
     if "===" in c:
       second_operator='=='
@@ -113,14 +118,13 @@ for c in functionsToRun: # for each function
       second_operator='|'
 
 
-    if (second_operator!="") : #there is a second operator so there is also another element
+    if (second_operator!=0) : #there is a second operator so there is also another element
 
       right_element=c[pos+1:c.find(second_operator)]  #get the right element so from  (#_year_#==2016)   gets "2016"
+
       if right_element[0]=='=':
         right_element=right_element[1:]
-        
-      if right_element[0]=='!':
-        right_element=right_element[2:]
+
 
 
       third_element=c[c.find(second_operator)+1:]
@@ -137,16 +141,12 @@ for c in functionsToRun: # for each function
         operator2_sel='<option>'+second_operator+'</option>'+operator2_sel
 
     else:
-      right_element=c.split(operator)[1]
+      right_element=c[pos+1:]
 
 
-#    if (right_element[0]=='=')or(right_element[0]=='!'):
-#      right_element=right_element[1:]
-      if right_element[0]=='=':
-        right_element=right_element[1:]
-        
-      if right_element[0]=='!':
-        right_element=right_element[2:]
+    if (right_element[0]=='=')or(right_element[0]=='!'):
+      right_element=right_element[1:]
+
 
 
 
@@ -162,9 +162,8 @@ for c in functionsToRun: # for each function
     obj_sel_dx='''<option>'''+str(right_element)+'''</option>'''+obj_sel_dx
 
     operator_sel='''
-      					<option>'''+operator+'''</option> 
       					<option>=</option> 
-     				    <option>!=</option> 
+     				    <option>not</option> 
                          '''
 
 
@@ -355,7 +354,6 @@ html=html+'''
 
 			<!--select4 -->
    				<select id ="select_4" class ="select select_4"  name="second_operator_new">
-                
                 '''+operator2_sel_default+'''
    				</select>
 			<!--fine select 4 -->

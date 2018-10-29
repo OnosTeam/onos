@@ -72,7 +72,7 @@ html_object_list_drop_menu=""
 
 system_object_list=[""]
 
-obj_sel='''<option value="0">0</option> <option value="1">1</option>  <option value="variabile_numerica">variabile_numerica</option>'''
+obj_sel='''<option value="variabile_numerica">variabile_numerica</option>'''
 
 
 obj_list=objectDict.keys()

@@ -33,7 +33,7 @@ global router_hardware_type
 
 
 class WebObject(object):   # inherit from object python class
-    __slots__ = 'name', 'baz','object_type','start_status','styleDict','htmlDict','cmdDict','note','hardware_pin','HwNodeSerialNumber','spareDict','__dict__'
+    __slots__ = 'name', 'baz','object_type','start_status','styleDict','htmlDict','cmdDict','note','hardware_pin','HwNodeSerialNumber','value_range','unit_value','spareDict','__dict__'
 
     global exit  #if exit ==1 all the program stop and exit
     __object_type="b"   #alternative is "s" for status viewer or "t" for timer button  or "sb" for static button  
@@ -46,11 +46,12 @@ class WebObject(object):   # inherit from object python class
    
 
 
-    def __init__(self,name,obj_type="b",start_status="0",styleDictionary={},htmlDictionary={},cmdDictionary={},note=" ",hardware_pin=[9999],HwNodeSerialNumber=0,spareDict={}):
+    def __init__(self,name,obj_type="b",start_status="0",styleDictionary={},htmlDictionary={},cmdDictionary={},note=" ",hardware_pin=[9999],HwNodeSerialNumber=0,value_range=(0,1),unit_value="",spareDict={}):
 
       logprint("init of object executed")
       self.__object_type=obj_type
-
+      self.__object_value_range=value_range
+      self.__object_unit_value=unit_value   
       self.__style0="background-color:red ;"
       self.__style1="background-color:green ;"
       self.styleDict={u"0":self.__style0,u"1":self.__style1,u"onoswait":"background-color:grey ;color black","default_s":"background-color:red ;color black"}
@@ -301,25 +302,39 @@ class WebObject(object):   # inherit from object python class
 
 
     def setStyle1(self,style1):             #set the static style1  of the button
-          self.__style1=style1
-          return(self.__style1)
-
+	    self.__style1=style1
+	    return(self.__style1)
+	
 
     def getStyle1(self):             #return the static style1  of the button
-          return(self.__style1)
+        return(self.__style1)
    
    
     
     
-    def getHtml(self):             #return the opposite  html  respect the actual  of the web object
-        if (self.status==0)|(self.status=="0"):
-          return(self.htmlDict[u"0"])
-        if (self.status=="onoswait"):
-          return(self.htmlDict[u"onoswait"]) 
-        if (self.status==1)|(self.status=="1"):
-          return(self.htmlDict[u"1"])   
-        return (self.object_name+u"="+str(self.status)) #for analog type
-          
+    def getHtml(self):             
+		if (self.__object_type == "analog_obj_in"):
+			self.__object_value_range=(0,50) #todo get this from globalvar object dict
+			          #(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+			percentage=(self.status - self.__object_value_range[0]) * (100 - 0) / (self.__object_value_range[1] - self.__object_value_range[0]) + 0
+			self.__object_unit_value="voltage"  #todo get this from globalvar object dict
+			self.htmlDict[u"0"]='''
+			    <div class="analog_bar_container ">  <br>
+		            <div class="analog_bar" style="width: '''+str(percentage)+'''% ;" >'''+str(self.status)+''' '''+self.__object_unit_value+'''  </div>
+			    </div> '''
+			
+	        return(self.htmlDict[u"0"])
+	        
+	    
+	        
+		if (self.status==0)|(self.status=="0"):  #return the opposite  html  respect the actual  of the web object
+		    return(self.htmlDict[u"0"])
+		if (self.status=="onoswait"):
+		    return(self.htmlDict[u"onoswait"]) 
+		if (self.status==1)|(self.status=="1"):  #return the opposite  html  respect the actual  of the web object
+		    return(self.htmlDict[u"1"])   
+		return (self.object_name+u"="+str(self.status)) #for other type
+		
           
     #def getOtherHtml(self):             #return the opposite  html  respect the actual  of the web object ,obsolete
     #    if (self.status==1)|(self.status=="1"):

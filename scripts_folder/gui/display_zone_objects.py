@@ -34,8 +34,22 @@ web_page_old=web_page
 
 for a in obj_name_list :      # for every web_obj in the zone make a row...
 
+  if objectDict[a].getType()=="analog_obj_in":
+    web_page=web_page+'''
+	
+	
+		<div class="riga" <!--onos_automatic_local_style--> >
+			  <div id="<!--onos_automatic_object_id-->"
+			  </div>
+			  <div class="specs col2"><!--onos_automatic_object_html-->
+			  </div>
+			  <div class="impostazioni-link col3" ></div>
+		</div>
 
-  web_page=web_page+'''
+	'''
+  else:
+	 
+    web_page=web_page+'''
 
 
 

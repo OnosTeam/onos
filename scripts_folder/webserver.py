@@ -1722,7 +1722,7 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
         img_html='''<!--start_img'''+obj+'''--><img class="flex" src="/img/off.png" class="image" />  <!--end_img'''+obj+'''-->'''
 
       onos_automatic_object_html=WebObjectdictionary[obj].getHtml()
-      onos_automatic_object_id=''' id="'''+obj+'''" '''
+      onos_automatic_object_id=obj
 
       objType=WebObjectdictionary[obj].getType() 
       if objType in ("b","sb","digital_obj_out","cfg_obj","sr_relay","digital_output"):  #banana to use group and to update the online php server with digital_obj...
@@ -1735,6 +1735,11 @@ def modPage(htmlPag,WebObjectdictionary,zone,zoneDictionary):
         onos_automatic_object= '''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+''' > '''+onos_automatic_object_html+'''</a>'''
         onos_automatic_object_a='''<a id="'''+obj+'''" onmousedown="stopUpdate()" onmouseout="restartUpdate()" '''+ onos_automatic_object_href+'''>'''
 
+      elif objType in  ("analog_obj_in"):  #banana to use group and to update the onlyne php server with digital_obj...
+        onos_automatic_object_href='''href="#"'''
+        onos_automatic_object= ''
+        onos_automatic_object_a=''
+        onos_automatic_local_style=''
 
       else:
         onos_automatic_object_href=''
@@ -1854,6 +1859,7 @@ def getRoomHtml(room,objectDictionary,path,roomDictionary):  #render the html to
       roomHtml=namespace["web_page"]  
     except Exception as e: 
       message="error executing /gui/display_zone_objects.py e:"
+      roomHtml=message
       logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
 
     return(roomHtml)

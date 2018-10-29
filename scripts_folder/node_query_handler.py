@@ -71,7 +71,7 @@ def make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_
     logprint("make_query_to_radio_node executed with number_of_retry_already_done:"+str(number_of_retry_already_done))
     max_retry=1 
     answer_received=""
-    for m in range(0,max_retry):     #retry n times to get the answer from node  
+    for m in range(0,max_retry):     #retry n times to get the answer from node    
         
         if (nodeDict[node_serial_number].getNodeActivity()==0):    # the node is inactive
             logprint("error01_radio_query,the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
@@ -359,12 +359,13 @@ def handle_new_query_to_radio_node_thread(serialCom):
 
 
     logprint("executed handle_new_query_to_radio_node_thread() ")
+
     global node_query_radio_threads_executing
     global node_used_addresses_list
     global nodeDict
     node_query_radio_threads_executing=1
 
-    time_of_write=time.time()    #after n query sent wait a moment to let the remote nodes starts the transmissions
+    time_of_write=time.time()    #after n query sent wait a moment to let the remote nodes starts the tranmissions
     old_time_of_write=time.time() 
     time_waiting_for_incoming_msg=time.time()
     threshold_of_time_query=0.1
@@ -405,7 +406,6 @@ def handle_new_query_to_radio_node_thread(serialCom):
         priority=currentRadioQueryPacket[8]
         mail_report_list=currentRadioQueryPacket[9]
         cmd=currentRadioQueryPacket[10]
-        
 
         if (nodeDict[node_serial_number].getNodeActivity()==0):    # the node is inactive
             logprint("error00_radio_handler, the node"+node_serial_number+"is inactive ,so I delete its query",verbose=8)
@@ -422,29 +422,30 @@ def handle_new_query_to_radio_node_thread(serialCom):
         #else:
         #    query_order=query_time-currentRadioQueryPacket[0]    # i used time_when_the_query_was_created - priority..
 
-        logprint("current query_order:"+str(query_order)+"for query:"+query+",with priority:"+str(priority))
+        logprint("current query_order:"+str(query_order)+"for query:"+query)
 
 
         query_answer=make_query_to_radio_node(serialCom,node_serial_number,query,number_of_retry_done)
         if query_answer==-1 : #invalid answer received
             logprint("error query_answer wrong UUUUUUUUuuuuuuuuuuuuuuUUUUUUUUUUUUuuuuuuuuuuu",verbose=4)
             number_of_retry_done=number_of_retry_done+1
-            if priority==99: #if the priority is 99 then the query will be always retraied infinites times.
+            if priority==99: #if the priority is 99 then the query will be always retrayed infinites times.
                 query_order=time.time()+1 #make the query less important..to allow other queries to run
                 if number_of_retry_done>35:    #if greater that n wait a bit
                     logprint("sleep a bit because number_of_retry_done>35")
                     time.sleep(0.5)     #need this to allow the serial node to pick up the messages from the radio nodes..
             else:
                 query_order=time.time()+queryToRadioNodeQueue.qsize() #make the query less important..to allow other queries to run     
-                if number_of_retry_done>15:    #if greater that n don't repeat the query.
-                    logprint("i retried the query:"+query+"more than 15 times , I giveup",verbose=10)
+                if number_of_retry_done>20:    #if greater that n don't repeat the query.
+                    logprint("i retried the query:"+query+"more than 20 times , I giveup",verbose=10)
                     continue
 
-                if (time.time()-query_time )>300:
+                if (time.time()-query_time )>500:
                     #if more than n seconds has passed since the query was made the first time..don't repeat the query.
-                    logprint("i retried the query "+query+"more than 300 seconds ago , I giveup",verbose=10)
+                    logprint("i retried the query "+query+"more than 500 seconds ago , I giveup",verbose=10)
 
                     continue
+
             queryToRadioNodeQueue.put((query_order,query,node_serial_number,number_of_retry_done,query_time,objName,status_to_set,user,priority,mail_report_list,cmd))
 
         else:##if the query was accepted from the radio/serial node
