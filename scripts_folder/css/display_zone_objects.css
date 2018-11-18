@@ -68,12 +68,13 @@
 }
 
 .analog_bar_container {
-  position:absolute;
-  top:100px;
-  box-sizing: border-box;
-  background-color: #ddd;
-  width: 100%;
-  height:100px;
+	margin-top:10px;
+	position:absolute;
+	top:100px;
+	box-sizing: border-box;
+	background-color: #ddd;
+	width: 100%;
+	height:100px;
 }
 
 .analog_bar {  top:100px; background-color: #2196F3;  text-align: right;  padding: 10px;  color: white;	}

@@ -170,9 +170,9 @@ volatile int obj_status_to_set_from_decoded_msg = 0;
 
 
 //////////////////////////////////Start of Standard part to run decodeOnosCmd()//////////////////////////////////
-const uint8_t rx_msg_lenght = 61;
-const uint8_t decoded_radio_answer_lenght = 32;
-const uint8_t syncMessage_lenght = 28;
+const uint8_t rx_msg_lenght=61;
+const uint8_t decoded_radio_answer_lenght=rx_msg_lenght+6;
+const uint8_t syncMessage_lenght=28;
 
 
 int onos_cmd_start_position=-99;  
@@ -181,11 +181,11 @@ char received_message_type_of_onos_cmd[3];
 uint8_t received_message_first_pin_used;
 uint8_t received_message_second_pin_used;
 int received_message_value;
-char decoded_uart_answer[24]="er00_#]";
+char decoded_uart_answer[decoded_radio_answer_lenght]="er00_#]";
 char decoded_radio_answer[decoded_radio_answer_lenght]="er00_#]";
 int received_message_address=0; //must be int..
-char filtered_uart_message[rx_msg_lenght+3];
-char filtered_radio_message[rx_msg_lenght+3];
+char filtered_uart_message[rx_msg_lenght+6];
+char filtered_radio_message[rx_msg_lenght+6];
 char syncMessage[syncMessage_lenght];
 char str_this_node_address[3];
 uint8_t main_obj_selected=0;
