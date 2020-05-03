@@ -147,8 +147,8 @@ class WebObject(object):   # inherit from object python class
       self.general_analog_output_group=["analog_output","servo_output","numeric_var","analog_obj_out"]
       self.general_out_group=self.general_digital_output_group+self.general_analog_output_group+["string_var"] #all output
       self.simply_digital_input_group=["d_sensor","digital_input"]     #make alias
-      self.general_input_group=self.simply_digital_input_group+["analog_obj_in","digital_obj_in"]
-      self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var","cfg_obj","analog_obj_input","analog_obj_out"]#objtype with num values
+      self.general_input_group=self.simply_digital_input_group+["analog_obj_in","digital_obj_in","numeric_var_display"]
+      self.analog_value_general_group=["analog_output","analog_input","servo_output","numeric_var","cfg_obj","analog_obj_input","analog_obj_out","numeric_var_display","incremental_numeric_var"]#objtype with num values
 
       self.isActive=1 #tell onos if the web_object is connected or not
       self.enable_logging=0 #enable the logging of this webobject status
@@ -176,7 +176,8 @@ class WebObject(object):   # inherit from object python class
         #if (self.status==status):
         #  print "the status to set in web_object.py is equal to the previus one so i did nothing"
         #  return(1) 
-
+          
+        
         if (status=="inactive")or(status=="onoswait"):
           if (self.status!="inactive")&(self.status!="onoswait"):   #if the status is not alredy inactive or is not in onoswait
             self.previous_status=self.status 
@@ -198,8 +199,11 @@ class WebObject(object):   # inherit from object python class
                 
         if (self.status!="inactive")&(self.status!="onoswait"):   # to never write onoswait or inactive in self.previous_status
           self.previous_status=self.status 
-
-        self.status=status
+        
+        if self.__object_type == "incremental_numeric_var":
+          self.status = self.status + status
+        else: #for any other object type
+          self.status=status
         return(1)
 
 
@@ -312,29 +316,32 @@ class WebObject(object):   # inherit from object python class
    
     
     
-    def getHtml(self):             
-		if (self.__object_type == "analog_obj_in"):
-			self.__object_value_range=(0,50) #todo get this from globalvar object dict
-			          #(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-			percentage=(self.status - self.__object_value_range[0]) * (100 - 0) / (self.__object_value_range[1] - self.__object_value_range[0]) + 0
-			self.__object_unit_value="voltage"  #todo get this from globalvar object dict
-			self.htmlDict[u"0"]='''
-			    <div class="analog_bar_container ">  <br>
-		            <div class="analog_bar" style="width: '''+str(percentage)+'''% ;" >'''+str(self.status)+''' '''+self.__object_unit_value+'''  </div>
-			    </div> '''
-			
-	        return(self.htmlDict[u"0"])
-	        
-	    
-	        
-		if (self.status==0)|(self.status=="0"):  #return the opposite  html  respect the actual  of the web object
-		    return(self.htmlDict[u"0"])
-		if (self.status=="onoswait"):
-		    return(self.htmlDict[u"onoswait"]) 
-		if (self.status==1)|(self.status=="1"):  #return the opposite  html  respect the actual  of the web object
-		    return(self.htmlDict[u"1"])   
-		return (self.object_name+u"="+str(self.status)) #for other type
-		
+    def getHtml(self):
+                
+        if (self.__object_type == "analog_obj_in"):
+            self.__object_value_range=(0,50) #todo get this from globalvar object dict
+                      #(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+            percentage=(self.status - self.__object_value_range[0]) * (100 - 0) / (self.__object_value_range[1] - self.__object_value_range[0]) + 0
+            self.__object_unit_value="voltage"  #todo get this from globalvar object dict
+            self.htmlDict[u"0"]='''
+                <div class="analog_bar_container ">  <br>
+                      <div class="analog_bar" style="width: '''+str(percentage)+'''% ;" >'''+str(self.status)+''' '''+self.__object_unit_value+'''  </div>
+                </div> '''
+            return(self.htmlDict[u"0"])
+          
+        elif (self.__object_type in self.general_input_group):
+            return (self.object_name+u"="+str(self.status)) #for other type
+   
+       
+        elif (self.status==0)|(self.status=="0"):  #return the opposite  html  respect the actual  of the web object
+            return(self.htmlDict[u"0"])
+        elif (self.status=="onoswait"):
+            return(self.htmlDict[u"onoswait"]) 
+        elif (self.status==1)|(self.status=="1"):  #return the opposite  html  respect the actual  of the web object
+            return(self.htmlDict[u"1"])   
+        else:
+            return (self.object_name+u"="+str(self.status)) #for other type
+      
           
     #def getOtherHtml(self):             #return the opposite  html  respect the actual  of the web object ,obsolete
     #    if (self.status==1)|(self.status=="1"):
@@ -686,11 +693,3 @@ class WebObject(object):   # inherit from object python class
     def getObjectDictionary(self):
       tmp_dict={u"objname":self.object_name,u"type":self.__object_type,u"status":self.status,u"styleDict":self.styleDict,u"htmlDict":self.htmlDict,u"cmdDict":self.cmdDict,u"notes":self.note,u"node_sn":self.HwNodeSerialNumber,u"pins":self.attachedPins,u"scenarios":self.attachedScenarios,u"priority":self.required_priority,u"perm":self.permissions,u"own":self.owner,u"grp":self.group,u"mail_l":self.mail_report_list,u"enable_logging":self.enable_logging}
       return(tmp_dict)
-    
-
-         
-
-
-
-
-

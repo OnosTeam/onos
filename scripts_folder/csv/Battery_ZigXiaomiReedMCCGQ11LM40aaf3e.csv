@@ -1,0 +1,9 @@
+statusToSet,timestamp,day/month/year,hours:minutes:seconds,hours,day_of_week,user
+100,1588525826,3/5/2020,19:10:26,19,6,onos_node
+100,1588526044,3/5/2020,19:14:4,19,6,onos_node
+100,1588526164,3/5/2020,19:16:4,19,6,onos_node
+100,1588526251,3/5/2020,19:17:31,19,6,onos_node
++++onos_system_started0+++,1588528032,3/5/2020,19:47:12,19,6,+++onos_system_started0+++
+100,1588528043,3/5/2020,19:47:23,19,6,onos_node
++++onos_system_started0+++,1588528304,3/5/2020,19:51:44,19,6,+++onos_system_started0+++
+100,1588528309,3/5/2020,19:51:49,19,6,onos_node

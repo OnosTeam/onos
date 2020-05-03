@@ -1290,7 +1290,7 @@ hardwareModelDict["RouterGL"]={"hwName":"RouterGL","max_pin":5,"hardware_type":"
 
 52) Need a stucture for mqtt to controll all onos using it... Not implemented
     OnosCenter will subscribe to all the mqtt topics..
-    Onos will use the following topics by default  using QoS 0 (because the check will be done using another topic) :
+    Onos will use the following topics by default  using QoS 0 (because the check will be done using another topic) for hw nodes and  QoS 2 for webobjects :
 
     To set a value to a webobject OnosCenter will send the value to:
       myonos/web_objects/<objectName>/status    using QoS 2

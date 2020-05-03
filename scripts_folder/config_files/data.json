@@ -7,21 +7,33 @@
         "nodeObjectsDict": {}, 
         "node_serial_number": "RouterOP0000"
       }, 
-      "WreedSaa0008": {
-        "hwModelName": "WreedSaa", 
-        "nodeAddress": "038", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "WreedSaa0008"
+      "ZigXiaomiReed40aaf3e": {
+        "hwModelName": "ZigXiaomiReed", 
+        "nodeAddress": "999", 
+        "nodeObjectsDict": {
+          "0": "Reed_state_ZigXiaomiReed40aaf3e", 
+          "1": "Battery_ZigXiaomiReed40aaf3e", 
+          "2": "Voltage_ZigXiaomiReed40aaf3e", 
+          "3": "Linkquality_ZigXiaomiReed40aaf3e"
+        }, 
+        "node_serial_number": "ZigXiaomiReed40aaf3e"
       }, 
-      "Wrelay4x0001": {
-        "hwModelName": "Wrelay4x", 
-        "nodeAddress": "027", 
-        "nodeObjectsDict": {}, 
-        "node_serial_number": "Wrelay4x0001"
+      "ZigXiaomiWeat444618a": {
+        "hwModelName": "ZigXiaomiReed", 
+        "nodeAddress": "999", 
+        "nodeObjectsDict": {
+          "0": "Temperature_ZigXiaomiWeat444618a", 
+          "1": "Humidity_ZigXiaomiWeat444618a", 
+          "2": "Pressure_ZigXiaomiWeat444618a", 
+          "3": "Battery_ZigXiaomiWeat444618a", 
+          "4": "Voltage_ZigXiaomiWeat444618a", 
+          "5": "Linkquality_ZigXiaomiWeat444618a"
+        }, 
+        "node_serial_number": "ZigXiaomiWeat444618a"
       }
     }, 
     "objectDictionary": {
-      "battery_state_WreedSaa0008": {
+      "Battery_ZigXiaomiReed40aaf3e": {
         "cmdDict": {
           "0": "", 
           "1": "", 
@@ -33,29 +45,29 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "battery_state_WreedSaa0008=0", 
-          "1": "battery_state_WreedSaa0008=1", 
-          "onoswait": "battery_state_WreedSaa0008WAIT"
+          "0": "Battery_ZigXiaomiReed40aaf3e=0", 
+          "1": "Battery_ZigXiaomiReed40aaf3e=1", 
+          "onoswait": "Battery_ZigXiaomiReed40aaf3eWAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
+        "node_sn": "ZigXiaomiReed40aaf3e", 
         "notes": " ", 
-        "objname": "battery_state_WreedSaa0008", 
+        "objname": "Battery_ZigXiaomiReed40aaf3e", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": "100", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "analog_obj_in"
+        "type": "numeric_var_display"
       }, 
-      "caldaia_Wrelay4x0001": {
+      "Battery_ZigXiaomiWeat444618a": {
         "cmdDict": {
           "0": "", 
           "1": "", 
@@ -67,27 +79,299 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "caldaia_Wrelay4x0001=0", 
-          "1": "caldaia_Wrelay4x0001=1", 
-          "onoswait": "caldaia_Wrelay4x0001WAIT"
+          "0": "Battery_ZigXiaomiWeat444618a=0", 
+          "1": "Battery_ZigXiaomiWeat444618a=1", 
+          "onoswait": "Battery_ZigXiaomiWeat444618aWAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "Wrelay4x0001", 
+        "node_sn": "ZigXiaomiWeat444618a", 
         "notes": " ", 
-        "objname": "caldaia_Wrelay4x0001", 
+        "objname": "Battery_ZigXiaomiWeat444618a", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "inactive", 
+        "status": "80", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj_out"
+        "type": "numeric_var_display"
+      }, 
+      "Humidity_ZigXiaomiWeat444618a": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Humidity_ZigXiaomiWeat444618a=0", 
+          "1": "Humidity_ZigXiaomiWeat444618a=1", 
+          "onoswait": "Humidity_ZigXiaomiWeat444618aWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiWeat444618a", 
+        "notes": " ", 
+        "objname": "Humidity_ZigXiaomiWeat444618a", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "94.88", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Linkquality_ZigXiaomiReed40aaf3e": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Linkquality_ZigXiaomiReed40aaf3e=0", 
+          "1": "Linkquality_ZigXiaomiReed40aaf3e=1", 
+          "onoswait": "Linkquality_ZigXiaomiReed40aaf3eWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiReed40aaf3e", 
+        "notes": " ", 
+        "objname": "Linkquality_ZigXiaomiReed40aaf3e", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "13", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Linkquality_ZigXiaomiWeat444618a": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Linkquality_ZigXiaomiWeat444618a=0", 
+          "1": "Linkquality_ZigXiaomiWeat444618a=1", 
+          "onoswait": "Linkquality_ZigXiaomiWeat444618aWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiWeat444618a", 
+        "notes": " ", 
+        "objname": "Linkquality_ZigXiaomiWeat444618a", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "68", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Pressure_ZigXiaomiWeat444618a": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Pressure_ZigXiaomiWeat444618a=0", 
+          "1": "Pressure_ZigXiaomiWeat444618a=1", 
+          "onoswait": "Pressure_ZigXiaomiWeat444618aWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiWeat444618a", 
+        "notes": " ", 
+        "objname": "Pressure_ZigXiaomiWeat444618a", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "1007.6", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Reed_state_ZigXiaomiReed40aaf3e": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Reed_state_ZigXiaomiReed40aaf3e=0", 
+          "1": "Reed_state_ZigXiaomiReed40aaf3e=1", 
+          "onoswait": "Reed_state_ZigXiaomiReed40aaf3eWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiReed40aaf3e", 
+        "notes": " ", 
+        "objname": "Reed_state_ZigXiaomiReed40aaf3e", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "1", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "digital_obj_in"
+      }, 
+      "Temperature_ZigXiaomiWeat444618a": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Temperature_ZigXiaomiWeat444618a=0", 
+          "1": "Temperature_ZigXiaomiWeat444618a=1", 
+          "onoswait": "Temperature_ZigXiaomiWeat444618aWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiWeat444618a", 
+        "notes": " ", 
+        "objname": "Temperature_ZigXiaomiWeat444618a", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "21.4", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Voltage_ZigXiaomiReed40aaf3e": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Voltage_ZigXiaomiReed40aaf3e=0", 
+          "1": "Voltage_ZigXiaomiReed40aaf3e=1", 
+          "onoswait": "Voltage_ZigXiaomiReed40aaf3eWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiReed40aaf3e", 
+        "notes": " ", 
+        "objname": "Voltage_ZigXiaomiReed40aaf3e", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "3025", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Voltage_ZigXiaomiWeat444618a": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Voltage_ZigXiaomiWeat444618a=0", 
+          "1": "Voltage_ZigXiaomiWeat444618a=1", 
+          "onoswait": "Voltage_ZigXiaomiWeat444618aWAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "ZigXiaomiWeat444618a", 
+        "notes": " ", 
+        "objname": "Voltage_ZigXiaomiWeat444618a", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "2965", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
       }, 
       "day": {
         "cmdDict": {
@@ -101,7 +385,7 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "<div class=\"analog_bar_container\"> <div class=\"analog_bar\" style=\"width: 0%\" >29 </div></div> ", 
+          "0": "day=0", 
           "1": "day=1", 
           "onoswait": "dayWAIT"
         }, 
@@ -116,14 +400,14 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 29, 
+        "status": 3, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "analog_obj_in"
+        "type": "b"
       }, 
       "dayTime": {
         "cmdDict": {
@@ -152,7 +436,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1431, 
+        "status": 1284, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -160,40 +444,6 @@
           "onoswait": "background-color:grey ;color black"
         }, 
         "type": "b"
-      }, 
-      "digOut_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "digOut_WreedSaa0008=0", 
-          "1": "digOut_WreedSaa0008=1", 
-          "onoswait": "digOut_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "digOut_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
       }, 
       "hours": {
         "cmdDict": {
@@ -221,11 +471,8 @@
           9999
         ], 
         "priority": 0, 
-        "scenarios": [
-          "caldaia_on_mattino", 
-          "caldaia_off_notte"
-        ], 
-        "status": 23, 
+        "scenarios": [], 
+        "status": 21, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -234,7 +481,7 @@
         }, 
         "type": "b"
       }, 
-      "led_WreedSaa0008": {
+      "linkquality_ZigXiaomiReed40aaf3e": {
         "cmdDict": {
           "0": "", 
           "1": "", 
@@ -246,14 +493,14 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "led_WreedSaa0008=0", 
-          "1": "led_WreedSaa0008=1", 
-          "onoswait": "led_WreedSaa0008WAIT"
+          "0": "linkquality_ZigXiaomiReed40aaf3e=0", 
+          "1": "linkquality_ZigXiaomiReed40aaf3e=1", 
+          "onoswait": "linkquality_ZigXiaomiReed40aaf3eWAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
+        "node_sn": "ZigXiaomiReed40aaf3e", 
         "notes": " ", 
-        "objname": "led_WreedSaa0008", 
+        "objname": "linkquality_ZigXiaomiReed40aaf3e", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
@@ -266,75 +513,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "digital_obj_out"
-      }, 
-      "led_Wrelay4x0001": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "led_Wrelay4x0001=0", 
-          "1": "led_Wrelay4x0001=1", 
-          "onoswait": "led_Wrelay4x0001WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0001", 
-        "notes": " ", 
-        "objname": "led_Wrelay4x0001", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
-      }, 
-      "luminosity_sensor_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "luminosity_sensor_WreedSaa0008=0", 
-          "1": "luminosity_sensor_WreedSaa0008=1", 
-          "onoswait": "luminosity_sensor_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "luminosity_sensor_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "analog_obj_in"
+        "type": "numeric_var_display"
       }, 
       "minutes": {
         "cmdDict": {
@@ -363,7 +542,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 51, 
+        "status": 24, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -399,7 +578,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 10, 
+        "status": 5, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -442,7 +621,7 @@
         }, 
         "type": "digital_obj_out"
       }, 
-      "reed1Logic_WreedSaa0008": {
+      "voltage_ZigXiaomiReed40aaf3e": {
         "cmdDict": {
           "0": "", 
           "1": "", 
@@ -454,14 +633,14 @@
           "onos_mail_guest"
         ], 
         "htmlDict": {
-          "0": "reed1Logic_WreedSaa0008=0", 
-          "1": "reed1Logic_WreedSaa0008=1", 
-          "onoswait": "reed1Logic_WreedSaa0008WAIT"
+          "0": "voltage_ZigXiaomiReed40aaf3e=0", 
+          "1": "voltage_ZigXiaomiReed40aaf3e=1", 
+          "onoswait": "voltage_ZigXiaomiReed40aaf3eWAIT"
         }, 
         "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
+        "node_sn": "ZigXiaomiReed40aaf3e", 
         "notes": " ", 
-        "objname": "reed1Logic_WreedSaa0008", 
+        "objname": "voltage_ZigXiaomiReed40aaf3e", 
         "own": "onos_admin", 
         "perm": "111111111", 
         "pins": [], 
@@ -474,313 +653,7 @@
           "default_s": "background-color:red ;color black", 
           "onoswait": "background-color:grey ;color black"
         }, 
-        "type": "cfg_obj"
-      }, 
-      "reed1_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "reed1_WreedSaa0008=0", 
-          "1": "reed1_WreedSaa0008=1", 
-          "onoswait": "reed1_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "reed1_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_in"
-      }, 
-      "reed2Logic_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "reed2Logic_WreedSaa0008=0", 
-          "1": "reed2Logic_WreedSaa0008=1", 
-          "onoswait": "reed2Logic_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "reed2Logic_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "cfg_obj"
-      }, 
-      "reed2_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "reed2_WreedSaa0008=0", 
-          "1": "reed2_WreedSaa0008=1", 
-          "onoswait": "reed2_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "reed2_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_in"
-      }, 
-      "relay2_Wrelay4x0001": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "relay2_Wrelay4x0001=0", 
-          "1": "relay2_Wrelay4x0001=1", 
-          "onoswait": "relay2_Wrelay4x0001WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0001", 
-        "notes": " ", 
-        "objname": "relay2_Wrelay4x0001", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
-      }, 
-      "relay_Wrelay4x0001": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "relay_Wrelay4x0001=0", 
-          "1": "relay_Wrelay4x0001=1", 
-          "onoswait": "relay_Wrelay4x0001WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0001", 
-        "notes": " ", 
-        "objname": "relay_Wrelay4x0001", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
-      }, 
-      "router_Wrelay4x0001": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "router_Wrelay4x0001=0", 
-          "1": "router_Wrelay4x0001=1", 
-          "onoswait": "router_Wrelay4x0001WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0001", 
-        "notes": " ", 
-        "objname": "router_Wrelay4x0001", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "digital_obj_out"
-      }, 
-      "syncTime_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "syncTime_WreedSaa0008=0", 
-          "1": "syncTime_WreedSaa0008=1", 
-          "onoswait": "syncTime_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "syncTime_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "cfg_obj"
-      }, 
-      "syncTime_Wrelay4x0001": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "syncTime_Wrelay4x0001=0", 
-          "1": "syncTime_Wrelay4x0001=1", 
-          "onoswait": "syncTime_Wrelay4x0001WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "Wrelay4x0001", 
-        "notes": " ", 
-        "objname": "syncTime_Wrelay4x0001", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "cfg_obj"
-      }, 
-      "tempSensor_WreedSaa0008": {
-        "cmdDict": {
-          "0": "", 
-          "1": "", 
-          "s_cmd": ""
-        }, 
-        "enable_logging": 0, 
-        "grp": [
-          "web_interface", 
-          "onos_mail_guest"
-        ], 
-        "htmlDict": {
-          "0": "tempSensor_WreedSaa0008=0", 
-          "1": "tempSensor_WreedSaa0008=1", 
-          "onoswait": "tempSensor_WreedSaa0008WAIT"
-        }, 
-        "mail_l": [], 
-        "node_sn": "WreedSaa0008", 
-        "notes": " ", 
-        "objname": "tempSensor_WreedSaa0008", 
-        "own": "onos_admin", 
-        "perm": "111111111", 
-        "pins": [], 
-        "priority": 0, 
-        "scenarios": [], 
-        "status": "inactive", 
-        "styleDict": {
-          "0": "background-color:#A9E2F3;", 
-          "1": "background-color:#8181F7;", 
-          "default_s": "background-color:red ;color black", 
-          "onoswait": "background-color:grey ;color black"
-        }, 
-        "type": "analog_obj_in"
+        "type": "numeric_var_display"
       }, 
       "year": {
         "cmdDict": {
@@ -809,7 +682,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 2018, 
+        "status": 2020, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -819,71 +692,45 @@
         "type": "b"
       }
     }, 
-    "scenarioDictionary": {
-      "caldaia_off_notte": {
-        "conditions": "(#_hours_#>0)&(#_hours_#<6)", 
-        "delayTime": 0, 
-        "enabled": 1, 
-        "functionsToRun": [
-          "#_caldaia_Wrelay4x0001_#=0"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }, 
-      "caldaia_on_mattino": {
-        "conditions": "(#_hours_#==7)&(#_select_an_element_#==#_select_an_element_#)", 
-        "delayTime": 0, 
-        "enabled": 1, 
-        "functionsToRun": [
-          "#_caldaia_Wrelay4x0001_#=1"
-        ], 
-        "priority": 0, 
-        "type_after_run": "0"
-      }
-    }, 
+    "scenarioDictionary": {}, 
     "zoneDictionary": {
       "RouterOP0000": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "day", 
           "onosCenterWifi"
         ], 
         "order": 0, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
-      "WreedSaa0008": {
+      "ZigXiaomiReed40aaf3e": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "tempSensor_WreedSaa0008", 
-          "battery_state_WreedSaa0008", 
-          "luminosity_sensor_WreedSaa0008", 
-          "reed1_WreedSaa0008", 
-          "reed2_WreedSaa0008", 
-          "digOut_WreedSaa0008", 
-          "led_WreedSaa0008", 
-          "reed2Logic_WreedSaa0008", 
-          "syncTime_WreedSaa0008", 
-          "reed1Logic_WreedSaa0008"
+          "Battery_ZigXiaomiReed40aaf3e", 
+          "Reed_state_ZigXiaomiReed40aaf3e", 
+          "linkquality_ZigXiaomiReed40aaf3e", 
+          "voltage_ZigXiaomiReed40aaf3e", 
+          "Voltage_ZigXiaomiReed40aaf3e", 
+          "Linkquality_ZigXiaomiReed40aaf3e"
         ], 
-        "order": 2, 
+        "order": 1, 
         "owner": "onos_sys", 
         "permissions": "777"
       }, 
-      "Wrelay4x0001": {
+      "ZigXiaomiWeat444618a": {
         "group": [], 
         "hidden": 0, 
         "objects": [
-          "caldaia_Wrelay4x0001", 
-          "router_Wrelay4x0001", 
-          "led_Wrelay4x0001", 
-          "relay2_Wrelay4x0001", 
-          "relay_Wrelay4x0001", 
-          "syncTime_Wrelay4x0001"
+          "Battery_ZigXiaomiWeat444618a", 
+          "Humidity_ZigXiaomiWeat444618a", 
+          "Linkquality_ZigXiaomiWeat444618a", 
+          "Pressure_ZigXiaomiWeat444618a", 
+          "Temperature_ZigXiaomiWeat444618a", 
+          "Voltage_ZigXiaomiWeat444618a"
         ], 
-        "order": 1, 
+        "order": 2, 
         "owner": "onos_sys", 
         "permissions": "777"
       }

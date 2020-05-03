@@ -15,7 +15,7 @@
 
 .col1{left:0%;}
 
-.col2{left:35%;}
+.col2{left:25%;}
 
 .col3{left:85%;}
 
@@ -41,7 +41,7 @@
 	position:absolute;
 	top:0px;
 	height:100px;
-	width:55%;
+	width:75%;
 	line-height:100px;
 	font-size:20px;
 	color:black;
@@ -58,7 +58,8 @@
 .impostazioni-link{
 	position:absolute;
 	top:29px;
-	width:15%;
+	right:30px;
+	width:55%;
 	height:50px;
 	line-height:50px;
 	text-align:center;

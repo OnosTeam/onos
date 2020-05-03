@@ -1,0 +1,13 @@
+info  2020-04-27 17:10:47: Successfully interviewed '0x00158d000444618a', device has successfully been paired
+info  2020-04-27 17:10:47: Device '0x00158d000444618a' is supported, identified as: Xiaomi Aqara temperature, humidity and pressure sensor (WSDCGQ11LM)
+info  2020-04-27 17:10:47: MQTT publish: topic 'zigbee2mqtt/bridge/log', payload '{"type":"pairing","message":"interview_successful","meta":{"friendly_name":"0x00158d000444618a","model":"WSDCGQ11LM","vendor":"Xiaomi","description":"  temperature, humidity and pressure sensor","supported":true}}'
+
+
+
+
+il Aqara reed sensor aggiorna connessione ogni 50 minuti se non viene cambiato lo stato
+
+
+
+
+il sensore temperatura/umidita manda un aggiornamento solo una volta che cambia uno dei tre valori dei sensori

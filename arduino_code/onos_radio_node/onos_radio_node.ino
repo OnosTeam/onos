@@ -242,7 +242,21 @@ char numeric_serial[5]="0011";   // this is the progressive numeric serial numbe
   const int node_default_timeout = 180;  //seconds
   #undef ENABLE_RADIO_RESET_PIN
     #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
-  
+
+#elif defined(node_type_Wpcountx) // #Wpcountx is a node with: 2 current sensors 2 relay and a led
+  const uint8_t relay1 = 0;
+  const uint8_t relay2 = 1; 
+  const uint8_t led    = 2;
+  const uint8_t current_sensor1 = 3;
+  const uint8_t current_sensor2 = 4;
+  const uint8_t total_current1 = 5; // the house max current is 4,5kw/hours so the max values in minutes is 4500/60=75
+  const uint8_t total_current2 = 6;
+  const uint8_t syncTimeout = 7;
+  const uint8_t number_of_total_objects = 8;
+  const int node_default_timeout = 180;  //seconds
+  #undef ENABLE_RADIO_RESET_PIN
+    #define ENABLE_RADIO_RESET_PIN 1  //  enable the use of the radio reset pin to reset the radio module
+
 #elif defined(node_type_WLightSS)
   const int node_default_timeout = 360;
   #undef ENABLE_RADIO_RESET_PIN
@@ -843,8 +857,7 @@ void composeSyncMessage()
       syncMessage[tmp_len + 4] = '\0'; 
       
     }
-  #elif defined(node_type_Wrelay1x)
-    
+  #elif defined(node_type_Wrelay1x) || defined(node_type_Wpcountx)
     if (this_node_address==254){
       strcat(syncMessage, "g");
       strcat(syncMessage, node_fw);
@@ -1602,16 +1615,31 @@ void setup()
     strcpy(serial_number,"Wrelay1x");
     strcat(serial_number,numeric_serial);
     // OBJECTS PIN DEFINITION___________________________________________________________________
-    node_obj_pinout[relay1]=5;  // the forth  object is the relay  connected on pin 5
-    node_obj_pinout[led]=4;     // the fifth  object is the led     connected on pin 4
-    node_obj_pinout[button]=3;  // the sixth  object is the button  connected on pin 3 
+    node_obj_pinout[relay1]=5;  // the first  object is the relay  connected on pin 5
+    node_obj_pinout[led]=4;     // the second  object is the led     connected on pin 4
+    node_obj_pinout[button]=3;  // the third  object is the button  connected on pin 3 
     // END OBJECTS PIN DEFINITION_______________________________________________________________
     pinMode(node_obj_pinout[relay1], OUTPUT);
     pinMode(node_obj_pinout[led], OUTPUT);
     pinMode(node_obj_pinout[button], INPUT);
         
     digitalWrite(node_obj_pinout[button], HIGH); //enable pull up resistors
-
+    
+  #elif defined(node_type_Wpcountx)
+    memset(serial_number,0,sizeof(serial_number)); //to clear the array
+    strcpy(serial_number,"Wpcountx");
+    strcat(serial_number,numeric_serial);
+    // OBJECTS PIN DEFINITION___________________________________________________________________
+    node_obj_pinout[relay1]=7;  // the first  object is the relay 1 connected on pin 7 
+    node_obj_pinout[relay2]=5;  // the second object is the relay 2 connected on pin 5  
+    node_obj_pinout[led]=4;  // the third  object is the led connected on pin 4 
+    node_obj_pinout[relay4]=5;  // the forth  object is the relay 4 connected on pin 3
+    node_obj_pinout[current_sensor1]=0;  // the 5th  object is the current_sensor1 connected on pin a0
+    node_obj_pinout[current_sensor2]=1;  // the 6th  object is the current_sensor2 connected on pin a1
+    // END OBJECTS PIN DEFINITION_______________________________________________________________
+    pinMode(node_obj_pinout[relay1], OUTPUT);
+    pinMode(node_obj_pinout[relay2], OUTPUT);
+    pinMode(node_obj_pinout[led], OUTPUT);
 
   #elif defined(node_type_WLightSS)
     memset(serial_number,0,sizeof(serial_number)); //to clear the array
@@ -1831,7 +1859,7 @@ void setup()
   changeObjStatus(0,0);
   
   Blink(node_obj_pinout[led],100,3); 
-  digitalWrite(node_obj_pinout[led], 1); // 1 to to turn ledd off
+  digitalWrite(node_obj_pinout[led], 1); // 1 to to turn led off
   
   
   //enabling interrupt must be the LAST THING YOU DO IN THE SETUP!!!!
@@ -1839,7 +1867,7 @@ void setup()
     attachInterrupt(1, interrupt1_handler, CHANGE); //set interrupt on the hardware interrupt 1
     Serial.println(F("WreedSaa interrupt en"));
   #elif defined(node_type_WPlug1vx)
-    digitalWrite(node_obj_pinout[led], 0); // 1 to to turn ledd off
+    digitalWrite(node_obj_pinout[led], 0); // 1 to to turn led off
     attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
     Serial.println(F("WPlug1vx interrupt en"));
   #elif defined(node_type_Wrelay4x)
@@ -1849,7 +1877,9 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(node_obj_pinout[button]), buttonStateChanged, FALLING);
     Serial.println(F("Wrelay1x interrupt en"));    
   #elif defined(node_type_MarsRover)
-    digitalWrite(node_obj_pinout[led], 0); // 0 to to turn ledd off
+    digitalWrite(node_obj_pinout[led], 0); // 0 to to turn led off
+  #elif defined(node_type_Wpcountx)
+    digitalWrite(node_obj_pinout[led], 0); // 0 to to turn led off
 
 
   #endif 
@@ -1958,5 +1988,3 @@ void Blink(byte PIN, byte DELAY_MS, byte loops)
     delay(DELAY_MS);
   }
 }
-
-

@@ -1,8 +1,9 @@
 {
   "conf_options_dictionary": {
     "accept_only_from_white_list": 0, 
-    "enable_mail_output_service": 1, 
+    "enable_mail_output_service": 0, 
     "enable_mail_service": 0, 
+    "enable_mqtt": 1, 
     "enable_onos_auto_update": "yes", 
     "logTimeout": 15, 
     "login_required": 0, 
@@ -12,7 +13,7 @@
       "Sonoff1P0001": "onosBestHome9999", 
       "Sonoff1P0002": "onosBestHome9999"
     }, 
-    "online_server_enable": 1, 
+    "online_server_enable": 0, 
     "online_usersDict": {
       "RouterGA0000": {
         "mail_control_password": "1234", 

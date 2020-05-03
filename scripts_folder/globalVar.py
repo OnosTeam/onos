@@ -178,8 +178,10 @@ mail_retry_timeout=120  # seconds between retry after error in sending mail
 last_internet_check=0  # the last time the internet connection was checked
 enable_onos_auto_update="yes" # possible value: "yes","no","ask_me"  # banana ask_me not implemented yet
 scenarios_enable=1  # tell onos if it have to check the scenarios or not. warning overwritten by scenarios_enable in cfg.json
-online_server_enable=1  # enable the remote online server to controll onos from internet without opening the router ports
+online_server_enable=0  # enable the remote online server to controll onos from internet without opening the router ports
 # will be overwritten by /scripts_folder/config_files/cf.json
+enable_mqtt = 0 #tell onos to enable mqtt or not, warning overwritten by scenarios_enable in cfg.json
+
 
 last_server_sync_time=0
 onlineServerSyncThreadIsrunning=0 #tell onos if the thread is running
@@ -658,7 +660,7 @@ onos_mail_conf={"mail_account":"onos.beta@gmail.com","pw":"gmailbeta1234","smtp_
 
 
 
-conf_options={u"online_server_enable":online_server_enable, u"enable_mail_output_service":enable_mail_output_service, u"enable_mail_service":enable_mail_service, u"accept_only_from_white_list":accept_only_from_white_list, u"mail_whiteList":mail_whiteList, u"timezone":timezone, u"login_required":login_required, u"logTimeout":logTimeout, "node_password_dict":node_password_dict, "online_usersDict":online_usersDict, "enable_onos_auto_update":enable_onos_auto_update, "scenarios_enable":scenarios_enable}
+conf_options={u"online_server_enable":online_server_enable, u"enable_mail_output_service":enable_mail_output_service, u"enable_mail_service":enable_mail_service, u"accept_only_from_white_list":accept_only_from_white_list, u"mail_whiteList":mail_whiteList, u"timezone":timezone, u"login_required":login_required, u"logTimeout":logTimeout, "node_password_dict":node_password_dict, "online_usersDict":online_usersDict, "enable_onos_auto_update":enable_onos_auto_update, "scenarios_enable":scenarios_enable, "enable_mqtt":enable_mqtt}
 
 #localhost/setup/node_manager/RouterGL0001
 
@@ -756,41 +758,35 @@ hardwareModelDict["WreedSaa"]["parameters"]={}
 hardwareModelDict["WreedSaa"]["parameters"]["battery_node"]=1
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]["object_numbers"]=[0]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed1"]["object_numbers"]=[0]
 
 # object 1 is hardware button but I don't have to show it on html
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[2]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[2] 
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["led"]["query"]="d#_objnumber_##_valuelen:1_#"
-
 
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["tempSensor"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["tempSensor"]["object_numbers"]=[3]   #
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["tempSensor"]["object_numbers"]=[3]
 
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["luminosity_sensor"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["luminosity_sensor"]["object_numbers"]=[10] 
 
 hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]["object_numbers"]=[9]   #
-
+hardwareModelDict["WreedSaa"]["object_list"]["analog_obj_in"]["battery_state"]["object_numbers"]=[9] 
 # "analog_input" don't need the query part because is only a input and not an output..
 
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["object_numbers"]=[4]   #
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["object_numbers"]=[4]
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_out"]["digOut"]["query"]="d#_objnumber_##_valuelen:1_#"
 
-
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]["object_numbers"]=[5]   #
-
+hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]["reed2"]["object_numbers"]=[5]
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]={}
-
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]={}
-hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[6]   #
-
+hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[6]  
 
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]={}
 hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed1Logic"]["object_numbers"]=[7] 
@@ -813,7 +809,6 @@ hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["query_expected_answer"][1]="""RESULT = {"POWER":"ON"}"""
 hardwareModelDict["Sonoff1P"]["object_list"]["cfg_obj"]={}
 hardwareModelDict["Sonoff1P"]["parameters"]["password"]="onosBestHome9999"
-
 #hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
 
 
@@ -836,6 +831,177 @@ hardwareModelDict["Sonoff1P"]["parameters"]["password"]="onosBestHome9999"
 
 # if the type of "pin_mode" is digital_obj then the structure must be :{"plug":[(0)],"plug2":[(1)]}   with a custom name for each object,  if you have to do more than one object of the same type write progressive names..like: {"plug01":[(0)],"plug02":[(1)]}
 # in the digital_obj case the number zero here [(0)] indicates the number of the object in the arduino node software make sure to don't repeat numbers there.
+
+
+
+#Wpcountx is a node with: 2 current sensors 2 relay and a led
+hardwareModelDict["Wpcountx"]={"hwName":"Wpcountx", "max_pin":13, "hardware_type":"arduino_promini", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay0"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay0"]["object_numbers"]=[0]
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay0"]["query"]="d#_objnumber_##_valuelen:1_#"
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay1"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay1"]["object_numbers"]=[1]
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay1"]["query"]="d#_objnumber_##_valuelen:1_#"
+#hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay"]["mqtt_topic"]="Wrelay4x/relay#_objnumber_##_valuelen:1_#/status"
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["led"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["led"]["object_numbers"]=[2]
+hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["led"]["query"]="d#_objnumber_##_valuelen:1_#"
+
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours0_live"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours0_live"]["object_numbers"]=[3]
+
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours1_live"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours1_live"]["object_numbers"]=[4]
+
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]["Whours0_total"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]["Whours0_total"]["object_numbers"]=[5]
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]["Whours0_total"]["query"]="d#_objnumber_##_valuelen:1_#"
+
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]["Whours1_total"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]["Whours1_total"]["object_numbers"]=[6]
+hardwareModelDict["Wpcountx"]["object_list"]["incremental_numeric_var"]["Whours1_total"]["query"]="d#_objnumber_##_valuelen:1_#"
+
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours_live_diff"]={} #the difference between the 2 live values
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours_live_diff"]["object_numbers"]=[7]
+
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours_total_diff"]={} #the difference between the 2 total values
+hardwareModelDict["Wpcountx"]["object_list"]["numeric_var"]["Whours_total_diff"]["object_numbers"]=[8]
+
+hardwareModelDict["Wpcountx"]["object_list"]["cfg_obj"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["cfg_obj"]["syncTime"]={}
+hardwareModelDict["Wpcountx"]["object_list"]["cfg_obj"]["syncTime"]["object_numbers"]=[9]
+hardwareModelDict["Wpcountx"]["object_list"]["cfg_obj"]["syncTime"]["query"]="C#_objnumber_##_valuelen:3_#"
+
+
+
+
+hardwareModelDict["ZigXiaomiReed"]={"hwName":"ZigXiaomiReed", "max_pin":4, "hardware_type":"xiaomi_zigbee_mqtt_reed_ZigXiaomiReed_MCCGQ11LM", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
+#topic example: zigbee2mqtt/0x00158d00040aaf3e {"battery":100,"voltage":3075,"contact":false,"linkquality":28}
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]={} # Objectname
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["object_type"]="digital_obj_in" # Type of object
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["object_position"]=0 #this is the first object in the hardware
+#hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" #this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["json_payload"]="contact"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["values_options_dict"]={"False":{"value":"0","text":"Open"},"True":{"value":"1","text":"Close"}} #if the topic has value false, the onos_object will have value 0 and text Open...
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["suffix"]="" # text part to add on the right of the value
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["bash_cmd"]={}
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["bash_cmd"]["0"]=""
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["bash_cmd"]["1"]=""
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["bash_cmd"]["s_cmd"]=""
+
+
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]={} # Objectname
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["object_type"]="numeric_var_display"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["object_position"]=1 #this is the position of object in the hardware
+#hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["json_payload"]="battery"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Battery"]["suffix"]=" %" # text part to add on the right of the value
+
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]={} # Objectname
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["object_type"]="numeric_var_display"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["object_position"]=2 # this is the position of object in the hardware
+#hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" # this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["json_payload"]="voltage"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Voltage"]["suffix"]=" V" # text part to add on the right of the value
+
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]={} # Objectname
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["object_type"]="numeric_var_display"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["object_position"]=3 # this is the position of object in the hardware
+#hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" # this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["json_payload"]="linkquality"
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["suffix"]=" %" # text part to add on the right of the value
+
+
+
+
+
+
+
+
+
+
+hardwareModelDict["ZigXiaomiWeat"]={"hwName":"ZigXiaomiReed", "max_pin":4, "hardware_type":"xiaomi_zigbee_mqtt_temperature_humidity_pressure_sensor_WSDCGQ11LM", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
+#zigbee2mqtt/0x00158d000444618a {"battery":100,"voltage":3015,"temperature":22.08,"humidity":69.49,"pressure":998,"linkquality":70}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]={} # Objectname
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["object_type"]="numeric_var_display" # Type of object
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["object_position"]=0 #this is the first object in the hardware
+#hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" #this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["json_payload"]="temperature"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["suffix"]="" # text part to add on the right of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["bash_cmd"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["bash_cmd"]["0"]=""
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["bash_cmd"]["1"]=""
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["bash_cmd"]["s_cmd"]=""
+
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]={} # Objectname
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["object_type"]="numeric_var_display" # Type of object
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["object_position"]=1 #this is the first object in the hardware
+#hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" #this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["json_payload"]="humidity"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Humidity"]["suffix"]="" # text part to add on the right of the value
+
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]={} # Objectname
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["object_type"]="numeric_var_display" # Type of object
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["object_position"]=2 #this is the first object in the hardware
+#hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" #this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["json_payload"]="pressure"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Pressure"]["suffix"]="" # text part to add on the right of the value
+
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]={} # Objectname
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["object_type"]="numeric_var_display"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["object_position"]=3 #this is the position of object in the hardware
+#hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["json_payload"]="battery"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Battery"]["suffix"]=" %" # text part to add on the right of the value
+
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]={} # Objectname
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["object_type"]="numeric_var_display"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["object_position"]=4 # this is the position of object in the hardware
+#hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" # this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["json_payload"]="voltage"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Voltage"]["suffix"]=" V" # text part to add on the right of the value
+
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]={} # Objectname
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["object_type"]="numeric_var_display"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["object_position"]=5 # this is the position of object in the hardware
+#hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["mqtt_topic"]="zigbee2mqtt/0x00serial_number" # this is the base mqtt topic,serial_number will be replaced with the hw serialnumber
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["json_payload"]="linkquality"
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["values_options_dict"]={}
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["suffix"]=" %" # text part to add on the right of the value
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 hardwareModelDict["RouterRB"]={"hwName":"RouterRB", "max_pin":15, "hardware_type":"rasberry_b_rev2_only", "pin_mode":{}, "parameters":{}, "timeout":180}
@@ -1112,4 +1278,3 @@ def get_ip_address():
   # s.connect(("8.8.8.8", 80))
   # return s.getsockname()[0]
   return((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
-

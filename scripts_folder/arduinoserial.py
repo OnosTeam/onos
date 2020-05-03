@@ -268,7 +268,26 @@ class SerialPort:
                                     priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
                                     continue
     
-    
+                            if node_type == "Wpcountx":    # if the node is a reed node
+                                logprint("reeds status received:"+reeds_status) 
+                                relay0_status = cmd[18]
+                                relay1_status = cmd[19]
+                                current_sensor1 = ord(cmd[21])-1             #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                                current_sensor2 = ord(cmd[22])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                                total_watt_minutes1 = ord(cmd[23])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary..
+                                total_watt_minutes2 = ord(cmd[24])-1 #-1 is because on the micro side i added 1 to the value to avoid the 0 binary
+                                total_watt_hours1 = total_watt_minutes1 * 60
+                                total_watt_hours2 = total_watt_minutes2 * 60
+
+                                live_watt_difference = current_sensor1 - current_sensor2
+                                total_watt_difference = total_watt_minutes1 - total_watt_minutes2
+                                objects_to_update_dict = {0:relay0_status,1:relay1_status,3:current_sensor1,4:current_sensor2,5:total_watt_hours1,6:total_watt_hours2,7:live_watt_difference,8:total_watt_difference }
+                                #obj_address_to_update=0
+                                priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+                                if node_address == "254":    #the node is looking for a free address
+                                    priorityCmdQueue.put( {"cmd":"NewAddressToNodeRequired","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw}) 
+                                    continue
+                                    
                             elif node_type == "Wrelay4x":
                                 #    [S_01uWrelay4x00010011x_#]
 
@@ -416,5 +435,3 @@ class SerialPort:
  #         os.close(self.ser)         
     #    except:
      #     print "tried to close serial port"
-
-

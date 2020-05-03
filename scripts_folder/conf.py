@@ -181,6 +181,7 @@ def importConfig():
   global enable_onos_auto_update
   global conf_options
   global node_password_dict
+  global enable_mqtt
 
   dictionaries=readDictionaryFromSavedFile(u"dictionaries")
 
@@ -261,9 +262,3 @@ def importConfig():
 importConfig()
 
 logprint("OnosCenter Started!!!",verbose=10)
-
-
-
-
-
-

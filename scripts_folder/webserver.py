@@ -1149,7 +1149,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
             logprint("I will not set the status because the change is from a node")
             return(-1)
 
-    
+
       objectDict[objName].setStatus(statusToSet)#set the web object status 
 
 
@@ -1985,6 +1985,62 @@ def createNewNodeFolder(node_sn):
 
 
 
+def createNewMqttWebObjFromNode(hwType,node_sn):
+    """
+    | Given an hardware type and a Mqtt node serial number it will create a new zone and the webobjects in that zone .
+    |
+    |
+    """
+    logprint("createNewMqttWebObjFromNode executed with node_sn:"+node_sn+"and hwType:"+hwType)
+
+    logprint(hardwareModelDict.keys())
+    
+    if hwType not in hardwareModelDict.keys():  #if the type exist in the hardwareModelDict
+        logprint("Error no hardware of " + hwType + " type in hardwareModelDict",verbose=10)
+        return()
+
+    if "object_list" not in  hardwareModelDict[hwType]:
+        logprint("Error no object_list in this hwType hardwareModelDict",verbose=10)
+        return()
+
+    logprint("I will create a new "+hwType+" node ")
+
+
+
+    try:
+        for obj in list(hardwareModelDict[hwType]["object_list"].keys()):
+            object_address_in_the_node = int(hardwareModelDict[hwType]["object_list"][obj]["object_position"])
+            objType = hardwareModelDict[hwType]["object_list"][obj]["object_type"]
+            new_obj_name = obj + "_" + node_sn 
+            logprint ("new object name="+new_obj_name)
+
+            if node_sn not in list(zoneDict):
+                zoneDict[node_sn] = {"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+                createNewNodeFolder(node_sn)
+
+            nodeDict[node_sn].setNodeObjectAddress(object_address_in_the_node,new_obj_name)#set the new object address in the
+              
+            if new_obj_name not in (zoneDict[node_sn]["objects"]):
+                zoneDict[node_sn]["objects"].append(new_obj_name)   #add the object name to the zone
+            else:
+                logprint("warning000 the object " + new_obj_name + " already exist in the zoneDict ") 
+    
+            if new_obj_name not in objectDict.keys():  #if the object does not exist yet, create it: 
+                logprint("added new webobj from node")        
+                objectDict[new_obj_name]=newNodeWebObj(new_obj_name,objType,node_sn)
+                
+                #if "bash_cmd" in list(hardwareModelDict[hwType]["object_list"][obj]).keys():
+                #    objectDict[new_obj_name].setCommandDict(hardwareModelDict[hwType]["object_list"][obj]["bash_cmd"])
+            else:
+                logprint("warning001  the object " + new_obj_name + " already exist in the objectDict") 
+
+
+    except Exception as e:
+        message="Error createNewMqttWebObjFromNode in the object part loop"
+        logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+        
+        
+        
 
 def createNewWebObjFromNode(hwType0,node_sn):
   """
@@ -1994,6 +2050,11 @@ def createNewWebObjFromNode(hwType0,node_sn):
   """
 
   #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
+  if "ZigXiaomi" in hwType0:
+    logprint("I pass from  createNewWebObjFromNode to createNewMqttWebObjFromNode")
+    createNewMqttWebObjFromNode(hwType0,node_sn)
+    return()
+  
   logprint("createNewWebObjFromNode executed with node_sn:"+node_sn+"and hwType0:"+hwType0)
   global zoneDict
   global objectDict
@@ -2142,82 +2203,90 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 
 
-
-
+def getHwType(node_sn):
+    if "ZigXiaomi" in node_sn : #for mqtt zigbee reed nodes
+        hwType=node_sn[0:-7]
+    else:  
+        hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
+        
+    return(hwType)
 
 
 def createNewNode(node_sn,node_address,node_fw):
-  logprint("0createNewNode() executed with :"+node_sn)
-  global uart_router_sn
-  global node_password_dict
-  global conf_options
-  msg=""
-  if node_address=="001":  #uart_node
-    uart_router_sn=node_sn
+    logprint("0createNewNode() executed with :"+node_sn)
+    global uart_router_sn
+    global node_password_dict
+    global conf_options
+    msg=""
+    if node_address=="001":  #uart_node
+        uart_router_sn=node_sn
+    
 
-  hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
+    hwType=getHwType(node_sn)
+    
+    #createNewWebObjFromNode(hwType,node_sn)
+    
+    if node_sn in list(nodeDict): #&(force_recreate==0):
+      logprint("found node in the dict")
+    
+      #nodeDict[node_sn].setNodeAddress(node_address)
+      #if len(nodeDict[node_sn].getnodeObjectsDict())==0 :
+      #  print("I force a node update")
+      #  createNewNode(node_sn,node_address,node_fw,1) 
+        # if the node doesn't have any object it means there is a problem so will force an update
+    
+      updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)
+    
+    
+      msg=nodeDict[node_sn].getSetupMsg() 
+    else: #create a new node
+      logprint("requested setup for a node not existing yet ")                 
+    
+       #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
+    
+      if hwType in hardwareModelDict.keys():  #if the hardware is in the list 
+        logprint("added node_hw from query :"+hwType)
+    
+    
+        #if((len(node_sn)>0)&((node_sn)!=" ")): 
+        hardware_node_model=hardwareModelDict[hwType]  
+        nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
+        createNewWebObjFromNode(hwType,node_sn)
+        
 
-  #createNewWebObjFromNode(hwType,node_sn)
-
-  if node_sn in list(nodeDict): #&(force_recreate==0):
-    logprint("found node in the dict")
-
-    #nodeDict[node_sn].setNodeAddress(node_address)
-    #if len(nodeDict[node_sn].getnodeObjectsDict())==0 :
-    #  print("I force a node update")
-    #  createNewNode(node_sn,node_address,node_fw,1) 
-      # if the node doesn't have any object it means there is a problem so will force an update
-
-    updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)
-
-
-    msg=nodeDict[node_sn].getSetupMsg() 
-  else: #create a new node
-    logprint("requested setup for a node not existing yet ")                 
-
-     #cut the last 4 char which are the numeric sn, in order to get only the type of hardware
-
-    if hwType in hardwareModelDict.keys():  #if the hardware is in the list 
-      logprint("added node_hw from query :"+hwType)
-
-
-      #if((len(node_sn)>0)&((node_sn)!=" ")): 
-      hardware_node_model=hardwareModelDict[hwType]  
-      nodeDict[node_sn]=hw_node.HwNode(node_sn,hardware_node_model,node_address,node_fw) 
-      createNewWebObjFromNode(hwType,node_sn)
-
-      if node_sn not in node_password_dict:
- 
-        if ("password" in hardwareModelDict[hwType]["parameters"] ):  # to use the standard node password..
-          node_password=hardwareModelDict[hwType]["parameters"]["password"]         
-          node_password_dict[node_sn]=node_password
-          conf_options["node_password_dict"]=node_password_dict  # todo delete the password when the node is deleted..
-          updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
-
-
-        #nodeDict[node_sn].updateLastNodeSync(time.time())
+    
+        if node_sn not in node_password_dict:
+    
+          if ("password" in hardwareModelDict[hwType]["parameters"] ):  # to use the standard node password..
+            node_password=hardwareModelDict[hwType]["parameters"]["password"]         
+            node_password_dict[node_sn]=node_password
+            conf_options["node_password_dict"]=node_password_dict  # todo delete the password when the node is deleted..
+            updateJson(objectDict,nodeDict,zoneDict,scenarioDict,conf_options) 
+    
+    
+          #nodeDict[node_sn].updateLastNodeSync(time.time())
+      else:
+        logprint("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict ",verbose=10)
+        return(-1)
+        
+    
+          #if the room doesn't exist yet ...then:
+    if node_sn in list(zoneDict):
+      logprint("the node:"+node_sn+" already exist in the zoneDict") 
     else:
-      logprint("error creating new node the hardware:"+hwType+" is not listed on the hardwareModelDict ",verbose=10)
-      return(-1)
-      
-
-        #if the room doesn't exist yet ...then:
-  if node_sn in list(zoneDict):
-    logprint("the node:"+node_sn+" already exist in the zoneDict") 
-  else:
-    # if (node_sn+"_body" in objectDict.keys()):
-    #   print "the node body already exist in the web_object_dict" 
-    # else:
-    #   objectDict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
-    #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
-    zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
-    createNewNodeFolder(node_sn)
-    createNewWebObjFromNode(hwType,node_sn)
-    updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)  
-    msg=nodeDict[node_sn].getSetupMsg() 
-
-
-  return(msg)
+      # if (node_sn+"_body" in objectDict.keys()):
+      #   print "the node body already exist in the web_object_dict" 
+      # else:
+      #   objectDict[node_sn+"_body"]=newDefaultWebObjBody(node_sn+"_body")
+      #zoneDict[node_sn]=[node_sn+"_body"]  # modify to update also the webobject dict and list 
+      createNewWebObjFromNode(hwType,node_sn)
+      zoneDict[node_sn]={"objects":[],"order":len(zoneDict.keys()),"permissions":"777","group":[],"owner":"onos_sys","hidden":0}
+      createNewNodeFolder(node_sn)
+      updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw)  
+      msg=nodeDict[node_sn].getSetupMsg() 
+    
+    
+    return(msg)
 
 
 
@@ -2307,7 +2376,77 @@ def getUserFromIp(ipUserAddress):
 
 
 
+def mqtt_on_connect_method(client, userdata, rc):
+    """
+    | Method that handles mqtt first time connection
+    |
+    """
+    logprint("Connected with result code "+str(rc))
+    #Subscribing in on_connect() means that if we lose the connection and
+    #reconnect then subscriptions will be renewed.
+    client.subscribe("$SYS/#")
 
+# The callback for when a PUBLISH message is received from the server.
+def mqtt_on_message_method(client, userdata, msg):
+    """
+    | Method that handles mqtt read messages
+    |
+    """
+    logprint("mqtt_topic:" + msg.topic + " " + str(msg.payload))
+    if "zigbee2mqtt/0x00" in msg.topic:
+        payload_string = str(msg.payload)
+        topic_string = str(msg.topic)
+        logprint ("msg from zigbee2mqtt,payload:" + str(msg.payload) + "from topic:" + msg.topic)
+        try:
+            if u"contact" in payload_string or u"pressure" in payload_string:
+                logprint("________________________mqtt  connected")
+                numeric_serial_number = topic_string.split("zigbee2mqtt/")[1].split("{")[0].strip() #get 40aaf3e from zigbee2mqtt/0x00158d00040aaf3e
+                #logprint("numeric_serial_number" + numeric_serial_number)
+                if u"contact" in payload_string:
+                    hwType = "ZigXiaomiReed"
+                if u"pressure" in payload_string:
+                    hwType = "ZigXiaomiWeat"
+                    
+                serial_number = hwType + numeric_serial_number[-7:]  #example  ZigXiaomiReed40aaf3e
+                logprint("serial_number: " + serial_number + "END" )
+                node_address = "999"
+                node_fw = "0"
+                objects_to_update_dict = {}
+                payload_dict = json.loads(payload_string)
+                logprint("payload_dict:" + str(payload_dict))
+                for obj in list(hardwareModelDict[hwType]["object_list"].keys()):
+                    selected_obj = hardwareModelDict[hwType]["object_list"][obj]
+                    object_address_in_the_node = int(selected_obj["object_position"])
+                    print("object_address_in_the_node:" +str(object_address_in_the_node))
+                    print("obj:" + obj)
+    
+                    obj_key_value = selected_obj["json_payload"]
+                    obj_status = str(payload_dict[obj_key_value])  #payload_string.split(obj_key_value + ":")[1].split(",")[0] # get "3045" from :{"battery":100,"voltage":3045,"contact":true,"linkquality":0}
+                    print("obj_status:" + obj_status)
+
+                    if "values_options_dict" in list(selected_obj) and len(selected_obj["values_options_dict"])>0:
+                        obj_translate_dict = selected_obj["values_options_dict"]
+                        obj_status_translated = obj_translate_dict[obj_status]["value"]
+                    else: #no translation needed
+                        obj_status_translated = obj_status
+                    objects_to_update_dict[object_address_in_the_node] = obj_status_translated
+                
+                logprint("objects_to_update_dict:" + str(objects_to_update_dict) + "END")
+                priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+    
+            else:
+                logprint("Error no mqtt node with this payload in the hardwareModelDict ")
+        except Exception as e: 
+            message ="Error in mqtt_topic"
+            logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+  
+    
+#Example of association message for Xiaomi reed :
+#zigbee2mqtt/bridge/log {"type":"pairing","message":"interview_successful","meta":{"friendly_name":"0x00158d00040aaf3e","model":"MCCGQ11LM","vendor":"Xiaomi","description":"Aqara door & window contact sensor","supported":true}}
+
+#Example of update message:
+#zigbee2mqtt/0x00158d00040aaf3e {"battery":100,"voltage":3045,"contact":true,"linkquality":0}
+ 
 
 class MyHandler(BaseHTTPRequestHandler):
     #global objectDict  
@@ -6848,7 +6987,7 @@ def executeQueueFunction(dataExchanged):
       node_fw = nodeDict[node_serial_number].getNodeFwVersion()
       
     updateNodeAddress(node_serial_number,uart_router_sn,node_address,node_fw)
-    node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
+    #node_model_name=node_serial_number[0:-4]#get WPlugAvx from  WPlugAvx0008
     logprint(str(list(dataExchanged["objects_to_update"]))+"end data_exanged",verbose=3)
 
 
@@ -6861,7 +7000,8 @@ def executeQueueFunction(dataExchanged):
             objName=nodeDict[node_serial_number].getNodeObjectFromAddress(int(a),node_serial_number)
             objectDict[objName].getStatus()  #just to see if the object exist and otherwise to create it in the except...
           except Exception as e: #todo place this somewhere else..
-            hwType=node_serial_number[0:-4]  #get Plug6way  from Plug6way0001
+            
+            hwType=getHwType(node_serial_number) #get Plug6way  from Plug6way0001
             message="warning in the updateObjFromNode,the object:_"+str(objName)+"_ doesnt exist yet, I create the node"
             logprint(message,verbose=7,error_tuple=(e,sys.exc_info()))  
             msg=createNewNode(node_serial_number,node_address,node_fw)+"_#]" 
@@ -6875,7 +7015,7 @@ def executeQueueFunction(dataExchanged):
           priority=99  #this priority will always be able to change the object status but will not change the object required priority 
           mail_list_to_report_to=[]
           #example of objName: socket0_Plug6way0002
-          logprint("I call changeWebObjectStatus() to update the obj from node update")
+          logprint("I call changeWebObjectStatus() to update the obj from node update with status:" + str(status_to_set))
           if status_to_set!=objectDict[objName].getStatus():
             #print(str((objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to)))
             changeWebObjectStatus(objName,status_to_set,write_hw_enable,usr,priority,mail_list_to_report_to) 
@@ -7029,6 +7169,36 @@ def executeQueueFunction(dataExchanged):
   logprint("dataExchanged = : "+str(dataExchanged) )
 
   return()
+
+
+def mqttThread():  #run mqtt loop
+    """
+    |   Thread that handle the mqtt client
+    |
+    |
+    
+    """
+    import paho.mqtt.client as mqtt
+    #sudo pip3 install paho-mqtt
+    #or
+    #sudo pip install paho-mqtt  #for python2
+    mqtt_client = mqtt.Client()
+    mqtt_client.username_pw_set("mqtt-onos", password="onosmqtt1234")
+    mqtt_client.on_connect = mqtt_on_connect_method
+    mqtt_client.on_message = mqtt_on_message_method
+    mqtt_client.connect("192.168.1.110", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
+    topic="prova"
+    #mqtt_client.publish(topic, payload=None, qos=0, retain=False)
+    mqtt_client.subscribe("#", qos=0)  # subscrive to all topics except for topics that start with a $ (these are normally control topics anyway). 
+    mqtt_client.subscribe("spk-socket/channel-0", qos=0)
+    mqtt_client.on_message = mqtt_on_message_method
+    mqtt_client.loop_forever()
+
+
+  
+  
+   
+
 
 def onosBusThread():
 
@@ -7404,6 +7574,12 @@ def main():
         w1 = threading.Thread(target=hardwareHandlerThread)
         w1.daemon = True  #make the thread a daemon thread
         w1.start()
+        
+        if (conf_options["enable_mqtt"]==1):
+            mqtt_thread = threading.Thread(target=mqttThread)
+            mqtt_thread.daemon = True
+            mqtt_thread.start()
+        
         run_while_true()
 
     except KeyboardInterrupt:
@@ -7416,4 +7592,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
