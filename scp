@@ -9,6 +9,9 @@ scp -rC root@192.168.1.110:/bin/onos/* /tmp/ram/
 
 scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e Sonoff1P.ino.bin ) root@192.168.1.110:/tmp/onos/
 
+scp -r $(ls | grep -v -e docs -e arduino_code -e online_db  -e tests -e Sonoff1P.ino.bin ) root@192.168.1.110:/bin/onos/
+
+
 poi da ssh dare :
 mv /tmp/onos/ /bin/onos
 

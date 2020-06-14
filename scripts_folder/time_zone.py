@@ -40,7 +40,7 @@ try:
       router_hardware_type="RouterOP"
       os.system("mount -o remount,rw /")  #remount the  filesystem as rw
       os.system('echo "export TZ='+conf_options["timezone"]+'">> /etc/profile') ##export TZ="CET-1CEST,M3.5.0,M10.5.0/3"
-      os.system("mount -o remount,ro /")  #remount the  filesystem as ro
+      #os.system("mount -o remount,ro /")  #remount the  filesystem as ro
     else:
       os.system('echo "export TZ='+conf_options["timezone"]+'">> /etc/profile') ##export TZ="CET-1CEST,M3.5.0,M10.5.0/3"
     logprint(" onos set the timezone to:"+conf_options["timezone"])

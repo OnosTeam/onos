@@ -1,6 +1,25 @@
 {
   "dictionaries": {
     "nodeDictionary": {
+      "MqttPzWhMeter0000": {
+        "hwModelName": "MqttPzWhMeter", 
+        "nodeAddress": "999", 
+        "nodeObjectsDict": {
+          "1": "Power_Absorption_MqttPzWhMeter0000", 
+          "2": "Current_Absorption_MqttPzWhMeter0000", 
+          "3": "Energy_used_MqttPzWhMeter0000", 
+          "4": "Grid_Voltage_MqttPzWhMeter0000", 
+          "5": "Grid_Power_Factor_MqttPzWhMeter0000", 
+          "6": "Grid_Frequency_MqttPzWhMeter0000", 
+          "7": "Solar_Power_Prod_MqttPzWhMeter0000", 
+          "8": "Solar_Current_Prod_MqttPzWhMeter0000", 
+          "9": "Solar_Energy_Prod_MqttPzWhMeter0000", 
+          "10": "Solar_Voltage_MqttPzWhMeter0000", 
+          "11": "Solar_Power_Factor_MqttPzWhMeter0000", 
+          "12": "Solar_Frequency_MqttPzWhMeter0000"
+        }, 
+        "node_serial_number": "MqttPzWhMeter0000"
+      }, 
       "RouterOP0000": {
         "hwModelName": "RouterOP", 
         "nodeAddress": "0", 
@@ -10,25 +29,13 @@
       "ZigXiaomiReed40aaf3e": {
         "hwModelName": "ZigXiaomiReed", 
         "nodeAddress": "999", 
-        "nodeObjectsDict": {
-          "0": "Reed_state_ZigXiaomiReed40aaf3e", 
-          "1": "Battery_ZigXiaomiReed40aaf3e", 
-          "2": "Voltage_ZigXiaomiReed40aaf3e", 
-          "3": "Linkquality_ZigXiaomiReed40aaf3e"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "ZigXiaomiReed40aaf3e"
       }, 
       "ZigXiaomiWeat444618a": {
         "hwModelName": "ZigXiaomiReed", 
         "nodeAddress": "999", 
-        "nodeObjectsDict": {
-          "0": "Temperature_ZigXiaomiWeat444618a", 
-          "1": "Humidity_ZigXiaomiWeat444618a", 
-          "2": "Pressure_ZigXiaomiWeat444618a", 
-          "3": "Battery_ZigXiaomiWeat444618a", 
-          "4": "Voltage_ZigXiaomiWeat444618a", 
-          "5": "Linkquality_ZigXiaomiWeat444618a"
-        }, 
+        "nodeObjectsDict": {}, 
         "node_serial_number": "ZigXiaomiWeat444618a"
       }
     }, 
@@ -58,7 +65,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "100", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -92,7 +99,177 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "80", 
+        "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Current_Absorption_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Current_Absorption_MqttPzWhMeter0000=0", 
+          "1": "Current_Absorption_MqttPzWhMeter0000=1", 
+          "onoswait": "Current_Absorption_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Current_Absorption_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "13.3", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Energy_used_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Energy_used_MqttPzWhMeter0000=0", 
+          "1": "Energy_used_MqttPzWhMeter0000=1", 
+          "onoswait": "Energy_used_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Energy_used_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "15.5", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Grid_Frequency_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Grid_Frequency_MqttPzWhMeter0000=0", 
+          "1": "Grid_Frequency_MqttPzWhMeter0000=1", 
+          "onoswait": "Grid_Frequency_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Grid_Frequency_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "21.1", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Grid_Power_Factor_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Grid_Power_Factor_MqttPzWhMeter0000=0", 
+          "1": "Grid_Power_Factor_MqttPzWhMeter0000=1", 
+          "onoswait": "Grid_Power_Factor_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Grid_Power_Factor_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "19.9", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Grid_Voltage_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Grid_Voltage_MqttPzWhMeter0000=0", 
+          "1": "Grid_Voltage_MqttPzWhMeter0000=1", 
+          "onoswait": "Grid_Voltage_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Grid_Voltage_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "17.7", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -126,7 +303,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "94.88", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -160,7 +337,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "13", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -194,7 +371,41 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "68", 
+        "status": "inactive", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Power_Absorption_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Power_Absorption_MqttPzWhMeter0000=0", 
+          "1": "Power_Absorption_MqttPzWhMeter0000=1", 
+          "onoswait": "Power_Absorption_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Power_Absorption_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "11.1", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -228,7 +439,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "1007.6", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -262,7 +473,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "1", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -270,6 +481,210 @@
           "onoswait": "background-color:grey ;color black"
         }, 
         "type": "digital_obj_in"
+      }, 
+      "Solar_Current_Prod_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Solar_Current_Prod_MqttPzWhMeter0000=0", 
+          "1": "Solar_Current_Prod_MqttPzWhMeter0000=1", 
+          "onoswait": "Solar_Current_Prod_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Solar_Current_Prod_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "14.4", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Solar_Energy_Prod_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Solar_Energy_Prod_MqttPzWhMeter0000=0", 
+          "1": "Solar_Energy_Prod_MqttPzWhMeter0000=1", 
+          "onoswait": "Solar_Energy_Prod_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Solar_Energy_Prod_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "16.6", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Solar_Frequency_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Solar_Frequency_MqttPzWhMeter0000=0", 
+          "1": "Solar_Frequency_MqttPzWhMeter0000=1", 
+          "onoswait": "Solar_Frequency_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Solar_Frequency_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "22.2", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Solar_Power_Factor_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Solar_Power_Factor_MqttPzWhMeter0000=0", 
+          "1": "Solar_Power_Factor_MqttPzWhMeter0000=1", 
+          "onoswait": "Solar_Power_Factor_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Solar_Power_Factor_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "20.0", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Solar_Power_Prod_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Solar_Power_Prod_MqttPzWhMeter0000=0", 
+          "1": "Solar_Power_Prod_MqttPzWhMeter0000=1", 
+          "onoswait": "Solar_Power_Prod_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Solar_Power_Prod_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "12.2", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
+      }, 
+      "Solar_Voltage_MqttPzWhMeter0000": {
+        "cmdDict": {
+          "0": "", 
+          "1": "", 
+          "s_cmd": ""
+        }, 
+        "enable_logging": 0, 
+        "grp": [
+          "web_interface", 
+          "onos_mail_guest"
+        ], 
+        "htmlDict": {
+          "0": "Solar_Voltage_MqttPzWhMeter0000=0", 
+          "1": "Solar_Voltage_MqttPzWhMeter0000=1", 
+          "onoswait": "Solar_Voltage_MqttPzWhMeter0000WAIT"
+        }, 
+        "mail_l": [], 
+        "node_sn": "MqttPzWhMeter0000", 
+        "notes": " ", 
+        "objname": "Solar_Voltage_MqttPzWhMeter0000", 
+        "own": "onos_admin", 
+        "perm": "111111111", 
+        "pins": [], 
+        "priority": 0, 
+        "scenarios": [], 
+        "status": "18.8", 
+        "styleDict": {
+          "0": "background-color:#A9E2F3;", 
+          "1": "background-color:#8181F7;", 
+          "default_s": "background-color:red ;color black", 
+          "onoswait": "background-color:grey ;color black"
+        }, 
+        "type": "numeric_var_display"
       }, 
       "Temperature_ZigXiaomiWeat444618a": {
         "cmdDict": {
@@ -296,7 +711,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "21.4", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -330,7 +745,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "3025", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -364,7 +779,7 @@
         "pins": [], 
         "priority": 0, 
         "scenarios": [], 
-        "status": "2965", 
+        "status": "inactive", 
         "styleDict": {
           "0": "background-color:#A9E2F3;", 
           "1": "background-color:#8181F7;", 
@@ -400,7 +815,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 3, 
+        "status": 14, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -436,7 +851,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 1284, 
+        "status": 622, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -472,7 +887,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 21, 
+        "status": 10, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -542,7 +957,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 24, 
+        "status": 22, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -578,7 +993,7 @@
         ], 
         "priority": 0, 
         "scenarios": [], 
-        "status": 5, 
+        "status": 6, 
         "styleDict": {
           "0": "background-color:green;", 
           "1": "background-color:red;", 
@@ -694,6 +1109,27 @@
     }, 
     "scenarioDictionary": {}, 
     "zoneDictionary": {
+      "MqttPzWhMeter0000": {
+        "group": [], 
+        "hidden": 0, 
+        "objects": [
+          "Current_Absorption_MqttPzWhMeter0000", 
+          "Energy_used_MqttPzWhMeter0000", 
+          "Grid_Frequency_MqttPzWhMeter0000", 
+          "Grid_Power_Factor_MqttPzWhMeter0000", 
+          "Grid_Voltage_MqttPzWhMeter0000", 
+          "Power_Absorption_MqttPzWhMeter0000", 
+          "Solar_Current_Prod_MqttPzWhMeter0000", 
+          "Solar_Energy_Prod_MqttPzWhMeter0000", 
+          "Solar_Frequency_MqttPzWhMeter0000", 
+          "Solar_Power_Factor_MqttPzWhMeter0000", 
+          "Solar_Power_Prod_MqttPzWhMeter0000", 
+          "Solar_Voltage_MqttPzWhMeter0000"
+        ], 
+        "order": 3, 
+        "owner": "onos_sys", 
+        "permissions": "777"
+      }, 
       "RouterOP0000": {
         "group": [], 
         "hidden": 0, 

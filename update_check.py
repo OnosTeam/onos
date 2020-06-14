@@ -28,7 +28,7 @@ if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1)or(platform.find(
   enable_usb_serial_port=1
   base_cfg_path="/bin/onos/scripts_folder/"
   baseRoomPath="/bin/onos/scripts_folder/zones/"
-  subprocess.call('mount -o remount,rw /', shell=True,close_fds=True) #mount filesystem as rw
+  #subprocess.call('mount -o remount,rw /', shell=True,close_fds=True) #mount filesystem as rw
 
 else: #disable serial port
   base_path=""
@@ -391,7 +391,7 @@ if (md5_update_script_code==file_md5code)&(float(current_local_fw)<float(current
           msg="err0"
           s_mail="1"
           send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
-          if router_hardware_type=="RouterOP":
+          if 0: #router_hardware_type=="RouterOP":
               subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
           quit()
         else:
@@ -489,7 +489,7 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
           msg="err1"
           s_mail="1"
           send_to_php_log(router_sn,current_hw,current_local_fw,msg,s_mail,url_php)
-          if router_hardware_type=="RouterOP":
+          if 0: #router_hardware_type=="RouterOP":
               subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
           quit()
         else:
@@ -505,6 +505,5 @@ else:#the directory doesn't exist i check if the enable_onos_auto_update is yes
     logprint("config disable automatic update")  
 
 
-if router_hardware_type=="RouterOP":
+if 0: #router_hardware_type=="RouterOP":
   subprocess.call('mount -o remount,ro /', shell=True,close_fds=True) #mount filesystem as ro
-

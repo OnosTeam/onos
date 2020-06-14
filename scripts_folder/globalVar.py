@@ -665,7 +665,7 @@ conf_options={u"online_server_enable":online_server_enable, u"enable_mail_output
 #localhost/setup/node_manager/RouterGL0001
 
 
-hardwareModelDict["RouterOP"]={"hwName":"RouterOP", "max_pin":5, "hardware_type":"gl.inet_only", "pin_mode":{}, "parameters":{}, "timeout":"never"}
+hardwareModelDict["RouterOP"]={"hwName":"RouterOP", "max_pin":5, "hardware_type":"gl.inet_only","hw_communication_type":"rfm69", "pin_mode":{}, "parameters":{}, "timeout":"never"}
 hardwareModelDict["RouterOP"]["pin_mode"]["digital_input"]={}
 hardwareModelDict["RouterOP"]["parameters"]["bash_pin_enable"]=1
 hardwareModelDict["RouterOP"]["parameters"]["serial_port_enable"]=1  #not yet implemented
@@ -679,27 +679,27 @@ hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["bash_cmd"]["s_cmd"]="ifup wlan1"
 hardwareModelDict["RouterOP"]["object_list"]["digital_obj_out"]["onosCenterWifi"]["options"]=["no_write_to_hw"]
 
-hardwareModelDict["RouterPC"]={"hwName":"RouterPC", "max_pin":0, "hardware_type":"pc", "pin_mode":{}, "parameters":{}, "timeout":"never"}
+hardwareModelDict["RouterPC"]={"hwName":"RouterPC", "max_pin":0, "hardware_type":"pc","hw_communication_type":"rfm69", "pin_mode":{}, "parameters":{}, "timeout":"never"}
 hardwareModelDict["RouterPC"]["parameters"]["bash_pin_enable"]=1
 hardwareModelDict["RouterPC"]["parameters"]["serial_port_enable"]=1   #not yet implemented
 
-hardwareModelDict["ProminiS"]={"hwName":"ProminiS", "max_pin":13, "hardware_type":"arduino2009_serial", "pin_mode":{}, "timeout":360}
+hardwareModelDict["ProminiS"]={"hwName":"ProminiS", "max_pin":13, "hardware_type":"arduino2009_serial","hw_communication_type":"rfm69", "pin_mode":{}, "timeout":360}
 hardwareModelDict["ProminiS"]["pin_mode"]["sr_relay"]={"socket":[(20, 19)]}
 hardwareModelDict["ProminiS"]["pin_mode"]["digital_input"]={"d_sensor":[(21)]}
 hardwareModelDict["ProminiS"]["pin_mode"]["digital_output"]={"button":[(5), (6)]}
 
 
-hardwareModelDict["ProminiA"]={"hwName":"ProminiA", "max_pin":18, "hardware_type":"arduino_promini", "pin_mode":{}, "parameters":{}, "timeout":"never"}
+hardwareModelDict["ProminiA"]={"hwName":"ProminiA", "max_pin":18, "hardware_type":"arduino_promini","hw_communication_type":"rfm69", "pin_mode":{}, "parameters":{}, "timeout":"never"}
 hardwareModelDict["ProminiA"]["pin_mode"]["digital_input"]={"d_sensor":[(2), (3), (4)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["digital_output"]={"button":[(6), (7), (8)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["analog_input"]={"a_sensor":[(14), (15), (16), (17), (18), (19)]}
 hardwareModelDict["ProminiA"]["pin_mode"]["servo_output"]={"servo":[(5)]}
 #hardwareModelDict["ProminiA"]["pin_mode"]["analog_output"]={"a_out":[(9)]}
 
-hardwareModelDict["Plug6way"]={"hwName":"Plug6way", "max_pin":18, "hardware_type":"arduino_promini", "pin_mode":{}, "parameters":{}, "timeout":90}
+hardwareModelDict["Plug6way"]={"hwName":"Plug6way", "max_pin":18, "hardware_type":"arduino_promini","hw_communication_type":"rfm69", "pin_mode":{}, "parameters":{}, "timeout":90}
 hardwareModelDict["Plug6way"]["pin_mode"]["sr_relay"]={"socket":[(2, 3), (4, 5), (6, 7), (8, 9), (14, 15)], "wifi":[(16, 17)]}
 
-hardwareModelDict["WLightSS"]={"hwName":"WLightSS", "max_pin":13, "hardware_type":"arduino2009_serial", "pin_mode":{}, "parameters":{}, "timeout":360}
+hardwareModelDict["WLightSS"]={"hwName":"WLightSS", "max_pin":13, "hardware_type":"arduino2009_serial","hw_communication_type":"rfm69", "pin_mode":{}, "parameters":{}, "timeout":360}
 hardwareModelDict["WLightSS"]["pin_mode"]["sr_relay"]={"socket":[(7, 8)]}
 hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5), (6)]}
 
@@ -711,7 +711,7 @@ hardwareModelDict["WLightSS"]["pin_mode"]["digital_output"]={"button":[(5), (6)]
 #hardwareModelDict["WLightSA"]["query"]["digital_obj_out"]={"lamp":"wl#_objnumber_##_valuelen:1_#"}  #define the base query for this
 #hardwareModelDict["WLightSA"]["query"]["cfg_obj"]={"lux_threshold":"lt#_valuelen:3_#", "timeout_to_turn_off":"to#_valuelen:4_#" }  #define the base query for this
                    
-hardwareModelDict["WPlug1vx"]={"hwName":"WPlug1vx", "max_pin":13, "hardware_type":"arduino_promini", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
+hardwareModelDict["WPlug1vx"]={"hwName":"WPlug1vx", "max_pin":13, "hardware_type":"arduino_promini","hw_communication_type":"rfm69", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]={}
 hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["object_numbers"]=[0]   #
@@ -723,7 +723,7 @@ hardwareModelDict["WPlug1vx"]["object_list"]["digital_obj_out"]["presa"]["query"
 
 
 
-hardwareModelDict["Wrelay4x"]={"hwName":"Wrelay4x", "max_pin":13, "hardware_type":"arduino_promini", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
+hardwareModelDict["Wrelay4x"]={"hwName":"Wrelay4x", "max_pin":13, "hardware_type":"arduino_promini","hw_communication_type":"rfm69", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]={}
 hardwareModelDict["Wrelay4x"]["object_list"]["digital_obj_out"]["caldaia"]["object_numbers"]=[0]   #
@@ -753,7 +753,7 @@ hardwareModelDict["Wrelay4x"]["object_list"]["cfg_obj"]["syncTime"]["query"]="C#
  #define the base query for this node digital_obj..so onos will write for example: [S_01d001x_#] , valuelen:1  means that this part will be replaced with a single character('0' or '1' since is digital_obj)  , the starting [S_01  and the ending _#]  will be added in router_handler.py at the end of the message a '\n' will be added anyway , all this is handled in router_hadler.py composeChangeNodeOutputPinStatusQuery()
 
 
-hardwareModelDict["WreedSaa"]={"hwName":"WreedSaa", "max_pin":13, "hardware_type":"arduino_promini", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
+hardwareModelDict["WreedSaa"]={"hwName":"WreedSaa", "max_pin":13, "hardware_type":"arduino_promini","hw_communication_type":"rfm69", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
 hardwareModelDict["WreedSaa"]["parameters"]={}
 hardwareModelDict["WreedSaa"]["parameters"]["battery_node"]=1
 hardwareModelDict["WreedSaa"]["object_list"]["digital_obj_in"]={}
@@ -798,7 +798,7 @@ hardwareModelDict["WreedSaa"]["object_list"]["cfg_obj"]["reed2Logic"]["query"]="
 
 
 
-hardwareModelDict["Sonoff1P"]={"hwName":"Sonoff1P", "max_pin":13, "hardware_type":"sonoff_single_plug", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360} #  360 seconds of timeout
+hardwareModelDict["Sonoff1P"]={"hwName":"Sonoff1P", "max_pin":13, "hardware_type":"sonoff_single_plug","hw_communication_type":"wifi_tasmota", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360} #  360 seconds of timeout
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]={}
 hardwareModelDict["Sonoff1P"]["object_list"]["digital_obj_out"]["relay"]["object_numbers"]=[0] # see arduino code at :"define object numbers to use in the pin configuration"
@@ -835,7 +835,7 @@ hardwareModelDict["Sonoff1P"]["parameters"]["password"]="onosBestHome9999"
 
 
 #Wpcountx is a node with: 2 current sensors 2 relay and a led
-hardwareModelDict["Wpcountx"]={"hwName":"Wpcountx", "max_pin":13, "hardware_type":"arduino_promini", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
+hardwareModelDict["Wpcountx"]={"hwName":"Wpcountx", "max_pin":13, "hardware_type":"arduino_promini","hw_communication_type":"rfm69", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":360}
 hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]={}
 hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay0"]={}
 hardwareModelDict["Wpcountx"]["object_list"]["digital_obj_out"]["relay0"]["object_numbers"]=[0]
@@ -878,7 +878,7 @@ hardwareModelDict["Wpcountx"]["object_list"]["cfg_obj"]["syncTime"]["query"]="C#
 
 
 
-hardwareModelDict["ZigXiaomiReed"]={"hwName":"ZigXiaomiReed", "max_pin":4, "hardware_type":"xiaomi_zigbee_mqtt_reed_ZigXiaomiReed_MCCGQ11LM", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
+hardwareModelDict["ZigXiaomiReed"]={"hwName":"ZigXiaomiReed", "max_pin":4, "hardware_type":"xiaomi_zigbee_mqtt_reed_ZigXiaomiReed_MCCGQ11LM","hw_communication_type":"zigbee", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
 #topic example: zigbee2mqtt/0x00158d00040aaf3e {"battery":100,"voltage":3075,"contact":false,"linkquality":28}
 hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]={} # Objectname
 hardwareModelDict["ZigXiaomiReed"]["object_list"]["Reed_state"]["object_type"]="digital_obj_in" # Type of object
@@ -930,8 +930,8 @@ hardwareModelDict["ZigXiaomiReed"]["object_list"]["Linkquality"]["suffix"]=" %" 
 
 
 
-
-hardwareModelDict["ZigXiaomiWeat"]={"hwName":"ZigXiaomiReed", "max_pin":4, "hardware_type":"xiaomi_zigbee_mqtt_temperature_humidity_pressure_sensor_WSDCGQ11LM", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
+                   
+hardwareModelDict["ZigXiaomiWeat"]={"hwName":"ZigXiaomiReed", "max_pin":4, "hardware_type":"xiaomi_zigbee_mqtt_temperature_humidity_pressure_sensor_WSDCGQ11LM","hw_communication_type":"zigbee", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
 #zigbee2mqtt/0x00158d000444618a {"battery":100,"voltage":3015,"temperature":22.08,"humidity":69.49,"pressure":998,"linkquality":70}
 hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]={} # Objectname
 hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Temperature"]["object_type"]="numeric_var_display" # Type of object
@@ -995,13 +995,103 @@ hardwareModelDict["ZigXiaomiWeat"]["object_list"]["Linkquality"]["suffix"]=" %" 
 
 
 
+hardwareModelDict["MqttPzWhMeter"]={"hwName":"MqttPzWhMeter", "max_pin":4, "hardware_type":"Pzem0004T_v30_watt_meter","hw_communication_type":"mqtt", "pin_mode":{}, "object_list":{}, "parameters":{}, "query":{}, "timeout":3120}
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]["object_position"]=1 #this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]["json_payload"]="W1"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Power_Absorption"]["suffix"]=" W" # text part to add on the right of the value
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]["object_position"]=2 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]["json_payload"]="A1"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Current_Absorption"]["suffix"]=" A" # text part to add on the right of the value
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]["object_position"]=3 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]["json_payload"]="Wh1"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Energy_used"]["suffix"]=" Wh" # text part to add on the right of the value
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]["object_position"]=4 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]["json_payload"]="V1"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Voltage"]["suffix"]=" V" # text part to add on the right of the value
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]["object_position"]=5 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]["json_payload"]="Pf1"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Power_Factor"]["suffix"]=" " # text part to add on the right of the value
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]["object_position"]=6 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]["json_payload"]="Hz1"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Grid_Frequency"]["suffix"]=" Hz" # text part to add on the right of the value
 
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]["object_position"]=7 #this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]["json_payload"]="W2"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Prod"]["suffix"]=" W" # text part to add on the right of the value
+
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]["object_position"]=8 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]["json_payload"]="A2"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Current_Prod"]["suffix"]=" A" # text part to add on the right of the value
+
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]["object_position"]=9 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]["json_payload"]="Wh2"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Energy_Prod"]["suffix"]=" Wh" # text part to add on the right of the value
+
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]["object_position"]=10 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]["json_payload"]="V2"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Voltage"]["suffix"]=" V" # text part to add on the right of the value
+
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]["object_position"]=11 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]["json_payload"]="Pf2"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Power_Factor"]["suffix"]=" " # text part to add on the right of the value
+
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]={} # Objectname
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]["object_type"]="numeric_var_display"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]["object_position"]=12 # this is the position of object in the hardware
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]["json_payload"]="Hz2"
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]["values_options_dict"]={}
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]["prefix"]="" # text part to add on the left of the value
+hardwareModelDict["MqttPzWhMeter"]["object_list"]["Solar_Frequency"]["suffix"]=" Hz" # text part to add on the right of the value
 
 
 hardwareModelDict["RouterRB"]={"hwName":"RouterRB", "max_pin":15, "hardware_type":"rasberry_b_rev2_only", "pin_mode":{}, "parameters":{}, "timeout":180}
@@ -1251,7 +1341,7 @@ def make_fs_ready_to_write():
   |
 
   """
-  if router_hardware_type=="RouterOP":
+  if 0: # router_hardware_type=="RouterOP":
     subprocess.call('mount -o remount,rw /', shell=True, close_fds=True)
 
 
@@ -1262,7 +1352,7 @@ def make_fs_readonly():  # change the linux filesystem to readOnly ,if onos is r
   |
 
   """
-  if router_hardware_type=="RouterOP":
+  if 0: # router_hardware_type=="RouterOP":
     subprocess.call('mount -o remount,ro /', shell=True, close_fds=True)
 
 

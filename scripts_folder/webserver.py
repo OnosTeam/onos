@@ -325,7 +325,20 @@ def updateJson(object_dictionary,nodeDictionary,zoneDictionary,scenarioDictionar
 
 
 
-
+def getHwType(node_sn):
+    if "ZigXiaomi" in node_sn : #for mqtt zigbee reed nodes
+        hwType=node_sn[0:-7]
+    else:  
+        hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
+        
+    return(hwType)
+    
+def getHwCommType(hwType):
+    if hwType in hardwareModelDict:
+        return(hardwareModelDict[hwType]["hw_communication_type"])
+    else:
+        logprint("Error in getHwCommType, hwType:" + hwType + "not in hardwareModelDict")
+        return(-1)
 
 def checkNodeActivity(node_sn):    
     """
@@ -448,8 +461,9 @@ def updateNodeAddress(node_sn,uart_router_sn,node_address,node_fw):
                       node_address, time_passed_since_last_sync_string, still_same_address]            
         writeCsvFile(csv_file_name, init_row, row_to_write)  
 
-
-    if len(node_address)==3:  #if is a radio node
+    hwType = getHwType(node_sn)
+    commType = getHwCommType(hwType)
+    if (len(node_address)==3) and (commType == "rfm69"):  #if is a radio node
       logprint("the node to update is a radio node",verbose=3)
       numeric_address=int(node_address)
       if numeric_address not in node_used_addresses_list: 
@@ -1373,7 +1387,7 @@ def changeWebObjectStatus(objName,statusToSet,write_to_hardware,user="onos_sys",
 
     else:
       logprint("error in changeWebObjectStatus(),the out_type"+obj_type+" is not yet implemented",verbose=10) 
-
+      return(-1)
 
 
 
@@ -2050,10 +2064,13 @@ def createNewWebObjFromNode(hwType0,node_sn):
   """
 
   #progressive_number=node_sn          #   [-4:]   #get 0001 from Plug6way0001 ,now get the full serial Plug6way0001
-  if "ZigXiaomi" in hwType0:
+  if ("ZigXiaomi" in hwType0) or ("MqttPzWhMeter" in hwType0):
     logprint("I pass from  createNewWebObjFromNode to createNewMqttWebObjFromNode")
     createNewMqttWebObjFromNode(hwType0,node_sn)
     return()
+    
+    
+    
   
   logprint("createNewWebObjFromNode executed with node_sn:"+node_sn+"and hwType0:"+hwType0)
   global zoneDict
@@ -2203,13 +2220,7 @@ def createNewWebObjFromNode(hwType0,node_sn):
 
 
 
-def getHwType(node_sn):
-    if "ZigXiaomi" in node_sn : #for mqtt zigbee reed nodes
-        hwType=node_sn[0:-7]
-    else:  
-        hwType=node_sn[0:-4]  #get Plug6way  from Plug6way0001
-        
-    return(hwType)
+
 
 
 def createNewNode(node_sn,node_address,node_fw):
@@ -2392,7 +2403,52 @@ def mqtt_on_message_method(client, userdata, msg):
     | Method that handles mqtt read messages
     |
     """
-    logprint("mqtt_topic:" + msg.topic + " " + str(msg.payload))
+    logprint("mqtt_topic:" + msg.topic + " Payload:" + str(msg.payload))
+    
+    #MqttPzWhMeter0000, b'{"W2":11.10,"A2":12.20,"Wh2":   13.30,"V2":14.40,"Pf2":14.40,"Hz2":14.4,}'
+    if "MqttPzWhMeter" in msg.topic:
+        payload_string = str(msg.payload)
+        topic_string = str(msg.topic)
+        logprint ("msg from MqttPzWhMeter,payload:" + str(msg.payload) + "from topic:" + msg.topic)
+        try:
+            if u"A1" in payload_string or u"A2" in payload_string:
+                logprint("________________________mqtt  connected")
+                numeric_serial_number = topic_string.split("MqttPzWhMeter")[1].split(",")[0].strip() #get 0000 from "MqttPzWhMeter0000,"
+                #logprint("numeric_serial_number" + numeric_serial_number)
+                hwType = "MqttPzWhMeter"
+                serial_number = hwType + numeric_serial_number  #example  MqttPzWhMeter0000
+                logprint("serial_number: " + serial_number + "END" )
+                node_address = "999"
+                node_fw = "0"
+                objects_to_update_dict = {}
+                payload_dict = json.loads(payload_string)
+                logprint("payload_dict:" + str(payload_dict))
+                for obj in list(hardwareModelDict[hwType]["object_list"].keys()):
+                    selected_obj = hardwareModelDict[hwType]["object_list"][obj]
+                    object_address_in_the_node = int(selected_obj["object_position"])
+                    print("object_address_in_the_node:" +str(object_address_in_the_node))
+                    print("obj:" + obj)
+    
+                    obj_key_value = selected_obj["json_payload"]
+                    obj_status = str(payload_dict[obj_key_value])  #payload_string.split(obj_key_value + ":")[1].split(",")[0] # get "3045" from :{"battery":100,"voltage":3045,"contact":true,"linkquality":0}
+                    print("obj_status:" + obj_status)
+
+                    if "values_options_dict" in list(selected_obj) and len(selected_obj["values_options_dict"])>0:
+                        obj_translate_dict = selected_obj["values_options_dict"]
+                        obj_status_translated = obj_translate_dict[obj_status]["value"]
+                    else: #no translation needed
+                        obj_status_translated = obj_status
+                    objects_to_update_dict[object_address_in_the_node] = obj_status_translated
+                
+                logprint("objects_to_update_dict:" + str(objects_to_update_dict) + "END")
+                priorityCmdQueue.put( {"cmd":"updateObjFromNode","nodeSn":serial_number,"nodeAddress":node_address,"nodeFw":node_fw,"objects_to_update":objects_to_update_dict }) 
+    
+            else:
+                logprint("Error no mqtt node with this payload in the hardwareModelDict ")
+        except Exception as e: 
+            message ="Error in mqtt_topic"
+            logprint(message,verbose=10,error_tuple=(e,sys.exc_info()))
+    
     if "zigbee2mqtt/0x00" in msg.topic:
         payload_string = str(msg.payload)
         topic_string = str(msg.topic)
@@ -7576,6 +7632,12 @@ def main():
         w1.start()
         
         if (conf_options["enable_mqtt"]==1):
+            zigbee2mqtt_status = "dead" #subprocess.check_output('''systemctl status zigbee2mqtt''', shell=True,close_fds=True)  
+            if "dead" in zigbee2mqtt_status:
+                logprint(''' Error  zigbee2mqtt was dead, I resatarted it''')
+                subprocess.call('''systemctl restart zigbee2mqtt''', shell=True,close_fds=True)
+                
+            
             mqtt_thread = threading.Thread(target=mqttThread)
             mqtt_thread.daemon = True
             mqtt_thread.start()

@@ -8,3 +8,15 @@ statusToSet,timestamp,day/month/year,hours:minutes:seconds,hours,day_of_week,use
 +++onos_system_started0+++,1588535138,3/5/2020,21:45:38,21,6,+++onos_system_started0+++
 1007.6,1588535200,3/5/2020,21:46:40,21,6,onos_node
 1007.9,1588535200,3/5/2020,21:46:40,21,6,onos_node
++++onos_system_started0+++,1592121165,14/6/2020,9:52:45,9,6,+++onos_system_started0+++
++++onos_system_started0+++,1592121221,14/6/2020,9:53:41,9,6,+++onos_system_started0+++
++++onos_system_started0+++,1592121307,14/6/2020,9:55:7,9,6,+++onos_system_started0+++
++++onos_system_started0+++,1592121469,14/6/2020,9:57:49,9,6,+++onos_system_started0+++
++++onos_system_started0+++,1592121621,14/6/2020,10:0:21,10,6,+++onos_system_started0+++
++++onos_system_started0+++,1592121762,14/6/2020,10:2:42,10,6,+++onos_system_started0+++
++++onos_system_started0+++,1592121804,14/6/2020,10:3:24,10,6,+++onos_system_started0+++
++++onos_system_started0+++,1592122903,14/6/2020,10:21:43,10,6,+++onos_system_started0+++
+1000.5,1592123844,14/6/2020,10:37:24,10,6,onos_node
+1000.8,1592125469,14/6/2020,11:4:29,11,6,onos_node
+1001,1592126622,14/6/2020,11:23:42,11,6,onos_node
+1001.3,1592129030,14/6/2020,12:3:50,12,6,onos_node
