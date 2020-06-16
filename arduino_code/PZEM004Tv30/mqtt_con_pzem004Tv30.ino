@@ -30,7 +30,9 @@ PubSubClient mqttClient(mqttServer, 1883, callback, ethClient);
 
 
 
-PZEM004Tv30 pzem(9, 10);
+PZEM004Tv30 pzem1(9, 10);
+PZEM004Tv30 pzem2(6, 5);
+
 
 void setup() {
   Serial.begin(115200);
@@ -226,56 +228,120 @@ void loop() {
 
     
 
-    float power1 = pzem.power();
+    float power1 = pzem1.power();
     if( !isnan(power1) ){
-        Serial.print(F("Pwr: ")); Serial.print(power1); Serial.println(F("W"));
+        Serial.print(F("Pwr1: ")); Serial.print(power1); Serial.println(F("W"));
     } else {
         power1 = 999;
-        Serial.println("Er_PWR");
+        Serial.println("Er_PWR1");
+    }
+    
+    float power2 = pzem2.power();
+    if( !isnan(power1) ){
+        Serial.print(F("Pwr2: ")); Serial.print(power2); Serial.println(F("W"));
+    } else {
+        power2 = 999;
+        Serial.println("Er_PWR2");
     }
 
-    float energy1 = pzem.energy();
+    float energy1 = pzem1.energy();
     if( !isnan(energy1) ){
-        Serial.print(F("Energy: ")); Serial.print(energy1,3); Serial.println(F("kWh"));
+        Serial.print(F("Energy1: ")); Serial.print(energy1,3); Serial.println(F("kWh"));
     } else {
         energy1 = 999;
-        Serial.println(F("Er_en"));
-    }
-    
-    float voltage1 = pzem.voltage();
-    
-    if( !isnan(voltage1) ){
-        Serial.print(F("Voltage: ")); Serial.print(voltage1); Serial.println(F("V"));
-    } else {
-        voltage1 = 999;
-        Serial.println("Error_voltage");
-    }
-    
-    float current1 = pzem.current();
-    
-    if( !isnan(current1) ){
-        Serial.print(F("Current: ")); Serial.print(current1); Serial.println(F("A"));
-    } else {
-        current1 = 999;
-        Serial.println(F("Er_I"));
-    }
-    float frequency1 = pzem.frequency();
-    
-    if( !isnan(frequency1) ){
-        Serial.print(F("Freq: ")); Serial.print(frequency1, 1); Serial.println(F("Hz"));
-    } else {
-        frequency1 = 999;
-        Serial.println(F("Error_F"));
+        Serial.println(F("Er_en1"));
     }
 
-    float pf1 = pzem.pf();
+    float energy2 = pzem2.energy();
+    if( !isnan(energy2) ){
+        Serial.print(F("Energy2: ")); Serial.print(energy2,3); Serial.println(F("kWh"));
+    } else {
+        energy2 = 999;
+        Serial.println(F("Er_en2"));
+    }
+    
+    
+    
+    float voltage1 = pzem1.voltage();
+    
+    if( !isnan(voltage1) ){
+        Serial.print(F("Voltage1: ")); Serial.print(voltage1); Serial.println(F("V"));
+    } else {
+        voltage1 = 999;
+        Serial.println("Error_voltage1");
+    }
+    
+    float voltage2 = pzem2.voltage();
+    
+    if( !isnan(voltage2) ){
+        Serial.print(F("Voltage2: ")); Serial.print(voltage2); Serial.println(F("V"));
+    } else {
+        voltage2 = 999;
+        Serial.println("Error_voltage2");
+    }
+    
+    
+    
+    
+    float current1 = pzem1.current();
+    
+    if( !isnan(current1) ){
+        Serial.print(F("Current1: ")); Serial.print(current1); Serial.println(F("A"));
+    } else {
+        current1 = 999;
+        Serial.println(F("Er_I1"));
+    }
+    
+    float current2 = pzem2.current();
+    
+    if( !isnan(current2) ){
+        Serial.print(F("Current2: ")); Serial.print(current2); Serial.println(F("A"));
+    } else {
+        current2 = 999;
+        Serial.println(F("Er_I2"));
+    }
+    
+    
+    
+    float frequency1 = pzem1.frequency();
+    
+    if( !isnan(frequency1) ){
+        Serial.print(F("Freq1: ")); Serial.print(frequency1, 1); Serial.println(F("Hz"));
+    } else {
+        frequency1 = 999;
+        Serial.println(F("Error_F1"));
+    }
+
+    float frequency2 = pzem2.frequency();
+    
+    if( !isnan(frequency2) ){
+        Serial.print(F("Freq2: ")); Serial.print(frequency2, 1); Serial.println(F("Hz"));
+    } else {
+        frequency2 = 999;
+        Serial.println(F("Error_F2"));
+    }
+
+
+
+    float pf1 = pzem1.pf();
     
     if( !isnan(pf1) ){
-        Serial.print(F("PF: ")); Serial.println(pf1);
+        Serial.print(F("PF1: ")); Serial.println(pf1);
     } else {
         pf1 = 999;
-        Serial.println(F("Error_pwr_f"));
+        Serial.println(F("Error_pwr_f1"));
     }
+
+    float pf2 = pzem2.pf();
+    
+    if( !isnan(pf2) ){
+        Serial.print(F("PF2: ")); Serial.println(pf2);
+    } else {
+        pf2 = 999;
+        Serial.println(F("Error_pwr_f2"));
+    }
+
+
 
     Serial.println();
   // it's time to send new data?
@@ -286,9 +352,10 @@ void loop() {
 
   //sendData('2',11.1,12.2,13.3,14.4,15.5,16.6);
 
+  sendAllData(power1,power2,current1,current2,energy1,energy2,voltage1,voltage2,pf1,pf2,frequency1,frequency2);
 
   
-  sendAllData(power1,12.2,current1,14.4,energy1,16.6,voltage1,18.8,pf1,20.0,frequency1,22.2);
+ // sendAllData(power1,12.2,current1,14.4,energy1,16.6,voltage1,18.8,pf1,20.0,frequency1,22.2);
 
 
 

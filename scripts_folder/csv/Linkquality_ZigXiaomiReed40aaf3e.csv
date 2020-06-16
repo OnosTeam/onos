@@ -28,3 +28,4 @@ statusToSet,timestamp,day/month/year,hours:minutes:seconds,hours,day_of_week,use
 147,1592128634,14/6/2020,11:57:14,11,6,onos_node
 168,1592131645,14/6/2020,12:47:25,12,6,onos_node
 170,1592137671,14/6/2020,14:27:51,14,6,onos_node
++++onos_system_started0+++,1592138951,14/6/2020,14:49:11,14,6,+++onos_system_started0+++
