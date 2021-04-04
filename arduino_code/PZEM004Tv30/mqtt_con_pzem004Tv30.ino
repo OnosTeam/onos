@@ -33,9 +33,15 @@ PubSubClient mqttClient(mqttServer, 1883, callback, ethClient);
 PZEM004Tv30 pzem1(9, 10);
 PZEM004Tv30 pzem2(6, 5);
 
+uint8_t green_led = 7;
+uint8_t red_led = 8;
+
 
 void setup() {
   Serial.begin(115200);
+  pinMode(13, OUTPUT);
+  pinMode(green_led, OUTPUT);
+  pinMode(red_led, OUTPUT);
 
   // setup ethernet communication using DHCP
   if(Ethernet.begin(mac) == 0) {
@@ -351,6 +357,20 @@ void loop() {
   //sendData('1',11.1,12.2,13.3,14.4,15.5,16.6);
 
   //sendData('2',11.1,12.2,13.3,14.4,15.5,16.6);
+  
+  
+  if (power1>power2){ //power comsumption greater than generated power
+    digitalWrite(13, LOW);   // turn the LED on 
+    digitalWrite(red_led, HIGH);   // turn the LED on 
+    digitalWrite(green_led, LOW);
+
+  }
+  else{ //power comsumption lesser than generated power
+    digitalWrite(13, HIGH);  
+    digitalWrite(red_led, LOW);
+    digitalWrite(green_led, HIGH);
+
+  }
 
   sendAllData(power1,power2,current1,current2,energy1,energy2,voltage1,voltage2,pf1,pf2,frequency1,frequency2);
 

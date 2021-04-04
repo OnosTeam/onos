@@ -7318,7 +7318,11 @@ def onosBusThread():
     #time_objects_handler
       if (old_minutes!=datetime.datetime.today().minute):  #each minute check
         
-
+        if (conf_options["enable_mqtt"]==1):
+          zigbee2mqtt_status = subprocess.check_output('''systemctl status zigbee2mqtt''', shell=True,close_fds=True)  
+          if "dead" in zigbee2mqtt_status:
+            logprint(''' Error  zigbee2mqtt was dead, I resatarted it''')
+            subprocess.call('''systemctl restart zigbee2mqtt''', shell=True,close_fds=True)
 
 
         try:
