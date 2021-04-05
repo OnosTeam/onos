@@ -7273,7 +7273,7 @@ def onosBusThread():
   global internet_connection
   time.sleep(5)  #wait for webserver to startup 
   while (exit==0):   #if exit ==1  then close the webserver
-    time.sleep(0.002)    #wait until layerExchangeDataQueue has some element     
+    time.sleep(0.01)    #wait until layerExchangeDataQueue has some element     
     try:
       
       for l in range(0,10):
