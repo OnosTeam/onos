@@ -6722,6 +6722,7 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
   #print "diff last_server_sync_time",time.time()-last_server_sync_time
   #print "diff last_pin_read_time",time.time()-last_pin_read_time
   last_node_check=0
+  last_mqtt_sevice_check=0
   last_internet_check=0
   internetCheckThreshold=10  # how often do onos check for connection (expressed in seconds)
 
@@ -6739,8 +6740,19 @@ def hardwareHandlerThread():  #check the nodes status and update the webobjects 
       internet_connection=internetCheckConnection()
  
 
+    if ( (time.time()-last_mqtt_sevice_check) > 120 ):   #EVERY 120 SECONDS   todo: make this function..
+      #logprint("mqtt service check")
+      if (conf_options["enable_mqtt"]==1):
+        zigbee2mqtt_status = commands.getstatusoutput('''systemctl status zigbee2mqtt''')
+        mosquitto_status = commands.getstatusoutput('''systemctl status mosquitto''')
+        #logprint("mqtt service mosquitto_status:" + str(mosquitto_status))
+        
+        if ("dead" in str(zigbee2mqtt_status)) or ("dead" in str(mosquitto_status)):
+          logprint(''' Error  zigbee2mqtt or mosquitto  was dead, I restarted it''')
+          subprocess.call('''systemctl restart mosquitto''', shell=True,close_fds=True)
+          subprocess.call('''systemctl restart zigbee2mqtt''', shell=True,close_fds=True)
 
-
+      last_mqtt_sevice_check=time.time()
 
     if ( (time.time()-last_node_check) >10 ):   #EVERY 10 SECONDS   todo: make this function..
       #print "threads:",len(threading.enumerate())
@@ -7261,36 +7273,25 @@ def onosBusThread():
   global internet_connection
   time.sleep(5)  #wait for webserver to startup 
   while (exit==0):   #if exit ==1  then close the webserver
-    time.sleep(0.01)    #wait until layerExchangeDataQueue has some element     
+    time.sleep(0.002)    #wait until layerExchangeDataQueue has some element     
     try:
+      
+      for l in range(0,10):
+        if not priorityCmdQueue.empty():   #this has priority over the other layer
+          executeQueueFunction(priorityCmdQueue.get())
+        else:
+          break
+          
+      for l in range(0,2):
+        if not layerExchangeDataQueue.empty():
+          executeQueueFunction(layerExchangeDataQueue.get())
+        else:
+          break
 
 
-
-      if not priorityCmdQueue.empty():   #this has priority over the other layer
-        executeQueueFunction(priorityCmdQueue.get())
-    
-      if not layerExchangeDataQueue.empty():
-        executeQueueFunction(layerExchangeDataQueue.get())
-
-
-      if not priorityCmdQueue.empty():   #this has priority over the other layer
-        executeQueueFunction(priorityCmdQueue.get())
-
-
-      if not priorityCmdQueue.empty():   #this has priority over the other layer
-        executeQueueFunction(priorityCmdQueue.get())
-
-
-      if not layerExchangeDataQueue.empty():
-        executeQueueFunction(layerExchangeDataQueue.get())
-
-
-
-      while not priorityCmdQueue.empty():   #this has priority over the other layer
-        executeQueueFunction(priorityCmdQueue.get())
         
-      while not layerExchangeDataQueue.empty():
-        executeQueueFunction(layerExchangeDataQueue.get())
+      #while not layerExchangeDataQueue.empty():
+      #  executeQueueFunction(layerExchangeDataQueue.get())
 
 
 
@@ -7318,12 +7319,6 @@ def onosBusThread():
     #time_objects_handler
       if (old_minutes!=datetime.datetime.today().minute):  #each minute check
         
-        if (conf_options["enable_mqtt"]==1):
-          zigbee2mqtt_status = subprocess.check_output('''systemctl status zigbee2mqtt''', shell=True,close_fds=True)  
-          if "dead" in zigbee2mqtt_status:
-            logprint(''' Error  zigbee2mqtt was dead, I resatarted it''')
-            subprocess.call('''systemctl restart zigbee2mqtt''', shell=True,close_fds=True)
-
 
         try:
           changeWebObjectStatus("minutes",datetime.datetime.today().minute,0)
@@ -7640,7 +7635,8 @@ def main():
             if "dead" in zigbee2mqtt_status:
                 logprint(''' Error  zigbee2mqtt was dead, I resatarted it''')
                 subprocess.call('''systemctl restart zigbee2mqtt''', shell=True,close_fds=True)
-                
+                subprocess.call('''systemctl restart mosquitto''', shell=True,close_fds=True)
+
             
             mqtt_thread = threading.Thread(target=mqttThread)
             mqtt_thread.daemon = True

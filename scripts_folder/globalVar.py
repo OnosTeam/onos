@@ -39,6 +39,7 @@ from time import gmtime, strftime
 
 import json
 import os
+import commands
 import syslog
 # import urllib2,urllib
 import urllib2
