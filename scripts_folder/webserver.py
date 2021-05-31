@@ -2421,6 +2421,7 @@ def mqtt_on_message_method(client, userdata, msg):
                 node_address = "999"
                 node_fw = "0"
                 objects_to_update_dict = {}
+                payload_string = payload_string.replace("NAN",'''"NAN"''') #replace the NAN tha would break the json format
                 payload_dict = json.loads(payload_string)
                 logprint("payload_dict:" + str(payload_dict))
                 for obj in list(hardwareModelDict[hwType]["object_list"].keys()):
