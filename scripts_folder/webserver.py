@@ -2397,6 +2397,7 @@ def mqtt_on_connect_method(client, userdata, rc):
     #reconnect then subscriptions will be renewed.
     client.subscribe("$SYS/#")
 
+
 # The callback for when a PUBLISH message is received from the server.
 def mqtt_on_message_method(client, userdata, msg):
     """
@@ -7251,18 +7252,28 @@ def mqttThread():  #run mqtt loop
     #sudo pip3 install paho-mqtt
     #or
     #sudo pip install paho-mqtt  #for python2
-    mqtt_client = mqtt.Client()
-    mqtt_client.username_pw_set("mqtt-onos", password="onosmqtt1234")
-    mqtt_client.on_connect = mqtt_on_connect_method
-    mqtt_client.on_message = mqtt_on_message_method
-    mqtt_client.connect("192.168.1.110", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
-    topic="prova"
-    #mqtt_client.publish(topic, payload=None, qos=0, retain=False)
-    mqtt_client.subscribe("#", qos=0)  # subscrive to all topics except for topics that start with a $ (these are normally control topics anyway). 
-    mqtt_client.subscribe("spk-socket/channel-0", qos=0)
-    mqtt_client.on_message = mqtt_on_message_method
-    mqtt_client.loop_forever()
-
+    while (exit==0):   #if exit ==1  then close the webserver
+      try:
+        mqtt_client = mqtt.Client()
+        mqtt_client.username_pw_set("mqtt-onos", password="onosmqtt1234")
+        mqtt_client.on_connect = mqtt_on_connect_method
+        mqtt_client.on_message = mqtt_on_message_method
+        mqtt_client.connect("192.168.1.110", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
+        topic="prova"
+        #mqtt_client.publish(topic, payload=None, qos=0, retain=False)
+        mqtt_client.subscribe("#", qos=0)  # subscrive to all topics except for topics that start with a $ (these are normally control topics anyway). 
+        mqtt_client.subscribe("spk-socket/channel-0", qos=0)
+        mqtt_client.on_message = mqtt_on_message_method
+        #mqtt_client.loop_forever()
+        mqtt_client.loop_start()
+        time.sleep(5)  #wait for incoming messages
+        #mqtt_client.loop(10)
+        mqtt_client.loop_stop()
+        time.sleep(0.5)  #wait to slow down mqtt reception...put a smaller number for faster mqtt reception
+      except Exception as e:
+        message="Mqtt error"
+        logprint(message,verbose=8,error_tuple=(e,sys.exc_info()) ) 
+        time.sleep(2)
 
   
   

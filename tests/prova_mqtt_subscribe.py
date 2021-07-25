@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import time
 #pip3 install paho-mqtt
 #or
 #pip install paho-mqtt  #for python2
@@ -22,27 +23,40 @@ def mqtt_on_message_method(client, userdata, msg):
     print ("received"+str(msg.payload)+"from topic:"+msg.topic)
 
 
-mqtt_client = mqtt.Client()
-mqtt_client.username_pw_set("mqtt-onos", password="onosmqtt1234")
-mqtt_client.on_connect = mqtt_on_connect_method
-mqtt_client.on_message = mqtt_on_message_method
-mqtt_client.connect("192.168.1.110", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
-
-topic="prova"
-
-#mqtt_client.publish(topic, payload=None, qos=0, retain=False)
-
-mqtt_client.subscribe("#", qos=0)  # subscrive to all topics except for topics that start with a $ (these are normally control topics anyway). 
-mqtt_client.subscribe("spk-socket/channel-0", qos=0)
-mqtt_client.on_message = mqtt_on_message_method
-
-
+while 1:
+  try:
+    mqtt_client = mqtt.Client()
+    mqtt_client.username_pw_set("mqtt-onos", password="onosmqtt1234")
+    mqtt_client.on_connect = mqtt_on_connect_method
+    mqtt_client.on_message = mqtt_on_message_method
+    mqtt_client.connect("192.168.1.110", 1883, 60)# connect(host, port=1883, keepalive=60, bind_address="")
+    
+    topic="prova"
+    
+    #mqtt_client.publish(topic, payload=None, qos=0, retain=False)
+    
+    mqtt_client.subscribe("#", qos=0)  # subscrive to all topics except for topics that start with a $ (these are normally control topics anyway). 
+    mqtt_client.subscribe("spk-socket/channel-0", qos=0)
+    mqtt_client.on_message = mqtt_on_message_method
+    mqtt_client.loop_start()
+    time.sleep(5)
+    #mqtt_client.loop(1)
+    #mqtt_client.disconnect()
+    mqtt_client.loop_stop()
+  except:
+    print("error mqtt")
+    exit()
+  print("endloop")
+  
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
-mqtt_client.loop_forever()
+
+
+#mqtt_client.loop_forever()
+
 
 
 
