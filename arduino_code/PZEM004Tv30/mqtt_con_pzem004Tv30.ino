@@ -243,7 +243,7 @@ void loop() {
     }
     
     float power2 = pzem2.power();
-    if( !isnan(power1) ){
+    if( !isnan(power2) ){
         Serial.print(F("Pwr2: ")); Serial.print(power2); Serial.println(F("W"));
     } else {
         power2 = 999;

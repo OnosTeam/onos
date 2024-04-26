@@ -122,7 +122,7 @@ reconnect_serial_port_enable=0  # this will be equal to time.time() when the ser
 router_sn="RouterOP0000"
 uart_router_sn=""  # the sn of the node connected to the usb of the pc where onos is run..
 router_hardware_type="RouterOP" # select the type of hardware
-router_hardware_fw_version="5.14"
+router_hardware_fw_version="5.32"
 gui_webserver_port=80
 service_webserver_port=81
 onos_center_internal_ip='192.168.101.1'  # the ip of the lan , the one where all nodes are attached
@@ -137,6 +137,13 @@ base_cfg_path=""
 
 # if (os.path.exists("/sys/class/gpio")==1) : #if the directory exist ,then the hardware has embedded IO pins
 if (platform.find("Orange")!=-1)or(platform.find("orange")!=-1)or(platform.find("RouterOP")!=-1): #found uname with orange pi name or RouterOP
+    router_sn=platform[0:12]  # get the serial number from /etc/hostname  
+    router_hardware_type="RouterOP"
+    enable_usb_serial_port=1
+    base_cfg_path="/bin/onos/scripts_folder/"
+    baseRoomPath="/bin/onos/scripts_folder/zones/"
+    
+elif (platform.find("raspberry")!=-1)or(platform.find("raspberry")!=-1)or(platform.find("RouterOP")!=-1): #found uname with orange pi name or RouterOP
     router_sn=platform[0:12]  # get the serial number from /etc/hostname  
     router_hardware_type="RouterOP"
     enable_usb_serial_port=1

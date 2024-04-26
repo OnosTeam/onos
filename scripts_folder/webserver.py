@@ -7263,13 +7263,13 @@ def mqttThread():  #run mqtt loop
         #mqtt_client.publish(topic, payload=None, qos=0, retain=False)
         mqtt_client.subscribe("#", qos=0)  # subscrive to all topics except for topics that start with a $ (these are normally control topics anyway). 
         mqtt_client.subscribe("spk-socket/channel-0", qos=0)
-        mqtt_client.on_message = mqtt_on_message_method
+        #mqtt_client.on_message = mqtt_on_message_method
         #mqtt_client.loop_forever()
         mqtt_client.loop_start()
         time.sleep(5)  #wait for incoming messages
         #mqtt_client.loop(10)
         mqtt_client.loop_stop()
-        time.sleep(0.5)  #wait to slow down mqtt reception...put a smaller number for faster mqtt reception
+        time.sleep(1)  #wait to slow down mqtt reception...put a smaller number for faster mqtt reception
       except Exception as e:
         message="Mqtt error"
         logprint(message,verbose=8,error_tuple=(e,sys.exc_info()) ) 

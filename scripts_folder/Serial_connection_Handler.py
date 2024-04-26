@@ -111,10 +111,12 @@ class Serial_connection_Handler():
 
 
     if router_hardware_type=="RouterOP":  #if the router hardware is orange pi zero
-      logprint("orangepi serial port ttyS2 selected")
+      logprint("orangepi serial port ttyS2 selected")  
       if "ttyS2" in  list_of_dev: #for orange pi
-        logprint("return ttyS2") 
-        return("ttyS2")
+        #logprint("return ttyS2") #orangepi 
+        logprint("return ttyUSB0") #mod for raspberry 
+        #return("ttyS2") #orangepi
+        return("ttyS2") #raspberry
 
 
     if ("ttyUSB0" in list_of_dev)and('/dev/ttyUSB0' not in list_of_port_to_not_use):
@@ -161,7 +163,3 @@ class Serial_connection_Handler():
     #  self.ser.close()
     #except:
     #  print("")
-
-
-
-
